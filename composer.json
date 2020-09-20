@@ -1,0 +1,16 @@
+{
+    "name": "cjacob/appwrite-cli",
+    "description": "A CLI to interact with the appwrite server",
+    "authors": [
+        {
+            "name": "Christy Jacob",
+            "email": "christyjacob4@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Appwrite\\": "src/Appwrite"}
+    },
+    "require": {
+        "utopia-php/cli": "^0.7.1"
+    }
+}
