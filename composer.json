@@ -11,6 +11,7 @@
         "psr-4": {"Appwrite\\": "src/Appwrite"}
     },
     "require": {
-        "utopia-php/cli": "^0.7.1"
+        "utopia-php/cli": "^0.7.1",
+        "jc21/clitable": "^1.2"
     }
 }

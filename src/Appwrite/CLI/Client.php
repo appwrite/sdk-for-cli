@@ -63,13 +63,19 @@ class Client
         if (!$this->loadPreferences()) {
             $this->promptUser();
         }
+
+        $this->setProject($this->preferences[self::PREFERENCE_APPWRITE_PROJECT])
+            ->setKey($this->preferences[self::PREFERENCE_APPWRITE_KEY])
+            ->setLocale($this->preferences[self::PREFERENCE_APPWRITE_LOCALE]);
     }
 
-    public function getPreference(string $key) {
+    public function getPreference(string $key): string
+    {
         return $this->preferences[$key];
     }
 
-    public function setPreference(string $key , string $value) {
+    public function setPreference(string $key , string $value) 
+    {
         $this->preferences[$key] = $value;
     }
 
@@ -131,8 +137,8 @@ class Client
     }
 
     private function isPreferenceLoaded() : bool {
-        if (empty($this->getPreference(self::PREFERENCE_ENDPOINT))) return false;
-        if (empty($this->getPreference(self::PREFERENCE_APPWRITE_PROJECT))) return false;
+        if(empty($this->getPreference(self::PREFERENCE_ENDPOINT))) return false;
+        if(empty($this->getPreference(self::PREFERENCE_APPWRITE_PROJECT))) return false;
         if(empty($this->getPreference(self::PREFERENCE_APPWRITE_KEY))) return false;
         if(empty($this->getPreference(self::PREFERENCE_APPWRITE_LOCALE))) return false;
         return true;
@@ -216,8 +222,7 @@ class Client
      */
     public function setEndpoint($endpoint)
     {
-        $this->endpoint = $endpoint;
-
+        $this->setPreference(self::PREFERENCE_ENDPOINT. $endpoint);
         return $this;
     }
 
@@ -247,7 +252,7 @@ class Client
     public function call($method, $path = '', $headers = array(), array $params = array())
     {
         $headers            = array_merge($this->headers, $headers);
-        $ch                 = curl_init($this->endpoint . $path . (($method == self::METHOD_GET && !empty($params)) ? '?' . http_build_query($params) : ''));
+        $ch                 = curl_init($this->getPreference(self::PREFERENCE_ENDPOINT) . $path . (($method == self::METHOD_GET && !empty($params)) ? '?' . http_build_query($params) : ''));
         $responseHeaders    = [];
         $responseStatus     = -1;
         $responseType       = '';

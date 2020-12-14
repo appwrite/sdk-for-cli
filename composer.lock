@@ -4,8 +4,54 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b905f8438da907ece819dd61bdf4ee0",
+    "content-hash": "0cedf2e75d17c59c039abc3d5eea130a",
     "packages": [
+        {
+            "name": "jc21/clitable",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jc21/clitable.git",
+                "reference": "a9ff1fcdff131d25e90a9ae839a5805f6963b3da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jc21/clitable/zipball/a9ff1fcdff131d25e90a9ae839a5805f6963b3da",
+                "reference": "a9ff1fcdff131d25e90a9ae839a5805f6963b3da",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "victorjonsson/markdowndocs": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "jc21": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-1-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Jamie Curnow",
+                    "email": "jc@jc21.com"
+                }
+            ],
+            "description": "CLI Table output for PHP scripts",
+            "homepage": "https://github.com/jc21/clitable",
+            "keywords": [
+                "cli",
+                "command",
+                "line",
+                "table"
+            ],
+            "time": "2019-04-28T00:06:48+00:00"
+        },
         {
             "name": "utopia-php/cli",
             "version": "0.7.1",
