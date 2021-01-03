@@ -1,5 +1,5 @@
 {
-    "name": "cjacob/appwrite-cli",
+    "name": "appwrite/appwrite-cli",
     "description": "A CLI to interact with the appwrite server",
     "authors": [
         {
@@ -11,6 +11,7 @@
         "psr-4": {"Appwrite\\": "src/Appwrite"}
     },
     "require": {
+        "php": ">=7.4.0",
         "utopia-php/cli": "^0.7.1",
         "jc21/clitable": "^1.2"
     }
