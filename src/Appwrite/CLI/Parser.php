@@ -27,8 +27,7 @@ class Parser {
     private const headerColor = self::colors[2];
 
     public function parseResponse($response, $properties = array()) {
-        print_r($response);
-    
+        
         foreach ($response as $key => $value) {
             if (is_array($value)) {
                 $this->drawTable($value, self::headerColor, self::tableColor);
