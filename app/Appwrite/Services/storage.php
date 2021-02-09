@@ -66,12 +66,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -104,12 +106,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'multipart/form-data',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -124,12 +128,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -154,12 +160,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_PUT, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -174,12 +182,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -194,12 +204,13 @@ $cli
 
 
 
-        $response =  $client->call(Client::METHOD_GET, $path, [
-            'content-type' => 'application/json',
-        ], $params);
+
+        $params['project'] = $client->getPreference('X-Appwrite-Project');
+        $params['key'] = $client->getPreference('X-Appwrite-Key');
+        $path = $client->getPreference(Client::PREFERENCE_ENDPOINT).$path . "?" . http_build_query($params);
+        echo $path;
 
 
-        $parser->parseResponse($response);
     });
 
 $cli
@@ -224,12 +235,13 @@ $cli
 
 
 
-        $response =  $client->call(Client::METHOD_GET, $path, [
-            'content-type' => 'application/json',
-        ], $params);
+
+        $params['project'] = $client->getPreference('X-Appwrite-Project');
+        $params['key'] = $client->getPreference('X-Appwrite-Key');
+        $path = $client->getPreference(Client::PREFERENCE_ENDPOINT).$path . "?" . http_build_query($params);
+        echo $path;
 
 
-        $parser->parseResponse($response);
     });
 
 $cli
@@ -244,12 +256,13 @@ $cli
 
 
 
-        $response =  $client->call(Client::METHOD_GET, $path, [
-            'content-type' => 'application/json',
-        ], $params);
+
+        $params['project'] = $client->getPreference('X-Appwrite-Project');
+        $params['key'] = $client->getPreference('X-Appwrite-Key');
+        $path = $client->getPreference(Client::PREFERENCE_ENDPOINT).$path . "?" . http_build_query($params);
+        echo $path;
 
 
-        $parser->parseResponse($response);
     });
 
 

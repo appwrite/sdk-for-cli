@@ -68,12 +68,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -122,12 +124,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -142,12 +146,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -192,12 +198,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_PUT, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -212,12 +220,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -240,12 +250,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -260,12 +272,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -281,12 +295,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -306,12 +322,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -334,12 +352,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -378,14 +398,16 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
 
 
 
+
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'multipart/form-data',
         ], $params);
 
+        $parser->parseResponse($response);
+
+
         unlink($archive_file_path); // as we already obtained a tar.gz
         unlink($archive_file_path.'.gz');
-
-        $parser->parseResponse($response);
     });
 
 $cli
@@ -401,12 +423,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -422,12 +446,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 

@@ -58,12 +58,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -77,12 +79,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -96,12 +100,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -115,12 +121,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -134,12 +142,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -153,12 +163,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -172,12 +184,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -191,12 +205,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -210,12 +226,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -229,12 +247,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -248,12 +268,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -267,12 +289,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 

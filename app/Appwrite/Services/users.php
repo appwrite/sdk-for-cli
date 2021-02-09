@@ -66,12 +66,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -100,12 +102,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -120,12 +124,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -140,12 +146,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -160,12 +168,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -180,12 +190,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -205,12 +217,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -225,12 +239,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -245,12 +261,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -266,12 +284,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 $cli
@@ -291,12 +311,14 @@ $cli
 
 
 
+
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
 
-
         $parser->parseResponse($response);
+
+
     });
 
 
