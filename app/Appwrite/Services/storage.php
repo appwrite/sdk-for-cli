@@ -89,12 +89,15 @@ $cli
 
 
 
+
         $file = realpath(__DIR__.'/../../../files/'.$file);
         if (file_exists($file) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
         }
+
         $cFile = new \CURLFile($file,  'image/png' , basename($file));
         $params['file'] = $cFile;
+        
 
 
  

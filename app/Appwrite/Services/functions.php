@@ -383,18 +383,20 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         $params['command'] = $command;
 
 
-        $code = realpath(__DIR__.'/../../../files/'.$code);
-        if (file_exists($code) === false ) {
+        $cloudFunctionPath = realpath(__DIR__.'/../../../files/'.$code);
+        $cloudFunctionParentDir = dirname($cloudFunctionPath, 1);
+        $cloudFunctionDirName = basename($code);
+        if (file_exists($cloudFunctionPath) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
         }
-        $archive_file_name = 'code.tar';
-        $archive_file_path = dirname($code, 1)."/${archive_file_name}";
-        $archive = new PharData($archive_file_path);
-        $archive->buildFromDirectory($code);
-        $archive->compress(Phar::GZ);
-        $code = $archive_file_path.'.gz';
-        $cFile = new \CURLFile($code,  'application/x-gzip' , basename($code));
+        $archiveName = 'code.tar.gz';
+        $volumeMountPoint = realpath(__DIR__.'/../../../files/');
+        exec("tar -zcvf $archiveName -C ${cloudFunctionParentDir} $cloudFunctionDirName && mv ${archiveName} ${volumeMountPoint}");
+        $archivePath = realpath($volumeMountPoint."/$archiveName");$archivePath = realpath($volumeMountPoint."/$archiveName");
+        $cFile = new \CURLFile($archivePath,  'application/x-gzip' , basename($archivePath));
+        
         $params['code'] = $cFile;
+
 
 
 
@@ -406,8 +408,7 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         $parser->parseResponse($response);
 
 
-        unlink($archive_file_path); // as we already obtained a tar.gz
-        unlink($archive_file_path.'.gz');
+        unlink($archivePath);
     });
 
 $cli

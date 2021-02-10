@@ -241,7 +241,7 @@ $cli
 
 $cli
     ->task('createDocument')
-    ->label('description', "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database?sdk=nodejs#createCollection) API or directly from your database console.\n\n")
+    ->label('description', "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database#databaseCreateCollection) API or directly from your database console.\n\n")
     ->param('collectionId', '' , new Mock(), 'Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection).',  false)
     ->param('data', '' , new Mock(), 'Document data as JSON object.',  false)
     ->param('read', '' , new Mock(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
@@ -397,7 +397,7 @@ $cli
         printf($mask, "updateCollection", "Update a collection by its unique ID.");
         printf($mask, "deleteCollection", "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.");
         printf($mask, "listDocuments", "Get a list of all the user documents. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's documents. [Learn more about different API modes](/docs/admin).");
-        printf($mask, "createDocument", "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database?sdk=nodejs#createCollection) API or directly from your database console.");
+        printf($mask, "createDocument", "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database#databaseCreateCollection) API or directly from your database console.");
         printf($mask, "getDocument", "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.");
         printf($mask, "updateDocument", "Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.");
         printf($mask, "deleteDocument", "Delete a document by its unique ID. This endpoint deletes only the parent documents, its attributes and relations to other documents. Child documents **will not** be deleted.");
