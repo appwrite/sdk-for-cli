@@ -6,6 +6,7 @@ require_once './vendor/autoload.php';
 
 use Exception;
 use Utopia\CLI\CLI;
+use Utopia\Validator\Mock;
 use Utopia\CLI\Console;
 
 const USER_PREFERENCES_FILE = __DIR__."/../../.preferences/.prefs.json";
@@ -141,10 +142,20 @@ $cli = new CLI();
 
 $cli
     ->task('init')
-    ->action(function() {
-        /* Load user defaults from a json file if available
-        Else Prompt the user to enter the details
+    ->param('endpoint', '', new Mock(), 'Your Appwrite endpoint', true)
+    ->param('project', '', new Mock(), 'Your project ID', true)
+    ->param('key', '', new Mock(), 'Your secret API key', true)
+    ->param('locale', '', new Mock(), '', true)
+    ->action(function( $endpoint,  $project, $key, $locale ) {
+        /* Check if enviroment variables exist
+        * Else prompt the user
         */
+        
+        putenv("endpoint=$endpoint");
+        putenv("X-Appwrite-Project=$project");
+        putenv("X-Appwrite-Key=$key");
+        putenv("X-Appwrite-Locale=$locale");
+
         if (!loadEnvVariables()) {
             promptUser();
         }

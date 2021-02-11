@@ -34,7 +34,7 @@ class Client
      */
     private $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.3.0',
+        'x-sdk-version' => 'appwrite:cli:0.4.0',
 ];
 
     /**
@@ -112,6 +112,20 @@ class Client
         }
 
         return true;
+    }
+
+    /**
+    * Function to write user preferences to
+    * the JSON file
+    * 
+    * @param string $filename 
+    * @return int
+    */
+    function savePreferences(string $filename = self::USER_PREFERENCES_FILE): int
+    {
+        $jsondata = json_encode($this->preferences, JSON_PRETTY_PRINT);
+        $result = file_put_contents($filename, $jsondata);
+        return $result;
     }
 
      /**
