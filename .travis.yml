@@ -33,7 +33,7 @@ script:
 deploy:
   - provider: script
     edge: true
-    script: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm64/v8 -t appwrite/test:1.0 ./ --push
+    script: docker buildx build --platform linux/amd64,linux/arm/v7,linux/arm64/v8 -t appwrite/test:1.0 ./ --push
     on:
       repo: appwrite/sdk-for-cli
       branch: master
