@@ -1,0 +1,39 @@
+dist: xenial
+
+arch:
+  - amd64
+
+os: linux
+
+language: shell
+
+notifications:
+  email:
+  - team@appwrite.io
+  
+services:
+- docker
+
+before_install:
+- curl -fsSL https://get.docker.com | sh
+- echo '{"experimental":"enabled"}' | sudo tee /etc/docker/daemon.json
+- mkdir -p $HOME/.docker
+- echo '{"experimental":"enabled"}' | sudo tee $HOME/.docker/config.json
+- sudo service docker start
+- >
+  if [ ! -z "${DOCKERHUB_PULL_USERNAME:-}" ]; then
+    echo "${DOCKERHUB_PULL_PASSWORD}" | docker login --username "${DOCKERHUB_PULL_USERNAME}" --password-stdin
+  fi
+- docker --version
+- docker buildx create --use
+
+script:
+- docker ps
+
+deploy:
+  - provider: script
+    edge: true
+    script: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x -t appwrite/test:1.0 ./ --push
+    on:
+      repo: appwrite/sdk-for-cli
+      branch: master
