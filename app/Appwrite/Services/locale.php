@@ -23,8 +23,15 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            Console::log("\e[0;31;m  \e[0m") ;
-            Console::log("\nUsage : executable locale {$taskName} --[OPTIONS] \n");
+            Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+            Console::log("\nUsage : appwrite locale {$taskName} --[OPTIONS] \n");
             Console::log($description);
             Console::log("Options:");
             array_walk($params, function(&$key) {
@@ -139,8 +146,15 @@ $cli
 $cli
     ->task('help')
     ->action(function() use ($parser) {
-        Console::log("\e[0;31;m  \e[0m");
-        Console::log("\nUsage : executable locale [COMMAND]\n");
+        Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m");
+        Console::log("\nUsage : appwrite locale [COMMAND]\n");
         Console::log("Commands :");
         $commands = [
                 "get" => "Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
@@ -154,7 +168,7 @@ $cli
                 "getLanguages" => "List of all languages classified by ISO 639-1 including 2-letter code, name in English, and name in the respective language.",
         ];
         $parser->formatArray($commands);
-        Console::log("\nRun 'executable locale COMMAND --help' for more information on a command.");
+        Console::log("\nRun 'appwrite locale COMMAND --help' for more information on a command.");
     });
 
 

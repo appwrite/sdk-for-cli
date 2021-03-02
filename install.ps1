@@ -16,7 +16,7 @@
 $APPWRITE_INSTALL_DIR = Join-Path -Path $env:LOCALAPPDATA -ChildPath "Appwrite"
 
 # Appwrite CLI Executable name 
-$APPWRITE_EXECUTABLE_NAME = "executable.ps1"
+$APPWRITE_EXECUTABLE_NAME = "appwrite.ps1"
 
 # Appwrite executable file path 
 $APPWRITE_EXECUTABLE_FILEPATH = Join-Path -Path $APPWRITE_INSTALL_DIR -ChildPath $APPWRITE_EXECUTABLE_NAME
@@ -34,7 +34,7 @@ if ( $args.count -eq 0 ) {
 }
 
 if ( -not ($allowList -contains $args[0])) {
-    Write-Host "Looks like a crazy hamster flipped a bit.`n`nUse executable help for a list of supported commands."
+    Write-Host "Looks like a crazy hamster flipped a bit.`n`nUse appwrite help for a list of supported commands."
     exit 1
 }
 
@@ -44,6 +44,13 @@ $USER_PATH_ENV_VAR = [Environment]::GetEnvironmentVariable("PATH", "User")
 
 function Greeting {
     Write-Host @"
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+ 
 "@ -ForegroundColor red
     Write-Host "Welcome to the Appwrite CLI install shield."
     

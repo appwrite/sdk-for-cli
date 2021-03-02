@@ -23,8 +23,15 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            Console::log("\e[0;31;m  \e[0m") ;
-            Console::log("\nUsage : executable client {$taskName} --[OPTIONS] \n");
+            Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+            Console::log("\nUsage : appwrite client {$taskName} --[OPTIONS] \n");
             Console::log($description);
             Console::log("Options:");
             array_walk($params, function(&$key) {
@@ -100,8 +107,15 @@ $cli
 $cli
     ->task('help')
     ->action(function() use ($parser) {
-        Console::log("\e[0;31;m  \e[0m") ;
-        Console::log("\nUsage : executable client [COMMAND]\n");
+        Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+        Console::log("\nUsage : appwrite client [COMMAND]\n");
         Console::log("Commands :");
         $commands = [
             "setEndpoint" => "Set your server endpoint.",
@@ -110,7 +124,7 @@ $cli
             "setLocale" => "Set your preferred locale (eg: en-US)."
         ];
         $parser->formatArray($commands);
-        Console::log("\nRun 'executable client COMMAND --help' for more information on a command.");
+        Console::log("\nRun 'appwrite client COMMAND --help' for more information on a command.");
     });
     
 

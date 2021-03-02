@@ -1,1 +1,1 @@
-executable locale getCurrencies 
+appwrite locale getCurrencies 

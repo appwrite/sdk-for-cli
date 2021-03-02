@@ -1,1 +1,1 @@
-executable database getDocument --collectionId="[COLLECTION_ID]" --documentId="[DOCUMENT_ID]" 
+appwrite database getDocument --collectionId="[COLLECTION_ID]" --documentId="[DOCUMENT_ID]" 

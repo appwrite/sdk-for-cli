@@ -23,8 +23,15 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            Console::log("\e[0;31;m  \e[0m") ;
-            Console::log("\nUsage : executable avatars {$taskName} --[OPTIONS] \n");
+            Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+            Console::log("\nUsage : appwrite avatars {$taskName} --[OPTIONS] \n");
             Console::log($description);
             Console::log("Options:");
             array_walk($params, function(&$key) {
@@ -180,8 +187,15 @@ $cli
 $cli
     ->task('help')
     ->action(function() use ($parser) {
-        Console::log("\e[0;31;m  \e[0m");
-        Console::log("\nUsage : executable avatars [COMMAND]\n");
+        Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m");
+        Console::log("\nUsage : appwrite avatars [COMMAND]\n");
         Console::log("Commands :");
         $commands = [
                 "getBrowser" => "You can use this endpoint to show different browser icons to your users. The code argument receives the browser code as it appears in your user /account/sessions endpoint. Use width, height and quality arguments to change the output settings.",
@@ -196,7 +210,7 @@ You can use the color and background params to change the avatar colors. By defa
                 "getQR" => "Converts a given plain text to a QR code image. You can use the query parameters to change the size and style of the resulting image.",
         ];
         $parser->formatArray($commands);
-        Console::log("\nRun 'executable avatars COMMAND --help' for more information on a command.");
+        Console::log("\nRun 'appwrite avatars COMMAND --help' for more information on a command.");
     });
 
 

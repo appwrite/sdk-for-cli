@@ -1,1 +1,1 @@
-executable health getQueueUsage 
+appwrite health getQueueUsage 

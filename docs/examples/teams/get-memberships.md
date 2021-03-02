@@ -1,1 +1,1 @@
-executable teams getMemberships --teamId="[TEAM_ID]" --search="[SEARCH]" --limit="0" --offset="0" --orderType="ASC" 
+appwrite teams getMemberships --teamId="[TEAM_ID]" --search="[SEARCH]" --limit="0" --offset="0" --orderType="ASC" 

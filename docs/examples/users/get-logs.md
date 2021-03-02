@@ -1,1 +1,1 @@
-executable users getLogs --userId="[USER_ID]" 
+appwrite users getLogs --userId="[USER_ID]" 

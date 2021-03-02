@@ -9,8 +9,15 @@ use Appwrite\Parser;
 
 $parser = new Parser();
 
-Console::log("\e[0;31;m  \e[0m") ;
-Console::log("\nUsage : executable [SERVICE] [COMMAND] --[OPTION]\n");
+Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+Console::log("\nUsage : appwrite [SERVICE] [COMMAND] --[OPTION]\n");
 Console::log("Services :");
 $commands = [
         "avatars" => "The Avatars service aims to help you complete everyday tasks related to your app image, icons, and avatars.",
@@ -23,4 +30,4 @@ $commands = [
         "users" => "The Users service allows you to manage your project users.",
         ];
 $parser->formatArray($commands);
-Console::log("\nRun 'executable [SERVICE] help' for more information on a service.");
+Console::log("\nRun 'appwrite [SERVICE] help' for more information on a service.");

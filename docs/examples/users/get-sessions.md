@@ -1,1 +1,1 @@
-executable users getSessions --userId="[USER_ID]" 
+appwrite users getSessions --userId="[USER_ID]" 

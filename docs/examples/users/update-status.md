@@ -1,1 +1,1 @@
-executable users updateStatus --userId="[USER_ID]" --status="1" 
+appwrite users updateStatus --userId="[USER_ID]" --status="1" 

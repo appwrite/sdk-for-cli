@@ -1,1 +1,1 @@
-executable health getTime 
+appwrite health getTime 

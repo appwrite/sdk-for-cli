@@ -18,7 +18,7 @@
 APPWRITE_INSTALL_DIR="/usr/local/bin"
 
 # Appwrite CLI Executable name 
-APPWRITE_EXECUTABLE_NAME=executable
+APPWRITE_EXECUTABLE_NAME=appwrite
 
 # Appwrite executable file path 
 APPWRITE_EXECUTABLE_FILEPATH="$APPWRITE_INSTALL_DIR/$APPWRITE_EXECUTABLE_NAME"
@@ -41,6 +41,13 @@ NC='\033[0m' # No Color
 greeting() {
     echo -e "${RED}"
     cat << "EOF"
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+ 
 EOF
     echo -e "${NC}\n"
     echo "🔥 Welcome to the Appwrite CLI install shield 🛡."
@@ -124,7 +131,7 @@ fi
 
 # Check if the command is in the whitelist
 if [[ ! " ${allowList[@]} " =~ " ${1} " ]]; then
-    echo "\nLooks like a crazy hamster 🐹 flipped a bit.\n\nUse executable help for a list of supported commands."
+    echo "\nLooks like a crazy hamster 🐹 flipped a bit.\n\nUse appwrite help for a list of supported commands."
     exit 1
 fi
 

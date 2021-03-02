@@ -23,8 +23,15 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            Console::log("\e[0;31;m  \e[0m") ;
-            Console::log("\nUsage : executable users {$taskName} --[OPTIONS] \n");
+            Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+            Console::log("\nUsage : appwrite users {$taskName} --[OPTIONS] \n");
             Console::log($description);
             Console::log("Options:");
             array_walk($params, function(&$key) {
@@ -221,8 +228,15 @@ $cli
 $cli
     ->task('help')
     ->action(function() use ($parser) {
-        Console::log("\e[0;31;m  \e[0m");
-        Console::log("\nUsage : executable users [COMMAND]\n");
+        Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m");
+        Console::log("\nUsage : appwrite users [COMMAND]\n");
         Console::log("Commands :");
         $commands = [
                 "list" => "Get a list of all the project's users. You can use the query params to filter your results.",
@@ -238,7 +252,7 @@ $cli
                 "updateStatus" => "Update the user status by its unique ID.",
         ];
         $parser->formatArray($commands);
-        Console::log("\nRun 'executable users COMMAND --help' for more information on a command.");
+        Console::log("\nRun 'appwrite users COMMAND --help' for more information on a command.");
     });
 
 

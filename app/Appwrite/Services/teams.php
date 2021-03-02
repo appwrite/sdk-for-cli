@@ -23,8 +23,15 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            Console::log("\e[0;31;m  \e[0m") ;
-            Console::log("\nUsage : executable teams {$taskName} --[OPTIONS] \n");
+            Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m") ;
+            Console::log("\nUsage : appwrite teams {$taskName} --[OPTIONS] \n");
             Console::log($description);
             Console::log("Options:");
             array_walk($params, function(&$key) {
@@ -192,8 +199,15 @@ $cli
 $cli
     ->task('help')
     ->action(function() use ($parser) {
-        Console::log("\e[0;31;m  \e[0m");
-        Console::log("\nUsage : executable teams [COMMAND]\n");
+        Console::log("\e[0;31;m 
+    _                            _ _           ___   __   _____ 
+   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+ /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+ \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+       |_|   |_|                                                  
+  \e[0m");
+        Console::log("\nUsage : appwrite teams [COMMAND]\n");
         Console::log("Commands :");
         $commands = [
                 "list" => "Get a list of all the current user teams. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's teams. [Learn more about different API modes](/docs/admin).",
@@ -210,7 +224,7 @@ Please note that in order to avoid a [Redirect Attacks](https://github.com/OWASP
                 "deleteMembership" => "This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.",
         ];
         $parser->formatArray($commands);
-        Console::log("\nRun 'executable teams COMMAND --help' for more information on a command.");
+        Console::log("\nRun 'appwrite teams COMMAND --help' for more information on a command.");
     });
 
 

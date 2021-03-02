@@ -1,1 +1,1 @@
-executable health getAntiVirus 
+appwrite health getAntiVirus 

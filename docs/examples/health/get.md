@@ -1,1 +1,1 @@
-executable health get 
+appwrite health get 

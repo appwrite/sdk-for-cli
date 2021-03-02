@@ -30,14 +30,14 @@ $ iwr -useb https://appwrite.io/cli/install.ps1 | iex
 ## Initialisation 
 The CLI needs to be initialised with your project settings. This can be done using 
 ```sh
-$ executable init 
+$ appwrite init 
 ```
 
 The CLI requires an endpoint, project ID, API key and a locale to be able to communicate with the Appwrite backend server. There are two ways to achieve this 
 
 ### 1. Environment file 
 ```sh
-$ executable --env-file path/to/your/environment/file init     
+$ appwrite --env-file path/to/your/environment/file init     
 ```
 The .env file must have the following keys 
 ```sh
@@ -49,38 +49,38 @@ X-Appwrite-Locale=en-US
 
 ### 2. Using the prompt
 
-Invoking `executable init` without an env file triggers an interactive prompt where you can manually enter the details. These values are saved locally so that you dont have to re-enter them everytime. 
+Invoking `appwrite init` without an env file triggers an interactive prompt where you can manually enter the details. These values are saved locally so that you dont have to re-enter them everytime. 
 
 ## Usage 
 
 The Appwrite CLI follows the following general syntax.
 ```sh
-$ executable [SERVICE] [COMMAND] --[OPTIONS]
+$ appwrite [SERVICE] [COMMAND] --[OPTIONS]
 ```
 
 A few sample commands to get you started 
 
 ```sh
-$ executable users create --email="hello@appwrite.io" --password="very_strong_password"
-$ executable users list 
+$ appwrite users create --email="hello@appwrite.io" --password="very_strong_password"
+$ appwrite users list 
 ```
 
 To get information about the different services available, you can use 
 ```sh
-$ executable help
+$ appwrite help
 ```
 
 To get information about a particular service and the commands available in a service you can use 
 ```sh
-$ executable users help
-$ executable accounts help
+$ appwrite users help
+$ appwrite accounts help
 ```
 
 To get information about a particular command and the parameters it accepts, you can use
 
 ```sh
-$ executable users list --help
-$ executable account get --help 
+$ appwrite users list --help
+$ appwrite account get --help 
 ```
 
 ## Contribution

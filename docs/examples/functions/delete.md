@@ -1,1 +1,1 @@
-executable functions delete --functionId="[FUNCTION_ID]" 
+appwrite functions delete --functionId="[FUNCTION_ID]" 

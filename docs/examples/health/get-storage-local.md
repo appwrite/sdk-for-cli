@@ -1,1 +1,1 @@
-executable health getStorageLocal 
+appwrite health getStorageLocal 
