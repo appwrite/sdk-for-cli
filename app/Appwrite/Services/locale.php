@@ -12,11 +12,10 @@ use Utopia\CLI\Console;
 use Utopia\Validator\Mock;
 
 $parser = new Parser();
-
 $cli = new CLI();
 
 $cli->
-      init(function() use ($cli) {
+      init(function() use ($cli, $parser) {
         
         if (array_key_exists('help', $cli->getArgs())) {
             $taskName = $cli->match()->getName();
@@ -24,25 +23,14 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-
-            printf("\nUsage : appwrite locale {$taskName} --[OPTIONS] \n\n");
-            printf($description);
-            printf("Options:\n");
-            $mask = "\t%-20.20s %-125.125s\n";
-
-            foreach ($params as $key => $value) {
-                if ($key !== 'help')
-                    printf($mask, $key, $value['description']);
-            }
+            Console::log("\e[0;31;m  \e[0m") ;
+            Console::log("\nUsage : executable locale {$taskName} --[OPTIONS] \n");
+            Console::log($description);
+            Console::log("Options:");
+            array_walk($params, function(&$key) {
+                $key = $key['description'];
+            });
+            $parser->formatArray($params);
             Console::exit(0);
         }
       });
@@ -57,17 +45,10 @@ $cli
         $path   = str_replace([], [], '/locale');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -78,17 +59,10 @@ $cli
         $path   = str_replace([], [], '/locale/continents');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -99,17 +73,10 @@ $cli
         $path   = str_replace([], [], '/locale/countries');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -120,17 +87,10 @@ $cli
         $path   = str_replace([], [], '/locale/countries/eu');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -141,17 +101,10 @@ $cli
         $path   = str_replace([], [], '/locale/countries/phones');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -162,17 +115,10 @@ $cli
         $path   = str_replace([], [], '/locale/currencies');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -183,45 +129,32 @@ $cli
         $path   = str_replace([], [], '/locale/languages');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 
 $cli
     ->task('help')
-    ->action(function() {
-        echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-        printf("\nUsage : appwrite locale [COMMAND]\n\n");
-        printf("Commands :\n");
-        $mask = "\t%-20.20s %-125.125s\n";
-        printf($mask, "get", "Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
+    ->action(function() use ($parser) {
+        Console::log("\e[0;31;m  \e[0m");
+        Console::log("\nUsage : executable locale [COMMAND]\n");
+        Console::log("Commands :");
+        $commands = [
+                "get" => "Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
 
-([IP Geolocation by DB-IP](https://db-ip.com))");
-        printf($mask, "getContinents", "List of all continents. You can use the locale header to get the data in a supported language.");
-        printf($mask, "getCountries", "List of all countries. You can use the locale header to get the data in a supported language.");
-        printf($mask, "getCountriesEU", "List of all countries that are currently members of the EU. You can use the locale header to get the data in a supported language.");
-        printf($mask, "getCountriesPhones", "List of all countries phone codes. You can use the locale header to get the data in a supported language.");
-        printf($mask, "getCurrencies", "List of all currencies, including currency symbol, name, plural, and decimal digits for all major and minor currencies. You can use the locale header to get the data in a supported language.");
-        printf($mask, "getLanguages", "List of all languages classified by ISO 639-1 including 2-letter code, name in English, and name in the respective language.");
-        printf("\nRun 'appwrite locale COMMAND --help' for more information on a command.\n");
+([IP Geolocation by DB-IP](https://db-ip.com))",
+                "getContinents" => "List of all continents. You can use the locale header to get the data in a supported language.",
+                "getCountries" => "List of all countries. You can use the locale header to get the data in a supported language.",
+                "getCountriesEU" => "List of all countries that are currently members of the EU. You can use the locale header to get the data in a supported language.",
+                "getCountriesPhones" => "List of all countries phone codes. You can use the locale header to get the data in a supported language.",
+                "getCurrencies" => "List of all currencies, including currency symbol, name, plural, and decimal digits for all major and minor currencies. You can use the locale header to get the data in a supported language.",
+                "getLanguages" => "List of all languages classified by ISO 639-1 including 2-letter code, name in English, and name in the respective language.",
+        ];
+        $parser->formatArray($commands);
+        Console::log("\nRun 'executable locale COMMAND --help' for more information on a command.");
     });
 
 

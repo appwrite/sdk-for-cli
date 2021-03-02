@@ -1,1 +1,1 @@
-appwrite health getCache 
+executable health getCache 

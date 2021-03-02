@@ -1,1 +1,1 @@
-appwrite users get --userId="[USER_ID]" 
+executable users get --userId="[USER_ID]" 

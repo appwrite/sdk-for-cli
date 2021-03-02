@@ -1,1 +1,1 @@
-appwrite database getCollection --collectionId="[COLLECTION_ID]" 
+executable database getCollection --collectionId="[COLLECTION_ID]" 

@@ -1,1 +1,1 @@
-appwrite users deleteSessions --userId="[USER_ID]" 
+executable users deleteSessions --userId="[USER_ID]" 

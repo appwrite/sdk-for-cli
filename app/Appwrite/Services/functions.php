@@ -10,15 +10,12 @@ use Appwrite\Parser;
 use Utopia\CLI\CLI;
 use Utopia\CLI\Console;
 use Utopia\Validator\Mock;
-use PharData;
-use Phar;
 
 $parser = new Parser();
-
 $cli = new CLI();
 
 $cli->
-      init(function() use ($cli) {
+      init(function() use ($cli, $parser) {
         
         if (array_key_exists('help', $cli->getArgs())) {
             $taskName = $cli->match()->getName();
@@ -26,25 +23,14 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-
-            printf("\nUsage : appwrite functions {$taskName} --[OPTIONS] \n\n");
-            printf($description);
-            printf("Options:\n");
-            $mask = "\t%-20.20s %-125.125s\n";
-
-            foreach ($params as $key => $value) {
-                if ($key !== 'help')
-                    printf($mask, $key, $value['description']);
-            }
+            Console::log("\e[0;31;m  \e[0m") ;
+            Console::log("\nUsage : executable functions {$taskName} --[OPTIONS] \n");
+            Console::log($description);
+            Console::log("Options:");
+            array_walk($params, function(&$key) {
+                $key = $key['description'];
+            });
+            $parser->formatArray($params);
             Console::exit(0);
         }
       });
@@ -60,22 +46,15 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/functions');
         $params = [];
-
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -92,46 +71,18 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/functions');
         $params = [];
-
-
-
- 
         $params['name'] = $name;
-
-
- 
         $params['execute'] = $execute;
-
-
- 
         $params['env'] = $env;
-
-
- 
         $params['vars'] = $vars;
-
-
- 
         $params['events'] = $events;
-
-
- 
         $params['schedule'] = $schedule;
-
-
- 
         $params['timeout'] = $timeout;
-
-
-
 
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -143,17 +94,10 @@ $cli
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -170,42 +114,17 @@ $cli
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
-
-
-
- 
         $params['name'] = $name;
-
-
- 
         $params['execute'] = $execute;
-
-
- 
         $params['vars'] = $vars;
-
-
- 
         $params['events'] = $events;
-
-
- 
         $params['schedule'] = $schedule;
-
-
- 
         $params['timeout'] = $timeout;
-
-
-
 
         $response =  $client->call(Client::METHOD_PUT, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -217,17 +136,10 @@ $cli
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -242,22 +154,15 @@ $cli
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
-
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -269,17 +174,10 @@ $cli
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -292,17 +190,10 @@ $cli
         $path   = str_replace(['{functionId}', '{executionId}'], [$functionId, $executionId], '/functions/{functionId}/executions/{executionId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -314,22 +205,12 @@ $cli
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tag');
         $params = [];
-
-
-
- 
         $params['tag'] = $tag;
-
-
-
 
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -344,22 +225,15 @@ $cli
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
-
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -376,13 +250,7 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
-
-
-
- 
         $params['command'] = $command;
-
-
         $cloudFunctionPath = realpath(__DIR__.'/../../../files/'.$code);
         $cloudFunctionParentDir = dirname($cloudFunctionPath, 1);
         $cloudFunctionDirName = basename($cloudFunctionPath);
@@ -394,20 +262,12 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         exec("tar -zcvf $archiveName -C $cloudFunctionParentDir $cloudFunctionDirName && mv $archiveName $volumeMountPoint");
         $archivePath = realpath($volumeMountPoint."/$archiveName");
         $cFile = new \CURLFile($archivePath,  'application/x-gzip' , basename($archivePath));
-        
         $params['code'] = $cFile;
-
-
-
-
 
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'multipart/form-data',
         ], $params);
-
         $parser->parseResponse($response);
-
-
         unlink($archivePath);
     });
 
@@ -421,17 +281,10 @@ $cli
         $path   = str_replace(['{functionId}', '{tagId}'], [$functionId, $tagId], '/functions/{functionId}/tags/{tagId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -444,53 +297,40 @@ $cli
         $path   = str_replace(['{functionId}', '{tagId}'], [$functionId, $tagId], '/functions/{functionId}/tags/{tagId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 
 $cli
     ->task('help')
-    ->action(function() {
-        echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-        printf("\nUsage : appwrite functions [COMMAND]\n\n");
-        printf("Commands :\n");
-        $mask = "\t%-20.20s %-125.125s\n";
-        printf($mask, "list", "Get a list of all the project's functions. You can use the query params to filter your results.");
-        printf($mask, "create", "Create a new function. You can pass a list of [permissions](/docs/permissions) to allow different project users or team with access to execute the function using the client API.");
-        printf($mask, "get", "Get a function by its unique ID.");
-        printf($mask, "update", "Update function by its unique ID.");
-        printf($mask, "delete", "Delete a function by its unique ID.");
-        printf($mask, "listExecutions", "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's teams. [Learn more about different API modes](/docs/admin).");
-        printf($mask, "createExecution", "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.");
-        printf($mask, "getExecution", "Get a function execution log by its unique ID.");
-        printf($mask, "updateTag", "Update the function code tag ID using the unique function ID. Use this endpoint to switch the code tag that should be executed by the execution endpoint.");
-        printf($mask, "listTags", "Get a list of all the project's code tags. You can use the query params to filter your results.");
-        printf($mask, "createTag", "Create a new function code tag. Use this endpoint to upload a new version of your code function. To execute your newly uploaded code, you'll need to update the function's tag to use your new tag UID.
+    ->action(function() use ($parser) {
+        Console::log("\e[0;31;m  \e[0m");
+        Console::log("\nUsage : executable functions [COMMAND]\n");
+        Console::log("Commands :");
+        $commands = [
+                "list" => "Get a list of all the project's functions. You can use the query params to filter your results.",
+                "create" => "Create a new function. You can pass a list of [permissions](/docs/permissions) to allow different project users or team with access to execute the function using the client API.",
+                "get" => "Get a function by its unique ID.",
+                "update" => "Update function by its unique ID.",
+                "delete" => "Delete a function by its unique ID.",
+                "listExecutions" => "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's teams. [Learn more about different API modes](/docs/admin).",
+                "createExecution" => "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.",
+                "getExecution" => "Get a function execution log by its unique ID.",
+                "updateTag" => "Update the function code tag ID using the unique function ID. Use this endpoint to switch the code tag that should be executed by the execution endpoint.",
+                "listTags" => "Get a list of all the project's code tags. You can use the query params to filter your results.",
+                "createTag" => "Create a new function code tag. Use this endpoint to upload a new version of your code function. To execute your newly uploaded code, you'll need to update the function's tag to use your new tag UID.
 
 This endpoint accepts a tar.gz file compressed with your code. Make sure to include any dependencies your code has within the compressed file. You can learn more about code packaging in the [Appwrite Cloud Functions tutorial](/docs/functions).
 
-Use the 'command' param to set the entry point used to execute your code.");
-        printf($mask, "getTag", "Get a code tag by its unique ID.");
-        printf($mask, "deleteTag", "Delete a code tag by its unique ID.");
-        printf("\nRun 'appwrite functions COMMAND --help' for more information on a command.\n");
+Use the 'command' param to set the entry point used to execute your code.",
+                "getTag" => "Get a code tag by its unique ID.",
+                "deleteTag" => "Delete a code tag by its unique ID.",
+        ];
+        $parser->formatArray($commands);
+        Console::log("\nRun 'executable functions COMMAND --help' for more information on a command.");
     });
 
 

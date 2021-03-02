@@ -34,7 +34,7 @@ class Client
      */
     private $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.5.0',
+        'x-sdk-version' => 'appwrite:cli:0.6.0',
 ];
 
     /**
@@ -55,7 +55,7 @@ class Client
     public function __construct()
     {
         if (!$this->loadPreferences()) {
-            Console::error("❌ Oops We were unable to load your preferences. Ensure that you have run 'appwrite init' before using the CLI");
+            Console::error("❌ Oops We were unable to load your preferences. Ensure that you have run 'executable init' before using the CLI");
             Console::exit();
         }
 

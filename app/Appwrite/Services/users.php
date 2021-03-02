@@ -12,11 +12,10 @@ use Utopia\CLI\Console;
 use Utopia\Validator\Mock;
 
 $parser = new Parser();
-
 $cli = new CLI();
 
 $cli->
-      init(function() use ($cli) {
+      init(function() use ($cli, $parser) {
         
         if (array_key_exists('help', $cli->getArgs())) {
             $taskName = $cli->match()->getName();
@@ -24,25 +23,14 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-
-            printf("\nUsage : appwrite users {$taskName} --[OPTIONS] \n\n");
-            printf($description);
-            printf("Options:\n");
-            $mask = "\t%-20.20s %-125.125s\n";
-
-            foreach ($params as $key => $value) {
-                if ($key !== 'help')
-                    printf($mask, $key, $value['description']);
-            }
+            Console::log("\e[0;31;m  \e[0m") ;
+            Console::log("\nUsage : executable users {$taskName} --[OPTIONS] \n");
+            Console::log($description);
+            Console::log("Options:");
+            array_walk($params, function(&$key) {
+                $key = $key['description'];
+            });
+            $parser->formatArray($params);
             Console::exit(0);
         }
       });
@@ -58,22 +46,15 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/users');
         $params = [];
-
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -86,30 +67,14 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/users');
         $params = [];
-
-
-
- 
         $params['email'] = $email;
-
-
- 
         $params['password'] = $password;
-
-
- 
         $params['name'] = $name;
-
-
-
 
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -121,17 +86,10 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -143,17 +101,10 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -165,17 +116,10 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/logs');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -187,17 +131,10 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/prefs');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -209,22 +146,12 @@ $cli
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/prefs');
         $params = [];
-
-
-
- 
         $params['prefs'] = $prefs;
-
-
-
 
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -236,17 +163,10 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/sessions');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -258,17 +178,10 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/sessions');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -281,17 +194,10 @@ $cli
         $path   = str_replace(['{userId}', '{sessionId}'], [$userId, $sessionId], '/users/{userId}/sessions/{sessionId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -303,52 +209,36 @@ $cli
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/status');
         $params = [];
-
-
-
- 
         $params['status'] = $status;
-
-
-
 
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 
 $cli
     ->task('help')
-    ->action(function() {
-        echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-        printf("\nUsage : appwrite users [COMMAND]\n\n");
-        printf("Commands :\n");
-        $mask = "\t%-20.20s %-125.125s\n";
-        printf($mask, "list", "Get a list of all the project's users. You can use the query params to filter your results.");
-        printf($mask, "create", "Create a new user.");
-        printf($mask, "get", "Get a user by its unique ID.");
-        printf($mask, "deleteUser", "Delete a user by its unique ID.");
-        printf($mask, "getLogs", "Get a user activity logs list by its unique ID.");
-        printf($mask, "getPrefs", "Get the user preferences by its unique ID.");
-        printf($mask, "updatePrefs", "Update the user preferences by its unique ID. You can pass only the specific settings you wish to update.");
-        printf($mask, "getSessions", "Get the user sessions list by its unique ID.");
-        printf($mask, "deleteSessions", "Delete all user's sessions by using the user's unique ID.");
-        printf($mask, "deleteSession", "Delete a user sessions by its unique ID.");
-        printf($mask, "updateStatus", "Update the user status by its unique ID.");
-        printf("\nRun 'appwrite users COMMAND --help' for more information on a command.\n");
+    ->action(function() use ($parser) {
+        Console::log("\e[0;31;m  \e[0m");
+        Console::log("\nUsage : executable users [COMMAND]\n");
+        Console::log("Commands :");
+        $commands = [
+                "list" => "Get a list of all the project's users. You can use the query params to filter your results.",
+                "create" => "Create a new user.",
+                "get" => "Get a user by its unique ID.",
+                "deleteUser" => "Delete a user by its unique ID.",
+                "getLogs" => "Get a user activity logs list by its unique ID.",
+                "getPrefs" => "Get the user preferences by its unique ID.",
+                "updatePrefs" => "Update the user preferences by its unique ID. You can pass only the specific settings you wish to update.",
+                "getSessions" => "Get the user sessions list by its unique ID.",
+                "deleteSessions" => "Delete all user's sessions by using the user's unique ID.",
+                "deleteSession" => "Delete a user sessions by its unique ID.",
+                "updateStatus" => "Update the user status by its unique ID.",
+        ];
+        $parser->formatArray($commands);
+        Console::log("\nRun 'executable users COMMAND --help' for more information on a command.");
     });
 
 

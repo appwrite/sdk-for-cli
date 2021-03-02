@@ -1,1 +1,1 @@
-appwrite health getQueueLogs 
+executable health getQueueLogs 

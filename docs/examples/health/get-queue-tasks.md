@@ -1,1 +1,1 @@
-appwrite health getQueueTasks 
+executable health getQueueTasks 

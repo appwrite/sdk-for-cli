@@ -1,1 +1,1 @@
-appwrite locale getCountriesEU 
+executable locale getCountriesEU 

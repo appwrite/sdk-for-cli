@@ -1,1 +1,1 @@
-appwrite storage getFile --fileId="[FILE_ID]" 
+executable storage getFile --fileId="[FILE_ID]" 

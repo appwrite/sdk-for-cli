@@ -1,1 +1,1 @@
-appwrite health getQueueCertificates 
+executable health getQueueCertificates 

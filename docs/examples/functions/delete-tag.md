@@ -1,1 +1,1 @@
-appwrite functions deleteTag --functionId="[FUNCTION_ID]" --tagId="[TAG_ID]" 
+executable functions deleteTag --functionId="[FUNCTION_ID]" --tagId="[TAG_ID]" 

@@ -1,1 +1,1 @@
-appwrite users getPrefs --userId="[USER_ID]" 
+executable users getPrefs --userId="[USER_ID]" 

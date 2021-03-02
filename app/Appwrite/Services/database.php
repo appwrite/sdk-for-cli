@@ -12,11 +12,10 @@ use Utopia\CLI\Console;
 use Utopia\Validator\Mock;
 
 $parser = new Parser();
-
 $cli = new CLI();
 
 $cli->
-      init(function() use ($cli) {
+      init(function() use ($cli, $parser) {
         
         if (array_key_exists('help', $cli->getArgs())) {
             $taskName = $cli->match()->getName();
@@ -24,25 +23,14 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-
-            printf("\nUsage : appwrite database {$taskName} --[OPTIONS] \n\n");
-            printf($description);
-            printf("Options:\n");
-            $mask = "\t%-20.20s %-125.125s\n";
-
-            foreach ($params as $key => $value) {
-                if ($key !== 'help')
-                    printf($mask, $key, $value['description']);
-            }
+            Console::log("\e[0;31;m  \e[0m") ;
+            Console::log("\nUsage : executable database {$taskName} --[OPTIONS] \n");
+            Console::log($description);
+            Console::log("Options:");
+            array_walk($params, function(&$key) {
+                $key = $key['description'];
+            });
+            $parser->formatArray($params);
             Console::exit(0);
         }
       });
@@ -58,22 +46,15 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/database/collections');
         $params = [];
-
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -87,34 +68,15 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/database/collections');
         $params = [];
-
-
-
- 
         $params['name'] = $name;
-
-
- 
         $params['read'] = $read;
-
-
- 
         $params['write'] = $write;
-
-
- 
         $params['rules'] = $rules;
-
-
-
 
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -126,17 +88,10 @@ $cli
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -151,34 +106,15 @@ $cli
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}');
         $params = [];
-
-
-
- 
         $params['name'] = $name;
-
-
- 
         $params['read'] = $read;
-
-
- 
         $params['write'] = $write;
-
-
- 
         $params['rules'] = $rules;
-
-
-
 
         $response =  $client->call(Client::METHOD_PUT, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -190,17 +126,10 @@ $cli
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -218,7 +147,6 @@ $cli
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}/documents');
         $params = [];
-
         $params['filters'] = $filters;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
@@ -227,16 +155,10 @@ $cli
         $params['orderCast'] = $orderCast;
         $params['search'] = $search;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -253,42 +175,17 @@ $cli
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}/documents');
         $params = [];
-
-
-
- 
         $params['data'] = $data;
-
-
- 
         $params['read'] = $read;
-
-
- 
         $params['write'] = $write;
-
-
- 
         $params['parentDocument'] = $parentDocument;
-
-
- 
         $params['parentProperty'] = $parentProperty;
-
-
- 
         $params['parentPropertyType'] = $parentPropertyType;
-
-
-
 
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -301,17 +198,10 @@ $cli
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -326,30 +216,14 @@ $cli
         $client = new Client();
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];
-
-
-
- 
         $params['data'] = $data;
-
-
- 
         $params['read'] = $read;
-
-
- 
         $params['write'] = $write;
-
-
-
 
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -362,46 +236,33 @@ $cli
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 
 $cli
     ->task('help')
-    ->action(function() {
-        echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-        printf("\nUsage : appwrite database [COMMAND]\n\n");
-        printf("Commands :\n");
-        $mask = "\t%-20.20s %-125.125s\n";
-        printf($mask, "listCollections", "Get a list of all the user collections. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's collections. [Learn more about different API modes](/docs/admin).");
-        printf($mask, "createCollection", "Create a new Collection.");
-        printf($mask, "getCollection", "Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.");
-        printf($mask, "updateCollection", "Update a collection by its unique ID.");
-        printf($mask, "deleteCollection", "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.");
-        printf($mask, "listDocuments", "Get a list of all the user documents. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's documents. [Learn more about different API modes](/docs/admin).");
-        printf($mask, "createDocument", "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database#databaseCreateCollection) API or directly from your database console.");
-        printf($mask, "getDocument", "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.");
-        printf($mask, "updateDocument", "Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.");
-        printf($mask, "deleteDocument", "Delete a document by its unique ID. This endpoint deletes only the parent documents, its attributes and relations to other documents. Child documents **will not** be deleted.");
-        printf("\nRun 'appwrite database COMMAND --help' for more information on a command.\n");
+    ->action(function() use ($parser) {
+        Console::log("\e[0;31;m  \e[0m");
+        Console::log("\nUsage : executable database [COMMAND]\n");
+        Console::log("Commands :");
+        $commands = [
+                "listCollections" => "Get a list of all the user collections. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's collections. [Learn more about different API modes](/docs/admin).",
+                "createCollection" => "Create a new Collection.",
+                "getCollection" => "Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.",
+                "updateCollection" => "Update a collection by its unique ID.",
+                "deleteCollection" => "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.",
+                "listDocuments" => "Get a list of all the user documents. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's documents. [Learn more about different API modes](/docs/admin).",
+                "createDocument" => "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database#databaseCreateCollection) API or directly from your database console.",
+                "getDocument" => "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.",
+                "updateDocument" => "Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.",
+                "deleteDocument" => "Delete a document by its unique ID. This endpoint deletes only the parent documents, its attributes and relations to other documents. Child documents **will not** be deleted.",
+        ];
+        $parser->formatArray($commands);
+        Console::log("\nRun 'executable database COMMAND --help' for more information on a command.");
     });
 
 

@@ -1,1 +1,1 @@
-appwrite health getQueueWebhooks 
+executable health getQueueWebhooks 

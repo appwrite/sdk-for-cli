@@ -1,1 +1,1 @@
-appwrite database deleteCollection --collectionId="[COLLECTION_ID]" 
+executable database deleteCollection --collectionId="[COLLECTION_ID]" 

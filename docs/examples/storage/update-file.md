@@ -1,1 +1,1 @@
-appwrite storage updateFile --fileId="[FILE_ID]" "--read[]=" "--write[]=" 
+executable storage updateFile --fileId="[FILE_ID]" "--read[]=" "--write[]=" 

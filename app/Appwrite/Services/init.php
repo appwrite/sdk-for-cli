@@ -8,6 +8,7 @@ use Exception;
 use Utopia\CLI\CLI;
 use Utopia\Validator\Mock;
 use Utopia\CLI\Console;
+use Appwrite\Parser;
 
 const USER_PREFERENCES_FILE = __DIR__."/../../.preferences/.prefs.json";
 const PREFERENCE_ENDPOINT = "endpoint";
@@ -139,9 +140,32 @@ function promptUser()
 }
 
 $cli = new CLI();
+$parser = new Parser();
+
+$cli->
+      init(function() use ($cli, $parser) {
+        
+        if (array_key_exists('help', $cli->getArgs())) {
+            $taskName = $cli->match()->getName();
+            $task = $cli->getTasks()[$taskName];
+            $description = $task->getLabel('description', '');
+            $params = $task->getParams();
+
+            Console::log("\e[0;31;m  \e[0m") ;
+            Console::log("\nUsage : executable {$taskName} --[OPTIONS] \n");
+            Console::log($description);
+            Console::log("Options:");
+            array_walk($params, function(&$key) {
+                $key = $key['description'];
+            });
+            $parser->formatArray($params);
+            Console::exit(0);
+        }
+      });
 
 $cli
     ->task('init')
+    ->label('description', "The init command is used to initialise your CLI\n")
     ->param('endpoint', '', new Mock(), 'Your Appwrite endpoint', true)
     ->param('project', '', new Mock(), 'Your project ID', true)
     ->param('key', '', new Mock(), 'Your secret API key', true)

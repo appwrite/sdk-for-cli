@@ -1,1 +1,1 @@
-appwrite functions createExecution --functionId="[FUNCTION_ID]" 
+executable functions createExecution --functionId="[FUNCTION_ID]" 

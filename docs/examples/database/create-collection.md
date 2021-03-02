@@ -1,1 +1,1 @@
-appwrite database createCollection --name="[NAME]" "--read[]=" "--write[]=" "--rules[]=" 
+executable database createCollection --name="[NAME]" "--read[]=" "--write[]=" "--rules[]=" 

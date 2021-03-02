@@ -1,1 +1,1 @@
-appwrite storage deleteFile --fileId="[FILE_ID]" 
+executable storage deleteFile --fileId="[FILE_ID]" 

@@ -1,1 +1,1 @@
-appwrite users updatePrefs --userId="[USER_ID]" --prefs="{}" 
+executable users updatePrefs --userId="[USER_ID]" --prefs="{}" 

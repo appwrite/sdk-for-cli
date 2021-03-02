@@ -1,1 +1,1 @@
-appwrite storage getFileView --fileId="[FILE_ID]" 
+executable storage getFileView --fileId="[FILE_ID]" 

@@ -1,1 +1,1 @@
-appwrite teams get --teamId="[TEAM_ID]" 
+executable teams get --teamId="[TEAM_ID]" 

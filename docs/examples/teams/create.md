@@ -1,1 +1,1 @@
-appwrite teams create --name="[NAME]" "--roles[]=" 
+executable teams create --name="[NAME]" "--roles[]=" 

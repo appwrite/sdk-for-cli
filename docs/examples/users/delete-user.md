@@ -1,1 +1,1 @@
-appwrite users deleteUser --userId="[USER_ID]" 
+executable users deleteUser --userId="[USER_ID]" 

@@ -1,1 +1,1 @@
-appwrite locale get 
+executable locale get 

@@ -12,11 +12,10 @@ use Utopia\CLI\Console;
 use Utopia\Validator\Mock;
 
 $parser = new Parser();
-
 $cli = new CLI();
 
 $cli->
-      init(function() use ($cli) {
+      init(function() use ($cli, $parser) {
         
         if (array_key_exists('help', $cli->getArgs())) {
             $taskName = $cli->match()->getName();
@@ -24,25 +23,14 @@ $cli->
             $description = $task->getLabel('description', '');
             $params = $task->getParams();
 
-            echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-
-            printf("\nUsage : appwrite storage {$taskName} --[OPTIONS] \n\n");
-            printf($description);
-            printf("Options:\n");
-            $mask = "\t%-20.20s %-125.125s\n";
-
-            foreach ($params as $key => $value) {
-                if ($key !== 'help')
-                    printf($mask, $key, $value['description']);
-            }
+            Console::log("\e[0;31;m  \e[0m") ;
+            Console::log("\nUsage : executable storage {$taskName} --[OPTIONS] \n");
+            Console::log($description);
+            Console::log("Options:");
+            array_walk($params, function(&$key) {
+                $key = $key['description'];
+            });
+            $parser->formatArray($params);
             Console::exit(0);
         }
       });
@@ -58,22 +46,15 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/storage/files');
         $params = [];
-
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
 
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -86,37 +67,19 @@ $cli
         $client = new Client();
         $path   = str_replace([], [], '/storage/files');
         $params = [];
-
-
-
-
         $file = realpath(__DIR__.'/../../../files/'.$file);
         if (file_exists($file) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
         }
-
         $cFile = new \CURLFile($file,  'image/png' , basename($file));
         $params['file'] = $cFile;
-        
-
-
- 
         $params['read'] = $read;
-
-
- 
         $params['write'] = $write;
-
-
-
 
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'multipart/form-data',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -128,17 +91,10 @@ $cli
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -151,26 +107,13 @@ $cli
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}');
         $params = [];
-
-
-
- 
         $params['read'] = $read;
-
-
- 
         $params['write'] = $write;
-
-
-
 
         $response =  $client->call(Client::METHOD_PUT, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -182,17 +125,10 @@ $cli
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}');
         $params = [];
 
-
-
-
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
-
         $parser->parseResponse($response);
-
-
     });
 
 $cli
@@ -203,17 +139,10 @@ $cli
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}/download');
         $params = [];
-
-
-
-
-
         $params['project'] = $client->getPreference('X-Appwrite-Project');
         $params['key'] = $client->getPreference('X-Appwrite-Key');
         $path = $client->getPreference(Client::PREFERENCE_ENDPOINT).$path . "?" . http_build_query($params);
-        echo $path;
-
-
+        Console::success($path);
     });
 
 $cli
@@ -229,22 +158,15 @@ $cli
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}/preview');
         $params = [];
-
         $params['width'] = $width;
         $params['height'] = $height;
         $params['quality'] = $quality;
         $params['background'] = $background;
         $params['output'] = $output;
-
-
-
-
         $params['project'] = $client->getPreference('X-Appwrite-Project');
         $params['key'] = $client->getPreference('X-Appwrite-Key');
         $path = $client->getPreference(Client::PREFERENCE_ENDPOINT).$path . "?" . http_build_query($params);
-        echo $path;
-
-
+        Console::success($path);
     });
 
 $cli
@@ -255,44 +177,31 @@ $cli
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}/view');
         $params = [];
-
-
-
-
-
         $params['project'] = $client->getPreference('X-Appwrite-Project');
         $params['key'] = $client->getPreference('X-Appwrite-Key');
         $path = $client->getPreference(Client::PREFERENCE_ENDPOINT).$path . "?" . http_build_query($params);
-        echo $path;
-
-
+        Console::success($path);
     });
 
 
 $cli
     ->task('help')
-    ->action(function() {
-        echo "\e[0;31;m
-   _                            _ _       
-  /_\  _ __  _ ____      ___ __(_) |_ ___ 
- //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \
-/  _  \ |_) | |_) \ V  V /| |  | | ||  __/
-\_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___|
-      |_|   |_|                           
-      
-      \e[0m" ;
-        printf("\nUsage : appwrite storage [COMMAND]\n\n");
-        printf("Commands :\n");
-        $mask = "\t%-20.20s %-125.125s\n";
-        printf($mask, "listFiles", "Get a list of all the user files. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's files. [Learn more about different API modes](/docs/admin).");
-        printf($mask, "createFile", "Create a new file. The user who creates the file will automatically be assigned to read and write access unless he has passed custom values for read and write arguments.");
-        printf($mask, "getFile", "Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.");
-        printf($mask, "updateFile", "Update a file by its unique ID. Only users with write permissions have access to update this resource.");
-        printf($mask, "deleteFile", "Delete a file by its unique ID. Only users with write permissions have access to delete this resource.");
-        printf($mask, "getFileDownload", "Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.");
-        printf($mask, "getFilePreview", "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image.");
-        printf($mask, "getFileView", "Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.");
-        printf("\nRun 'appwrite storage COMMAND --help' for more information on a command.\n");
+    ->action(function() use ($parser) {
+        Console::log("\e[0;31;m  \e[0m");
+        Console::log("\nUsage : executable storage [COMMAND]\n");
+        Console::log("Commands :");
+        $commands = [
+                "listFiles" => "Get a list of all the user files. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's files. [Learn more about different API modes](/docs/admin).",
+                "createFile" => "Create a new file. The user who creates the file will automatically be assigned to read and write access unless he has passed custom values for read and write arguments.",
+                "getFile" => "Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.",
+                "updateFile" => "Update a file by its unique ID. Only users with write permissions have access to update this resource.",
+                "deleteFile" => "Delete a file by its unique ID. Only users with write permissions have access to delete this resource.",
+                "getFileDownload" => "Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.",
+                "getFilePreview" => "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image.",
+                "getFileView" => "Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.",
+        ];
+        $parser->formatArray($commands);
+        Console::log("\nRun 'executable storage COMMAND --help' for more information on a command.");
     });
 
 

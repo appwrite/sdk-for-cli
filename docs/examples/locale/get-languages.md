@@ -1,1 +1,1 @@
-appwrite locale getLanguages 
+executable locale getLanguages 

@@ -1,1 +1,1 @@
-appwrite database updateCollection --collectionId="[COLLECTION_ID]" --name="[NAME]" "--read[]=" "--write[]=" "--rules[]=" 
+executable database updateCollection --collectionId="[COLLECTION_ID]" --name="[NAME]" "--read[]=" "--write[]=" "--rules[]=" 

@@ -1,1 +1,1 @@
-appwrite health getDB 
+executable health getDB 

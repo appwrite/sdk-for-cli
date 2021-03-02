@@ -1,1 +1,1 @@
-appwrite teams update --teamId="[TEAM_ID]" --name="[NAME]" 
+executable teams update --teamId="[TEAM_ID]" --name="[NAME]" 

@@ -1,1 +1,1 @@
-appwrite functions getTag --functionId="[FUNCTION_ID]" --tagId="[TAG_ID]" 
+executable functions getTag --functionId="[FUNCTION_ID]" --tagId="[TAG_ID]" 

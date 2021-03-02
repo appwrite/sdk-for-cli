@@ -1,1 +1,1 @@
-appwrite locale getCountriesPhones 
+executable locale getCountriesPhones 

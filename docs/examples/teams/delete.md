@@ -1,1 +1,1 @@
-appwrite teams delete --teamId="[TEAM_ID]" 
+executable teams delete --teamId="[TEAM_ID]" 

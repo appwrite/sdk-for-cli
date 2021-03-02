@@ -1,1 +1,1 @@
-appwrite storage createFile --file="" "--read[]=" "--write[]=" 
+executable storage createFile --file="" "--read[]=" "--write[]=" 

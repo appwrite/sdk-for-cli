@@ -1,1 +1,1 @@
-appwrite functions createTag --functionId="[FUNCTION_ID]" --command="[COMMAND]" --code="" 
+executable functions createTag --functionId="[FUNCTION_ID]" --command="[COMMAND]" --code="" 
