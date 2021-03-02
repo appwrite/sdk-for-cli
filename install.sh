@@ -23,11 +23,14 @@ APPWRITE_EXECUTABLE_NAME=appwrite
 # Appwrite executable file path 
 APPWRITE_EXECUTABLE_FILEPATH="$APPWRITE_INSTALL_DIR/$APPWRITE_EXECUTABLE_NAME"
 
+# Appwrite CLI temp name 
+APPWRITE_TEMP_NAME=temp
+
 # Appwrite CLI image name
 APPWRITE_CLI_IMAGE_NAME=appwrite/cli
 
 # Appwrite CLI image version 
-APPWRITE_CLI_IMAGE_VERSION=0.7.0
+APPWRITE_CLI_IMAGE_VERSION=0.6.0
 
 # sudo is required to copy executable to APPWRITE_INSTALL_DIR for linux
 USE_SUDO="false"
@@ -131,7 +134,7 @@ fi
 
 # Check if the command is in the whitelist
 if [[ ! " ${allowList[@]} " =~ " ${1} " ]]; then
-    echo "\nLooks like a crazy hamster 🐹 flipped a bit.\n\nUse appwrite help for a list of supported commands."
+    printf "\nLooks like a crazy hamster 🐹 flipped a bit.\n\nUse appwrite help for a list of supported commands.\n"
     exit 1
 fi
 
@@ -145,20 +148,20 @@ for x in "${@}" ; do
     _args=$_args" "$x
 done
 
-bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume $(pwd):/usr/local/code/files:rw --network host '$APPWRITE_CLI_IMAGE_NAME:$APPWRITE_CLI_IMAGE_VERSION' $_args" ' > $APPWRITE_EXECUTABLE_NAME
+bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume $(pwd):/usr/local/code/files:rw --network host '$APPWRITE_CLI_IMAGE_NAME:$APPWRITE_CLI_IMAGE_VERSION' $_args" ' > $APPWRITE_TEMP_NAME
 
     printf "${GREEN}🚧 Setting Permissions ${NC}\n"
-    chmod +x $APPWRITE_EXECUTABLE_NAME
+    chmod +x $APPWRITE_TEMP_NAME
     if [ $? -ne 0 ]; then
         printf "${RED}❌ Failed to set permissions ... ${NC}\n"
         exit 1
     fi
     printSuccess
 
-    printf "${GREEN}📝 Copying file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
-    runAsRoot cp $APPWRITE_EXECUTABLE_NAME $APPWRITE_EXECUTABLE_FILEPATH
+    printf "${GREEN}📝 Copying temporary file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
+    runAsRoot cp $APPWRITE_TEMP_NAME $APPWRITE_EXECUTABLE_FILEPATH
     if [ $? -ne 0 ]; then
-        printf "${RED}❌ Failed to copy file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
+        printf "${RED}❌ Failed to copy temporary file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
         exit 1
     fi
     printSuccess
@@ -166,9 +169,9 @@ bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferenc
 
 cleanup() {
     echo "🧹 Cleaning up mess ... "
-    rm $APPWRITE_EXECUTABLE_NAME 
+    rm $APPWRITE_TEMP_NAME 
     if [ $? -ne 0 ]; then
-        printf "${RED}❌ Failed to remove $APPWRITE_EXECUTABLE_NAME ... ${NC}\n"
+        printf "${RED}❌ Failed to remove temporary file ... ${NC}\n"
         exit 1
     fi
     printSuccess
