@@ -1,16 +1,8 @@
-dist: xenial
-
-arch:
-  - amd64
-
 os: linux
+dist: xenial
 
 language: shell
 
-notifications:
-  email:
-  - team@appwrite.io
-  
 services:
 - docker
 
@@ -25,15 +17,15 @@ before_install:
     echo "${DOCKERHUB_PULL_PASSWORD}" | docker login --username "${DOCKERHUB_PULL_USERNAME}" --password-stdin
   fi
 - docker --version
+- docker run --rm --privileged linuxkit/binfmt:v0.8
 - docker buildx create --use
 
 script:
-- docker ps
+- docker ps; docker buildx ls
 
 deploy:
   - provider: script
     edge: true
-    script: docker buildx build --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x -t appwrite/test:2.0 ./ --push
+    script: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7,linux/ppc64le,linux/s390x -t appwrite/cli:$TRAVIS_TAG ./ --push
     on:
-      repo: appwrite/sdk-for-cli
-      branch: master
+      tags: true
