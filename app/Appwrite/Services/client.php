@@ -46,8 +46,21 @@ $cli
     ->task('setEndpoint')
     ->param('endpoint', '', new Mock(), 'Your Appwrite endpoint', false)
     ->action(function($endpoint) use ($client) {
-        $client->setPreference('endpoint', $endpoint);
-        $result = $client->savePreferences();
+        $result = $client->setPreference('endpoint', $endpoint)
+                         ->savePreferences();
+        if ($result === false) {
+            Console::error('❌ Could not save preferences.');
+        } else {
+            Console::success('✅ Preferences saved successfully');
+        }
+    });
+
+$cli
+    ->task('setSelfSigned')
+    ->param('value', '', new Mock(), 'A boolean representing whether you are using a self signed certificate', false)
+    ->action(function($value) use ($client) {
+        $result = $client->setPreference('selfSigned', $value)
+                         ->savePreferences();
         if ($result === false) {
             Console::error('❌ Could not save preferences.');
         } else {
@@ -60,8 +73,8 @@ $cli
     ->task('setProject')
     ->param('project', '', new Mock(), 'Your project ID', false)
     ->action(function($project) use ($client) {
-        $client->setPreference('X-Appwrite-Project', $project);
-        $result = $client->savePreferences();
+        $result = $client->setPreference('X-Appwrite-Project', $project)
+                         ->savePreferences();
         if ($result === false) {
             Console::error('❌ Could not save preferences.');
         } else {
@@ -73,8 +86,8 @@ $cli
     ->task('setKey')
     ->param('key', '', new Mock(), 'Your secret API key', false)
     ->action(function($key) use ($client) {
-        $client->setPreference('X-Appwrite-Key', $key);
-        $result = $client->savePreferences();
+        $result = $client->setPreference('X-Appwrite-Key', $key)
+                         ->savePreferences();
         if ($result === false) {
             Console::error('❌ Could not save preferences.');
         } else {
@@ -86,8 +99,8 @@ $cli
     ->task('setLocale')
     ->param('locale', '', new Mock(), '', false)
     ->action(function($locale) use ($client) {
-        $client->setPreference('X-Appwrite-Locale', $locale);
-        $result = $client->savePreferences();
+        $result = $client->setPreference('X-Appwrite-Locale', $locale)
+                         ->savePreferences();
         if ($result === false) {
             Console::error('❌ Could not save preferences.');
         } else {
@@ -99,7 +112,7 @@ $cli
 $cli
     ->task('version')
     ->action(function() {
-       Console::log('CLI Version : 0.6.0');
+       Console::log('CLI Version : 0.7.0');
        Console::log('Server Version : 0.7.0');
     });
 
@@ -121,7 +134,9 @@ $cli
             "setEndpoint" => "Set your server endpoint.",
             "setProject" => "Set the project you want to connect to.",
             "setKey" => "Set the API key for the project.",
-            "setLocale" => "Set your preferred locale (eg: en-US)."
+            "setLocale" => "Set your preferred locale (eg: en-US).",
+            "setSelfSigned" => "Set whether you are using a self signed certificate",
+            "version" => "Get the current cli version"
         ];
         $parser->formatArray($commands);
         Console::log("\nRun 'appwrite client COMMAND --help' for more information on a command.");

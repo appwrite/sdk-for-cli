@@ -49,7 +49,7 @@ $cli
     ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
     ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
     ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/functions');
         $params = [];
@@ -74,7 +74,7 @@ $cli
     ->param('events', [] , new Mock(), 'Events list.',  true)
     ->param('schedule', '' , new Mock(), 'Schedule CRON syntax.',  true)
     ->param('timeout', 15 , new Mock(), 'Function maximum execution time in seconds.',  true)
-    ->action(function ( $name, $execute, $env, $vars, $events, $schedule, $timeout ) use ($parser) {
+    ->action(function ( $name, $execute, $env, $vars, $events, $schedule, $timeout ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/functions');
         $params = [];
@@ -96,7 +96,7 @@ $cli
     ->task('get')
     ->label('description', "Get a function by its unique ID.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {
+    ->action(function ( $functionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
@@ -117,7 +117,7 @@ $cli
     ->param('events', [] , new Mock(), 'Events list.',  true)
     ->param('schedule', '' , new Mock(), 'Schedule CRON syntax.',  true)
     ->param('timeout', 15 , new Mock(), 'Function maximum execution time in seconds.',  true)
-    ->action(function ( $functionId, $name, $execute, $vars, $events, $schedule, $timeout ) use ($parser) {
+    ->action(function ( $functionId, $name, $execute, $vars, $events, $schedule, $timeout ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
@@ -138,7 +138,7 @@ $cli
     ->task('delete')
     ->label('description', "Delete a function by its unique ID.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {
+    ->action(function ( $functionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
@@ -157,7 +157,7 @@ $cli
     ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
     ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
     ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
@@ -176,7 +176,7 @@ $cli
     ->task('createExecution')
     ->label('description', "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {
+    ->action(function ( $functionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
@@ -192,7 +192,7 @@ $cli
     ->label('description', "Get a function execution log by its unique ID.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
     ->param('executionId', '' , new Mock(), 'Execution unique ID.',  false)
-    ->action(function ( $functionId, $executionId ) use ($parser) {
+    ->action(function ( $functionId, $executionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}', '{executionId}'], [$functionId, $executionId], '/functions/{functionId}/executions/{executionId}');
         $params = [];
@@ -208,7 +208,7 @@ $cli
     ->label('description', "Update the function code tag ID using the unique function ID. Use this endpoint to switch the code tag that should be executed by the execution endpoint.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
     ->param('tag', '' , new Mock(), 'Tag unique ID.',  false)
-    ->action(function ( $functionId, $tag ) use ($parser) {
+    ->action(function ( $functionId, $tag ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tag');
         $params = [];
@@ -228,7 +228,7 @@ $cli
     ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
     ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
     ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
@@ -253,7 +253,7 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
     ->param('command', '' , new Mock(), 'Code execution command.',  false)
     ->param('code', '' , new Mock(), 'Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.',  false)
-    ->action(function ( $functionId, $command, $code ) use ($parser) {
+    ->action(function ( $functionId, $command, $code ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
@@ -283,7 +283,7 @@ $cli
     ->label('description', "Get a code tag by its unique ID.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
     ->param('tagId', '' , new Mock(), 'Tag unique ID.',  false)
-    ->action(function ( $functionId, $tagId ) use ($parser) {
+    ->action(function ( $functionId, $tagId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}', '{tagId}'], [$functionId, $tagId], '/functions/{functionId}/tags/{tagId}');
         $params = [];
@@ -299,7 +299,7 @@ $cli
     ->label('description', "Delete a code tag by its unique ID.\n\n")
     ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
     ->param('tagId', '' , new Mock(), 'Tag unique ID.',  false)
-    ->action(function ( $functionId, $tagId ) use ($parser) {
+    ->action(function ( $functionId, $tagId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{functionId}', '{tagId}'], [$functionId, $tagId], '/functions/{functionId}/tags/{tagId}');
         $params = [];

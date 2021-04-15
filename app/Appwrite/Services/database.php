@@ -49,7 +49,7 @@ $cli
     ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
     ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
     ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/database/collections');
         $params = [];
@@ -71,7 +71,7 @@ $cli
     ->param('read', '' , new Mock(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
     ->param('write', '' , new Mock(), 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
     ->param('rules', '' , new Mock(), 'Array of [rule objects](/docs/rules). Each rule define a collection field name, data type and validation.',  false)
-    ->action(function ( $name, $read, $write, $rules ) use ($parser) {
+    ->action(function ( $name, $read, $write, $rules ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/database/collections');
         $params = [];
@@ -90,7 +90,7 @@ $cli
     ->task('getCollection')
     ->label('description', "Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.\n\n")
     ->param('collectionId', '' , new Mock(), 'Collection unique ID.',  false)
-    ->action(function ( $collectionId ) use ($parser) {
+    ->action(function ( $collectionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}');
         $params = [];
@@ -109,7 +109,7 @@ $cli
     ->param('read', '' , new Mock(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions(/docs/permissions) and get a full list of available permissions.',  false)
     ->param('write', '' , new Mock(), 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
     ->param('rules', [] , new Mock(), 'Array of [rule objects](/docs/rules). Each rule define a collection field name, data type and validation.',  true)
-    ->action(function ( $collectionId, $name, $read, $write, $rules ) use ($parser) {
+    ->action(function ( $collectionId, $name, $read, $write, $rules ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}');
         $params = [];
@@ -128,7 +128,7 @@ $cli
     ->task('deleteCollection')
     ->label('description', "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.\n\n")
     ->param('collectionId', '' , new Mock(), 'Collection unique ID.',  false)
-    ->action(function ( $collectionId ) use ($parser) {
+    ->action(function ( $collectionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}');
         $params = [];
@@ -150,7 +150,7 @@ $cli
     ->param('orderType', 'ASC' , new Mock(), 'Order direction. Possible values are DESC for descending order, or ASC for ascending order.',  true)
     ->param('orderCast', 'string' , new Mock(), 'Order field type casting. Possible values are int, string, date, time or datetime. The database will attempt to cast the order field to the value you pass here. The default value is a string.',  true)
     ->param('search', '' , new Mock(), 'Search query. Enter any free text search. The database will try to find a match against all document attributes and children. Max length: 256 chars.',  true)
-    ->action(function ( $collectionId, $filters, $limit, $offset, $orderField, $orderType, $orderCast, $search ) use ($parser) {
+    ->action(function ( $collectionId, $filters, $limit, $offset, $orderField, $orderType, $orderCast, $search ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}/documents');
         $params = [];
@@ -178,7 +178,7 @@ $cli
     ->param('parentDocument', '' , new Mock(), 'Parent document unique ID. Use when you want your new document to be a child of a parent document.',  true)
     ->param('parentProperty', '' , new Mock(), 'Parent document property name. Use when you want your new document to be a child of a parent document.',  true)
     ->param('parentPropertyType', 'assign' , new Mock(), 'Parent document property connection type. You can set this value to **assign**, **append** or **prepend**, default value is assign. Use when you want your new document to be a child of a parent document.',  true)
-    ->action(function ( $collectionId, $data, $read, $write, $parentDocument, $parentProperty, $parentPropertyType ) use ($parser) {
+    ->action(function ( $collectionId, $data, $read, $write, $parentDocument, $parentProperty, $parentPropertyType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}/documents');
         $params = [];
@@ -200,7 +200,7 @@ $cli
     ->label('description', "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.\n\n")
     ->param('collectionId', '' , new Mock(), 'Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection).',  false)
     ->param('documentId', '' , new Mock(), 'Document unique ID.',  false)
-    ->action(function ( $collectionId, $documentId ) use ($parser) {
+    ->action(function ( $collectionId, $documentId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];
@@ -219,7 +219,7 @@ $cli
     ->param('data', '' , new Mock(), 'Document data as JSON object.',  false)
     ->param('read', '' , new Mock(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
     ->param('write', '' , new Mock(), 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->action(function ( $collectionId, $documentId, $data, $read, $write ) use ($parser) {
+    ->action(function ( $collectionId, $documentId, $data, $read, $write ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];
@@ -238,7 +238,7 @@ $cli
     ->label('description', "Delete a document by its unique ID. This endpoint deletes only the parent documents, its attributes and relations to other documents. Child documents **will not** be deleted.\n\n")
     ->param('collectionId', '' , new Mock(), 'Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection).',  false)
     ->param('documentId', '' , new Mock(), 'Document unique ID.',  false)
-    ->action(function ( $collectionId, $documentId ) use ($parser) {
+    ->action(function ( $collectionId, $documentId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];

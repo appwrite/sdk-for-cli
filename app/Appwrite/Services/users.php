@@ -49,7 +49,7 @@ $cli
     ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
     ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
     ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/users');
         $params = [];
@@ -70,7 +70,7 @@ $cli
     ->param('email', '' , new Mock(), 'User email.',  false)
     ->param('password', '' , new Mock(), 'User password. Must be between 6 to 32 chars.',  false)
     ->param('name', '' , new Mock(), 'User name. Max length: 128 chars.',  true)
-    ->action(function ( $email, $password, $name ) use ($parser) {
+    ->action(function ( $email, $password, $name ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/users');
         $params = [];
@@ -88,7 +88,7 @@ $cli
     ->task('get')
     ->label('description', "Get a user by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
-    ->action(function ( $userId ) use ($parser) {
+    ->action(function ( $userId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}');
         $params = [];
@@ -103,7 +103,7 @@ $cli
     ->task('deleteUser')
     ->label('description', "Delete a user by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
-    ->action(function ( $userId ) use ($parser) {
+    ->action(function ( $userId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}');
         $params = [];
@@ -118,7 +118,7 @@ $cli
     ->task('getLogs')
     ->label('description', "Get a user activity logs list by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
-    ->action(function ( $userId ) use ($parser) {
+    ->action(function ( $userId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/logs');
         $params = [];
@@ -133,7 +133,7 @@ $cli
     ->task('getPrefs')
     ->label('description', "Get the user preferences by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
-    ->action(function ( $userId ) use ($parser) {
+    ->action(function ( $userId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/prefs');
         $params = [];
@@ -149,7 +149,7 @@ $cli
     ->label('description', "Update the user preferences by its unique ID. You can pass only the specific settings you wish to update.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
     ->param('prefs', '' , new Mock(), 'Prefs key-value JSON object.',  false)
-    ->action(function ( $userId, $prefs ) use ($parser) {
+    ->action(function ( $userId, $prefs ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/prefs');
         $params = [];
@@ -165,7 +165,7 @@ $cli
     ->task('getSessions')
     ->label('description', "Get the user sessions list by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
-    ->action(function ( $userId ) use ($parser) {
+    ->action(function ( $userId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/sessions');
         $params = [];
@@ -180,7 +180,7 @@ $cli
     ->task('deleteSessions')
     ->label('description', "Delete all user's sessions by using the user's unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
-    ->action(function ( $userId ) use ($parser) {
+    ->action(function ( $userId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/sessions');
         $params = [];
@@ -196,7 +196,7 @@ $cli
     ->label('description', "Delete a user sessions by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
     ->param('sessionId', '' , new Mock(), 'User unique session ID.',  false)
-    ->action(function ( $userId, $sessionId ) use ($parser) {
+    ->action(function ( $userId, $sessionId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}', '{sessionId}'], [$userId, $sessionId], '/users/{userId}/sessions/{sessionId}');
         $params = [];
@@ -212,7 +212,7 @@ $cli
     ->label('description', "Update the user status by its unique ID.\n\n")
     ->param('userId', '' , new Mock(), 'User unique ID.',  false)
     ->param('status', '' , new Mock(), 'User Status code. To activate the user pass 1, to block the user pass 2 and for disabling the user pass 0',  false)
-    ->action(function ( $userId, $status ) use ($parser) {
+    ->action(function ( $userId, $status ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/status');
         $params = [];

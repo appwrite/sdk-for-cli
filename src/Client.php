@@ -19,13 +19,8 @@ class Client
 
     const USER_PREFERENCES_FILE = __DIR__."/../app/.preferences/.prefs.json";
     const PREFERENCE_ENDPOINT = "endpoint";
-
-    /**
-     * Is Self Signed Certificates Allowed?
-     *
-     * @var bool
-     */
-    private $selfSigned = false;
+    const PREFERENCE_SELF_SIGNED = "selfSigned";
+    const SELF_SIGNED_CERTIFICATE_ERROR_CODE = 18;
 
     /**
      * Global Headers
@@ -34,8 +29,8 @@ class Client
      */
     private $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.6.0',
-];
+        'x-sdk-version' => 'appwrite:cli:0.7.0',
+    ];
 
     /**
      * Default User Preferences
@@ -44,6 +39,7 @@ class Client
      */
     private $preferences = [
         self::PREFERENCE_ENDPOINT => '',
+        self::PREFERENCE_SELF_SIGNED => '',
         'X-Appwrite-Project' => '',
         'X-Appwrite-Key' => '',
         'X-Appwrite-Locale' => '',
@@ -58,7 +54,6 @@ class Client
             Console::error("❌ Oops We were unable to load your preferences. Ensure that you have run 'appwrite init' before using the CLI");
             Console::exit();
         }
-
         $this
             ->setProject($this->preferences['X-Appwrite-Project'])
             ->setKey($this->preferences['X-Appwrite-Key'])
@@ -86,6 +81,8 @@ class Client
     public function setPreference(string $key , string $value) 
     {
         $this->preferences[$key] = $value;
+        
+        return $this;
     }
 
      /**
@@ -263,8 +260,12 @@ class Client
             curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
         }
 
-        // Allow self signed certificates
-        if ($this->selfSigned) {
+        /**
+        * Allow self-signed certificates
+        * Default to false if no preference is found
+        */
+        $selfSigned = $this->getPreference(self::PREFERENCE_SELF_SIGNED) === 'true';
+        if ($selfSigned) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         }
@@ -280,7 +281,12 @@ class Client
         }
 
         if ((curl_errno($ch)/* || 200 != $responseStatus*/)) {
-            throw new Exception(curl_error($ch) . ' with status code ' . $responseStatus, $responseStatus);
+            // Self signed certificate error
+            if(curl_getinfo($ch, CURLINFO_SSL_VERIFYRESULT) === self::SELF_SIGNED_CERTIFICATE_ERROR_CODE) {
+                throw new Exception("Your server is using a self signed certificate. If you trust this domain, disable certificate check by running `appwrite client setSelfSigned --value=true`", $responseStatus);
+            } else {
+                 throw new Exception(curl_error($ch) . ' with status code ' . $responseStatus, $responseStatus);
+            }
         }
 
         curl_close($ch);

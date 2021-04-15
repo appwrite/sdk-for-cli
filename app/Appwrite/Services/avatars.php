@@ -49,7 +49,7 @@ $cli
     ->param('width', 100 , new Mock(), 'Image width. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('height', 100 , new Mock(), 'Image height. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('quality', 100 , new Mock(), 'Image quality. Pass an integer between 0 to 100. Defaults to 100.',  true)
-    ->action(function ( $code, $width, $height, $quality ) use ($parser) {
+    ->action(function ( $code, $width, $height, $quality ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{code}'], [$code], '/avatars/browsers/{code}');
         $params = [];
@@ -69,7 +69,7 @@ $cli
     ->param('width', 100 , new Mock(), 'Image width. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('height', 100 , new Mock(), 'Image height. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('quality', 100 , new Mock(), 'Image quality. Pass an integer between 0 to 100. Defaults to 100.',  true)
-    ->action(function ( $code, $width, $height, $quality ) use ($parser) {
+    ->action(function ( $code, $width, $height, $quality ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{code}'], [$code], '/avatars/credit-cards/{code}');
         $params = [];
@@ -87,7 +87,7 @@ $cli
     ->label('description', "Use this endpoint to fetch the favorite icon (AKA favicon) of any remote website URL.
 \n\n")
     ->param('url', '' , new Mock(), 'Website URL which you want to fetch the favicon from.',  false)
-    ->action(function ( $url ) use ($parser) {
+    ->action(function ( $url ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/avatars/favicon');
         $params = [];
@@ -105,7 +105,7 @@ $cli
     ->param('width', 100 , new Mock(), 'Image width. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('height', 100 , new Mock(), 'Image height. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('quality', 100 , new Mock(), 'Image quality. Pass an integer between 0 to 100. Defaults to 100.',  true)
-    ->action(function ( $code, $width, $height, $quality ) use ($parser) {
+    ->action(function ( $code, $width, $height, $quality ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{code}'], [$code], '/avatars/flags/{code}');
         $params = [];
@@ -124,7 +124,7 @@ $cli
     ->param('url', '' , new Mock(), 'Image URL which you want to crop.',  false)
     ->param('width', 400 , new Mock(), 'Resize preview image width, Pass an integer between 0 to 2000.',  true)
     ->param('height', 400 , new Mock(), 'Resize preview image height, Pass an integer between 0 to 2000.',  true)
-    ->action(function ( $url, $width, $height ) use ($parser) {
+    ->action(function ( $url, $width, $height ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/avatars/image');
         $params = [];
@@ -147,7 +147,7 @@ You can use the color and background params to change the avatar colors. By defa
     ->param('height', 500 , new Mock(), 'Image height. Pass an integer between 0 to 2000. Defaults to 100.',  true)
     ->param('color', '' , new Mock(), 'Changes text color. By default a random color will be picked and stay will persistent to the given name.',  true)
     ->param('background', '' , new Mock(), 'Changes background color. By default a random color will be picked and stay will persistent to the given name.',  true)
-    ->action(function ( $name, $width, $height, $color, $background ) use ($parser) {
+    ->action(function ( $name, $width, $height, $color, $background ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/avatars/initials');
         $params = [];
@@ -169,7 +169,7 @@ $cli
     ->param('size', 400 , new Mock(), 'QR code size. Pass an integer between 0 to 1000. Defaults to 400.',  true)
     ->param('margin', 1 , new Mock(), 'Margin from edge. Pass an integer between 0 to 10. Defaults to 1.',  true)
     ->param('download', false , new Mock(), 'Return resulting image with &#039;Content-Disposition: attachment &#039; headers for the browser to start downloading it. Pass 0 for no header, or 1 for otherwise. Default value is set to 0.',  true)
-    ->action(function ( $text, $size, $margin, $download ) use ($parser) {
+    ->action(function ( $text, $size, $margin, $download ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/avatars/qr');
         $params = [];

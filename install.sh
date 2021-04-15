@@ -30,7 +30,7 @@ APPWRITE_TEMP_NAME=temp
 APPWRITE_CLI_IMAGE_NAME=appwrite/cli
 
 # Appwrite CLI image version 
-APPWRITE_CLI_IMAGE_VERSION=0.6.0
+APPWRITE_CLI_IMAGE_VERSION=0.7.0
 
 # sudo is required to copy executable to APPWRITE_INSTALL_DIR for linux
 USE_SUDO="false"
@@ -132,7 +132,7 @@ if [[ -z $1 ]]; then
     set -- "$@" help
 fi 
 
-# Check if the command is in the whitelist
+# Check if the command is in the allowList
 if [[ ! " ${allowList[@]} " =~ " ${1} " ]]; then
     printf "\nLooks like a crazy hamster 🐹 flipped a bit.\n\nUse appwrite help for a list of supported commands.\n"
     exit 1

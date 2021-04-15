@@ -45,7 +45,7 @@ $cli->
 $cli
     ->task('get')
     ->label('description', "Check the Appwrite HTTP server is up and responsive.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health');
         $params = [];
@@ -59,7 +59,7 @@ $cli
 $cli
     ->task('getAntiVirus')
     ->label('description', "Check the Appwrite Anti Virus server is up and connection is successful.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/anti-virus');
         $params = [];
@@ -73,7 +73,7 @@ $cli
 $cli
     ->task('getCache')
     ->label('description', "Check the Appwrite in-memory cache server is up and connection is successful.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/cache');
         $params = [];
@@ -87,7 +87,7 @@ $cli
 $cli
     ->task('getDB')
     ->label('description', "Check the Appwrite database server is up and connection is successful.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/db');
         $params = [];
@@ -101,7 +101,7 @@ $cli
 $cli
     ->task('getQueueCertificates')
     ->label('description', "Get the number of certificates that are waiting to be issued against [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue server.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/queue/certificates');
         $params = [];
@@ -115,7 +115,7 @@ $cli
 $cli
     ->task('getQueueFunctions')
     ->label('description', "\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/queue/functions');
         $params = [];
@@ -129,7 +129,7 @@ $cli
 $cli
     ->task('getQueueLogs')
     ->label('description', "Get the number of logs that are waiting to be processed in the Appwrite internal queue server.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/queue/logs');
         $params = [];
@@ -143,7 +143,7 @@ $cli
 $cli
     ->task('getQueueTasks')
     ->label('description', "Get the number of tasks that are waiting to be processed in the Appwrite internal queue server.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/queue/tasks');
         $params = [];
@@ -157,7 +157,7 @@ $cli
 $cli
     ->task('getQueueUsage')
     ->label('description', "Get the number of usage stats that are waiting to be processed in the Appwrite internal queue server.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/queue/usage');
         $params = [];
@@ -171,7 +171,7 @@ $cli
 $cli
     ->task('getQueueWebhooks')
     ->label('description', "Get the number of webhooks that are waiting to be processed in the Appwrite internal queue server.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/queue/webhooks');
         $params = [];
@@ -185,7 +185,7 @@ $cli
 $cli
     ->task('getStorageLocal')
     ->label('description', "Check the Appwrite local storage device is up and connection is successful.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/storage/local');
         $params = [];
@@ -199,7 +199,7 @@ $cli
 $cli
     ->task('getTime')
     ->label('description', "Check the Appwrite server time is synced with Google remote NTP server. We use this technology to smoothly handle leap seconds with no disruptive events. The [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used by hundreds of millions of computers and devices to synchronize their clocks over the Internet. If your computer sets its own clock, it likely uses NTP.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/health/time');
         $params = [];

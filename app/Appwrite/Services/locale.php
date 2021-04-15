@@ -47,7 +47,7 @@ $cli
     ->label('description', "Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
 
 ([IP Geolocation by DB-IP](https://db-ip.com))\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale');
         $params = [];
@@ -61,7 +61,7 @@ $cli
 $cli
     ->task('getContinents')
     ->label('description', "List of all continents. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale/continents');
         $params = [];
@@ -75,7 +75,7 @@ $cli
 $cli
     ->task('getCountries')
     ->label('description', "List of all countries. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale/countries');
         $params = [];
@@ -89,7 +89,7 @@ $cli
 $cli
     ->task('getCountriesEU')
     ->label('description', "List of all countries that are currently members of the EU. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale/countries/eu');
         $params = [];
@@ -103,7 +103,7 @@ $cli
 $cli
     ->task('getCountriesPhones')
     ->label('description', "List of all countries phone codes. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale/countries/phones');
         $params = [];
@@ -117,7 +117,7 @@ $cli
 $cli
     ->task('getCurrencies')
     ->label('description', "List of all currencies, including currency symbol, name, plural, and decimal digits for all major and minor currencies. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale/currencies');
         $params = [];
@@ -131,7 +131,7 @@ $cli
 $cli
     ->task('getLanguages')
     ->label('description', "List of all languages classified by ISO 639-1 including 2-letter code, name in English, and name in the respective language.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->action(function ( ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/locale/languages');
         $params = [];

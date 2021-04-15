@@ -49,7 +49,7 @@ $cli
     ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
     ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
     ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/storage/files');
         $params = [];
@@ -70,7 +70,7 @@ $cli
     ->param('file', '' , new Mock(), 'Binary file.',  false)
     ->param('read', '' , new Mock(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
     ->param('write', '' , new Mock(), 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->action(function ( $file, $read, $write ) use ($parser) {
+    ->action(function ( $file, $read, $write ) use ($parser) {        
         $client = new Client();
         $path   = str_replace([], [], '/storage/files');
         $params = [];
@@ -93,7 +93,7 @@ $cli
     ->task('getFile')
     ->label('description', "Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.\n\n")
     ->param('fileId', '' , new Mock(), 'File unique ID.',  false)
-    ->action(function ( $fileId ) use ($parser) {
+    ->action(function ( $fileId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}');
         $params = [];
@@ -110,7 +110,7 @@ $cli
     ->param('fileId', '' , new Mock(), 'File unique ID.',  false)
     ->param('read', '' , new Mock(), 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
     ->param('write', '' , new Mock(), 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->action(function ( $fileId, $read, $write ) use ($parser) {
+    ->action(function ( $fileId, $read, $write ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}');
         $params = [];
@@ -127,7 +127,7 @@ $cli
     ->task('deleteFile')
     ->label('description', "Delete a file by its unique ID. Only users with write permissions have access to delete this resource.\n\n")
     ->param('fileId', '' , new Mock(), 'File unique ID.',  false)
-    ->action(function ( $fileId ) use ($parser) {
+    ->action(function ( $fileId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}');
         $params = [];
@@ -142,7 +142,7 @@ $cli
     ->task('getFileDownload')
     ->label('description', "Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.\n\n")
     ->param('fileId', '' , new Mock(), 'File unique ID.',  false)
-    ->action(function ( $fileId ) use ($parser) {
+    ->action(function ( $fileId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}/download');
         $params = [];
@@ -161,7 +161,7 @@ $cli
     ->param('quality', 100 , new Mock(), 'Preview image quality. Pass an integer between 0 to 100. Defaults to 100.',  true)
     ->param('background', '' , new Mock(), 'Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.',  true)
     ->param('output', '' , new Mock(), 'Output format type (jpeg, jpg, png, gif and webp).',  true)
-    ->action(function ( $fileId, $width, $height, $quality, $background, $output ) use ($parser) {
+    ->action(function ( $fileId, $width, $height, $quality, $background, $output ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}/preview');
         $params = [];
@@ -180,7 +180,7 @@ $cli
     ->task('getFileView')
     ->label('description', "Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.\n\n")
     ->param('fileId', '' , new Mock(), 'File unique ID.',  false)
-    ->action(function ( $fileId ) use ($parser) {
+    ->action(function ( $fileId ) use ($parser) {        
         $client = new Client();
         $path   = str_replace(['{fileId}'], [$fileId], '/storage/files/{fileId}/view');
         $params = [];
