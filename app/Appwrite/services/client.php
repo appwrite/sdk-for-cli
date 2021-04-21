@@ -6,7 +6,7 @@ require_once './vendor/autoload.php';
 
 use Appwrite\Client;
 use Utopia\CLI\CLI;
-use Utopia\Validator\Mock;
+use Utopia\Validator\Wildcard;
 use Utopia\CLI\Console;
 use Appwrite\Parser;
 
@@ -44,7 +44,7 @@ $cli->
 
 $cli
     ->task('setEndpoint')
-    ->param('endpoint', '', new Mock(), 'Your Appwrite endpoint', false)
+    ->param('endpoint', '', new Wildcard(), 'Your Appwrite endpoint', false)
     ->action(function($endpoint) use ($client) {
         $result = $client->setPreference('endpoint', $endpoint)
                          ->savePreferences();
@@ -57,7 +57,7 @@ $cli
 
 $cli
     ->task('setSelfSigned')
-    ->param('value', '', new Mock(), 'A boolean representing whether you are using a self signed certificate', false)
+    ->param('value', '', new Wildcard(), 'A boolean representing whether you are using a self signed certificate', false)
     ->action(function($value) use ($client) {
         $result = $client->setPreference('selfSigned', $value)
                          ->savePreferences();
@@ -71,7 +71,7 @@ $cli
 
 $cli
     ->task('setProject')
-    ->param('project', '', new Mock(), 'Your project ID', false)
+    ->param('project', '', new Wildcard(), 'Your project ID', false)
     ->action(function($project) use ($client) {
         $result = $client->setPreference('X-Appwrite-Project', $project)
                          ->savePreferences();
@@ -84,7 +84,7 @@ $cli
 
 $cli
     ->task('setKey')
-    ->param('key', '', new Mock(), 'Your secret API key', false)
+    ->param('key', '', new Wildcard(), 'Your secret API key', false)
     ->action(function($key) use ($client) {
         $result = $client->setPreference('X-Appwrite-Key', $key)
                          ->savePreferences();
@@ -97,7 +97,7 @@ $cli
 
 $cli
     ->task('setLocale')
-    ->param('locale', '', new Mock(), '', false)
+    ->param('locale', '', new Wildcard(), '', false)
     ->action(function($locale) use ($client) {
         $result = $client->setPreference('X-Appwrite-Locale', $locale)
                          ->savePreferences();

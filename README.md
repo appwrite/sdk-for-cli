@@ -69,6 +69,16 @@ $ appwrite users create --email="hello@appwrite.io" --password="very_strong_pass
 $ appwrite users list 
 ```
 
+To create a Document you can use the following command 
+```sh
+$ appwrite database createDocument --collectionId="YOUR COLLECTION ID" --data='A VALID JSON STRING' --read=role:member --read="*" --write=role:guest
+```
+
+### Some Gotchas
+- `data` expects the JSON string to be escaped.
+- If using the wildcard (`*`) read or write permissions , make sure that it is properly escaped using a `\` or by enclosing it in `"*"` since bash interprets them differently.
+- Some arguments like `read` and `write` permissions are expected to be arrays. In the Appwrite CLI, arrays are passed by simply repeating the argument as seen in the `createDocument` example above.
+
 To get information about the different services available, you can use 
 ```sh
 $ appwrite help

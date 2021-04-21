@@ -9,7 +9,7 @@ use Appwrite\Client;
 use Appwrite\Parser;
 use Utopia\CLI\CLI;
 use Utopia\CLI\Console;
-use Utopia\Validator\Mock;
+use Utopia\Validator\Wildcard;
 
 $parser = new Parser();
 $cli = new CLI();
@@ -45,19 +45,24 @@ $cli->
 $cli
     ->task('list')
     ->label('description', "Get a list of all the project's functions. You can use the query params to filter your results.\n\n")
-    ->param('search', '' , new Mock(), 'Search term to filter your list results. Max length: 256 chars.',  true)
-    ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
-    ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
-    ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {        
+    ->param('search', '' , new Wildcard() , 'Search term to filter your list results. Max length: 256 chars.',  true)
+    ->param('limit', 25 , new Wildcard() , 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
+    ->param('offset', 0 , new Wildcard() , 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
+    ->param('orderType', 'ASC' , new Wildcard() , 'Order result by ASC or DESC order.',  true)
+    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {
+        /** @var string $search */
+        /** @var integer $limit */
+        /** @var integer $offset */
+        /** @var string $orderType */
+
         $client = new Client();
         $path   = str_replace([], [], '/functions');
         $params = [];
+        /** Query Params */
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -67,25 +72,33 @@ $cli
 $cli
     ->task('create')
     ->label('description', "Create a new function. You can pass a list of [permissions](/docs/permissions) to allow different project users or team with access to execute the function using the client API.\n\n")
-    ->param('name', '' , new Mock(), 'Function name. Max length: 128 chars.',  false)
-    ->param('execute', '' , new Mock(), 'An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('env', '' , new Mock(), 'Execution enviornment.',  false)
-    ->param('vars', [] , new Mock(), 'Key-value JSON object.',  true)
-    ->param('events', [] , new Mock(), 'Events list.',  true)
-    ->param('schedule', '' , new Mock(), 'Schedule CRON syntax.',  true)
-    ->param('timeout', 15 , new Mock(), 'Function maximum execution time in seconds.',  true)
-    ->action(function ( $name, $execute, $env, $vars, $events, $schedule, $timeout ) use ($parser) {        
+    ->param('name', '' , new Wildcard() , 'Function name. Max length: 128 chars.',  false)
+    ->param('execute', '' , new Wildcard() , 'An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('env', '' , new Wildcard() , 'Execution enviornment.',  false)
+    ->param('vars', [] , new Wildcard() , 'Key-value JSON object.',  true)
+    ->param('events', [] , new Wildcard() , 'Events list.',  true)
+    ->param('schedule', '' , new Wildcard() , 'Schedule CRON syntax.',  true)
+    ->param('timeout', 15 , new Wildcard() , 'Function maximum execution time in seconds.',  true)
+    ->action(function ( $name, $execute, $env, $vars, $events, $schedule, $timeout ) use ($parser) {
+        /** @var string $name */
+        /** @var array $execute */
+        /** @var string $env */
+        /** @var object $vars */
+        /** @var array $events */
+        /** @var string $schedule */
+        /** @var integer $timeout */
+
         $client = new Client();
         $path   = str_replace([], [], '/functions');
         $params = [];
+        /** Body Params */
         $params['name'] = $name;
-        $params['execute'] = $execute;
+        $params['execute'] = !is_array($execute) ? array($execute) : $execute;
         $params['env'] = $env;
         $params['vars'] = $vars;
-        $params['events'] = $events;
+        $params['events'] = !is_array($events) ? array($events) : $events;
         $params['schedule'] = $schedule;
-        $params['timeout'] = $timeout;
-
+        $params['timeout'] = (int)$timeout;
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -95,12 +108,13 @@ $cli
 $cli
     ->task('get')
     ->label('description', "Get a function by its unique ID.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->action(function ( $functionId ) use ($parser) {
+        /** @var string $functionId */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -110,24 +124,32 @@ $cli
 $cli
     ->task('update')
     ->label('description', "Update function by its unique ID.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('name', '' , new Mock(), 'Function name. Max length: 128 chars.',  false)
-    ->param('execute', '' , new Mock(), 'An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('vars', [] , new Mock(), 'Key-value JSON object.',  true)
-    ->param('events', [] , new Mock(), 'Events list.',  true)
-    ->param('schedule', '' , new Mock(), 'Schedule CRON syntax.',  true)
-    ->param('timeout', 15 , new Mock(), 'Function maximum execution time in seconds.',  true)
-    ->action(function ( $functionId, $name, $execute, $vars, $events, $schedule, $timeout ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('name', '' , new Wildcard() , 'Function name. Max length: 128 chars.',  false)
+    ->param('execute', '' , new Wildcard() , 'An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('vars', [] , new Wildcard() , 'Key-value JSON object.',  true)
+    ->param('events', [] , new Wildcard() , 'Events list.',  true)
+    ->param('schedule', '' , new Wildcard() , 'Schedule CRON syntax.',  true)
+    ->param('timeout', 15 , new Wildcard() , 'Function maximum execution time in seconds.',  true)
+    ->action(function ( $functionId, $name, $execute, $vars, $events, $schedule, $timeout ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $name */
+        /** @var array $execute */
+        /** @var object $vars */
+        /** @var array $events */
+        /** @var string $schedule */
+        /** @var integer $timeout */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
+        /** Body Params */
         $params['name'] = $name;
-        $params['execute'] = $execute;
+        $params['execute'] = !is_array($execute) ? array($execute) : $execute;
         $params['vars'] = $vars;
-        $params['events'] = $events;
+        $params['events'] = !is_array($events) ? array($events) : $events;
         $params['schedule'] = $schedule;
-        $params['timeout'] = $timeout;
-
+        $params['timeout'] = (int)$timeout;
         $response =  $client->call(Client::METHOD_PUT, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -137,12 +159,13 @@ $cli
 $cli
     ->task('delete')
     ->label('description', "Delete a function by its unique ID.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->action(function ( $functionId ) use ($parser) {
+        /** @var string $functionId */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}');
         $params = [];
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -152,20 +175,26 @@ $cli
 $cli
     ->task('listExecutions')
     ->label('description', "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's teams. [Learn more about different API modes](/docs/admin).\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('search', '' , new Mock(), 'Search term to filter your list results. Max length: 256 chars.',  true)
-    ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
-    ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
-    ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('search', '' , new Wildcard() , 'Search term to filter your list results. Max length: 256 chars.',  true)
+    ->param('limit', 25 , new Wildcard() , 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
+    ->param('offset', 0 , new Wildcard() , 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
+    ->param('orderType', 'ASC' , new Wildcard() , 'Order result by ASC or DESC order.',  true)
+    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $search */
+        /** @var integer $limit */
+        /** @var integer $offset */
+        /** @var string $orderType */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
+        /** Query Params */
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -175,12 +204,13 @@ $cli
 $cli
     ->task('createExecution')
     ->label('description', "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->action(function ( $functionId ) use ($parser) {
+        /** @var string $functionId */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
-
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -190,13 +220,15 @@ $cli
 $cli
     ->task('getExecution')
     ->label('description', "Get a function execution log by its unique ID.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('executionId', '' , new Mock(), 'Execution unique ID.',  false)
-    ->action(function ( $functionId, $executionId ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('executionId', '' , new Wildcard() , 'Execution unique ID.',  false)
+    ->action(function ( $functionId, $executionId ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $executionId */
+
         $client = new Client();
         $path   = str_replace(['{functionId}', '{executionId}'], [$functionId, $executionId], '/functions/{functionId}/executions/{executionId}');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -206,14 +238,17 @@ $cli
 $cli
     ->task('updateTag')
     ->label('description', "Update the function code tag ID using the unique function ID. Use this endpoint to switch the code tag that should be executed by the execution endpoint.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('tag', '' , new Mock(), 'Tag unique ID.',  false)
-    ->action(function ( $functionId, $tag ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('tag', '' , new Wildcard() , 'Tag unique ID.',  false)
+    ->action(function ( $functionId, $tag ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $tag */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tag');
         $params = [];
+        /** Body Params */
         $params['tag'] = $tag;
-
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -223,20 +258,26 @@ $cli
 $cli
     ->task('listTags')
     ->label('description', "Get a list of all the project's code tags. You can use the query params to filter your results.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('search', '' , new Mock(), 'Search term to filter your list results. Max length: 256 chars.',  true)
-    ->param('limit', 25 , new Mock(), 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
-    ->param('offset', 0 , new Mock(), 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
-    ->param('orderType', 'ASC' , new Mock(), 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('search', '' , new Wildcard() , 'Search term to filter your list results. Max length: 256 chars.',  true)
+    ->param('limit', 25 , new Wildcard() , 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
+    ->param('offset', 0 , new Wildcard() , 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
+    ->param('orderType', 'ASC' , new Wildcard() , 'Order result by ASC or DESC order.',  true)
+    ->action(function ( $functionId, $search, $limit, $offset, $orderType ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $search */
+        /** @var integer $limit */
+        /** @var integer $offset */
+        /** @var string $orderType */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
+        /** Query Params */
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         $params['orderType'] = $orderType;
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -250,13 +291,18 @@ $cli
 This endpoint accepts a tar.gz file compressed with your code. Make sure to include any dependencies your code has within the compressed file. You can learn more about code packaging in the [Appwrite Cloud Functions tutorial](/docs/functions).
 
 Use the 'command' param to set the entry point used to execute your code.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('command', '' , new Mock(), 'Code execution command.',  false)
-    ->param('code', '' , new Mock(), 'Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.',  false)
-    ->action(function ( $functionId, $command, $code ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('command', '' , new Wildcard() , 'Code execution command.',  false)
+    ->param('code', '' , new Wildcard() , 'Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.',  false)
+    ->action(function ( $functionId, $command, $code ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $command */
+        /** @var file $code */
+
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
+        /** Body Params */
         $params['command'] = $command;
         $cloudFunctionPath = realpath(__DIR__.'/../../../files/'.$code);
         $cloudFunctionParentDir = dirname($cloudFunctionPath, 1);
@@ -270,7 +316,6 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         $archivePath = realpath($volumeMountPoint."/$archiveName");
         $cFile = new \CURLFile($archivePath,  'application/x-gzip' , basename($archivePath));
         $params['code'] = $cFile;
-
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'multipart/form-data',
         ], $params);
@@ -281,13 +326,15 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
 $cli
     ->task('getTag')
     ->label('description', "Get a code tag by its unique ID.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('tagId', '' , new Mock(), 'Tag unique ID.',  false)
-    ->action(function ( $functionId, $tagId ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('tagId', '' , new Wildcard() , 'Tag unique ID.',  false)
+    ->action(function ( $functionId, $tagId ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $tagId */
+
         $client = new Client();
         $path   = str_replace(['{functionId}', '{tagId}'], [$functionId, $tagId], '/functions/{functionId}/tags/{tagId}');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -297,13 +344,15 @@ $cli
 $cli
     ->task('deleteTag')
     ->label('description', "Delete a code tag by its unique ID.\n\n")
-    ->param('functionId', '' , new Mock(), 'Function unique ID.',  false)
-    ->param('tagId', '' , new Mock(), 'Tag unique ID.',  false)
-    ->action(function ( $functionId, $tagId ) use ($parser) {        
+    ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
+    ->param('tagId', '' , new Wildcard() , 'Tag unique ID.',  false)
+    ->action(function ( $functionId, $tagId ) use ($parser) {
+        /** @var string $functionId */
+        /** @var string $tagId */
+
         $client = new Client();
         $path   = str_replace(['{functionId}', '{tagId}'], [$functionId, $tagId], '/functions/{functionId}/tags/{tagId}');
         $params = [];
-
         $response =  $client->call(Client::METHOD_DELETE, $path, [
             'content-type' => 'application/json',
         ], $params);

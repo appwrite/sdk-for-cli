@@ -28,6 +28,8 @@ $commands = [
         "storage" => "The Storage service allows you to manage your project files.",
         "teams" => "The Teams service allows you to group users of your project and to enable them to share read and write access to your project resources",
         "users" => "The Users service allows you to manage your project users.",
+        "client" => "The Client service allows you to set preferences of your Appwrite CLI",
+        "init" => "Init allows you to reset your Appwrite CLI."
         ];
 $parser->formatArray($commands);
 Console::log("\nRun 'appwrite [SERVICE] help' for more information on a service.");

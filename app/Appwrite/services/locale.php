@@ -9,7 +9,7 @@ use Appwrite\Client;
 use Appwrite\Parser;
 use Utopia\CLI\CLI;
 use Utopia\CLI\Console;
-use Utopia\Validator\Mock;
+use Utopia\Validator\Wildcard;
 
 $parser = new Parser();
 $cli = new CLI();
@@ -47,11 +47,11 @@ $cli
     ->label('description', "Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
 
 ([IP Geolocation by DB-IP](https://db-ip.com))\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -61,11 +61,11 @@ $cli
 $cli
     ->task('getContinents')
     ->label('description', "List of all continents. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale/continents');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -75,11 +75,11 @@ $cli
 $cli
     ->task('getCountries')
     ->label('description', "List of all countries. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale/countries');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -89,11 +89,11 @@ $cli
 $cli
     ->task('getCountriesEU')
     ->label('description', "List of all countries that are currently members of the EU. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale/countries/eu');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -103,11 +103,11 @@ $cli
 $cli
     ->task('getCountriesPhones')
     ->label('description', "List of all countries phone codes. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale/countries/phones');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -117,11 +117,11 @@ $cli
 $cli
     ->task('getCurrencies')
     ->label('description', "List of all currencies, including currency symbol, name, plural, and decimal digits for all major and minor currencies. You can use the locale header to get the data in a supported language.\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale/currencies');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -131,11 +131,11 @@ $cli
 $cli
     ->task('getLanguages')
     ->label('description', "List of all languages classified by ISO 639-1 including 2-letter code, name in English, and name in the respective language.\n\n")
-    ->action(function ( ) use ($parser) {        
+    ->action(function ( ) use ($parser) {
+
         $client = new Client();
         $path   = str_replace([], [], '/locale/languages');
         $params = [];
-
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);

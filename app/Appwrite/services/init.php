@@ -6,7 +6,7 @@ require_once './vendor/autoload.php';
 
 use Exception;
 use Utopia\CLI\CLI;
-use Utopia\Validator\Mock;
+use Utopia\Validator\Wildcard;
 use Utopia\CLI\Console;
 use Appwrite\Parser;
 
@@ -173,12 +173,13 @@ $cli->
 $cli
     ->task('init')
     ->label('description', "The init command is used to initialise your CLI\n")
-    ->param('endpoint', '', new Mock(), 'Your Appwrite endpoint', true)
-    ->param('project', '', new Mock(), 'Your project ID', true)
-    ->param('key', '', new Mock(), 'Your secret API key', true)
-    ->param('locale', '', new Mock(), '', true)
+    ->param('endpoint', '', new Wildcard(), 'Your Appwrite endpoint', true)
+    ->param('project', '', new Wildcard(), 'Your project ID', true)
+    ->param('key', '', new Wildcard(), 'Your secret API key', true)
+    ->param('locale', '', new Wildcard(), '', true)
     ->action(function( $endpoint,  $project, $key, $locale ) {
-        /* Check if enviroment variables exist
+        /* 
+        * Check if enviroment variables exist
         * Else prompt the user
         */
         
