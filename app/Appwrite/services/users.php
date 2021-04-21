@@ -234,13 +234,13 @@ $cli
     ->param('status', '' , new Wildcard() , 'User Status code. To activate the user pass 1, to block the user pass 2 and for disabling the user pass 0',  false)
     ->action(function ( $userId, $status ) use ($parser) {
         /** @var string $userId */
-        /** @var string $status */
+        /** @var integer $status */
 
         $client = new Client();
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/status');
         $params = [];
         /** Body Params */
-        $params['status'] = $status;
+        $params['status'] = (int)$status;
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);

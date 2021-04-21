@@ -117,8 +117,8 @@ $cli
     ->label('description', "Update a collection by its unique ID.\n\n")
     ->param('collectionId', '' , new Wildcard() , 'Collection unique ID.',  false)
     ->param('name', '' , new Wildcard() , 'Collection name. Max length: 128 chars.',  false)
-    ->param('read', '' , new Wildcard() , 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions(/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('write', '' , new Wildcard() , 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default inherits the existing read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
+    ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default inherits the existing write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
     ->param('rules', [] , new Wildcard() , 'Array of [rule objects](/docs/rules). Each rule define a collection field name, data type and validation.',  true)
     ->action(function ( $collectionId, $name, $read, $write, $rules ) use ($parser) {
         /** @var string $collectionId */
@@ -200,8 +200,8 @@ $cli
     ->label('description', "Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](/docs/server/database#databaseCreateCollection) API or directly from your database console.\n\n")
     ->param('collectionId', '' , new Wildcard() , 'Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection).',  false)
     ->param('data', '' , new Wildcard() , 'Document data as JSON object.',  false)
-    ->param('read', '' , new Wildcard() , 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('write', '' , new Wildcard() , 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
+    ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
     ->param('parentDocument', '' , new Wildcard() , 'Parent document unique ID. Use when you want your new document to be a child of a parent document.',  true)
     ->param('parentProperty', '' , new Wildcard() , 'Parent document property name. Use when you want your new document to be a child of a parent document.',  true)
     ->param('parentPropertyType', 'assign' , new Wildcard() , 'Parent document property connection type. You can set this value to **assign**, **append** or **prepend**, default value is assign. Use when you want your new document to be a child of a parent document.',  true)
@@ -254,8 +254,8 @@ $cli
     ->param('collectionId', '' , new Wildcard() , 'Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection).',  false)
     ->param('documentId', '' , new Wildcard() , 'Document unique ID.',  false)
     ->param('data', '' , new Wildcard() , 'Document data as JSON object.',  false)
-    ->param('read', '' , new Wildcard() , 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('write', '' , new Wildcard() , 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default inherits the existing read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
+    ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default inherits the existing write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
     ->action(function ( $collectionId, $documentId, $data, $read, $write ) use ($parser) {
         /** @var string $collectionId */
         /** @var string $documentId */

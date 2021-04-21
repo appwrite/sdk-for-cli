@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-cli.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-0.7.0-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-0.7.2-blue.svg?style=flat-square)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite_io?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite_io)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 

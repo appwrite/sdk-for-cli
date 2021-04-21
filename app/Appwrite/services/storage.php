@@ -73,8 +73,8 @@ $cli
     ->task('createFile')
     ->label('description', "Create a new file. The user who creates the file will automatically be assigned to read and write access unless he has passed custom values for read and write arguments.\n\n")
     ->param('file', '' , new Wildcard() , 'Binary file.',  false)
-    ->param('read', '' , new Wildcard() , 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('write', '' , new Wildcard() , 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
+    ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
     ->action(function ( $file, $read, $write ) use ($parser) {
         /** @var file $file */
         /** @var array $read */

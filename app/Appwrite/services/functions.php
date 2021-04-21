@@ -174,7 +174,7 @@ $cli
 
 $cli
     ->task('listExecutions')
-    ->label('description', "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's teams. [Learn more about different API modes](/docs/admin).\n\n")
+    ->label('description', "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's executions. [Learn more about different API modes](/docs/admin).\n\n")
     ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
     ->param('search', '' , new Wildcard() , 'Search term to filter your list results. Max length: 256 chars.',  true)
     ->param('limit', 25 , new Wildcard() , 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
@@ -379,7 +379,7 @@ $cli
                 "get" => "Get a function by its unique ID.",
                 "update" => "Update function by its unique ID.",
                 "delete" => "Delete a function by its unique ID.",
-                "listExecutions" => "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's teams. [Learn more about different API modes](/docs/admin).",
+                "listExecutions" => "Get a list of all the current user function execution logs. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's executions. [Learn more about different API modes](/docs/admin).",
                 "createExecution" => "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.",
                 "getExecution" => "Get a function execution log by its unique ID.",
                 "updateTag" => "Update the function code tag ID using the unique function ID. Use this endpoint to switch the code tag that should be executed by the execution endpoint.",
