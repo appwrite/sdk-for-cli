@@ -25,7 +25,7 @@ $APPWRITE_EXECUTABLE_FILEPATH = Join-Path -Path $APPWRITE_INSTALL_DIR -ChildPath
 $APPWRITE_CLI_IMAGE_NAME = "appwrite/cli"
 
 # Appwrite CLI image version 
-$APPWRITE_CLI_IMAGE_VERSION = "0.7.0"
+$APPWRITE_CLI_IMAGE_VERSION = "0.8.0"
 
 $APPWRITE_EXECUTABLE_CONTENT = @"
 $allowList = 'help', 'init', 'client' , 'avatars', 'database', 'functions', 'health', 'locale', 'storage', 'teams', 'users'
