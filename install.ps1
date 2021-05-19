@@ -25,15 +25,15 @@ $APPWRITE_EXECUTABLE_FILEPATH = Join-Path -Path $APPWRITE_INSTALL_DIR -ChildPath
 $APPWRITE_CLI_IMAGE_NAME = "appwrite/cli"
 
 # Appwrite CLI image version 
-$APPWRITE_CLI_IMAGE_VERSION = "0.9.0"
+$APPWRITE_CLI_IMAGE_VERSION = "0.10.0"
 
 $APPWRITE_EXECUTABLE_CONTENT = @"
-$allowList = 'version', 'help', 'init', 'client' , 'account', 'avatars', 'database', 'functions', 'health', 'locale', 'storage', 'teams', 'users'
-if ( $args.count -eq 0 ) {
-    $args += 'help'
+`$allowList = 'version', 'help', 'init', 'client' , 'account', 'avatars', 'database', 'functions', 'health', 'locale', 'storage', 'teams', 'users'
+if ( `$args.count -eq 0 ) {
+    `$args += 'help'
 }
 
-if ( -not ($allowList -contains $args[0])) {
+if ( -not (`$allowList -contains `$args[0])) {
     Write-Host "Looks like a crazy hamster flipped a bit.`n`nUse appwrite help for a list of supported commands."
     exit 1
 }
