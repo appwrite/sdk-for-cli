@@ -20,6 +20,7 @@ Console::log("\e[0;31;m
 Console::log("\nUsage : appwrite [SERVICE] [COMMAND] --[OPTION]\n");
 Console::log("Services :");
 $commands = [
+        "account" => "The Account service allows you to authenticate and manage a user account.",
         "avatars" => "The Avatars service aims to help you complete everyday tasks related to your app image, icons, and avatars.",
         "database" => "The Database service allows you to create structured collections of documents, query and filter lists of documents",
         "functions" => "The Functions Service allows you view, create and manage your Cloud Functions.",

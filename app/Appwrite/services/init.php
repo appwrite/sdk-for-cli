@@ -172,14 +172,14 @@ $cli->
 
 $cli
     ->task('init')
-    ->label('description', "The init command is used to initialise your CLI\n")
+    ->label('description', "The init command is used to initialize your CLI\n")
     ->param('endpoint', '', new Wildcard(), 'Your Appwrite endpoint', true)
     ->param('project', '', new Wildcard(), 'Your project ID', true)
     ->param('key', '', new Wildcard(), 'Your secret API key', true)
     ->param('locale', '', new Wildcard(), '', true)
-    ->action(function( $endpoint,  $project, $key, $locale ) {
+    ->action(function( $endpoint, $project, $key, $locale ) {
         /* 
-        * Check if enviroment variables exist
+        * Check if environment variables exist
         * Else prompt the user
         */
         

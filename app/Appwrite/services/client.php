@@ -81,7 +81,6 @@ $cli
             Console::success('✅ Preferences saved successfully');
         }
     });
-
 $cli
     ->task('setKey')
     ->param('key', '', new Wildcard(), 'Your secret API key', false)
@@ -94,7 +93,6 @@ $cli
             Console::success('✅ Preferences saved successfully');
         }
     });
-
 $cli
     ->task('setLocale')
     ->param('locale', '', new Wildcard(), '', false)
@@ -108,12 +106,11 @@ $cli
         }
     });
 
-
 $cli
     ->task('version')
     ->action(function() {
-       Console::log('CLI Version : 0.8.0');
-       Console::log('Server Version : 0.7.2');
+       Console::log('CLI Version : 0.9.0');
+       Console::log('Server Version : 0.8.0');
     });
 
 

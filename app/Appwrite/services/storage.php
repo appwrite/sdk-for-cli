@@ -176,13 +176,23 @@ $cli
     ->param('width', 0 , new Wildcard() , 'Resize preview image width, Pass an integer between 0 to 4000.',  true)
     ->param('height', 0 , new Wildcard() , 'Resize preview image height, Pass an integer between 0 to 4000.',  true)
     ->param('quality', 100 , new Wildcard() , 'Preview image quality. Pass an integer between 0 to 100. Defaults to 100.',  true)
+    ->param('borderWidth', 0 , new Wildcard() , 'Preview image border in pixels. Pass an integer between 0 to 100. Defaults to 0.',  true)
+    ->param('borderColor', '' , new Wildcard() , 'Preview image border color. Use a valid HEX color, no # is needed for prefix.',  true)
+    ->param('borderRadius', 0 , new Wildcard() , 'Preview image border radius in pixels. Pass an integer between 0 to 4000.',  true)
+    ->param('opacity', 1 , new Wildcard() , 'Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.',  true)
+    ->param('rotation', 0 , new Wildcard() , 'Preview image rotation in degrees. Pass an integer between 0 and 360.',  true)
     ->param('background', '' , new Wildcard() , 'Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.',  true)
     ->param('output', '' , new Wildcard() , 'Output format type (jpeg, jpg, png, gif and webp).',  true)
-    ->action(function ( $fileId, $width, $height, $quality, $background, $output ) use ($parser) {
+    ->action(function ( $fileId, $width, $height, $quality, $borderWidth, $borderColor, $borderRadius, $opacity, $rotation, $background, $output ) use ($parser) {
         /** @var string $fileId */
         /** @var integer $width */
         /** @var integer $height */
         /** @var integer $quality */
+        /** @var integer $borderWidth */
+        /** @var string $borderColor */
+        /** @var integer $borderRadius */
+        /** @var integer $opacity */
+        /** @var integer $rotation */
         /** @var string $background */
         /** @var string $output */
 
@@ -193,6 +203,11 @@ $cli
         $params['width'] = $width;
         $params['height'] = $height;
         $params['quality'] = $quality;
+        $params['borderWidth'] = $borderWidth;
+        $params['borderColor'] = $borderColor;
+        $params['borderRadius'] = $borderRadius;
+        $params['opacity'] = $opacity;
+        $params['rotation'] = $rotation;
         $params['background'] = $background;
         $params['output'] = $output;
         $params['project'] = $client->getPreference('X-Appwrite-Project');

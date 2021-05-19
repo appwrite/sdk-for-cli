@@ -29,8 +29,8 @@ class Client
      */
     private $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.8.0',
-    ];
+        'x-sdk-version' => 'appwrite:cli:0.9.0',
+        'X-Appwrite-Response-Format' => '0.8.0'     ];
 
     /**
      * Default User Preferences
@@ -138,7 +138,6 @@ class Client
         return true;
     }
 
-
     /**
      * Set Project
      *
@@ -151,7 +150,6 @@ class Client
     public function setProject($value)
     {
         $this->addHeader('X-Appwrite-Project', $value);
-
         return $this;
     }
 
@@ -167,7 +165,6 @@ class Client
     public function setKey($value)
     {
         $this->addHeader('X-Appwrite-Key', $value);
-
         return $this;
     }
 
@@ -181,11 +178,8 @@ class Client
     public function setLocale($value)
     {
         $this->addHeader('X-Appwrite-Locale', $value);
-
         return $this;
     }
-
-
 
     /**
      * @param $key
@@ -218,6 +212,13 @@ class Client
         $responseStatus     = -1;
         $responseType       = '';
         $responseBody       = '';
+
+        $params = array_map(function ($param) {
+            if (is_string($param)) {
+                $param = \urldecode($param);
+            }
+            return $param;
+        }, $params);
 
         switch ($headers['content-type']) {
             case 'application/json':

@@ -205,18 +205,65 @@ Please note that in order to avoid a [Redirect Attacks](https://github.com/OWASP
     });
 
 $cli
+    ->task('updateMembershipRoles')
+    ->label('description', "\n\n")
+    ->param('teamId', '' , new Wildcard() , 'Team unique ID.',  false)
+    ->param('membershipId', '' , new Wildcard() , 'Membership ID.',  false)
+    ->param('roles', '' , new Wildcard() , 'Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Max length for each role is 32 chars.',  false)
+    ->action(function ( $teamId, $membershipId, $roles ) use ($parser) {
+        /** @var string $teamId */
+        /** @var string $membershipId */
+        /** @var array $roles */
+
+        $client = new Client();
+        $path   = str_replace(['{teamId}', '{membershipId}'], [$teamId, $membershipId], '/teams/{teamId}/memberships/{membershipId}');
+        $params = [];
+        /** Body Params */
+        $params['roles'] = !is_array($roles) ? array($roles) : $roles;
+        $response =  $client->call(Client::METHOD_PATCH, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
+$cli
     ->task('deleteMembership')
     ->label('description', "This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.\n\n")
     ->param('teamId', '' , new Wildcard() , 'Team unique ID.',  false)
-    ->param('inviteId', '' , new Wildcard() , 'Invite unique ID.',  false)
-    ->action(function ( $teamId, $inviteId ) use ($parser) {
+    ->param('membershipId', '' , new Wildcard() , 'Membership ID.',  false)
+    ->action(function ( $teamId, $membershipId ) use ($parser) {
         /** @var string $teamId */
-        /** @var string $inviteId */
+        /** @var string $membershipId */
 
         $client = new Client();
-        $path   = str_replace(['{teamId}', '{inviteId}'], [$teamId, $inviteId], '/teams/{teamId}/memberships/{inviteId}');
+        $path   = str_replace(['{teamId}', '{membershipId}'], [$teamId, $membershipId], '/teams/{teamId}/memberships/{membershipId}');
         $params = [];
         $response =  $client->call(Client::METHOD_DELETE, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
+$cli
+    ->task('updateMembershipStatus')
+    ->label('description', "Use this endpoint to allow a user to accept an invitation to join a team after being redirected back to your app from the invitation email recieved by the user.\n\n")
+    ->param('teamId', '' , new Wildcard() , 'Team unique ID.',  false)
+    ->param('membershipId', '' , new Wildcard() , 'Membership ID.',  false)
+    ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
+    ->param('secret', '' , new Wildcard() , 'Secret key.',  false)
+    ->action(function ( $teamId, $membershipId, $userId, $secret ) use ($parser) {
+        /** @var string $teamId */
+        /** @var string $membershipId */
+        /** @var string $userId */
+        /** @var string $secret */
+
+        $client = new Client();
+        $path   = str_replace(['{teamId}', '{membershipId}'], [$teamId, $membershipId], '/teams/{teamId}/memberships/{membershipId}/status');
+        $params = [];
+        /** Body Params */
+        $params['userId'] = $userId;
+        $params['secret'] = $secret;
+        $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
         $parser->parseResponse($response);
@@ -248,7 +295,9 @@ $cli
 Use the 'URL' parameter to redirect the user from the invitation email back to your app. When the user is redirected, use the [Update Team Membership Status](/docs/client/teams#teamsUpdateMembershipStatus) endpoint to allow the user to accept the invitation to the team.
 
 Please note that in order to avoid a [Redirect Attacks](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URL's are the once from domains you have set when added your platforms in the console interface.",
+                "updateMembershipRoles" => "",
                 "deleteMembership" => "This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.",
+                "updateMembershipStatus" => "Use this endpoint to allow a user to accept an invitation to join a team after being redirected back to your app from the invitation email recieved by the user.",
         ];
         $parser->formatArray($commands);
         Console::log("\nRun 'appwrite teams COMMAND --help' for more information on a command.");

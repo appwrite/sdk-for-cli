@@ -205,12 +205,16 @@ $cli
     ->task('createExecution')
     ->label('description', "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.\n\n")
     ->param('functionId', '' , new Wildcard() , 'Function unique ID.',  false)
-    ->action(function ( $functionId ) use ($parser) {
+    ->param('data', '' , new Wildcard() , 'String of custom data to send to function.',  true)
+    ->action(function ( $functionId, $data ) use ($parser) {
         /** @var string $functionId */
+        /** @var string $data */
 
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/executions');
         $params = [];
+        /** Body Params */
+        $params['data'] = $data;
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);

@@ -110,7 +110,7 @@ $cli
     });
 
 $cli
-    ->task('deleteUser')
+    ->task('delete')
     ->label('description', "Delete a user by its unique ID.\n\n")
     ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
     ->action(function ( $userId ) use ($parser) {
@@ -265,7 +265,7 @@ $cli
                 "list" => "Get a list of all the project's users. You can use the query params to filter your results.",
                 "create" => "Create a new user.",
                 "get" => "Get a user by its unique ID.",
-                "deleteUser" => "Delete a user by its unique ID.",
+                "delete" => "Delete a user by its unique ID.",
                 "getLogs" => "Get a user activity logs list by its unique ID.",
                 "getPrefs" => "Get the user preferences by its unique ID.",
                 "updatePrefs" => "Update the user preferences by its unique ID. You can pass only the specific settings you wish to update.",

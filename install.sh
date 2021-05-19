@@ -30,7 +30,7 @@ APPWRITE_TEMP_NAME=temp
 APPWRITE_CLI_IMAGE_NAME=appwrite/cli
 
 # Appwrite CLI image version 
-APPWRITE_CLI_IMAGE_VERSION=0.8.0
+APPWRITE_CLI_IMAGE_VERSION=0.9.0
 
 # sudo is required to copy executable to APPWRITE_INSTALL_DIR for linux
 USE_SUDO="false"
@@ -123,10 +123,9 @@ install() {
     fi
     printSuccess
     
-    echo '
-#!/bin/bash
+    echo '#!/bin/bash
 
-allowList=(help init client avatars database functions health locale storage teams users)
+allowList=(version help init client account avatars database functions health locale storage teams users)
 
 if [[ -z $1 ]]; then 
     set -- "$@" help
