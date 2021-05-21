@@ -301,25 +301,14 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
     ->action(function ( $functionId, $command, $code ) use ($parser) {
         /** @var string $functionId */
         /** @var string $command */
-        /** @var file $code */
+        /** @var string $code */
 
         $client = new Client();
         $path   = str_replace(['{functionId}'], [$functionId], '/functions/{functionId}/tags');
         $params = [];
         /** Body Params */
         $params['command'] = $command;
-        $cloudFunctionPath = realpath(__DIR__.'/../../../files/'.$code);
-        $cloudFunctionParentDir = dirname($cloudFunctionPath, 1);
-        $cloudFunctionDirName = basename($cloudFunctionPath);
-        if (file_exists($cloudFunctionPath) === false ) {
-            throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
-        }
-        $archiveName = 'code.tar.gz';
-        $volumeMountPoint = realpath(__DIR__.'/../../../files/');
-        exec("tar -zcvf $archiveName -C $cloudFunctionParentDir $cloudFunctionDirName && mv $archiveName $volumeMountPoint");
-        $archivePath = realpath($volumeMountPoint."/$archiveName");
-        $cFile = new \CURLFile($archivePath,  'application/x-gzip' , basename($archivePath));
-        $params['code'] = $cFile;
+        $params['code'] = $code;
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'multipart/form-data',
         ], $params);

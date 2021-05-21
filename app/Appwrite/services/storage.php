@@ -76,7 +76,7 @@ $cli
     ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
     ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
     ->action(function ( $file, $read, $write ) use ($parser) {
-        /** @var file $file */
+        /** @var string $file */
         /** @var array $read */
         /** @var array $write */
 
@@ -84,12 +84,7 @@ $cli
         $path   = str_replace([], [], '/storage/files');
         $params = [];
         /** Body Params */
-        $file = realpath(__DIR__.'/../../../files/'.$file);
-        if (file_exists($file) === false ) {
-            throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
-        }
-        $cFile = new \CURLFile($file,  'image/png' , basename($file));
-        $params['file'] = $cFile;
+        $params['file'] = $file;
         $params['read'] = !is_array($read) ? array($read) : $read;
         $params['write'] = !is_array($write) ? array($write) : $write;
         $response =  $client->call(Client::METHOD_POST, $path, [
@@ -191,7 +186,7 @@ $cli
         /** @var integer $borderWidth */
         /** @var string $borderColor */
         /** @var integer $borderRadius */
-        /** @var integer $opacity */
+        /** @var number $opacity */
         /** @var integer $rotation */
         /** @var string $background */
         /** @var string $output */

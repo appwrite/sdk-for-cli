@@ -29,7 +29,7 @@ class Client
      */
     private $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.10.0',
+        'x-sdk-version' => 'appwrite:cli:0.10.1',
         'X-Appwrite-Response-Format' => '0.8.0'     ];
 
     /**
@@ -187,7 +187,7 @@ class Client
      */
     public function addHeader($key, $value)
     {
-        $this->headers[strtolower($key)] = strtolower($value);
+        $this->headers[strtolower($key)] = $value;
         
         return $this;
     }
