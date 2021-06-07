@@ -27,9 +27,9 @@ class Client
      *
      * @var array
      */
-    private $headers = [
+    protected $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.10.0',
+        'x-sdk-version' => 'appwrite:cli:0.10.1',
         'X-Appwrite-Response-Format' => '0.8.0'     ];
 
     /**
@@ -37,7 +37,7 @@ class Client
      *
      * @var array
      */
-    private $preferences = [
+    protected $preferences = [
         self::PREFERENCE_ENDPOINT => '',
         self::PREFERENCE_SELF_SIGNED => '',
         'X-Appwrite-Project' => '',
@@ -85,13 +85,13 @@ class Client
         return $this;
     }
 
-     /**
+    /**
      * Load user preferences from the JSON file
      * 
      * @param string $filename 
      * @return bool
      */
-    private function loadPreferences(string $filename = self::USER_PREFERENCES_FILE): bool
+    protected function loadPreferences(string $filename = self::USER_PREFERENCES_FILE): bool
     {
         try {
             $jsondata = @file_get_contents($filename);
@@ -112,12 +112,12 @@ class Client
     }
 
     /**
-    * Function to write user preferences to
-    * the JSON file
-    * 
-    * @param string $filename 
-    * @return int
-    */
+     * Function to write user preferences to
+     * the JSON file
+     * 
+     * @param string $filename 
+     * @return int
+     */
     function savePreferences(string $filename = self::USER_PREFERENCES_FILE): int
     {
         $jsondata = json_encode($this->preferences, JSON_PRETTY_PRINT);
@@ -125,12 +125,12 @@ class Client
         return $result;
     }
 
-     /**
+    /**
      * Check if all the preferences have been successfully loaded.
      * 
      * @return bool
      */
-    private function isPreferenceLoaded() : bool {
+    protected function isPreferenceLoaded() : bool {
         if(empty($this->getPreference(self::PREFERENCE_ENDPOINT))) return false;
         if(empty($this->getPreference('X-Appwrite-Project'))) return false;
         if(empty($this->getPreference('X-Appwrite-Key'))) return false;
@@ -302,7 +302,7 @@ class Client
      * @param string $prefix
      * @return array
      */
-    private function flatten(array $data, $prefix = '')
+    protected function flatten(array $data, $prefix = '')
     {
         $output = [];
 

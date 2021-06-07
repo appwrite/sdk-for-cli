@@ -191,7 +191,7 @@ $cli
         /** @var integer $borderWidth */
         /** @var string $borderColor */
         /** @var integer $borderRadius */
-        /** @var integer $opacity */
+        /** @var number $opacity */
         /** @var integer $rotation */
         /** @var string $background */
         /** @var string $output */
