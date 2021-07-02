@@ -175,6 +175,7 @@ $cli
     ->param('fileId', '' , new Wildcard() , 'File unique ID',  false)
     ->param('width', 0 , new Wildcard() , 'Resize preview image width, Pass an integer between 0 to 4000.',  true)
     ->param('height', 0 , new Wildcard() , 'Resize preview image height, Pass an integer between 0 to 4000.',  true)
+    ->param('gravity', 'center' , new Wildcard() , 'Image crop gravity. Can be one of center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right',  true)
     ->param('quality', 100 , new Wildcard() , 'Preview image quality. Pass an integer between 0 to 100. Defaults to 100.',  true)
     ->param('borderWidth', 0 , new Wildcard() , 'Preview image border in pixels. Pass an integer between 0 to 100. Defaults to 0.',  true)
     ->param('borderColor', '' , new Wildcard() , 'Preview image border color. Use a valid HEX color, no # is needed for prefix.',  true)
@@ -183,10 +184,11 @@ $cli
     ->param('rotation', 0 , new Wildcard() , 'Preview image rotation in degrees. Pass an integer between 0 and 360.',  true)
     ->param('background', '' , new Wildcard() , 'Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.',  true)
     ->param('output', '' , new Wildcard() , 'Output format type (jpeg, jpg, png, gif and webp).',  true)
-    ->action(function ( $fileId, $width, $height, $quality, $borderWidth, $borderColor, $borderRadius, $opacity, $rotation, $background, $output ) use ($parser) {
+    ->action(function ( $fileId, $width, $height, $gravity, $quality, $borderWidth, $borderColor, $borderRadius, $opacity, $rotation, $background, $output ) use ($parser) {
         /** @var string $fileId */
         /** @var integer $width */
         /** @var integer $height */
+        /** @var string $gravity */
         /** @var integer $quality */
         /** @var integer $borderWidth */
         /** @var string $borderColor */
@@ -202,6 +204,7 @@ $cli
         /** Query Params */
         $params['width'] = $width;
         $params['height'] = $height;
+        $params['gravity'] = $gravity;
         $params['quality'] = $quality;
         $params['borderWidth'] = $borderWidth;
         $params['borderColor'] = $borderColor;

@@ -1,1 +1,1 @@
-appwrite functions create --name="[NAME]" --execute="" --env="dotnet-3.1" --vars="{}" --events="" --schedule="" --timeout="1" 
+appwrite functions create --name="[NAME]" --execute="" --runtime="java-11" --vars="{}" --events="" --schedule="" --timeout="1" 

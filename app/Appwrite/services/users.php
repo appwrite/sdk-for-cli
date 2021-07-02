@@ -247,6 +247,26 @@ $cli
         $parser->parseResponse($response);
     });
 
+$cli
+    ->task('updateVerification')
+    ->label('description', "Update the user email verification status by its unique ID.\n\n")
+    ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
+    ->param('emailVerification', '' , new Wildcard() , 'User Email Verification Status.',  false)
+    ->action(function ( $userId, $emailVerification ) use ($parser) {
+        /** @var string $userId */
+        /** @var boolean $emailVerification */
+
+        $client = new Client();
+        $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/verification');
+        $params = [];
+        /** Body Params */
+        $params['emailVerification'] = $emailVerification;
+        $response =  $client->call(Client::METHOD_PATCH, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
 
 $cli
     ->task('help')
@@ -273,6 +293,7 @@ $cli
                 "deleteSessions" => "Delete all user's sessions by using the user's unique ID.",
                 "deleteSession" => "Delete a user sessions by its unique ID.",
                 "updateStatus" => "Update the user status by its unique ID.",
+                "updateVerification" => "Update the user email verification status by its unique ID.",
         ];
         $parser->formatArray($commands);
         Console::log("\nRun 'appwrite users COMMAND --help' for more information on a command.");

@@ -256,6 +256,22 @@ $cli
     });
 
 $cli
+    ->task('getSession')
+    ->label('description', "Use this endpoint to get a logged in user's session using a Session ID. Inputting 'current' will return the current session being used.\n\n")
+    ->param('sessionId', '' , new Wildcard() , 'Session unique ID. Use the string &#039;current&#039; to get the current device session.',  false)
+    ->action(function ( $sessionId ) use ($parser) {
+        /** @var string $sessionId */
+
+        $client = new Client();
+        $path   = str_replace(['{sessionId}'], [$sessionId], '/account/sessions/{sessionId}');
+        $params = [];
+        $response =  $client->call(Client::METHOD_GET, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
+$cli
     ->task('deleteSession')
     ->label('description', "Use this endpoint to log out the currently logged in user from all their account sessions across all of their different devices. When using the option id argument, only the session unique ID provider will be deleted.\n\n")
     ->param('sessionId', '' , new Wildcard() , 'Session unique ID. Use the string &#039;current&#039; to delete the current device session.',  false)
@@ -343,6 +359,7 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
 Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.",
                 "getSessions" => "Get currently logged in user list of active sessions across different devices.",
                 "deleteSessions" => "Delete all sessions from the user account and remove any sessions cookies from the end client.",
+                "getSession" => "Use this endpoint to get a logged in user's session using a Session ID. Inputting 'current' will return the current session being used.",
                 "deleteSession" => "Use this endpoint to log out the currently logged in user from all their account sessions across all of their different devices. When using the option id argument, only the session unique ID provider will be deleted.",
                 "createVerification" => "Use this endpoint to send a verification message to your user email address to confirm they are the valid owners of that address. Both the **userId** and **secret** arguments will be passed as query parameters to the URL you have provided to be attached to the verification email. The provided URL should redirect the user back to your app and allow you to complete the verification process by verifying both the **userId** and **secret** parameters. Learn more about how to [complete the verification process](/docs/client/account#accountUpdateVerification). The verification link sent to the user's email address is valid for 7 days.
 
