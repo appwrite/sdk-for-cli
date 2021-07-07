@@ -308,14 +308,15 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         $params = [];
         /** Body Params */
         $params['command'] = $command;
-        $cloudFunctionPath = realpath(__DIR__.'/../../../files/'.$code);
-        $cloudFunctionParentDir = dirname($cloudFunctionPath, 1);
-        $cloudFunctionDirName = basename($cloudFunctionPath);
+        $code = \urldecode($code);
+        $cloudFunctionPath = realpath(__DIR__.'/../files/'.$code);
+        $cloudFunctionParentDir = escapeshellarg(dirname($cloudFunctionPath, 1));
+        $cloudFunctionDirName = escapeshellarg(basename($cloudFunctionPath));
         if (file_exists($cloudFunctionPath) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
         }
         $archiveName = 'code.tar.gz';
-        $volumeMountPoint = realpath(__DIR__.'/../../../files/');
+        $volumeMountPoint = realpath(__DIR__.'/../files/');
         exec("tar -zcvf $archiveName -C $cloudFunctionParentDir $cloudFunctionDirName && mv $archiveName $volumeMountPoint");
         $archivePath = realpath($volumeMountPoint."/$archiveName");
         $cFile = new \CURLFile($archivePath,  'application/x-gzip' , basename($archivePath));

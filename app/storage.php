@@ -84,7 +84,7 @@ $cli
         $path   = str_replace([], [], '/storage/files');
         $params = [];
         /** Body Params */
-        $file = realpath(__DIR__.'/../../../files/'.$file);
+        $file = realpath(__DIR__.'/../files/'.\urldecode($file));
         if (file_exists($file) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
         }
