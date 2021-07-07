@@ -30,7 +30,7 @@ APPWRITE_TEMP_NAME=temp
 APPWRITE_CLI_IMAGE_NAME=appwrite/cli
 
 # Appwrite CLI image version 
-APPWRITE_CLI_IMAGE_VERSION=0.10.0
+APPWRITE_CLI_IMAGE_VERSION=0.11.0
 
 # sudo is required to copy executable to APPWRITE_INSTALL_DIR for linux
 USE_SUDO="false"
@@ -147,7 +147,7 @@ for x in "${@}" ; do
     _args=$_args" "$x
 done
 
-bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume $(pwd):/usr/local/code/files:rw --network host '$APPWRITE_CLI_IMAGE_NAME:$APPWRITE_CLI_IMAGE_VERSION' $_args" ' > $APPWRITE_TEMP_NAME
+bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume \"$PWD\":/usr/local/code/files:rw --network host '$APPWRITE_CLI_IMAGE_NAME:$APPWRITE_CLI_IMAGE_VERSION' $_args" ' > $APPWRITE_TEMP_NAME
 
     printf "${GREEN}🚧 Setting Permissions ${NC}\n"
     chmod +x $APPWRITE_TEMP_NAME

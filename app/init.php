@@ -10,7 +10,7 @@ use Utopia\Validator\Wildcard;
 use Utopia\CLI\Console;
 use Appwrite\Parser;
 
-const USER_PREFERENCES_FILE = __DIR__."/../../.preferences/.prefs.json";
+const USER_PREFERENCES_FILE = __DIR__."/.preferences/.prefs.json";
 const PREFERENCE_ENDPOINT = "endpoint";
 
 /**

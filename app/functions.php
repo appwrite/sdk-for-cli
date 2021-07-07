@@ -74,15 +74,15 @@ $cli
     ->label('description', "Create a new function. You can pass a list of [permissions](/docs/permissions) to allow different project users or team with access to execute the function using the client API.\n\n")
     ->param('name', '' , new Wildcard() , 'Function name. Max length: 128 chars.',  false)
     ->param('execute', '' , new Wildcard() , 'An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('env', '' , new Wildcard() , 'Execution enviornment.',  false)
+    ->param('runtime', '' , new Wildcard() , 'Execution runtime.',  false)
     ->param('vars', [] , new Wildcard() , 'Key-value JSON object.',  true)
     ->param('events', [] , new Wildcard() , 'Events list.',  true)
     ->param('schedule', '' , new Wildcard() , 'Schedule CRON syntax.',  true)
     ->param('timeout', 15 , new Wildcard() , 'Function maximum execution time in seconds.',  true)
-    ->action(function ( $name, $execute, $env, $vars, $events, $schedule, $timeout ) use ($parser) {
+    ->action(function ( $name, $execute, $runtime, $vars, $events, $schedule, $timeout ) use ($parser) {
         /** @var string $name */
         /** @var array $execute */
-        /** @var string $env */
+        /** @var string $runtime */
         /** @var object $vars */
         /** @var array $events */
         /** @var string $schedule */
@@ -94,7 +94,7 @@ $cli
         /** Body Params */
         $params['name'] = $name;
         $params['execute'] = !is_array($execute) ? array($execute) : $execute;
-        $params['env'] = $env;
+        $params['runtime'] = $runtime;
         $params['vars'] = $vars;
         $params['events'] = !is_array($events) ? array($events) : $events;
         $params['schedule'] = $schedule;
@@ -308,14 +308,15 @@ Use the 'command' param to set the entry point used to execute your code.\n\n")
         $params = [];
         /** Body Params */
         $params['command'] = $command;
-        $cloudFunctionPath = realpath(__DIR__.'/../../../files/'.$code);
-        $cloudFunctionParentDir = dirname($cloudFunctionPath, 1);
-        $cloudFunctionDirName = basename($cloudFunctionPath);
+        $code = \urldecode($code);
+        $cloudFunctionPath = realpath(__DIR__.'/../files/'.$code);
+        $cloudFunctionParentDir = escapeshellarg(dirname($cloudFunctionPath, 1));
+        $cloudFunctionDirName = escapeshellarg(basename($cloudFunctionPath));
         if (file_exists($cloudFunctionPath) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
         }
         $archiveName = 'code.tar.gz';
-        $volumeMountPoint = realpath(__DIR__.'/../../../files/');
+        $volumeMountPoint = realpath(__DIR__.'/../files/');
         exec("tar -zcvf $archiveName -C $cloudFunctionParentDir $cloudFunctionDirName && mv $archiveName $volumeMountPoint");
         $archivePath = realpath($volumeMountPoint."/$archiveName");
         $cFile = new \CURLFile($archivePath,  'application/x-gzip' , basename($archivePath));

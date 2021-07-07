@@ -29,8 +29,8 @@ class Client
      */
     protected $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.10.0',
-        'X-Appwrite-Response-Format' => '0.8.0'     ];
+        'x-sdk-version' => 'appwrite:cli:0.11.0',
+        'X-Appwrite-Response-Format' => '0.9.0'     ];
 
     /**
      * Default User Preferences
@@ -44,22 +44,6 @@ class Client
         'X-Appwrite-Key' => '',
         'X-Appwrite-Locale' => '',
     ];
-
-    /**
-     * SDK constructor.
-     */
-    public function __construct()
-    {
-        if (!$this->loadPreferences()) {
-            Console::error("❌ Oops We were unable to load your preferences. Ensure that you have run 'appwrite init' before using the CLI");
-            Console::exit();
-        }
-        $this
-            ->setProject($this->preferences['X-Appwrite-Project'])
-            ->setKey($this->preferences['X-Appwrite-Key'])
-            ->setLocale($this->preferences['X-Appwrite-Locale'])
-        ;
-    }
 
     /**
      * Getter for preferences
@@ -206,6 +190,18 @@ class Client
      */
     public function call($method, $path = '', $headers = array(), array $params = array())
     {
+
+        if (!$this->loadPreferences()) {
+            Console::error("❌ Oops We were unable to load your preferences. Ensure that you have run 'appwrite init' before using the CLI");
+            Console::exit();
+        }
+        
+        $this
+            ->setProject($this->preferences['X-Appwrite-Project'])
+            ->setKey($this->preferences['X-Appwrite-Key'])
+            ->setLocale($this->preferences['X-Appwrite-Locale'])
+        ;
+        
         $headers            = array_merge($this->headers, $headers);
         $ch                 = curl_init($this->getPreference(self::PREFERENCE_ENDPOINT) . $path . (($method == self::METHOD_GET && !empty($params)) ? '?' . http_build_query($params) : ''));
         $responseHeaders    = [];
@@ -278,7 +274,13 @@ class Client
         switch (substr($responseType, 0, strpos($responseType, ';'))) {
             case 'application/json':
                 $responseBody = json_decode($responseBody, true);
-            break;
+                break;
+            default:
+                $responseBody = [
+                    "responseCode" => $responseStatus,
+                    "message" => $responseBody
+                ];
+                break;
         }
 
         if ((curl_errno($ch)/* || 200 != $responseStatus*/)) {
