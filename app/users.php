@@ -126,6 +126,26 @@ $cli
     });
 
 $cli
+    ->task('updateEmail')
+    ->label('description', "Update the user email by its unique ID.\n\n")
+    ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
+    ->param('email', '' , new Wildcard() , 'User email.',  false)
+    ->action(function ( $userId, $email ) use ($parser) {
+        /** @var string $userId */
+        /** @var string $email */
+
+        $client = new Client();
+        $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/email');
+        $params = [];
+        /** Body Params */
+        $params['email'] = $email;
+        $response =  $client->call(Client::METHOD_PATCH, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
+$cli
     ->task('getLogs')
     ->label('description', "Get a user activity logs list by its unique ID.\n\n")
     ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
@@ -136,6 +156,46 @@ $cli
         $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/logs');
         $params = [];
         $response =  $client->call(Client::METHOD_GET, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
+$cli
+    ->task('updateName')
+    ->label('description', "Update the user name by its unique ID.\n\n")
+    ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
+    ->param('name', '' , new Wildcard() , 'User name. Max length: 128 chars.',  false)
+    ->action(function ( $userId, $name ) use ($parser) {
+        /** @var string $userId */
+        /** @var string $name */
+
+        $client = new Client();
+        $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/name');
+        $params = [];
+        /** Body Params */
+        $params['name'] = $name;
+        $response =  $client->call(Client::METHOD_PATCH, $path, [
+            'content-type' => 'application/json',
+        ], $params);
+        $parser->parseResponse($response);
+    });
+
+$cli
+    ->task('updatePassword')
+    ->label('description', "Update the user password by its unique ID.\n\n")
+    ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
+    ->param('password', '' , new Wildcard() , 'New user password. Must be between 6 to 32 chars.',  false)
+    ->action(function ( $userId, $password ) use ($parser) {
+        /** @var string $userId */
+        /** @var string $password */
+
+        $client = new Client();
+        $path   = str_replace(['{userId}'], [$userId], '/users/{userId}/password');
+        $params = [];
+        /** Body Params */
+        $params['password'] = $password;
+        $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
         $parser->parseResponse($response);
@@ -286,7 +346,10 @@ $cli
                 "create" => "Create a new user.",
                 "get" => "Get a user by its unique ID.",
                 "delete" => "Delete a user by its unique ID.",
+                "updateEmail" => "Update the user email by its unique ID.",
                 "getLogs" => "Get a user activity logs list by its unique ID.",
+                "updateName" => "Update the user name by its unique ID.",
+                "updatePassword" => "Update the user password by its unique ID.",
                 "getPrefs" => "Get the user preferences by its unique ID.",
                 "updatePrefs" => "Update the user preferences by its unique ID. You can pass only the specific settings you wish to update.",
                 "getSessions" => "Get the user sessions list by its unique ID.",

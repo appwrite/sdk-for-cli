@@ -1,1 +1,1 @@
-appwrite account getLogs 
+appwrite account getLogs

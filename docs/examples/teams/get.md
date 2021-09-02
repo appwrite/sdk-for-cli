@@ -1,1 +1,2 @@
-appwrite teams get --teamId="[TEAM_ID]" 
+appwrite teams get \
+        --teamId="[TEAM_ID]"

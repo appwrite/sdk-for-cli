@@ -1,1 +1,2 @@
-appwrite account updateName --name="[NAME]" 
+appwrite account updateName \
+        --name="[NAME]"

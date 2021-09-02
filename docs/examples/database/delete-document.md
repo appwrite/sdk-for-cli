@@ -1,1 +1,3 @@
-appwrite database deleteDocument --collectionId="[COLLECTION_ID]" --documentId="[DOCUMENT_ID]" 
+appwrite database deleteDocument \
+        --collectionId="[COLLECTION_ID]" \
+        --documentId="[DOCUMENT_ID]"

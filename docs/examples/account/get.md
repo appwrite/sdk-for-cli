@@ -1,1 +1,1 @@
-appwrite account get 
+appwrite account get

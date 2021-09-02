@@ -1,1 +1,2 @@
-appwrite users delete --userId="[USER_ID]" 
+appwrite users delete \
+        --userId="[USER_ID]"

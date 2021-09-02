@@ -30,7 +30,7 @@ APPWRITE_TEMP_NAME=temp
 APPWRITE_CLI_IMAGE_NAME=appwrite/cli
 
 # Appwrite CLI image version 
-APPWRITE_CLI_IMAGE_VERSION=0.11.0
+APPWRITE_CLI_IMAGE_VERSION=0.12.0
 
 # sudo is required to copy executable to APPWRITE_INSTALL_DIR for linux
 USE_SUDO="false"

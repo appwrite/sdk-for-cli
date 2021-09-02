@@ -1,1 +1,2 @@
-appwrite users get --userId="[USER_ID]" 
+appwrite users get \
+        --userId="[USER_ID]"

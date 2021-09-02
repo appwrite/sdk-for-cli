@@ -1,1 +1,2 @@
-appwrite users deleteSessions --userId="[USER_ID]" 
+appwrite users deleteSessions \
+        --userId="[USER_ID]"

@@ -1,1 +1,3 @@
-appwrite account createRecovery --email="email@example.com" --url="https://example.com" 
+appwrite account createRecovery \
+        --email="email@example.com" \
+        --url="https://example.com"

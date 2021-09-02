@@ -1,1 +1,5 @@
-appwrite database createCollection --name="[NAME]" --read="" --write="" --rules="" 
+appwrite database createCollection \
+        --name="[NAME]" \
+        --read="" \
+        --write="" \
+        --rules=""

@@ -1,1 +1,2 @@
-appwrite storage deleteFile --fileId="[FILE_ID]" 
+appwrite storage deleteFile \
+        --fileId="[FILE_ID]"

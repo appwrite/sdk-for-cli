@@ -1,1 +1,2 @@
-appwrite account createVerification --url="https://example.com" 
+appwrite account createVerification \
+        --url="https://example.com"

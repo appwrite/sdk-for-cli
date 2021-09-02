@@ -1,1 +1,2 @@
-appwrite account getSession --sessionId="[SESSION_ID]" 
+appwrite account getSession \
+        --sessionId="[SESSION_ID]"

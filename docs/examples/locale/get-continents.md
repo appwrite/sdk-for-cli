@@ -1,1 +1,1 @@
-appwrite locale getContinents 
+appwrite locale getContinents

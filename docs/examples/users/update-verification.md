@@ -1,1 +1,3 @@
-appwrite users updateVerification --userId="[USER_ID]" --emailVerification="" 
+appwrite users updateVerification \
+        --userId="[USER_ID]" \
+        --emailVerification=""

@@ -1,1 +1,4 @@
-appwrite avatars getImage --url="https://example.com" --width="0" --height="0" 
+appwrite avatars getImage \
+        --url="https://example.com" \
+        --width="0" \
+        --height="0"

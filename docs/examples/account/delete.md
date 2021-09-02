@@ -1,1 +1,1 @@
-appwrite account delete 
+appwrite account delete

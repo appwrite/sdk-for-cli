@@ -25,7 +25,7 @@ $APPWRITE_EXECUTABLE_FILEPATH = Join-Path -Path $APPWRITE_INSTALL_DIR -ChildPath
 $APPWRITE_CLI_IMAGE_NAME = "appwrite/cli"
 
 # Appwrite CLI image version 
-$APPWRITE_CLI_IMAGE_VERSION = "0.11.0"
+$APPWRITE_CLI_IMAGE_VERSION = "0.12.0"
 
 $APPWRITE_EXECUTABLE_CONTENT = @"
 `$allowList = 'version', 'help', 'init', 'client' , 'account', 'avatars', 'database', 'functions', 'health', 'locale', 'storage', 'teams', 'users'
@@ -38,7 +38,7 @@ if ( -not (`$allowList -contains `$args[0])) {
     exit 1
 }
 
-docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume `$pwd``:/usr/local/code/files:rw  $APPWRITE_CLI_IMAGE_NAME`:$APPWRITE_CLI_IMAGE_VERSION (`$args | % {[uri]::EscapeUriString(`$_)})
+docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume `$pwd``:/usr/local/code/files:rw --network host $APPWRITE_CLI_IMAGE_NAME`:$APPWRITE_CLI_IMAGE_VERSION (`$args | % {[uri]::EscapeUriString(`$_)})
 "@
 
 $USER_PATH_ENV_VAR = [Environment]::GetEnvironmentVariable("PATH", "User")

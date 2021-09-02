@@ -1,1 +1,2 @@
-appwrite account updatePrefs --prefs="{}" 
+appwrite account updatePrefs \
+        --prefs="{}"

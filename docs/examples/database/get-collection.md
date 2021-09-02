@@ -1,1 +1,2 @@
-appwrite database getCollection --collectionId="[COLLECTION_ID]" 
+appwrite database getCollection \
+        --collectionId="[COLLECTION_ID]"

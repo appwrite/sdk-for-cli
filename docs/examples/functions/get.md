@@ -1,1 +1,2 @@
-appwrite functions get --functionId="[FUNCTION_ID]" 
+appwrite functions get \
+        --functionId="[FUNCTION_ID]"

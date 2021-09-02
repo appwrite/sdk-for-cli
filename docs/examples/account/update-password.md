@@ -1,1 +1,3 @@
-appwrite account updatePassword --password="password" --oldPassword="password" 
+appwrite account updatePassword \
+        --password="password" \
+        --oldPassword="password"

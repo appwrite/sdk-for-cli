@@ -1,1 +1,1 @@
-appwrite account getSessions 
+appwrite account getSessions
