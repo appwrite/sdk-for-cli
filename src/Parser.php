@@ -1,11 +1,7 @@
 <?php
-
 namespace Appwrite;
-
 use jc21\CliTable;
-
 class Parser {
-
     /**
      * List of colors supported by the library 
      *
@@ -21,21 +17,18 @@ class Parser {
         'white',
         'grey'
     );
-
     /**
      * Color for the table borders
      *
      * @var bool
      */
     protected const tableColor = self::colors[0];
-
     /**
      * Color for the table column headers
      *
      * @var string
      */
     protected const headerColor = self::colors[2];
-
     /**
      * Parse the response body from the server 
      *
@@ -58,8 +51,6 @@ class Parser {
             printf($responseBody);
         }
     }
-
-
     /**
      * Print a key value pair
      *
@@ -78,7 +69,6 @@ class Parser {
 
         printf("%s : %s\n", $key, $value);
     }
-
     /**
      * Get a column color based on the index
      *
@@ -89,7 +79,6 @@ class Parser {
         if ($index != -1) return self::colors[$index % count(self::colors) ];
         return self::colors[array_rand(self::colors)];
     }
-
     /**
      * Creates a table from the passed data
      *
@@ -130,8 +119,6 @@ class Parser {
         $table->injectData($transformedData);
         $table->display();
     }
-
-
     /**
      * Formats an associative array of commands and descriptions using a 80 column mask
      *
@@ -146,7 +133,6 @@ class Parser {
         array_walk($arr, function(&$key) use ($descriptionColumnLimit){
             $key = explode("\n", wordwrap($key, $descriptionColumnLimit));
         });
-        
         foreach($arr as $key => $value) {
             foreach($value as $sentence) {
                  printf($mask, $key, $sentence);
