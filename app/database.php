@@ -218,7 +218,7 @@ $cli
         $path   = str_replace(['{collectionId}'], [$collectionId], '/database/collections/{collectionId}/documents');
         $params = [];
         /** Body Params */
-        $params['data'] = $data;
+        $params['data'] = \json_decode($data);
         $params['read'] = !is_array($read) ? array($read) : $read;
         $params['write'] = !is_array($write) ? array($write) : $write;
         $params['parentDocument'] = $parentDocument;
@@ -267,7 +267,7 @@ $cli
         $path   = str_replace(['{collectionId}', '{documentId}'], [$collectionId, $documentId], '/database/collections/{collectionId}/documents/{documentId}');
         $params = [];
         /** Body Params */
-        $params['data'] = $data;
+        $params['data'] = \json_decode($data);
         $params['read'] = !is_array($read) ? array($read) : $read;
         $params['write'] = !is_array($write) ? array($write) : $write;
         $response =  $client->call(Client::METHOD_PATCH, $path, [

@@ -95,7 +95,7 @@ $cli
         $params['name'] = $name;
         $params['execute'] = !is_array($execute) ? array($execute) : $execute;
         $params['runtime'] = $runtime;
-        $params['vars'] = $vars;
+        $params['vars'] = \json_decode($vars);
         $params['events'] = !is_array($events) ? array($events) : $events;
         $params['schedule'] = $schedule;
         $params['timeout'] = (int)$timeout;
@@ -146,7 +146,7 @@ $cli
         /** Body Params */
         $params['name'] = $name;
         $params['execute'] = !is_array($execute) ? array($execute) : $execute;
-        $params['vars'] = $vars;
+        $params['vars'] = \json_decode($vars);
         $params['events'] = !is_array($events) ? array($events) : $events;
         $params['schedule'] = $schedule;
         $params['timeout'] = (int)$timeout;

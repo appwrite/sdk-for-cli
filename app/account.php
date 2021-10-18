@@ -170,7 +170,7 @@ $cli
         $path   = str_replace([], [], '/account/prefs');
         $params = [];
         /** Body Params */
-        $params['prefs'] = $prefs;
+        $params['prefs'] = \json_decode($prefs);
         $response =  $client->call(Client::METHOD_PATCH, $path, [
             'content-type' => 'application/json',
         ], $params);
