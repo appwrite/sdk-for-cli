@@ -195,9 +195,9 @@ Please note that in order to avoid a [Redirect Attacks](https://github.com/OWASP
         $params = [];
         /** Body Params */
         $params['email'] = $email;
-        $params['name'] = $name;
         $params['roles'] = !is_array($roles) ? array($roles) : $roles;
         $params['url'] = $url;
+        $params['name'] = $name;
         $response =  $client->call(Client::METHOD_POST, $path, [
             'content-type' => 'application/json',
         ], $params);
