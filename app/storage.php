@@ -46,13 +46,17 @@ $cli
     ->task('listFiles')
     ->label('description', "Get a list of all the user files. You can use the query params to filter your results. On admin mode, this endpoint will return a list of all of the project's files. [Learn more about different API modes](/docs/admin).\n\n")
     ->param('search', '' , new Wildcard() , 'Search term to filter your list results. Max length: 256 chars.',  true)
-    ->param('limit', 25 , new Wildcard() , 'Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
-    ->param('offset', 0 , new Wildcard() , 'Results offset. The default value is 0. Use this param to manage pagination.',  true)
+    ->param('limit', 25 , new Wildcard() , 'Maximum number of files to return in response. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
+    ->param('offset', 0 , new Wildcard() , 'Offset value. The default value is 0. Use this param to manage pagination. [learn more about pagination](https://appwrite.io/docs/pagination)',  true)
+    ->param('cursor', '' , new Wildcard() , 'ID of the file used as the starting point for the query, excluding the file itself. Should be used for efficient pagination when working with large sets of data. [learn more about pagination](https://appwrite.io/docs/pagination)',  true)
+    ->param('cursorDirection', 'after' , new Wildcard() , 'Direction of the cursor.',  true)
     ->param('orderType', 'ASC' , new Wildcard() , 'Order result by ASC or DESC order.',  true)
-    ->action(function ( $search, $limit, $offset, $orderType ) use ($parser) {
+    ->action(function ( $search, $limit, $offset, $cursor, $cursorDirection, $orderType ) use ($parser) {
         /** @var string $search */
         /** @var integer $limit */
         /** @var integer $offset */
+        /** @var string $cursor */
+        /** @var string $cursorDirection */
         /** @var string $orderType */
 
         $client = new Client();
@@ -62,6 +66,8 @@ $cli
         $params['search'] = $search;
         $params['limit'] = $limit;
         $params['offset'] = $offset;
+        $params['cursor'] = $cursor;
+        $params['cursorDirection'] = $cursorDirection;
         $params['orderType'] = $orderType;
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
@@ -72,10 +78,12 @@ $cli
 $cli
     ->task('createFile')
     ->label('description', "Create a new file. The user who creates the file will automatically be assigned to read and write access unless he has passed custom values for read and write arguments.\n\n")
+    ->param('fileId', '' , new Wildcard() , 'File ID. Choose your own unique ID or pass the string `unique()` to auto generate it. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can&#039;t start with a special char. Max length is 36 chars.',  false)
     ->param('file', '' , new Wildcard() , 'Binary file.',  false)
-    ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
-    ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  true)
-    ->action(function ( $file, $read, $write ) use ($parser) {
+    ->param('read', [] , new Wildcard() , 'An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.',  true)
+    ->param('write', [] , new Wildcard() , 'An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.',  true)
+    ->action(function ( $fileId, $file, $read, $write ) use ($parser) {
+        /** @var string $fileId */
         /** @var file $file */
         /** @var array $read */
         /** @var array $write */
@@ -84,6 +92,7 @@ $cli
         $path   = str_replace([], [], '/storage/files');
         $params = [];
         /** Body Params */
+        $params['fileId'] = $fileId;
         $file = realpath(__DIR__.'/../files/'.\urldecode($file));
         if (file_exists($file) === false ) {
             throw new Exception("Path doesn't exist. Please ensure that the path is within the current directory. "); 
@@ -101,7 +110,7 @@ $cli
 $cli
     ->task('getFile')
     ->label('description', "Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.\n\n")
-    ->param('fileId', '' , new Wildcard() , 'File unique ID.',  false)
+    ->param('fileId', '' , new Wildcard() , 'File ID.',  false)
     ->action(function ( $fileId ) use ($parser) {
         /** @var string $fileId */
 
@@ -117,9 +126,9 @@ $cli
 $cli
     ->task('updateFile')
     ->label('description', "Update a file by its unique ID. Only users with write permissions have access to update this resource.\n\n")
-    ->param('fileId', '' , new Wildcard() , 'File unique ID.',  false)
-    ->param('read', '' , new Wildcard() , 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
-    ->param('write', '' , new Wildcard() , 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('fileId', '' , new Wildcard() , 'File ID.',  false)
+    ->param('read', '' , new Wildcard() , 'An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.',  false)
+    ->param('write', '' , new Wildcard() , 'An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](https://appwrite.io/docs/permissions) and get a full list of available permissions.',  false)
     ->action(function ( $fileId, $read, $write ) use ($parser) {
         /** @var string $fileId */
         /** @var array $read */
@@ -140,7 +149,7 @@ $cli
 $cli
     ->task('deleteFile')
     ->label('description', "Delete a file by its unique ID. Only users with write permissions have access to delete this resource.\n\n")
-    ->param('fileId', '' , new Wildcard() , 'File unique ID.',  false)
+    ->param('fileId', '' , new Wildcard() , 'File ID.',  false)
     ->action(function ( $fileId ) use ($parser) {
         /** @var string $fileId */
 
@@ -156,7 +165,7 @@ $cli
 $cli
     ->task('getFileDownload')
     ->label('description', "Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.\n\n")
-    ->param('fileId', '' , new Wildcard() , 'File unique ID.',  false)
+    ->param('fileId', '' , new Wildcard() , 'File ID.',  false)
     ->action(function ( $fileId ) use ($parser) {
         /** @var string $fileId */
 
@@ -172,7 +181,7 @@ $cli
 $cli
     ->task('getFilePreview')
     ->label('description', "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image.\n\n")
-    ->param('fileId', '' , new Wildcard() , 'File unique ID',  false)
+    ->param('fileId', '' , new Wildcard() , 'File ID.',  false)
     ->param('width', 0 , new Wildcard() , 'Resize preview image width, Pass an integer between 0 to 4000.',  true)
     ->param('height', 0 , new Wildcard() , 'Resize preview image height, Pass an integer between 0 to 4000.',  true)
     ->param('gravity', 'center' , new Wildcard() , 'Image crop gravity. Can be one of center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right',  true)
@@ -181,7 +190,7 @@ $cli
     ->param('borderColor', '' , new Wildcard() , 'Preview image border color. Use a valid HEX color, no # is needed for prefix.',  true)
     ->param('borderRadius', 0 , new Wildcard() , 'Preview image border radius in pixels. Pass an integer between 0 to 4000.',  true)
     ->param('opacity', 1 , new Wildcard() , 'Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.',  true)
-    ->param('rotation', 0 , new Wildcard() , 'Preview image rotation in degrees. Pass an integer between 0 and 360.',  true)
+    ->param('rotation', 0 , new Wildcard() , 'Preview image rotation in degrees. Pass an integer between -360 and 360.',  true)
     ->param('background', '' , new Wildcard() , 'Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.',  true)
     ->param('output', '' , new Wildcard() , 'Output format type (jpeg, jpg, png, gif and webp).',  true)
     ->action(function ( $fileId, $width, $height, $gravity, $quality, $borderWidth, $borderColor, $borderRadius, $opacity, $rotation, $background, $output ) use ($parser) {
@@ -222,7 +231,7 @@ $cli
 $cli
     ->task('getFileView')
     ->label('description', "Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.\n\n")
-    ->param('fileId', '' , new Wildcard() , 'File unique ID.',  false)
+    ->param('fileId', '' , new Wildcard() , 'File ID.',  false)
     ->action(function ( $fileId ) use ($parser) {
         /** @var string $fileId */
 

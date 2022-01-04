@@ -1,8 +1,6 @@
 appwrite database createDocument \
         --collectionId="[COLLECTION_ID]" \
+        --documentId="" \
         --data="{}" \
-        --read="" \
-        --write="" \
-        --parentDocument="[PARENT_DOCUMENT]" \
-        --parentProperty="" \
-        --parentPropertyType="assign"
+        --read="[&quot;role:all&quot;]" \
+        --write="[&quot;role:all&quot;]"

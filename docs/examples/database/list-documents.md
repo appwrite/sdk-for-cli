@@ -1,9 +1,9 @@
 appwrite database listDocuments \
         --collectionId="[COLLECTION_ID]" \
-        --filters="" \
+        --queries="" \
         --limit="0" \
         --offset="0" \
-        --orderField="[ORDER_FIELD]" \
-        --orderType="DESC" \
-        --orderCast="int" \
-        --search="[SEARCH]"
+        --cursor="[CURSOR]" \
+        --cursorDirection="after" \
+        --orderAttributes="" \
+        --orderTypes=""

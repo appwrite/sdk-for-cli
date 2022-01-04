@@ -1,5 +1,6 @@
 appwrite database createCollection \
+        --collectionId="" \
         --name="[NAME]" \
-        --read="" \
-        --write="" \
-        --rules=""
+        --permission="document" \
+        --read="[&quot;role:all&quot;]" \
+        --write="[&quot;role:all&quot;]"

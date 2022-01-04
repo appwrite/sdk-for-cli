@@ -57,8 +57,8 @@ $cli
     });
 
 $cli
-    ->task('getAntiVirus')
-    ->label('description', "Check the Appwrite Anti Virus server is up and connection is successful.\n\n")
+    ->task('getAntivirus')
+    ->label('description', "Check the Appwrite Antivirus server is up and connection is successful.\n\n")
     ->action(function ( ) use ($parser) {
 
         $client = new Client();
@@ -141,20 +141,6 @@ $cli
     });
 
 $cli
-    ->task('getQueueTasks')
-    ->label('description', "Get the number of tasks that are waiting to be processed in the Appwrite internal queue server.\n\n")
-    ->action(function ( ) use ($parser) {
-
-        $client = new Client();
-        $path   = str_replace([], [], '/health/queue/tasks');
-        $params = [];
-        $response =  $client->call(Client::METHOD_GET, $path, [
-            'content-type' => 'application/json',
-        ], $params);
-        $parser->parseResponse($response);
-    });
-
-$cli
     ->task('getQueueUsage')
     ->label('description', "Get the number of usage stats that are waiting to be processed in the Appwrite internal queue server.\n\n")
     ->action(function ( ) use ($parser) {
@@ -226,13 +212,12 @@ $cli
         Console::log("Commands :");
         $commands = [
                 "get" => "Check the Appwrite HTTP server is up and responsive.",
-                "getAntiVirus" => "Check the Appwrite Anti Virus server is up and connection is successful.",
+                "getAntivirus" => "Check the Appwrite Antivirus server is up and connection is successful.",
                 "getCache" => "Check the Appwrite in-memory cache server is up and connection is successful.",
                 "getDB" => "Check the Appwrite database server is up and connection is successful.",
                 "getQueueCertificates" => "Get the number of certificates that are waiting to be issued against [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue server.",
                 "getQueueFunctions" => "",
                 "getQueueLogs" => "Get the number of logs that are waiting to be processed in the Appwrite internal queue server.",
-                "getQueueTasks" => "Get the number of tasks that are waiting to be processed in the Appwrite internal queue server.",
                 "getQueueUsage" => "Get the number of usage stats that are waiting to be processed in the Appwrite internal queue server.",
                 "getQueueWebhooks" => "Get the number of webhooks that are waiting to be processed in the Appwrite internal queue server.",
                 "getStorageLocal" => "Check the Appwrite local storage device is up and connection is successful.",

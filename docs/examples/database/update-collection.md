@@ -1,6 +1,7 @@
 appwrite database updateCollection \
         --collectionId="[COLLECTION_ID]" \
         --name="[NAME]" \
-        --read="" \
-        --write="" \
-        --rules=""
+        --permission="document" \
+        --read="[&quot;role:all&quot;]" \
+        --write="[&quot;role:all&quot;]" \
+        --enabled=""

@@ -72,10 +72,11 @@ $cli
 
 $cli
     ->task('updateEmail')
-    ->label('description', "Update currently logged in user account email address. After changing user address, user confirmation status is being reset and a new confirmation mail is sent. For security measures, user password is required to complete this request.
-This endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.\n\n")
+    ->label('description', "Update currently logged in user account email address. After changing user address, the user confirmation status will get reset. A new confirmation email is not sent automatically however you can use the send confirmation email endpoint again to send the confirmation email. For security measures, user password is required to complete this request.
+This endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.
+\n\n")
     ->param('email', '' , new Wildcard() , 'User email.',  false)
-    ->param('password', '' , new Wildcard() , 'User password. Must be between 6 to 32 chars.',  false)
+    ->param('password', '' , new Wildcard() , 'User password. Must be at least 8 chars.',  false)
     ->action(function ( $email, $password ) use ($parser) {
         /** @var string $email */
         /** @var string $password */
@@ -95,11 +96,18 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
 $cli
     ->task('getLogs')
     ->label('description', "Get currently logged in user list of latest security activity logs. Each log returns user IP address, location and date and time of log.\n\n")
-    ->action(function ( ) use ($parser) {
+    ->param('limit', 25 , new Wildcard() , 'Maximum number of logs to return in response. By default will return maximum 25 results. Maximum of 100 results allowed per request.',  true)
+    ->param('offset', 0 , new Wildcard() , 'Offset value. The default value is 0. Use this value to manage pagination. [learn more about pagination](https://appwrite.io/docs/pagination)',  true)
+    ->action(function ( $limit, $offset ) use ($parser) {
+        /** @var integer $limit */
+        /** @var integer $offset */
 
         $client = new Client();
         $path   = str_replace([], [], '/account/logs');
         $params = [];
+        /** Query Params */
+        $params['limit'] = $limit;
+        $params['offset'] = $offset;
         $response =  $client->call(Client::METHOD_GET, $path, [
             'content-type' => 'application/json',
         ], $params);
@@ -127,8 +135,8 @@ $cli
 $cli
     ->task('updatePassword')
     ->label('description', "Update currently logged in user password. For validation, user is required to pass in the new password, and the old password. For users created with OAuth and Team Invites, oldPassword is optional.\n\n")
-    ->param('password', '' , new Wildcard() , 'New user password. Must be between 6 to 32 chars.',  false)
-    ->param('oldPassword', '' , new Wildcard() , 'Old user password. Must be between 6 to 32 chars.',  true)
+    ->param('password', '' , new Wildcard() , 'New user password. Must be at least 8 chars.',  false)
+    ->param('oldPassword', '' , new Wildcard() , 'Current user password. Must be at least 8 chars.',  true)
     ->action(function ( $password, $oldPassword ) use ($parser) {
         /** @var string $password */
         /** @var string $oldPassword */
@@ -203,10 +211,10 @@ $cli
     ->label('description', "Use this endpoint to complete the user account password reset. Both the **userId** and **secret** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the [POST /account/recovery](/docs/client/account#accountCreateRecovery) endpoint.
 
 Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.\n\n")
-    ->param('userId', '' , new Wildcard() , 'User account UID address.',  false)
+    ->param('userId', '' , new Wildcard() , 'User ID.',  false)
     ->param('secret', '' , new Wildcard() , 'Valid reset token.',  false)
-    ->param('password', '' , new Wildcard() , 'New password. Must be between 6 to 32 chars.',  false)
-    ->param('passwordAgain', '' , new Wildcard() , 'New password again. Must be between 6 to 32 chars.',  false)
+    ->param('password', '' , new Wildcard() , 'New user password. Must be at least 8 chars.',  false)
+    ->param('passwordAgain', '' , new Wildcard() , 'Repeat new user password. Must be at least 8 chars.',  false)
     ->action(function ( $userId, $secret, $password, $passwordAgain ) use ($parser) {
         /** @var string $userId */
         /** @var string $secret */
@@ -258,7 +266,7 @@ $cli
 $cli
     ->task('getSession')
     ->label('description', "Use this endpoint to get a logged in user's session using a Session ID. Inputting 'current' will return the current session being used.\n\n")
-    ->param('sessionId', '' , new Wildcard() , 'Session unique ID. Use the string &#039;current&#039; to get the current device session.',  false)
+    ->param('sessionId', '' , new Wildcard() , 'Session ID. Use the string &#039;current&#039; to get the current device session.',  false)
     ->action(function ( $sessionId ) use ($parser) {
         /** @var string $sessionId */
 
@@ -274,7 +282,7 @@ $cli
 $cli
     ->task('deleteSession')
     ->label('description', "Use this endpoint to log out the currently logged in user from all their account sessions across all of their different devices. When using the option id argument, only the session unique ID provider will be deleted.\n\n")
-    ->param('sessionId', '' , new Wildcard() , 'Session unique ID. Use the string &#039;current&#039; to delete the current device session.',  false)
+    ->param('sessionId', '' , new Wildcard() , 'Session ID. Use the string &#039;current&#039; to delete the current device session.',  false)
     ->action(function ( $sessionId ) use ($parser) {
         /** @var string $sessionId */
 
@@ -311,7 +319,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
 $cli
     ->task('updateVerification')
     ->label('description', "Use this endpoint to complete the user email verification process. Use both the **userId** and **secret** parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.\n\n")
-    ->param('userId', '' , new Wildcard() , 'User unique ID.',  false)
+    ->param('userId', '' , new Wildcard() , 'User ID.',  false)
     ->param('secret', '' , new Wildcard() , 'Valid verification token.',  false)
     ->action(function ( $userId, $secret ) use ($parser) {
         /** @var string $userId */
@@ -346,8 +354,9 @@ $cli
         $commands = [
                 "get" => "Get currently logged in user data as JSON object.",
                 "delete" => "Delete a currently logged in user account. Behind the scene, the user record is not deleted but permanently blocked from any access. This is done to avoid deleted accounts being overtaken by new users with the same email address. Any user-related resources like documents or storage files should be deleted separately.",
-                "updateEmail" => "Update currently logged in user account email address. After changing user address, user confirmation status is being reset and a new confirmation mail is sent. For security measures, user password is required to complete this request.
-This endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.",
+                "updateEmail" => "Update currently logged in user account email address. After changing user address, the user confirmation status will get reset. A new confirmation email is not sent automatically however you can use the send confirmation email endpoint again to send the confirmation email. For security measures, user password is required to complete this request.
+This endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.
+",
                 "getLogs" => "Get currently logged in user list of latest security activity logs. Each log returns user IP address, location and date and time of log.",
                 "updateName" => "Update currently logged in user account name.",
                 "updatePassword" => "Update currently logged in user password. For validation, user is required to pass in the new password, and the old password. For users created with OAuth and Team Invites, oldPassword is optional.",
