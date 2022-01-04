@@ -109,7 +109,7 @@ $cli
 $cli
     ->task('version')
     ->action(function() {
-       Console::log('CLI Version : 0.12.1');
+       Console::log('CLI Version : 0.13.0');
        Console::log('Server Version : 0.12.0');
     });
 
