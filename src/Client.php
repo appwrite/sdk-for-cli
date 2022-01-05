@@ -29,7 +29,7 @@ class Client
      */
     protected $headers = [
         'content-type' => '',
-        'x-sdk-version' => 'appwrite:cli:0.13.0',
+        'x-sdk-version' => 'appwrite:cli:0.13.1',
         'X-Appwrite-Response-Format' => '0.12.0'     ];
 
     /**
