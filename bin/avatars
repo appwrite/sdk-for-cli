@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [[ $# -eq 0 ]]; then
-   php /usr/local/code/app/avatars.php help
-else
-   php /usr/local/code/app/avatars.php $@
-fi

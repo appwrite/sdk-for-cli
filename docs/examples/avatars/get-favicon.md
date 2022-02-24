@@ -1,2 +1,2 @@
 appwrite avatars getFavicon \
-        --url="https://example.com"
+        --url https://example.com

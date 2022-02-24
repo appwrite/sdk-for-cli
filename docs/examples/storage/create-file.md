@@ -1,5 +1,6 @@
 appwrite storage createFile \
-        --fileId="[FILE_ID]" \
-        --file="" \
-        --read="" \
-        --write=""
+        --bucketId [BUCKET_ID] \
+        --fileId [FILE_ID] \
+        --file 'path/to/file.png' \
+
+

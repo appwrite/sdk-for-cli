@@ -27,13 +27,12 @@ APPWRITE_EXECUTABLE_FILEPATH="$APPWRITE_INSTALL_DIR/$APPWRITE_EXECUTABLE_NAME"
 APPWRITE_TEMP_NAME=temp-$(date +%s)
 
 # Appwrite CLI image name
-APPWRITE_CLI_IMAGE_NAME=appwrite/cli
-
-# Appwrite CLI image version 
-APPWRITE_CLI_IMAGE_VERSION=0.13.1
+GITHUB_REPOSITORY_NAME=appwrite/sdk-for-cli
 
 # sudo is required to copy executable to APPWRITE_INSTALL_DIR for linux
 USE_SUDO="false"
+OS=""
+ARCH=""
 
 # Add some color to life
 RED='\033[0;31m'
@@ -44,25 +43,28 @@ NC='\033[0m' # No Color
 greeting() {
     echo -e "${RED}"
     cat << "EOF"
-    _                            _ _           ___   __   _____ 
-   /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
-  //_\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
- /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
- \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
-       |_|   |_|                                                  
- 
+
+     _                            _ _           ___   __   _____ 
+    /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
+   //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
+  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
+  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+        |_|   |_|                                                
 EOF
     echo -e "${NC}\n"
-    echo "🔥 Welcome to the Appwrite CLI install shield 🛡."
+    echo "🔥 Welcome to the Appwrite CLI install shield 🛡"
 }
 
 getSystemInfo() {
     echo "[1/4] Getting System Info ..."
+    
     ARCH=$(uname -m)
     case $ARCH in
-        armv7*) ARCH="arm";;
-        aarch64) ARCH="arm64";;
-        x86_64) ARCH="amd64";;
+        i386|i686) ARCH="x64" ;;
+        x86_64) ARCH="x64";;
+        armv6*) ARCH="arm64" ;;
+        armv7*) ARCH="arm64" ;;
+        aarch64*) ARCH="arm64" ;;
     esac
 
     OS=$(echo `uname`|tr '[:upper:]' '[:lower:]')
@@ -92,67 +94,33 @@ printSuccess() {
     printf "${GREEN}✅ Done ... ${NC}\n\n"
 }
 
-performChecks() {
-    echo "[2/4] Performing Checks ..."
+downloadBinary() {
+    echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    # Check if docker is installed 
-    printf "${GREEN}🚦 Checking if docker is installed ... ${NC}\n"
-    if ! command -v docker  &> /dev/null; then
-        printf "${RED}❌ Docker could not be found. Please install docker for your OS from https://docs.docker.com/get-docker/ and try again.${NC}\n"
+    printf "${GREEN}🚦 Fetching latest version ... ${NC}\n"
+    res=$(curl -L -s -H 'Accept: application/json' https://github.com/$GITHUB_REPOSITORY_NAME/releases/latest)
+    if [[ "$res" == *"error"* ]]; then
+        printf "${RED}❌ There was an error. Try again later.${NC} \n"
         exit 1
     fi
     printSuccess
 
-    # Check if the Docker Daemon is running
-    printf "${GREEN}🏃‍ Checking if docker daemon is running ... ${NC}\n"
-    rep=$(curl -s --unix-socket /var/run/docker.sock http://ping > /dev/null)
-    status=$?
-    if [ "$status" == "7" ]; then
-        printf "${RED}❌ The docker daemon is not operational. Make sure that docker is running and try again.${NC} \n"
+    GITHUB_LATEST_VERSION=$( echo $res | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+    GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
+    GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
+
+    printf "${GREEN}🚦 Downloading Appwrite CLI $GITHUB_LATEST_VERSION ... ${NC}\n"
+    res=$(curl -s $GITHUB_URL)
+    if [[ "$res" == *"Not Found"* ]]; then
+        printf "${RED}❌ Couldn't find executable for $OS ($ARCH). Please contact the Appwrite team ${NC} \n"
         exit 1
     fi
+    curl -L -o $APPWRITE_TEMP_NAME $GITHUB_URL
     printSuccess
-
 }
 
 install() {
-
-    echo "[3/4] Starting installation ..."
-
-    # Fetch the Appwrite CLI Image.
-    printf "${GREEN}🐳 Pulling docker image ... ${NC}\n"
-    out=$(docker pull "$APPWRITE_CLI_IMAGE_NAME:$APPWRITE_CLI_IMAGE_VERSION")
-    if [[ $out != *"Image is up to date"* ]] && [[ $out != *"Downloaded newer image"* ]]; then
-        printf "${RED}❌ Failed to fetch docker image. Exiting ... ${NC}\n"
-        exit 1
-    fi
-    printSuccess
-    
-    echo '#!/bin/bash
-
-allowList=(version help init client account avatars database functions health locale storage teams users)
-
-if [[ -z $1 ]]; then 
-    set -- "$@" help
-fi 
-
-# Check if the command is in the allowList
-if [[ ! " ${allowList[@]} " =~ " ${1} " ]]; then
-    printf "\nLooks like a crazy hamster 🐹 flipped a bit.\n\nUse appwrite help for a list of supported commands.\n"
-    exit 1
-fi
-
-# https://stackoverflow.com/a/30655982/2299554
-for x in "${@}" ; do
-    # try to figure out if quoting was required for the $x
-    if [[ "$x" != "${x%[[:space:]]*}" ]]; then
-        x="\""$x"\""
-    fi
-    x="${x// /%20}"
-    _args=$_args" "$x
-done
-
-bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferences/ --volume \"$PWD\":/usr/local/code/files:rw --network host '$APPWRITE_CLI_IMAGE_NAME:$APPWRITE_CLI_IMAGE_VERSION' $_args" ' > $APPWRITE_TEMP_NAME
+    echo "[3/4] Installing ..."
 
     printf "${GREEN}🚧 Setting Permissions ${NC}\n"
     chmod +x $APPWRITE_TEMP_NAME
@@ -172,7 +140,7 @@ bash -c "docker run -i --rm --volume appwrite-cli:/usr/local/code/app/.preferenc
 }
 
 cleanup() {
-    echo "🧹 Cleaning up mess ... "
+    printf "${GREEN}🧹 Cleaning up mess ... ${NC}\n"
     rm $APPWRITE_TEMP_NAME 
     if [ $? -ne 0 ]; then
         printf "${RED}❌ Failed to remove temporary file ... ${NC}\n"
@@ -192,6 +160,6 @@ installCompleted() {
 # Installation Starts here 
 greeting
 getSystemInfo
-performChecks
+downloadBinary
 install
 installCompleted

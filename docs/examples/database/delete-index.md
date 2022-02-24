@@ -1,3 +1,3 @@
 appwrite database deleteIndex \
-        --collectionId="[COLLECTION_ID]" \
-        --key=""
+        --collectionId [COLLECTION_ID] \
+        --key ''

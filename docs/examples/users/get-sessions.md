@@ -1,2 +1,2 @@
 appwrite users getSessions \
-        --userId="[USER_ID]"
+        --userId [USER_ID]

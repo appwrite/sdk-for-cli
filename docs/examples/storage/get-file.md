@@ -1,2 +1,3 @@
 appwrite storage getFile \
-        --fileId="[FILE_ID]"
+        --bucketId [BUCKET_ID] \
+        --fileId [FILE_ID]
