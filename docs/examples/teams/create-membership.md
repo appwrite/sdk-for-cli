@@ -1,6 +1,6 @@
 appwrite teams createMembership \
-        --teamId="[TEAM_ID]" \
-        --email="email@example.com" \
-        --roles="" \
-        --url="https://example.com" \
-        --name="[NAME]"
+        --teamId [TEAM_ID] \
+        --email email@example.com \
+        --roles one two three \
+        --url https://example.com \
+

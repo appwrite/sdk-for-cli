@@ -1,3 +1,3 @@
 appwrite account updatePassword \
-        --password="password" \
-        --oldPassword="password"
+        --password password \
+

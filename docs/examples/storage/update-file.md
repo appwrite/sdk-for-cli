@@ -1,4 +1,5 @@
 appwrite storage updateFile \
-        --fileId="[FILE_ID]" \
-        --read="" \
-        --write=""
+        --bucketId [BUCKET_ID] \
+        --fileId [FILE_ID] \
+
+
