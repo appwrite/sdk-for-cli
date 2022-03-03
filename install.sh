@@ -97,15 +97,7 @@ printSuccess() {
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    printf "${GREEN}🚦 Fetching latest version ... ${NC}\n"
-    res=$(curl -L -s -H 'Accept: application/json' https://github.com/$GITHUB_REPOSITORY_NAME/releases/latest)
-    if [[ "$res" == *"error"* ]]; then
-        printf "${RED}❌ There was an error. Try again later.${NC} \n"
-        exit 1
-    fi
-    printSuccess
-
-    GITHUB_LATEST_VERSION=$( echo $res | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
+    GITHUB_LATEST_VERSION="0.15.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
