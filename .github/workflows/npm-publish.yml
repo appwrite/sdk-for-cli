@@ -13,7 +13,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Setup binfmt with QEMU
         run: | 
-          sudo apt update
           sudo apt install qemu binfmt-support qemu-user-static
           update-binfmts --display
       - name: Setup ldid

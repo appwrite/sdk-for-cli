@@ -13,8 +13,8 @@
 # You can use "View source" of this page to see the full script.
 
 # REPO
-$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/0.15.0/appwrite-cli-win-x64.exe"
-$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/0.15.0/appwrite-cli-win-arm64.exe"
+$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/0.16.0/appwrite-cli-win-x64.exe"
+$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/0.16.0/appwrite-cli-win-arm64.exe"
 
 # Appwrite download directory
 $APPWRITE_DOWNLOAD_DIR = Join-Path -Path $env:TEMP -ChildPath "appwrite.exe"

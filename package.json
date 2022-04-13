@@ -2,7 +2,7 @@
   "name": "appwrite-cli",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstract and simplify complex and repetitive development tasks behind a very simple REST API",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "bin": {
@@ -22,12 +22,12 @@
     "windows-arm64": "pkg -t node16-win-arm64 -o build/appwrite-cli-win-arm64.exe package.json"
   },
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^0.26.1",
     "chalk": "4.1.2",
     "cli-table3": "^0.6.1",
-    "commander": "^8.3.0",
+    "commander": "^9.0.0",
     "form-data": "^4.0.0",
-    "inquirer": "^8.2.0",
+    "inquirer": "^8.2.1",
     "tar": "^6.1.11"
   },
   "devDependencies": {
