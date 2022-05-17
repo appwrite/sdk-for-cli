@@ -16,11 +16,14 @@
 $GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/0.16.0/appwrite-cli-win-x64.exe"
 $GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/0.16.0/appwrite-cli-win-arm64.exe"
 
+$APPWRITE_BINARY_NAME = "appwrite.exe"
+
 # Appwrite download directory
-$APPWRITE_DOWNLOAD_DIR = Join-Path -Path $env:TEMP -ChildPath "appwrite.exe"
+$APPWRITE_DOWNLOAD_DIR = Join-Path -Path $env:TEMP -ChildPath $APPWRITE_BINARY_NAME
 
 # Appwrite CLI location
 $APPWRITE_INSTALL_DIR = Join-Path -Path $env:LOCALAPPDATA -ChildPath "Appwrite"
+$APPWRITE_INSTALL_PATH = Join-Path -Path "$APPWRITE_INSTALL_DIR" -ChildPath "$APPWRITE_BINARY_NAME"
 
 $USER_PATH_ENV_VAR = [Environment]::GetEnvironmentVariable("PATH", "User")
 
@@ -58,9 +61,9 @@ function DownloadBinary {
     } else {
       Invoke-WebRequest -Uri $GITHUB_x64_URL -OutFile $APPWRITE_DOWNLOAD_DIR
     }
-   
 
-   Move-Item $APPWRITE_DOWNLOAD_DIR $APPWRITE_INSTALL_DIR
+    New-Item -ItemType Directory -Path $APPWRITE_INSTALL_DIR
+    Move-Item $APPWRITE_DOWNLOAD_DIR $APPWRITE_INSTALL_PATH
 }
 
 
@@ -71,6 +74,7 @@ function Install {
         Write-Host "Skipping to add Appwrite to User Path."
     } else {
         [System.Environment]::SetEnvironmentVariable("PATH", $USER_PATH_ENV_VAR + ";$APPWRITE_INSTALL_DIR", "User")
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User") 
     }
 }
 
