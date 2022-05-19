@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-0.17.0
+0.17.1
 ```
 
 ### Install using prebuilt binaries
@@ -58,7 +58,7 @@ $ iwr -useb https://appwrite.io/cli/install.ps1 | iex
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-0.17.0
+0.17.1
 ```
 
 ## Getting Started 
