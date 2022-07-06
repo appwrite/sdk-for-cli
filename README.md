@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-cli.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-0.15.0-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-0.15.1-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-0.18.0
+0.18.1
 ```
 
 ### Install using prebuilt binaries
@@ -58,7 +58,7 @@ $ iwr -useb https://appwrite.io/cli/install.ps1 | iex
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-0.18.0
+0.18.1
 ```
 
 ## Getting Started 
@@ -92,12 +92,6 @@ The `appwrite.json` file does a lot of things.
 You can also fetch all the collections in your current project using
 ```sh
 appwrite init collection
-```
-
-The CLI also comes with a convenient `--all` flag to perform both these steps at once.
-
-```sh
-appwrite init --all
 ```
 
 * ### Creating and deploying cloud functions
@@ -144,12 +138,6 @@ Similarly, you can deploy all your collections to your Appwrite server using
 ```sh
 appwrite deploy collections
 ```
-
-The `deploy` command also comes with a convenient `--all` flag to deploy all your functions and collections at once.
-
-```sh
-appwrite deploy --all
-``` 
 
 > ### Note
 > By default, requests to domains with self signed SSL certificates (or no certificates) are disabled. If you trust the domain, you can bypass the certificate validation using
