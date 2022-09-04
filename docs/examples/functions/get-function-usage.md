@@ -1,4 +1,3 @@
-appwrite functions listDeployments \
+appwrite functions getFunctionUsage \
         --functionId [FUNCTION_ID] \
-
 
