@@ -1,9 +1,8 @@
 appwrite functions create \
         --functionId [FUNCTION_ID] \
         --name [NAME] \
-        --execute one two three \
+        --execute "any" \
         --runtime node-14.5 \
-
 
 
 

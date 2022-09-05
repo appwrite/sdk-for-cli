@@ -4,4 +4,3 @@ appwrite databases updateDocument \
         --documentId [DOCUMENT_ID] \
 
 
-

@@ -1,4 +1,4 @@
-appwrite functions listDeployments \
+appwrite functions listVariables \
         --functionId [FUNCTION_ID] \
 
 

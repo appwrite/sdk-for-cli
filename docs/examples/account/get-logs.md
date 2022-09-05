@@ -1,3 +1,2 @@
 appwrite account getLogs \
 
-

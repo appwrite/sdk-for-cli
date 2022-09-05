@@ -4,4 +4,3 @@ appwrite databases createDocument \
         --documentId [DOCUMENT_ID] \
         --data '{ "key": "value" }' \
 
-

@@ -1,7 +1,3 @@
 appwrite users list \
 
 
-
-
-
-
