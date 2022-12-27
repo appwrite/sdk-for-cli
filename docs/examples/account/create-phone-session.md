@@ -1,3 +1,3 @@
 appwrite account createPhoneSession \
         --userId [USER_ID] \
-        --phone ''
+        --phone +12065550100

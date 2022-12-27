@@ -3,3 +3,4 @@ appwrite projects updateOAuth2 \
         --provider amazon \
 
 
+

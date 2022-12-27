@@ -1,3 +1,3 @@
 appwrite account updatePhone \
-        --phone '' \
+        --phone +12065550100 \
         --password password

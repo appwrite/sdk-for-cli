@@ -1,3 +1,3 @@
 appwrite users updatePhone \
         --userId [USER_ID] \
-        --number ''
+        --number +12065550100

@@ -11,6 +11,7 @@ const { account } = require("./lib/commands/account");
 const { avatars } = require("./lib/commands/avatars");
 const { databases } = require("./lib/commands/databases");
 const { functions } = require("./lib/commands/functions");
+const { graphql } = require("./lib/commands/graphql");
 const { health } = require("./lib/commands/health");
 const { locale } = require("./lib/commands/locale");
 const { projects } = require("./lib/commands/projects");
@@ -38,6 +39,7 @@ program
   .addCommand(avatars)
   .addCommand(databases)
   .addCommand(functions)
+  .addCommand(graphql)
   .addCommand(health)
   .addCommand(locale)
   .addCommand(projects)
