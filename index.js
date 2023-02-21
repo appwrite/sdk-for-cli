@@ -1,4 +1,10 @@
 #! /usr/bin/env node
+
+/** Required to set max width of the help commands */
+const oldWidth = process.stdout.columns
+process.stdout.columns = 100
+/** ---------------------------------------------- */
+
 const program = require("commander");
 const chalk = require("chalk");
 const { version } = require("./package.json");
@@ -21,6 +27,10 @@ const { users } = require("./lib/commands/users");
 
 program
   .description(commandDescriptions['main'])
+  .configureHelp({
+    helpWidth: process.stdout.columns || 80,
+    sortSubcommands: true
+  })
   .version(version, "-v, --version")
   .option("--verbose", "Show complete error log")
   .option("--json", "Output in JSON format")
@@ -49,3 +59,4 @@ program
   .addCommand(client)
   .parse(process.argv);
   
+process.stdout.columns = oldWidth;
