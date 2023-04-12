@@ -15,6 +15,7 @@ const { init } = require("./lib/commands/init");
 const { deploy } = require("./lib/commands/deploy");
 const { account } = require("./lib/commands/account");
 const { avatars } = require("./lib/commands/avatars");
+const { console } = require("./lib/commands/console");
 const { databases } = require("./lib/commands/databases");
 const { functions } = require("./lib/commands/functions");
 const { graphql } = require("./lib/commands/graphql");
@@ -47,6 +48,7 @@ program
   .addCommand(logout)
   .addCommand(account)
   .addCommand(avatars)
+  .addCommand(console)
   .addCommand(databases)
   .addCommand(functions)
   .addCommand(graphql)
