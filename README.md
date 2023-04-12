@@ -6,7 +6,7 @@
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
-**This SDK is compatible with Appwrite server version 1.2.x. For older versions, please check [previous releases](https://github.com/appwrite/sdk-for-cli/releases).**
+**This SDK is compatible with Appwrite server version 1.3.x. For older versions, please check [previous releases](https://github.com/appwrite/sdk-for-cli/releases).**
 
 Appwrite is an open-source backend as a service server that abstract and simplify complex and repetitive development tasks behind a very simple to use REST API. Appwrite aims to help you develop your apps faster and in a more secure way. Use the Command Line SDK to integrate your app with the Appwrite server to easily start interacting with all of Appwrite backend APIs and tools. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
 
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-1.2.1
+1.3.0
 ```
 
 ### Install using prebuilt binaries
@@ -58,7 +58,7 @@ $ iwr -useb https://appwrite.io/cli/install.ps1 | iex
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-1.2.1
+1.3.0
 ```
 
 ## Getting Started 

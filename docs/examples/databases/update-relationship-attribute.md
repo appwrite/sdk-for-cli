@@ -1,5 +1,5 @@
-appwrite databases getDocument \
+appwrite databases updateRelationshipAttribute \
         --databaseId [DATABASE_ID] \
         --collectionId [COLLECTION_ID] \
-        --documentId [DOCUMENT_ID] \
+        --key '' \
 
