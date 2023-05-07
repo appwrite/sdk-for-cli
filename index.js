@@ -25,6 +25,7 @@ const { projects } = require("./lib/commands/projects");
 const { storage } = require("./lib/commands/storage");
 const { teams } = require("./lib/commands/teams");
 const { users } = require("./lib/commands/users");
+const { flutter } = require("./lib/commands/flutter");
 
 program
   .description(commandDescriptions['main'])
@@ -59,6 +60,7 @@ program
   .addCommand(teams)
   .addCommand(users)
   .addCommand(client)
+  .addCommand(flutter)
   .parse(process.argv);
   
 process.stdout.columns = oldWidth;
