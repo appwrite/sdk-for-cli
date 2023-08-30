@@ -1,3 +1,2 @@
 appwrite projects delete \
-        --projectId [PROJECT_ID] \
-        --password password
+        --projectId [PROJECT_ID]
