@@ -4,3 +4,4 @@ appwrite databases createCollection \
         --name [NAME] \
 
 
+

@@ -6,3 +6,4 @@ appwrite databases createStringAttribute \
         --required false \
 
 
+

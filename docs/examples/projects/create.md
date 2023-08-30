@@ -1,5 +1,5 @@
 appwrite projects create \
-        --projectId [PROJECT_ID] \
+        --projectId '' \
         --name [NAME] \
         --teamId [TEAM_ID] \
 
