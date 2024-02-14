@@ -1,3 +1,3 @@
-appwrite account createEmailPasswordSession \
+appwrite account createEmailSession \
         --email email@example.com \
         --password password
