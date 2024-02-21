@@ -22,7 +22,6 @@ const { functions } = require("./lib/commands/functions");
 const { graphql } = require("./lib/commands/graphql");
 const { health } = require("./lib/commands/health");
 const { locale } = require("./lib/commands/locale");
-const { messaging } = require("./lib/commands/messaging");
 const { migrations } = require("./lib/commands/migrations");
 const { project } = require("./lib/commands/project");
 const { projects } = require("./lib/commands/projects");
@@ -61,7 +60,6 @@ program
   .addCommand(graphql)
   .addCommand(health)
   .addCommand(locale)
-  .addCommand(messaging)
   .addCommand(migrations)
   .addCommand(project)
   .addCommand(projects)

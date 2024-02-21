@@ -3,8 +3,7 @@ appwrite projects updateWebhook \
         --webhookId [WEBHOOK_ID] \
         --name [NAME] \
         --events one two three \
-        --url '' \
+        --url https://example.com \
         --security false \
-
 
 
