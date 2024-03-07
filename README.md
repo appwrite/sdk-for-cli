@@ -44,11 +44,8 @@ $ wget -q https://appwrite.io/cli/install.sh  -O - | /bin/bash
 
 ### MacOS via [Homebrew](https://brew.sh)
 ```bash
-$ brew tap appwrite/sdk-for-cli https://github.com/appwrite/sdk-for-cli
-$ brew update
-$ brew install --HEAD appwrite 
+$ brew install appwrite 
 ```
-> Please note that `--HEAD` will be removed with official release.
 
 ### Windows
 Via Powershell
