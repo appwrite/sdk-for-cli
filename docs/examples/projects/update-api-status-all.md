@@ -1,3 +1,3 @@
-appwrite projects updateAPIStatusAll \
+appwrite projects updateApiStatusAll \
         --projectId <PROJECT_ID> \
         --status false
