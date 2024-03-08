@@ -1,8 +1,9 @@
 appwrite projects createWebhook \
-        --projectId [PROJECT_ID] \
-        --name [NAME] \
+        --projectId <PROJECT_ID> \
+        --name <NAME> \
         --events one two three \
-        --url https://example.com \
+        --url '' \
         --security false \
+
 
 
