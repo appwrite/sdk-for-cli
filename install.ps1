@@ -13,8 +13,8 @@
 # You can use "View source" of this page to see the full script.
 
 # REPO
-$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/5.0.0/appwrite-cli-win-x64.exe"
-$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/5.0.0/appwrite-cli-win-arm64.exe"
+$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/5.0.1/appwrite-cli-win-x64.exe"
+$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/5.0.1/appwrite-cli-win-arm64.exe"
 
 $APPWRITE_BINARY_NAME = "appwrite.exe"
 
@@ -30,11 +30,11 @@ $USER_PATH_ENV_VAR = [Environment]::GetEnvironmentVariable("PATH", "User")
 function Greeting {
     Write-Host @"
 
-     _                            _ _           ___   __   _____ 
+     _                            _ _           ___   __   _____
     /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
    //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
-  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
-  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_
+  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/
         |_|   |_|                                                
 
 "@ -ForegroundColor red

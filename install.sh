@@ -44,11 +44,11 @@ greeting() {
     echo -e "${RED}"
     cat << "EOF"
 
-     _                            _ _           ___   __   _____ 
+     _                            _ _           ___   __   _____
     /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
    //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
-  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
-  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_
+  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/
         |_|   |_|                                                
 EOF
     echo -e "${NC}\n"
@@ -97,7 +97,7 @@ printSuccess() {
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="5.0.0"
+    GITHUB_LATEST_VERSION="5.0.1"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
