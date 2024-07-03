@@ -145,8 +145,8 @@ cleanup() {
 installCompleted() {
     echo "[4/4] Wrapping up installation ... "
     cleanup
-    printf "🤘 May the force be with you. \n"
     echo "🚀 To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    echo "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 
 # Installation Starts here 

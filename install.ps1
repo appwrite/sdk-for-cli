@@ -85,8 +85,8 @@ function CleanUp {
 function InstallCompleted {
     Write-Host "[4/4] Finishing Installation ... "
     cleanup
-    Write-Host "🤘 May the force be with you."
     Write-Host "To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    Write-Host "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 
 

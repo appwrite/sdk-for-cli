@@ -10,9 +10,12 @@ const chalk = require("chalk");
 const { version } = require("./package.json");
 const { commandDescriptions, cliConfig } = require("./lib/parser");
 const { client } = require("./lib/commands/generic");
-const { login, logout } = require("./lib/commands/generic");
+const inquirer = require("inquirer");
+const { login, logout, whoami, migrate, register } = require("./lib/commands/generic");
 const { init } = require("./lib/commands/init");
-const { deploy } = require("./lib/commands/deploy");
+const { pull } = require("./lib/commands/pull");
+const { run } = require("./lib/commands/run");
+const { push } = require("./lib/commands/push");
 const { account } = require("./lib/commands/account");
 const { avatars } = require("./lib/commands/avatars");
 const { assistant } = require("./lib/commands/assistant");
@@ -32,6 +35,8 @@ const { teams } = require("./lib/commands/teams");
 const { users } = require("./lib/commands/users");
 const { vcs } = require("./lib/commands/vcs");
 
+inquirer.registerPrompt('search-list', require('inquirer-search-list'));
+
 program
   .description(commandDescriptions['main'])
   .configureHelp({
@@ -39,18 +44,40 @@ program
     sortSubcommands: true
   })
   .version(version, "-v, --version")
-  .option("--verbose", "Show complete error log")
-  .option("--json", "Output in JSON format")
+  .option("-V, --verbose", "Show complete error log")
+  .option("-j, --json", "Output in JSON format")
+  .hook('preAction', migrate)
+  .option("-f,--force", "Flag to confirm all warnings")
+  .option("-a,--all", "Flag to push all resources")
+  .option("--id [id...]", "Flag to pass list of ids for a giving action")
+  .option("--report", "Enable reporting in case of CLI errors")
   .on("option:json", () => {
     cliConfig.json = true;
   })
   .on("option:verbose", () => {
     cliConfig.verbose = true;
   })
+  .on("option:report", function() {
+    cliConfig.report = true;
+    cliConfig.reportData = { data: this };
+  })
+  .on("option:force", () => {
+    cliConfig.force = true;
+  })
+  .on("option:all", () => {
+    cliConfig.all = true;
+  })
+  .on("option:id", function() {
+    cliConfig.ids = this.opts().id;
+  })
   .showSuggestionAfterError()
+  .addCommand(whoami)
+  .addCommand(register)
   .addCommand(login)
   .addCommand(init)
-  .addCommand(deploy)
+  .addCommand(pull)
+  .addCommand(push)
+  .addCommand(run)
   .addCommand(logout)
   .addCommand(account)
   .addCommand(avatars)
@@ -72,5 +99,5 @@ program
   .addCommand(vcs)
   .addCommand(client)
   .parse(process.argv);
-  
+
 process.stdout.columns = oldWidth;
