@@ -15,7 +15,7 @@ const { login, logout, whoami, migrate, register } = require("./lib/commands/gen
 const { init } = require("./lib/commands/init");
 const { pull } = require("./lib/commands/pull");
 const { run } = require("./lib/commands/run");
-const { push } = require("./lib/commands/push");
+const { push, deploy } = require("./lib/commands/push");
 const { account } = require("./lib/commands/account");
 const { avatars } = require("./lib/commands/avatars");
 const { assistant } = require("./lib/commands/assistant");
@@ -77,6 +77,7 @@ program
   .addCommand(init)
   .addCommand(pull)
   .addCommand(push)
+  .addCommand(deploy)
   .addCommand(run)
   .addCommand(logout)
   .addCommand(account)
