@@ -2,7 +2,7 @@
   "name": "appwrite-cli",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstract and simplify complex and repetitive development tasks behind a very simple REST API",
-  "version": "6.0.0-rc.5",
+  "version": "6.0.0-rc.6",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "bin": {
@@ -34,7 +34,8 @@
     "tar": "^6.1.11",
     "ignore": "^5.2.0",
     "chokidar": "^3.6.0",
-    "tail": "^2.2.6"
+    "tail": "^2.2.6",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "pkg": "5.8.1"
