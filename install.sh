@@ -97,7 +97,7 @@ printSuccess() {
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="5.0.5"
+    GITHUB_LATEST_VERSION="6.0.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -145,8 +145,8 @@ cleanup() {
 installCompleted() {
     echo "[4/4] Wrapping up installation ... "
     cleanup
-    printf "🤘 May the force be with you. \n"
     echo "🚀 To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    echo "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 
 # Installation Starts here 

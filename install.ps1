@@ -13,8 +13,8 @@
 # You can use "View source" of this page to see the full script.
 
 # REPO
-$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/5.0.5/appwrite-cli-win-x64.exe"
-$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/5.0.5/appwrite-cli-win-arm64.exe"
+$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/6.0.0/appwrite-cli-win-x64.exe"
+$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/6.0.0/appwrite-cli-win-arm64.exe"
 
 $APPWRITE_BINARY_NAME = "appwrite.exe"
 
@@ -85,8 +85,8 @@ function CleanUp {
 function InstallCompleted {
     Write-Host "[4/4] Finishing Installation ... "
     cleanup
-    Write-Host "🤘 May the force be with you."
     Write-Host "To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    Write-Host "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 
 
