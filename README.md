@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-6.2.2
+6.2.3
 ```
 
 ### Install using prebuilt binaries
@@ -60,7 +60,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-6.2.2
+6.2.3
 ```
 
 ## Getting Started 
@@ -124,7 +124,7 @@ My Awesome Function
 You can now deploy this function using 
 
 ```sh
-$ appwrite deploy function
+$ appwrite push function
 
 ? Which functions would you like to deploy? My Awesome Function (61d1a4c81dfcd95bc834)
 ℹ Info Deploying function My Awesome Function ( 61d1a4c81dfcd95bc834 )
@@ -138,7 +138,7 @@ Your function has now been deployed on your Appwrite server! As soon as the buil
 Similarly, you can deploy all your collections to your Appwrite server using 
 
 ```sh
-appwrite deploy collections
+appwrite push collections
 ```
 
 > ### Note
@@ -163,7 +163,7 @@ $ appwrite users list
 
 To create a document you can use the following command 
 ```sh
-$ appwrite database createDocument --collectionId <ID> --documentId 'unique()' --data '{ "Name": "Iron Man" }' --permissions 'read("any")' 'read("team:abc")'
+$ appwrite databases create-document --database-id <DATABASE_ID> --collection-id <COLLECTION_ID> --document-id "unique()" --data '{"name": "Walter O Brein"}' --permissions 'read("any")' 'read("team:abc")'
 ```
 
 ### Some Gotchas
@@ -206,6 +206,7 @@ The Appwrite CLI can also work in a CI environment. The initialisation of the CL
 ```sh
 appwrite client --endpoint http://localhost/v1 --projectId <PROJECT_ID> --key <API KEY>
 ```
+
 
 ## Contribution
 
