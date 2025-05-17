@@ -17,7 +17,3 @@ appwrite functions create \
 
 
 
-
-
-
-
