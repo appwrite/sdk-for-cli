@@ -3,3 +3,4 @@ appwrite functions updateVariable \
         --variableId <VARIABLE_ID> \
         --key <KEY> \
 
+

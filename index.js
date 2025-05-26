@@ -30,8 +30,10 @@ const { migrations } = require("./lib/commands/migrations");
 const { project } = require("./lib/commands/project");
 const { projects } = require("./lib/commands/projects");
 const { proxy } = require("./lib/commands/proxy");
+const { sites } = require("./lib/commands/sites");
 const { storage } = require("./lib/commands/storage");
 const { teams } = require("./lib/commands/teams");
+const { tokens } = require("./lib/commands/tokens");
 const { users } = require("./lib/commands/users");
 const { vcs } = require("./lib/commands/vcs");
 
@@ -95,8 +97,10 @@ program
   .addCommand(project)
   .addCommand(projects)
   .addCommand(proxy)
+  .addCommand(sites)
   .addCommand(storage)
   .addCommand(teams)
+  .addCommand(tokens)
   .addCommand(users)
   .addCommand(vcs)
   .addCommand(client)
