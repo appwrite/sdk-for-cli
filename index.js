@@ -13,12 +13,12 @@ const { client } = require("./lib/commands/generic");
 const inquirer = require("inquirer");
 const { login, logout, whoami, migrate, register } = require("./lib/commands/generic");
 const { init } = require("./lib/commands/init");
+const { types } = require("./lib/commands/types");
 const { pull } = require("./lib/commands/pull");
 const { run } = require("./lib/commands/run");
 const { push, deploy } = require("./lib/commands/push");
 const { account } = require("./lib/commands/account");
 const { avatars } = require("./lib/commands/avatars");
-const { assistant } = require("./lib/commands/assistant");
 const { console } = require("./lib/commands/console");
 const { databases } = require("./lib/commands/databases");
 const { functions } = require("./lib/commands/functions");
@@ -80,12 +80,12 @@ program
   .addCommand(init)
   .addCommand(pull)
   .addCommand(push)
+  .addCommand(types)
   .addCommand(deploy)
   .addCommand(run)
   .addCommand(logout)
   .addCommand(account)
   .addCommand(avatars)
-  .addCommand(assistant)
   .addCommand(console)
   .addCommand(databases)
   .addCommand(functions)
