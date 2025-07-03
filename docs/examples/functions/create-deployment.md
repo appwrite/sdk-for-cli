@@ -1,5 +1,6 @@
 appwrite functions createDeployment \
-        --functionId [FUNCTION_ID] \
-        --entrypoint [ENTRYPOINT] \
+        --functionId <FUNCTION_ID> \
         --code 'path/to/file.png' \
-        --activate false
+        --activate false \
+
+

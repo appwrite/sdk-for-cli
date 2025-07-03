@@ -1,7 +1,7 @@
 appwrite storage createBucket \
-        --bucketId [BUCKET_ID] \
-        --name [NAME] \
-        --permission file \
+        --bucketId <BUCKET_ID> \
+        --name <NAME> \
+
 
 
 

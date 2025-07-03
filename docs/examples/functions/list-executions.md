@@ -1,7 +1,3 @@
 appwrite functions listExecutions \
-        --functionId [FUNCTION_ID] \
-
-
-
-
+        --functionId <FUNCTION_ID> \
 

@@ -1,3 +1,3 @@
 appwrite account createSession \
-        --email email@example.com \
-        --password password
+        --userId <USER_ID> \
+        --secret <SECRET>

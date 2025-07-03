@@ -1,7 +1,3 @@
 appwrite teams list \
 
 
-
-
-
-

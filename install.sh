@@ -44,11 +44,11 @@ greeting() {
     echo -e "${RED}"
     cat << "EOF"
 
-     _                            _ _           ___   __   _____ 
+     _                            _ _           ___   __   _____
     /_\  _ __  _ ____      ___ __(_) |_ ___    / __\ / /   \_   \
    //_\\| '_ \| '_ \ \ /\ / / '__| | __/ _ \  / /   / /     / /\/
-  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_  
-  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/  
+  /  _  \ |_) | |_) \ V  V /| |  | | ||  __/ / /___/ /___/\/ /_
+  \_/ \_/ .__/| .__/ \_/\_/ |_|  |_|\__\___| \____/\____/\____/
         |_|   |_|                                                
 EOF
     echo -e "${NC}\n"
@@ -97,7 +97,7 @@ printSuccess() {
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="0.15.0"
+    GITHUB_LATEST_VERSION="8.1.1"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -145,8 +145,8 @@ cleanup() {
 installCompleted() {
     echo "[4/4] Wrapping up installation ... "
     cleanup
-    printf "🤘 May the force be with you. \n"
     echo "🚀 To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
+    echo "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
 
 # Installation Starts here 

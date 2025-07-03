@@ -2,7 +2,7 @@
   "name": "appwrite-cli",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstract and simplify complex and repetitive development tasks behind a very simple REST API",
-  "version": "0.15.0",
+  "version": "8.1.1",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "bin": {
@@ -14,24 +14,32 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "linux-x64": "pkg -t node16-linux-x64 -o build/appwrite-cli-linux-x64 package.json",
-    "linux-arm64": "pkg -t node16-linux-arm64 -o build/appwrite-cli-linux-arm64 package.json",
-    "mac-x64": "pkg -t node16-macos-x64 -o build/appwrite-cli-darwin-x64 package.json",
-    "mac-arm64": "pkg -t node16-macos-arm64 -o build/appwrite-cli-darwin-arm64 package.json",
-    "windows-x64": "pkg -t node16-win-x64 -o build/appwrite-cli-win-x64.exe package.json",
-    "windows-arm64": "pkg -t node16-win-arm64 -o build/appwrite-cli-win-arm64.exe package.json"
+    "linux-x64": "pkg -t node18-linux-x64 -o build/appwrite-cli-linux-x64 package.json",
+    "linux-arm64": "pkg -t node18-linux-arm64 -o build/appwrite-cli-linux-arm64 package.json",
+    "mac-x64": "pkg -t node18-macos-x64 -o build/appwrite-cli-darwin-x64 package.json",
+    "mac-arm64": "pkg -t node18-macos-arm64 -o build/appwrite-cli-darwin-arm64 package.json",
+    "windows-x64": "pkg -t node18-win-x64 -o build/appwrite-cli-win-x64.exe package.json",
+    "windows-arm64": "pkg -t node18-win-arm64 -o build/appwrite-cli-win-arm64.exe package.json"
   },
   "dependencies": {
-    "axios": "^0.24.0",
+    "undici": "^5.28.2",
+    "ejs": "^3.1.9",
     "chalk": "4.1.2",
-    "cli-table3": "^0.6.1",
-    "commander": "^8.3.0",
+    "cli-progress": "^3.12.0",
+    "cli-table3": "^0.6.2",
+    "commander": "^9.2.0",
     "form-data": "^4.0.0",
-    "inquirer": "^8.2.0",
-    "tar": "^6.1.11"
+    "json-bigint": "^1.0.0",
+    "inquirer": "^8.2.4",
+    "inquirer-search-list": "^1.2.6",
+    "tar": "^6.1.11",
+    "ignore": "^5.2.0",
+    "chokidar": "^3.6.0",
+    "tail": "^2.2.6",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
-    "pkg": "5.5.1"
+    "pkg": "5.8.1"
   },
   "pkg": {
     "scripts": [
