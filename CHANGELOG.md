@@ -24,7 +24,7 @@
 
 * Add Type generation fixes:
   * Properly handle enum attributes in dart, java and kotlin
-  * Fix initialisation of null attributes in dart&#039;s fromMap method
+  * Fix initialisation of null attributes in dart's fromMap method
   * Fix relationships and enums in swift
 
 ## 8.0.1
