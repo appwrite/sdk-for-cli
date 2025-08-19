@@ -1,3 +1,4 @@
-appwrite databases getDatabaseUsage \
+appwrite tablesDb listTables \
         --databaseId <DATABASE_ID> \
+
 
