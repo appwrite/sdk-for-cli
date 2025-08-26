@@ -10,6 +10,7 @@ const chalk = require("chalk");
 const { version } = require("./package.json");
 const { commandDescriptions, cliConfig } = require("./lib/parser");
 const { client } = require("./lib/commands/generic");
+const { getLatestVersion, compareVersions } = require("./lib/utils");
 const inquirer = require("inquirer");
 const { login, logout, whoami, migrate, register } = require("./lib/commands/generic");
 const { init } = require("./lib/commands/init");
@@ -17,6 +18,7 @@ const { types } = require("./lib/commands/types");
 const { pull } = require("./lib/commands/pull");
 const { run } = require("./lib/commands/run");
 const { push, deploy } = require("./lib/commands/push");
+const { update } = require("./lib/commands/update");
 const { account } = require("./lib/commands/account");
 const { avatars } = require("./lib/commands/avatars");
 const { console } = require("./lib/commands/console");
@@ -32,12 +34,48 @@ const { projects } = require("./lib/commands/projects");
 const { proxy } = require("./lib/commands/proxy");
 const { sites } = require("./lib/commands/sites");
 const { storage } = require("./lib/commands/storage");
+const { tablesDB } = require("./lib/commands/tables-db");
 const { teams } = require("./lib/commands/teams");
 const { tokens } = require("./lib/commands/tokens");
 const { users } = require("./lib/commands/users");
 const { vcs } = require("./lib/commands/vcs");
 
 inquirer.registerPrompt('search-list', require('inquirer-search-list'));
+
+/**
+ * Check for updates and show version information
+ */
+async function checkVersion() {
+    process.stdout.write(chalk.bold(`appwrite version ${version}`) + '\n');
+    
+    try {
+        const latestVersion = await getLatestVersion();
+        const comparison = compareVersions(version, latestVersion);
+        
+        if (comparison > 0) {
+            // Current version is older than latest
+            process.stdout.write(chalk.yellow(`\n⚠️  A newer version is available: ${chalk.bold(latestVersion)}`) + '\n');
+            process.stdout.write(chalk.cyan(`💡 Run '${chalk.bold('appwrite update')}' to update to the latest version.`) + '\n');
+        } else if (comparison === 0) {
+            process.stdout.write(chalk.green('\n✅ You are running the latest version!') + '\n');
+        } else {
+            // Current version is newer than latest (pre-release/dev)
+            process.stdout.write(chalk.blue('\n🚀 You are running a pre-release or development version.') + '\n');
+        }
+    } catch (error) {
+        // Silently fail version check, just show current version
+        process.stdout.write(chalk.gray('\n(Unable to check for updates)') + '\n');
+    }
+}
+
+// Intercept version flag before Commander.js processes it
+if (process.argv.includes('-v') || process.argv.includes('--version')) {
+    (async () => {
+        await checkVersion();
+        process.exit(0);
+    })();
+    return;
+}
 
 program
   .description(commandDescriptions['main'])
@@ -83,6 +121,7 @@ program
   .addCommand(types)
   .addCommand(deploy)
   .addCommand(run)
+  .addCommand(update)
   .addCommand(logout)
   .addCommand(account)
   .addCommand(avatars)
@@ -99,6 +138,7 @@ program
   .addCommand(proxy)
   .addCommand(sites)
   .addCommand(storage)
+  .addCommand(tablesdb)
   .addCommand(teams)
   .addCommand(tokens)
   .addCommand(users)
