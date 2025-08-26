@@ -138,7 +138,7 @@ program
   .addCommand(proxy)
   .addCommand(sites)
   .addCommand(storage)
-  .addCommand(tablesdb)
+  .addCommand(tablesDB)
   .addCommand(teams)
   .addCommand(tokens)
   .addCommand(users)
