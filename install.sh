@@ -97,7 +97,7 @@ printSuccess() {
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="9.0.2"
+    GITHUB_LATEST_VERSION="9.1.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
