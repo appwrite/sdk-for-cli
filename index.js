@@ -20,7 +20,6 @@ const { run } = require("./lib/commands/run");
 const { push, deploy } = require("./lib/commands/push");
 const { update } = require("./lib/commands/update");
 const { account } = require("./lib/commands/account");
-const { avatars } = require("./lib/commands/avatars");
 const { console } = require("./lib/commands/console");
 const { databases } = require("./lib/commands/databases");
 const { functions } = require("./lib/commands/functions");
@@ -124,7 +123,6 @@ program
   .addCommand(update)
   .addCommand(logout)
   .addCommand(account)
-  .addCommand(avatars)
   .addCommand(console)
   .addCommand(databases)
   .addCommand(functions)
