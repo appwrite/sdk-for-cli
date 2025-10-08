@@ -1,5 +1,10 @@
 # Change Log
 
+## 10.0.2
+
+* Deprecate `createVerification` method in `Account` service
+* Add `createEmailVerification` method in `Account` service
+
 ## 10.0.1
 
 * Fix CLI Dart model generation issues
