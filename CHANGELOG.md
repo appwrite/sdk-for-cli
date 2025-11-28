@@ -1,5 +1,9 @@
 # Change Log
 
+## 12.1.0
+
+* Add `getScreenshot` method to `Avatars` service
+
 ## 12.0.0
 
 * Change `create-deployment-template`'s `version` parameter to `type` and `reference`. eg. usage - `create-deployment-template --type tag --reference 1.0.0`
