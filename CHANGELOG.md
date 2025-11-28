@@ -1,8 +1,8 @@
 # Change Log
 
-## 12.1.0
+## 12.0.1
 
-* Add `getScreenshot` method to `Avatars` service
+Fix type generation for `point`, `lineString` and `polygon` columns
 
 ## 12.0.0
 
