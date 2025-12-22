@@ -13,8 +13,8 @@
 # You can use "View source" of this page to see the full script.
 
 # REPO
-$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/12.0.1/appwrite-cli-win-x64.exe"
-$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/12.0.1/appwrite-cli-win-arm64.exe"
+$GITHUB_x64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/13.0.0-rc.1/appwrite-cli-win-x64.exe"
+$GITHUB_arm64_URL = "https://github.com/appwrite/sdk-for-cli/releases/download/13.0.0-rc.1/appwrite-cli-win-arm64.exe"
 
 $APPWRITE_BINARY_NAME = "appwrite.exe"
 
@@ -41,7 +41,6 @@ function Greeting {
     Write-Host "Welcome to the Appwrite CLI install shield."  
 }
 
-
 function CheckSystemInfo {
     Write-Host "[1/4] Getting System Info ..."
     if ((Get-ExecutionPolicy) -gt 'RemoteSigned' -or (Get-ExecutionPolicy) -eq 'ByPass') {
@@ -66,7 +65,6 @@ function DownloadBinary {
     Move-Item $APPWRITE_DOWNLOAD_DIR $APPWRITE_INSTALL_PATH
 }
 
-
 function Install {
     Write-Host "[3/4] Starting installation ..."
 
@@ -88,7 +86,6 @@ function InstallCompleted {
     Write-Host "To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
     Write-Host "As first step, you can login to your Appwrite account using 'appwrite login'"
 }
-
 
 Greeting
 CheckSystemInfo

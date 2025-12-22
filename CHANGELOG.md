@@ -1,5 +1,9 @@
 # Change Log
 
+## 13.0.0-rc.1
+
+* Migrates codebase from JavaScript to TypeScript
+
 ## 12.0.1
 
 Fix type generation for `point`, `lineString` and `polygon` columns

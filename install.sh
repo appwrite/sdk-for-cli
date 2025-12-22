@@ -39,7 +39,6 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-
 greeting() {
     echo -e "${RED}"
     cat << "EOF"
@@ -97,7 +96,7 @@ printSuccess() {
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="12.0.1"
+    GITHUB_LATEST_VERSION="13.0.0-rc.1"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
