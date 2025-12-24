@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,11 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { Compression } from '../enums/compression';
+import { ImageGravity } from '../enums/image-gravity';
+import { ImageFormat } from '../enums/image-format';
+import { UsageRange } from '../enums/usage-range';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -104,7 +109,7 @@ export const storageCreateBucket = async ({bucketId,name,permissions,fileSecurit
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -117,7 +122,7 @@ export const storageCreateBucket = async ({bucketId,name,permissions,fileSecurit
     if (typeof maximumFileSize !== 'undefined') {
         payload['maximumFileSize'] = maximumFileSize;
     }
-    allowedFileExtensions = allowedFileExtensions === true ? [] : allowedFileExtensions;
+    allowedFileExtensions = (allowedFileExtensions as unknown) === true ? [] : allowedFileExtensions;
     if (typeof allowedFileExtensions !== 'undefined') {
         payload['allowedFileExtensions'] = allowedFileExtensions;
     }
@@ -202,7 +207,7 @@ export const storageUpdateBucket = async ({bucketId,name,permissions,fileSecurit
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -215,7 +220,7 @@ export const storageUpdateBucket = async ({bucketId,name,permissions,fileSecurit
     if (typeof maximumFileSize !== 'undefined') {
         payload['maximumFileSize'] = maximumFileSize;
     }
-    allowedFileExtensions = allowedFileExtensions === true ? [] : allowedFileExtensions;
+    allowedFileExtensions = (allowedFileExtensions as unknown) === true ? [] : allowedFileExtensions;
     if (typeof allowedFileExtensions !== 'undefined') {
         payload['allowedFileExtensions'] = allowedFileExtensions;
     }
@@ -321,10 +326,10 @@ interface StorageCreateFileRequestParams {
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
-    onProgress?: (progress: number) => void;
+    onProgress?: (progress: UploadProgress) => void;
 }
 
-export const storageCreateFile = async ({bucketId,fileId,file,permissions,parseOutput = true, overrideForCli = false, sdk = undefined,onProgress = () => {}}: StorageCreateFileRequestParams): Promise<any> => {
+export const storageCreateFile = async ({bucketId,fileId,file,permissions,parseOutput = true, overrideForCli = false, sdk = undefined,onProgress = (progress: any) => {}}: StorageCreateFileRequestParams): Promise<any> => {
     let client = !sdk ? await sdkForProject() :
     sdk;
     let apiPath = '/storage/buckets/{bucketId}/files'.replace('{bucketId}', bucketId);
@@ -336,16 +341,19 @@ export const storageCreateFile = async ({bucketId,fileId,file,permissions,parseO
     const nodeStream = fs.createReadStream(filePath);
     const stream = convertReadStreamToReadableStream(nodeStream);
 
-    if (typeof filePath !== 'undefined') {
-        file = { type: 'file', stream, filename: pathLib.basename(filePath), size: fs.statSync(filePath).size };
-        payload['file'] = file
-    }
-    permissions = permissions === true ? [] : permissions;
+    const fileUpload: FileInput = { 
+        type: 'file', 
+        stream, 
+        filename: pathLib.basename(filePath), 
+        size: fs.statSync(filePath).size 
+    };
+    payload['file'] = fileUpload;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
 
-    const size = file.size;
+    const size = fileUpload.size;
 
     const apiHeaders = {
         'content-type': 'multipart/form-data',
@@ -395,7 +403,7 @@ export const storageCreateFile = async ({bucketId,fileId,file,permissions,parseO
             apiHeaders['x-appwrite-id'] = id;
         }
 
-        payload['file'] = { type: 'file', file: new File([uploadableChunkTrimmed], file.filename), filename: file.filename };
+        payload['file'] = { type: 'file', file: new File([uploadableChunkTrimmed], fileUpload.filename), filename: fileUpload.filename };
 
         response = await client.call('post', apiPath, apiHeaders, payload);
 
@@ -418,7 +426,7 @@ export const storageCreateFile = async ({bucketId,fileId,file,permissions,parseO
         currentPosition = 0;
     }
 
-    for await (const chunk of file.stream) {
+    for await (const chunk of fileUpload.stream) {
         for(const b of chunk) {
             uploadableChunk[currentPosition] = b;
 
@@ -490,7 +498,7 @@ export const storageUpdateFile = async ({bucketId,fileId,name,permissions,parseO
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }

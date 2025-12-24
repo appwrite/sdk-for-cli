@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,11 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { UsageRange } from '../enums/usage-range';
+import { RelationshipType } from '../enums/relationship-type';
+import { RelationMutate } from '../enums/relation-mutate';
+import { IndexType } from '../enums/index-type';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -267,7 +272,7 @@ export const databasesDeleteTransaction = async ({transactionId,parseOutput = tr
 }
 interface DatabasesCreateOperationsRequestParams {
     transactionId: string;
-    operations?: object[];
+    operations?: string[];
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
@@ -278,7 +283,7 @@ export const databasesCreateOperations = async ({transactionId,operations,parseO
     sdk;
     let apiPath = '/databases/transactions/{transactionId}/operations'.replace('{transactionId}', transactionId);
     let payload = {};
-    operations = operations === true ? [] : operations;
+    operations = (operations as unknown) === true ? [] : operations;
     if (typeof operations !== 'undefined') {
         payload['operations'] = operations;
     }
@@ -468,8 +473,8 @@ interface DatabasesCreateCollectionRequestParams {
     permissions?: string[];
     documentSecurity?: boolean;
     enabled?: boolean;
-    attributes?: object[];
-    indexes?: object[];
+    attributes?: string[];
+    indexes?: string[];
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
@@ -486,7 +491,7 @@ export const databasesCreateCollection = async ({databaseId,collectionId,name,pe
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -496,11 +501,11 @@ export const databasesCreateCollection = async ({databaseId,collectionId,name,pe
     if (typeof enabled !== 'undefined') {
         payload['enabled'] = enabled;
     }
-    attributes = attributes === true ? [] : attributes;
+    attributes = (attributes as unknown) === true ? [] : attributes;
     if (typeof attributes !== 'undefined') {
         payload['attributes'] = attributes;
     }
-    indexes = indexes === true ? [] : indexes;
+    indexes = (indexes as unknown) === true ? [] : indexes;
     if (typeof indexes !== 'undefined') {
         payload['indexes'] = indexes;
     }
@@ -569,7 +574,7 @@ export const databasesUpdateCollection = async ({databaseId,collectionId,name,pe
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -929,7 +934,7 @@ export const databasesCreateEnumAttribute = async ({databaseId,collectionId,key,
     if (typeof key !== 'undefined') {
         payload['key'] = key;
     }
-    elements = elements === true ? [] : elements;
+    elements = (elements as unknown) === true ? [] : elements;
     if (typeof elements !== 'undefined') {
         payload['elements'] = elements;
     }
@@ -974,7 +979,7 @@ export const databasesUpdateEnumAttribute = async ({databaseId,collectionId,key,
     sdk;
     let apiPath = '/databases/{databaseId}/collections/{collectionId}/attributes/enum/{key}'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId).replace('{key}', key);
     let payload = {};
-    elements = elements === true ? [] : elements;
+    elements = (elements as unknown) === true ? [] : elements;
     if (typeof elements !== 'undefined') {
         payload['elements'] = elements;
     }
@@ -1304,7 +1309,7 @@ export const databasesCreateLineAttribute = async ({databaseId,collectionId,key,
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1342,7 +1347,7 @@ export const databasesUpdateLineAttribute = async ({databaseId,collectionId,key,
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1385,7 +1390,7 @@ export const databasesCreatePointAttribute = async ({databaseId,collectionId,key
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1423,7 +1428,7 @@ export const databasesUpdatePointAttribute = async ({databaseId,collectionId,key
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1466,7 +1471,7 @@ export const databasesCreatePolygonAttribute = async ({databaseId,collectionId,k
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1504,7 +1509,7 @@ export const databasesUpdatePolygonAttribute = async ({databaseId,collectionId,k
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1892,7 +1897,7 @@ interface DatabasesCreateDocumentRequestParams {
     databaseId: string;
     collectionId: string;
     documentId: string;
-    data: object;
+    data: string;
     permissions?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -1911,7 +1916,7 @@ export const databasesCreateDocument = async ({databaseId,collectionId,documentI
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -1935,7 +1940,7 @@ export const databasesCreateDocument = async ({databaseId,collectionId,documentI
 interface DatabasesCreateDocumentsRequestParams {
     databaseId: string;
     collectionId: string;
-    documents: object[];
+    documents: string[];
     transactionId?: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
@@ -1947,7 +1952,7 @@ export const databasesCreateDocuments = async ({databaseId,collectionId,document
     sdk;
     let apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
     let payload = {};
-    documents = documents === true ? [] : documents;
+    documents = (documents as unknown) === true ? [] : documents;
     if (typeof documents !== 'undefined') {
         payload['documents'] = documents;
     }
@@ -1971,7 +1976,7 @@ export const databasesCreateDocuments = async ({databaseId,collectionId,document
 interface DatabasesUpsertDocumentsRequestParams {
     databaseId: string;
     collectionId: string;
-    documents: object[];
+    documents: string[];
     transactionId?: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
@@ -1983,7 +1988,7 @@ export const databasesUpsertDocuments = async ({databaseId,collectionId,document
     sdk;
     let apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
     let payload = {};
-    documents = documents === true ? [] : documents;
+    documents = (documents as unknown) === true ? [] : documents;
     if (typeof documents !== 'undefined') {
         payload['documents'] = documents;
     }
@@ -2007,7 +2012,7 @@ export const databasesUpsertDocuments = async ({databaseId,collectionId,document
 interface DatabasesUpdateDocumentsRequestParams {
     databaseId: string;
     collectionId: string;
-    data?: object;
+    data?: string;
     queries?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2023,7 +2028,7 @@ export const databasesUpdateDocuments = async ({databaseId,collectionId,data,que
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    queries = queries === true ? [] : queries;
+    queries = (queries as unknown) === true ? [] : queries;
     if (typeof queries !== 'undefined') {
         payload['queries'] = queries;
     }
@@ -2059,7 +2064,7 @@ export const databasesDeleteDocuments = async ({databaseId,collectionId,queries,
     sdk;
     let apiPath = '/databases/{databaseId}/collections/{collectionId}/documents'.replace('{databaseId}', databaseId).replace('{collectionId}', collectionId);
     let payload = {};
-    queries = queries === true ? [] : queries;
+    queries = (queries as unknown) === true ? [] : queries;
     if (typeof queries !== 'undefined') {
         payload['queries'] = queries;
     }
@@ -2124,7 +2129,7 @@ interface DatabasesUpsertDocumentRequestParams {
     databaseId: string;
     collectionId: string;
     documentId: string;
-    data?: object;
+    data?: string;
     permissions?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2140,7 +2145,7 @@ export const databasesUpsertDocument = async ({databaseId,collectionId,documentI
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -2165,7 +2170,7 @@ interface DatabasesUpdateDocumentRequestParams {
     databaseId: string;
     collectionId: string;
     documentId: string;
-    data?: object;
+    data?: string;
     permissions?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2181,7 +2186,7 @@ export const databasesUpdateDocument = async ({databaseId,collectionId,documentI
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -2410,15 +2415,15 @@ export const databasesCreateIndex = async ({databaseId,collectionId,key,type,att
     if (typeof type !== 'undefined') {
         payload['type'] = type;
     }
-    attributes = attributes === true ? [] : attributes;
+    attributes = (attributes as unknown) === true ? [] : attributes;
     if (typeof attributes !== 'undefined') {
         payload['attributes'] = attributes;
     }
-    orders = orders === true ? [] : orders;
+    orders = (orders as unknown) === true ? [] : orders;
     if (typeof orders !== 'undefined') {
         payload['orders'] = orders;
     }
-    lengths = lengths === true ? [] : lengths;
+    lengths = (lengths as unknown) === true ? [] : lengths;
     if (typeof lengths !== 'undefined') {
         payload['lengths'] = lengths;
     }

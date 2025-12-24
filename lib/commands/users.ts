@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,11 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { PasswordHash } from '../enums/password-hash';
+import { UsageRange } from '../enums/usage-range';
+import { AuthenticatorType } from '../enums/authenticator-type';
+import { MessagingProviderType } from '../enums/messaging-provider-type';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -667,7 +672,7 @@ export const usersUpdateLabels = async ({userId,labels,parseOutput = true, overr
     sdk;
     let apiPath = '/users/{userId}/labels'.replace('{userId}', userId);
     let payload = {};
-    labels = labels === true ? [] : labels;
+    labels = (labels as unknown) === true ? [] : labels;
     if (typeof labels !== 'undefined') {
         payload['labels'] = labels;
     }
@@ -1031,7 +1036,7 @@ export const usersGetPrefs = async ({userId,parseOutput = true, overrideForCli =
 }
 interface UsersUpdatePrefsRequestParams {
     userId: string;
-    prefs: object;
+    prefs: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;

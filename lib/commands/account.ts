@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,10 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { AuthenticatorType } from '../enums/authenticator-type';
+import { AuthenticationFactor } from '../enums/authentication-factor';
+import { OAuthProvider } from '../enums/o-auth-provider';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -669,7 +673,7 @@ export const accountGetPrefs = async ({parseOutput = true, overrideForCli = fals
 
 }
 interface AccountUpdatePrefsRequestParams {
-    prefs: object;
+    prefs: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;

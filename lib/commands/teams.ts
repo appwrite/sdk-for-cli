@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,7 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -96,7 +97,7 @@ export const teamsCreate = async ({teamId,name,roles,parseOutput = true, overrid
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    roles = roles === true ? [] : roles;
+    roles = (roles as unknown) === true ? [] : roles;
     if (typeof roles !== 'undefined') {
         payload['roles'] = roles;
     }
@@ -297,7 +298,7 @@ export const teamsCreateMembership = async ({teamId,roles,email,userId,phone,url
     if (typeof phone !== 'undefined') {
         payload['phone'] = phone;
     }
-    roles = roles === true ? [] : roles;
+    roles = (roles as unknown) === true ? [] : roles;
     if (typeof roles !== 'undefined') {
         payload['roles'] = roles;
     }
@@ -361,7 +362,7 @@ export const teamsUpdateMembership = async ({teamId,membershipId,roles,parseOutp
     sdk;
     let apiPath = '/teams/{teamId}/memberships/{membershipId}'.replace('{teamId}', teamId).replace('{membershipId}', membershipId);
     let payload = {};
-    roles = roles === true ? [] : roles;
+    roles = (roles as unknown) === true ? [] : roles;
     if (typeof roles !== 'undefined') {
         payload['roles'] = roles;
     }
@@ -468,7 +469,7 @@ export const teamsGetPrefs = async ({teamId,parseOutput = true, overrideForCli =
 }
 interface TeamsUpdatePrefsRequestParams {
     teamId: string;
-    prefs: object;
+    prefs: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;

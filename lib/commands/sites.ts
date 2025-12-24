@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,14 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { Framework } from '../enums/framework';
+import { BuildRuntime } from '../enums/build-runtime';
+import { Adapter } from '../enums/adapter';
+import { UsageRange } from '../enums/usage-range';
+import { TemplateReferenceType } from '../enums/template-reference-type';
+import { VCSReferenceType } from '../enums/vcs-reference-type';
+import { DeploymentDownloadType } from '../enums/deployment-download-type';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -571,10 +579,10 @@ interface SitesCreateDeploymentRequestParams {
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
-    onProgress?: (progress: number) => void;
+    onProgress?: (progress: UploadProgress) => void;
 }
 
-export const sitesCreateDeployment = async ({siteId,code,activate,installCommand,buildCommand,outputDirectory,parseOutput = true, overrideForCli = false, sdk = undefined,onProgress = () => {}}: SitesCreateDeploymentRequestParams): Promise<any> => {
+export const sitesCreateDeployment = async ({siteId,code,activate,installCommand,buildCommand,outputDirectory,parseOutput = true, overrideForCli = false, sdk = undefined,onProgress = (progress: any) => {}}: SitesCreateDeploymentRequestParams): Promise<any> => {
     let client = !sdk ? await sdkForProject() :
     sdk;
     let apiPath = '/sites/{siteId}/deployments'.replace('{siteId}', siteId);
@@ -628,15 +636,18 @@ export const sitesCreateDeployment = async ({siteId,code,activate,installCommand
     const nodeStream = fs.createReadStream(filePath);
     const stream = convertReadStreamToReadableStream(nodeStream);
 
-    if (typeof filePath !== 'undefined') {
-        code = { type: 'file', stream, filename: pathLib.basename(filePath), size: fs.statSync(filePath).size };
-        payload['code'] = code
-    }
+    const codeUpload: FileInput = { 
+        type: 'file', 
+        stream, 
+        filename: pathLib.basename(filePath), 
+        size: fs.statSync(filePath).size 
+    };
+    payload['code'] = codeUpload;
     if (typeof activate !== 'undefined') {
         payload['activate'] = activate;
     }
 
-    const size = code.size;
+    const size = codeUpload.size;
 
     const apiHeaders = {
         'content-type': 'multipart/form-data',
@@ -678,7 +689,7 @@ export const sitesCreateDeployment = async ({siteId,code,activate,installCommand
             apiHeaders['x-appwrite-id'] = id;
         }
 
-        payload['code'] = { type: 'file', file: new File([uploadableChunkTrimmed], code.filename), filename: code.filename };
+        payload['code'] = { type: 'file', file: new File([uploadableChunkTrimmed], codeUpload.filename), filename: codeUpload.filename };
 
         response = await client.call('post', apiPath, apiHeaders, payload);
 
@@ -701,7 +712,7 @@ export const sitesCreateDeployment = async ({siteId,code,activate,installCommand
         currentPosition = 0;
     }
 
-    for await (const chunk of code.stream) {
+    for await (const chunk of codeUpload.stream) {
         for(const b of chunk) {
             uploadableChunk[currentPosition] = b;
 

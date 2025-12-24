@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,7 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -86,7 +87,7 @@ export const migrationsCreateAppwriteMigration = async ({resources,endpoint,proj
     sdk;
     let apiPath = '/migrations/appwrite';
     let payload = {};
-    resources = resources === true ? [] : resources;
+    resources = (resources as unknown) === true ? [] : resources;
     if (typeof resources !== 'undefined') {
         payload['resources'] = resources;
     }
@@ -179,11 +180,11 @@ export const migrationsCreateCSVExport = async ({resourceId,filename,columns,que
     if (typeof filename !== 'undefined') {
         payload['filename'] = filename;
     }
-    columns = columns === true ? [] : columns;
+    columns = (columns as unknown) === true ? [] : columns;
     if (typeof columns !== 'undefined') {
         payload['columns'] = columns;
     }
-    queries = queries === true ? [] : queries;
+    queries = (queries as unknown) === true ? [] : queries;
     if (typeof queries !== 'undefined') {
         payload['queries'] = queries;
     }
@@ -270,7 +271,7 @@ export const migrationsCreateFirebaseMigration = async ({resources,serviceAccoun
     sdk;
     let apiPath = '/migrations/firebase';
     let payload = {};
-    resources = resources === true ? [] : resources;
+    resources = (resources as unknown) === true ? [] : resources;
     if (typeof resources !== 'undefined') {
         payload['resources'] = resources;
     }
@@ -342,7 +343,7 @@ export const migrationsCreateNHostMigration = async ({resources,subdomain,region
     sdk;
     let apiPath = '/migrations/nhost';
     let payload = {};
-    resources = resources === true ? [] : resources;
+    resources = (resources as unknown) === true ? [] : resources;
     if (typeof resources !== 'undefined') {
         payload['resources'] = resources;
     }
@@ -455,7 +456,7 @@ export const migrationsCreateSupabaseMigration = async ({resources,endpoint,apiK
     sdk;
     let apiPath = '/migrations/supabase';
     let payload = {};
-    resources = resources === true ? [] : resources;
+    resources = (resources as unknown) === true ? [] : resources;
     if (typeof resources !== 'undefined') {
         payload['resources'] = resources;
     }

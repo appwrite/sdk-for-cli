@@ -1,5 +1,5 @@
 import os = require('os');
-import { fetch, FormData, Agent } from 'undici';
+import { fetch, FormData, Agent, File } from 'undici';
 import JSONbig = require('json-bigint');
 import AppwriteException = require('./exception');
 import { globalConfig } from './config';
@@ -9,7 +9,7 @@ import type { Headers, RequestParams, ResponseType, FileUpload } from './types';
 const JSONBigInt = JSONbig({ storeAsString: false });
 
 class Client {
-    private readonly CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+    readonly CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
     private endpoint: string;
     private headers: Headers;
     private selfSigned: boolean;
@@ -22,8 +22,8 @@ class Client {
             'x-sdk-name': 'Command Line',
             'x-sdk-platform': 'console',
             'x-sdk-language': 'cli',
-            'x-sdk-version': '13.0.0-rc.1',
-            'user-agent': `AppwriteCLI/13.0.0-rc.1 (${os.type()} ${os.version()}; ${os.arch()})`,
+            'x-sdk-version': '13.0.0-rc.2',
+            'user-agent': `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
             'X-Appwrite-Response-Format': '1.8.0',
         };
     }
@@ -168,7 +168,7 @@ class Client {
             for (const [key, value] of Object.entries(flatParams)) {
                 if (value && typeof value === 'object' && 'type' in value && value.type === 'file') {
                     const fileUpload = value as FileUpload;
-                    formData.append(key, fileUpload.file as any, fileUpload.filename);
+                    formData.append(key, fileUpload.file, fileUpload.filename);
                 } else {
                     formData.append(key, value as string);
                 }

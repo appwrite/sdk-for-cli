@@ -2,7 +2,7 @@
   "name": "appwrite-cli",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstract and simplify complex and repetitive development tasks behind a very simple REST API",
-  "version": "13.0.0-rc.1",
+  "version": "13.0.0-rc.2",
   "license": "BSD-3-Clause",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     "url": "https://github.com/appwrite/sdk-for-cli"
   },
   "scripts": {
-    "build": "tsc || true",
+    "build": "tsc",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "linux-x64": "npm run build && pkg -t node18-linux-x64 -o build/appwrite-cli-linux-x64 package.json",

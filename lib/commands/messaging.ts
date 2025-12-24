@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,9 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { MessagePriority } from '../enums/message-priority';
+import { SmtpEncryption } from '../enums/smtp-encryption';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -108,27 +111,27 @@ export const messagingCreateEmail = async ({messageId,subject,content,topics,use
     if (typeof content !== 'undefined') {
         payload['content'] = content;
     }
-    topics = topics === true ? [] : topics;
+    topics = (topics as unknown) === true ? [] : topics;
     if (typeof topics !== 'undefined') {
         payload['topics'] = topics;
     }
-    users = users === true ? [] : users;
+    users = (users as unknown) === true ? [] : users;
     if (typeof users !== 'undefined') {
         payload['users'] = users;
     }
-    targets = targets === true ? [] : targets;
+    targets = (targets as unknown) === true ? [] : targets;
     if (typeof targets !== 'undefined') {
         payload['targets'] = targets;
     }
-    cc = cc === true ? [] : cc;
+    cc = (cc as unknown) === true ? [] : cc;
     if (typeof cc !== 'undefined') {
         payload['cc'] = cc;
     }
-    bcc = bcc === true ? [] : bcc;
+    bcc = (bcc as unknown) === true ? [] : bcc;
     if (typeof bcc !== 'undefined') {
         payload['bcc'] = bcc;
     }
-    attachments = attachments === true ? [] : attachments;
+    attachments = (attachments as unknown) === true ? [] : attachments;
     if (typeof attachments !== 'undefined') {
         payload['attachments'] = attachments;
     }
@@ -178,15 +181,15 @@ export const messagingUpdateEmail = async ({messageId,topics,users,targets,subje
     sdk;
     let apiPath = '/messaging/messages/email/{messageId}'.replace('{messageId}', messageId);
     let payload = {};
-    topics = topics === true ? [] : topics;
+    topics = (topics as unknown) === true ? [] : topics;
     if (typeof topics !== 'undefined') {
         payload['topics'] = topics;
     }
-    users = users === true ? [] : users;
+    users = (users as unknown) === true ? [] : users;
     if (typeof users !== 'undefined') {
         payload['users'] = users;
     }
-    targets = targets === true ? [] : targets;
+    targets = (targets as unknown) === true ? [] : targets;
     if (typeof targets !== 'undefined') {
         payload['targets'] = targets;
     }
@@ -202,18 +205,18 @@ export const messagingUpdateEmail = async ({messageId,topics,users,targets,subje
     if (typeof html !== 'undefined') {
         payload['html'] = html;
     }
-    cc = cc === true ? [] : cc;
+    cc = (cc as unknown) === true ? [] : cc;
     if (typeof cc !== 'undefined') {
         payload['cc'] = cc;
     }
-    bcc = bcc === true ? [] : bcc;
+    bcc = (bcc as unknown) === true ? [] : bcc;
     if (typeof bcc !== 'undefined') {
         payload['bcc'] = bcc;
     }
     if (typeof scheduledAt !== 'undefined') {
         payload['scheduledAt'] = scheduledAt;
     }
-    attachments = attachments === true ? [] : attachments;
+    attachments = (attachments as unknown) === true ? [] : attachments;
     if (typeof attachments !== 'undefined') {
         payload['attachments'] = attachments;
     }
@@ -238,7 +241,7 @@ interface MessagingCreatePushRequestParams {
     topics?: string[];
     users?: string[];
     targets?: string[];
-    data?: object;
+    data?: string;
     action?: string;
     image?: string;
     icon?: string;
@@ -270,15 +273,15 @@ export const messagingCreatePush = async ({messageId,title,body,topics,users,tar
     if (typeof body !== 'undefined') {
         payload['body'] = body;
     }
-    topics = topics === true ? [] : topics;
+    topics = (topics as unknown) === true ? [] : topics;
     if (typeof topics !== 'undefined') {
         payload['topics'] = topics;
     }
-    users = users === true ? [] : users;
+    users = (users as unknown) === true ? [] : users;
     if (typeof users !== 'undefined') {
         payload['users'] = users;
     }
-    targets = targets === true ? [] : targets;
+    targets = (targets as unknown) === true ? [] : targets;
     if (typeof targets !== 'undefined') {
         payload['targets'] = targets;
     }
@@ -342,7 +345,7 @@ interface MessagingUpdatePushRequestParams {
     targets?: string[];
     title?: string;
     body?: string;
-    data?: object;
+    data?: string;
     action?: string;
     image?: string;
     icon?: string;
@@ -365,15 +368,15 @@ export const messagingUpdatePush = async ({messageId,topics,users,targets,title,
     sdk;
     let apiPath = '/messaging/messages/push/{messageId}'.replace('{messageId}', messageId);
     let payload = {};
-    topics = topics === true ? [] : topics;
+    topics = (topics as unknown) === true ? [] : topics;
     if (typeof topics !== 'undefined') {
         payload['topics'] = topics;
     }
-    users = users === true ? [] : users;
+    users = (users as unknown) === true ? [] : users;
     if (typeof users !== 'undefined') {
         payload['users'] = users;
     }
-    targets = targets === true ? [] : targets;
+    targets = (targets as unknown) === true ? [] : targets;
     if (typeof targets !== 'undefined') {
         payload['targets'] = targets;
     }
@@ -460,15 +463,15 @@ export const messagingCreateSMS = async ({messageId,content,topics,users,targets
     if (typeof content !== 'undefined') {
         payload['content'] = content;
     }
-    topics = topics === true ? [] : topics;
+    topics = (topics as unknown) === true ? [] : topics;
     if (typeof topics !== 'undefined') {
         payload['topics'] = topics;
     }
-    users = users === true ? [] : users;
+    users = (users as unknown) === true ? [] : users;
     if (typeof users !== 'undefined') {
         payload['users'] = users;
     }
-    targets = targets === true ? [] : targets;
+    targets = (targets as unknown) === true ? [] : targets;
     if (typeof targets !== 'undefined') {
         payload['targets'] = targets;
     }
@@ -510,15 +513,15 @@ export const messagingUpdateSMS = async ({messageId,topics,users,targets,content
     sdk;
     let apiPath = '/messaging/messages/sms/{messageId}'.replace('{messageId}', messageId);
     let payload = {};
-    topics = topics === true ? [] : topics;
+    topics = (topics as unknown) === true ? [] : topics;
     if (typeof topics !== 'undefined') {
         payload['topics'] = topics;
     }
-    users = users === true ? [] : users;
+    users = (users as unknown) === true ? [] : users;
     if (typeof users !== 'undefined') {
         payload['users'] = users;
     }
-    targets = targets === true ? [] : targets;
+    targets = (targets as unknown) === true ? [] : targets;
     if (typeof targets !== 'undefined') {
         payload['targets'] = targets;
     }
@@ -827,7 +830,7 @@ export const messagingUpdateAPNSProvider = async ({providerId,name,enabled,authK
 interface MessagingCreateFCMProviderRequestParams {
     providerId: string;
     name: string;
-    serviceAccountJSON?: object;
+    serviceAccountJSON?: string;
     enabled?: boolean;
     overrideForCli?: boolean;
     parseOutput?: boolean;
@@ -869,7 +872,7 @@ interface MessagingUpdateFCMProviderRequestParams {
     providerId: string;
     name?: string;
     enabled?: boolean;
-    serviceAccountJSON?: object;
+    serviceAccountJSON?: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
@@ -2069,7 +2072,7 @@ export const messagingCreateTopic = async ({topicId,name,subscribe,parseOutput =
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    subscribe = subscribe === true ? [] : subscribe;
+    subscribe = (subscribe as unknown) === true ? [] : subscribe;
     if (typeof subscribe !== 'undefined') {
         payload['subscribe'] = subscribe;
     }
@@ -2134,7 +2137,7 @@ export const messagingUpdateTopic = async ({topicId,name,subscribe,parseOutput =
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    subscribe = subscribe === true ? [] : subscribe;
+    subscribe = (subscribe as unknown) === true ? [] : subscribe;
     if (typeof subscribe !== 'undefined') {
         payload['subscribe'] = subscribe;
     }

@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,18 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { Region } from '../enums/region';
+import { Api } from '../enums/api';
+import { AuthMethod } from '../enums/auth-method';
+import { OAuthProvider } from '../enums/o-auth-provider';
+import { PlatformType } from '../enums/platform-type';
+import { ApiService } from '../enums/api-service';
+import { SMTPSecure } from '../enums/smtp-secure';
+import { EmailTemplateType } from '../enums/email-template-type';
+import { EmailTemplateLocale } from '../enums/email-template-locale';
+import { SmsTemplateType } from '../enums/sms-template-type';
+import { SmsTemplateLocale } from '../enums/sms-template-locale';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -469,7 +481,7 @@ export const projectsUpdateMembershipsPrivacy = async ({projectId,userName,userE
 }
 interface ProjectsUpdateMockNumbersRequestParams {
     projectId: string;
-    numbers: object[];
+    numbers: string[];
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
@@ -480,7 +492,7 @@ export const projectsUpdateMockNumbers = async ({projectId,numbers,parseOutput =
     sdk;
     let apiPath = '/projects/{projectId}/auth/mock-numbers'.replace('{projectId}', projectId);
     let payload = {};
-    numbers = numbers === true ? [] : numbers;
+    numbers = (numbers as unknown) === true ? [] : numbers;
     if (typeof numbers !== 'undefined') {
         payload['numbers'] = numbers;
     }
@@ -854,7 +866,7 @@ export const projectsCreateJWT = async ({projectId,scopes,duration,parseOutput =
     sdk;
     let apiPath = '/projects/{projectId}/jwts'.replace('{projectId}', projectId);
     let payload = {};
-    scopes = scopes === true ? [] : scopes;
+    scopes = (scopes as unknown) === true ? [] : scopes;
     if (typeof scopes !== 'undefined') {
         payload['scopes'] = scopes;
     }
@@ -927,7 +939,7 @@ export const projectsCreateKey = async ({projectId,name,scopes,expire,parseOutpu
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    scopes = scopes === true ? [] : scopes;
+    scopes = (scopes as unknown) === true ? [] : scopes;
     if (typeof scopes !== 'undefined') {
         payload['scopes'] = scopes;
     }
@@ -998,7 +1010,7 @@ export const projectsUpdateKey = async ({projectId,keyId,name,scopes,expire,pars
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    scopes = scopes === true ? [] : scopes;
+    scopes = (scopes as unknown) === true ? [] : scopes;
     if (typeof scopes !== 'undefined') {
         payload['scopes'] = scopes;
     }
@@ -1416,7 +1428,7 @@ export const projectsCreateSMTPTest = async ({projectId,emails,senderName,sender
     sdk;
     let apiPath = '/projects/{projectId}/smtp/tests'.replace('{projectId}', projectId);
     let payload = {};
-    emails = emails === true ? [] : emails;
+    emails = (emails as unknown) === true ? [] : emails;
     if (typeof emails !== 'undefined') {
         payload['emails'] = emails;
     }
@@ -1737,7 +1749,7 @@ export const projectsCreateWebhook = async ({projectId,name,events,url,security,
     if (typeof enabled !== 'undefined') {
         payload['enabled'] = enabled;
     }
-    events = events === true ? [] : events;
+    events = (events as unknown) === true ? [] : events;
     if (typeof events !== 'undefined') {
         payload['events'] = events;
     }
@@ -1824,7 +1836,7 @@ export const projectsUpdateWebhook = async ({projectId,webhookId,name,events,url
     if (typeof enabled !== 'undefined') {
         payload['enabled'] = enabled;
     }
-    events = events === true ? [] : events;
+    events = (events as unknown) === true ? [] : events;
     if (typeof events !== 'undefined') {
         payload['events'] = events;
     }

@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,11 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { UsageRange } from '../enums/usage-range';
+import { RelationshipType } from '../enums/relationship-type';
+import { RelationMutate } from '../enums/relation-mutate';
+import { IndexType } from '../enums/index-type';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -267,7 +272,7 @@ export const tablesDBDeleteTransaction = async ({transactionId,parseOutput = tru
 }
 interface TablesDBCreateOperationsRequestParams {
     transactionId: string;
-    operations?: object[];
+    operations?: string[];
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
@@ -278,7 +283,7 @@ export const tablesDBCreateOperations = async ({transactionId,operations,parseOu
     sdk;
     let apiPath = '/tablesdb/transactions/{transactionId}/operations'.replace('{transactionId}', transactionId);
     let payload = {};
-    operations = operations === true ? [] : operations;
+    operations = (operations as unknown) === true ? [] : operations;
     if (typeof operations !== 'undefined') {
         payload['operations'] = operations;
     }
@@ -468,8 +473,8 @@ interface TablesDBCreateTableRequestParams {
     permissions?: string[];
     rowSecurity?: boolean;
     enabled?: boolean;
-    columns?: object[];
-    indexes?: object[];
+    columns?: string[];
+    indexes?: string[];
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
@@ -486,7 +491,7 @@ export const tablesDBCreateTable = async ({databaseId,tableId,name,permissions,r
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -496,11 +501,11 @@ export const tablesDBCreateTable = async ({databaseId,tableId,name,permissions,r
     if (typeof enabled !== 'undefined') {
         payload['enabled'] = enabled;
     }
-    columns = columns === true ? [] : columns;
+    columns = (columns as unknown) === true ? [] : columns;
     if (typeof columns !== 'undefined') {
         payload['columns'] = columns;
     }
-    indexes = indexes === true ? [] : indexes;
+    indexes = (indexes as unknown) === true ? [] : indexes;
     if (typeof indexes !== 'undefined') {
         payload['indexes'] = indexes;
     }
@@ -569,7 +574,7 @@ export const tablesDBUpdateTable = async ({databaseId,tableId,name,permissions,r
     if (typeof name !== 'undefined') {
         payload['name'] = name;
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -929,7 +934,7 @@ export const tablesDBCreateEnumColumn = async ({databaseId,tableId,key,elements,
     if (typeof key !== 'undefined') {
         payload['key'] = key;
     }
-    elements = elements === true ? [] : elements;
+    elements = (elements as unknown) === true ? [] : elements;
     if (typeof elements !== 'undefined') {
         payload['elements'] = elements;
     }
@@ -974,7 +979,7 @@ export const tablesDBUpdateEnumColumn = async ({databaseId,tableId,key,elements,
     sdk;
     let apiPath = '/tablesdb/{databaseId}/tables/{tableId}/columns/enum/{key}'.replace('{databaseId}', databaseId).replace('{tableId}', tableId).replace('{key}', key);
     let payload = {};
-    elements = elements === true ? [] : elements;
+    elements = (elements as unknown) === true ? [] : elements;
     if (typeof elements !== 'undefined') {
         payload['elements'] = elements;
     }
@@ -1304,7 +1309,7 @@ export const tablesDBCreateLineColumn = async ({databaseId,tableId,key,required,
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1342,7 +1347,7 @@ export const tablesDBUpdateLineColumn = async ({databaseId,tableId,key,required,
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1385,7 +1390,7 @@ export const tablesDBCreatePointColumn = async ({databaseId,tableId,key,required
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1423,7 +1428,7 @@ export const tablesDBUpdatePointColumn = async ({databaseId,tableId,key,required
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1466,7 +1471,7 @@ export const tablesDBCreatePolygonColumn = async ({databaseId,tableId,key,requir
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1504,7 +1509,7 @@ export const tablesDBUpdatePolygonColumn = async ({databaseId,tableId,key,requir
     if (typeof required !== 'undefined') {
         payload['required'] = required;
     }
-    xdefault = xdefault === true ? [] : xdefault;
+    xdefault = (xdefault as unknown) === true ? [] : xdefault;
     if (typeof xdefault !== 'undefined') {
         payload['default'] = xdefault;
     }
@@ -1913,15 +1918,15 @@ export const tablesDBCreateIndex = async ({databaseId,tableId,key,type,columns,o
     if (typeof type !== 'undefined') {
         payload['type'] = type;
     }
-    columns = columns === true ? [] : columns;
+    columns = (columns as unknown) === true ? [] : columns;
     if (typeof columns !== 'undefined') {
         payload['columns'] = columns;
     }
-    orders = orders === true ? [] : orders;
+    orders = (orders as unknown) === true ? [] : orders;
     if (typeof orders !== 'undefined') {
         payload['orders'] = orders;
     }
-    lengths = lengths === true ? [] : lengths;
+    lengths = (lengths as unknown) === true ? [] : lengths;
     if (typeof lengths !== 'undefined') {
         payload['lengths'] = lengths;
     }
@@ -2076,7 +2081,7 @@ interface TablesDBCreateRowRequestParams {
     databaseId: string;
     tableId: string;
     rowId: string;
-    data: object;
+    data: string;
     permissions?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2095,7 +2100,7 @@ export const tablesDBCreateRow = async ({databaseId,tableId,rowId,data,permissio
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -2119,7 +2124,7 @@ export const tablesDBCreateRow = async ({databaseId,tableId,rowId,data,permissio
 interface TablesDBCreateRowsRequestParams {
     databaseId: string;
     tableId: string;
-    rows: object[];
+    rows: string[];
     transactionId?: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
@@ -2131,7 +2136,7 @@ export const tablesDBCreateRows = async ({databaseId,tableId,rows,transactionId,
     sdk;
     let apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'.replace('{databaseId}', databaseId).replace('{tableId}', tableId);
     let payload = {};
-    rows = rows === true ? [] : rows;
+    rows = (rows as unknown) === true ? [] : rows;
     if (typeof rows !== 'undefined') {
         payload['rows'] = rows;
     }
@@ -2155,7 +2160,7 @@ export const tablesDBCreateRows = async ({databaseId,tableId,rows,transactionId,
 interface TablesDBUpsertRowsRequestParams {
     databaseId: string;
     tableId: string;
-    rows: object[];
+    rows: string[];
     transactionId?: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
@@ -2167,7 +2172,7 @@ export const tablesDBUpsertRows = async ({databaseId,tableId,rows,transactionId,
     sdk;
     let apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'.replace('{databaseId}', databaseId).replace('{tableId}', tableId);
     let payload = {};
-    rows = rows === true ? [] : rows;
+    rows = (rows as unknown) === true ? [] : rows;
     if (typeof rows !== 'undefined') {
         payload['rows'] = rows;
     }
@@ -2191,7 +2196,7 @@ export const tablesDBUpsertRows = async ({databaseId,tableId,rows,transactionId,
 interface TablesDBUpdateRowsRequestParams {
     databaseId: string;
     tableId: string;
-    data?: object;
+    data?: string;
     queries?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2207,7 +2212,7 @@ export const tablesDBUpdateRows = async ({databaseId,tableId,data,queries,transa
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    queries = queries === true ? [] : queries;
+    queries = (queries as unknown) === true ? [] : queries;
     if (typeof queries !== 'undefined') {
         payload['queries'] = queries;
     }
@@ -2243,7 +2248,7 @@ export const tablesDBDeleteRows = async ({databaseId,tableId,queries,transaction
     sdk;
     let apiPath = '/tablesdb/{databaseId}/tables/{tableId}/rows'.replace('{databaseId}', databaseId).replace('{tableId}', tableId);
     let payload = {};
-    queries = queries === true ? [] : queries;
+    queries = (queries as unknown) === true ? [] : queries;
     if (typeof queries !== 'undefined') {
         payload['queries'] = queries;
     }
@@ -2308,7 +2313,7 @@ interface TablesDBUpsertRowRequestParams {
     databaseId: string;
     tableId: string;
     rowId: string;
-    data?: object;
+    data?: string;
     permissions?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2324,7 +2329,7 @@ export const tablesDBUpsertRow = async ({databaseId,tableId,rowId,data,permissio
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }
@@ -2349,7 +2354,7 @@ interface TablesDBUpdateRowRequestParams {
     databaseId: string;
     tableId: string;
     rowId: string;
-    data?: object;
+    data?: string;
     permissions?: string[];
     transactionId?: string;
     overrideForCli?: boolean;
@@ -2365,7 +2370,7 @@ export const tablesDBUpdateRow = async ({databaseId,tableId,rowId,data,permissio
     if (typeof data !== 'undefined') {
         payload['data'] = JSON.parse(data);
     }
-    permissions = permissions === true ? [] : permissions;
+    permissions = (permissions as unknown) === true ? [] : permissions;
     if (typeof permissions !== 'undefined') {
         payload['permissions'] = permissions;
     }

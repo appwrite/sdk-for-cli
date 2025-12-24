@@ -1,7 +1,7 @@
 import fs = require('fs');
 import pathLib = require('path');
 import tar = require('tar');
-import ignore = require('ignore');
+import ignore from 'ignore';
 import { promisify } from 'util';
 import Client from '../client';
 import { getAllFiles, showConsoleLink } from '../utils';
@@ -11,6 +11,13 @@ import { parse, actionRunner, parseInteger, parseBool, commandDescriptions, succ
 import { localConfig, globalConfig } from '../config';
 import { File } from 'undici';
 import { ReadableStream } from 'stream/web';
+import type { UploadProgress, FileInput } from '../types';
+import { Runtime } from '../enums/runtime';
+import { UsageRange } from '../enums/usage-range';
+import { TemplateReferenceType } from '../enums/template-reference-type';
+import { VCSReferenceType } from '../enums/vcs-reference-type';
+import { DeploymentDownloadType } from '../enums/deployment-download-type';
+import { ExecutionMethod } from '../enums/execution-method';
 
 function convertReadStreamToReadableStream(readStream: fs.ReadStream): ReadableStream {
   return new ReadableStream({
@@ -114,11 +121,11 @@ export const functionsCreate = async ({functionId,name,runtime,execute,events,sc
     if (typeof runtime !== 'undefined') {
         payload['runtime'] = runtime;
     }
-    execute = execute === true ? [] : execute;
+    execute = (execute as unknown) === true ? [] : execute;
     if (typeof execute !== 'undefined') {
         payload['execute'] = execute;
     }
-    events = events === true ? [] : events;
+    events = (events as unknown) === true ? [] : events;
     if (typeof events !== 'undefined') {
         payload['events'] = events;
     }
@@ -140,7 +147,7 @@ export const functionsCreate = async ({functionId,name,runtime,execute,events,sc
     if (typeof commands !== 'undefined') {
         payload['commands'] = commands;
     }
-    scopes = scopes === true ? [] : scopes;
+    scopes = (scopes as unknown) === true ? [] : scopes;
     if (typeof scopes !== 'undefined') {
         payload['scopes'] = scopes;
     }
@@ -406,11 +413,11 @@ export const functionsUpdate = async ({functionId,name,runtime,execute,events,sc
     if (typeof runtime !== 'undefined') {
         payload['runtime'] = runtime;
     }
-    execute = execute === true ? [] : execute;
+    execute = (execute as unknown) === true ? [] : execute;
     if (typeof execute !== 'undefined') {
         payload['execute'] = execute;
     }
-    events = events === true ? [] : events;
+    events = (events as unknown) === true ? [] : events;
     if (typeof events !== 'undefined') {
         payload['events'] = events;
     }
@@ -432,7 +439,7 @@ export const functionsUpdate = async ({functionId,name,runtime,execute,events,sc
     if (typeof commands !== 'undefined') {
         payload['commands'] = commands;
     }
-    scopes = scopes === true ? [] : scopes;
+    scopes = (scopes as unknown) === true ? [] : scopes;
     if (typeof scopes !== 'undefined') {
         payload['scopes'] = scopes;
     }
@@ -575,10 +582,10 @@ interface FunctionsCreateDeploymentRequestParams {
     overrideForCli?: boolean;
     parseOutput?: boolean;
     sdk?: Client;
-    onProgress?: (progress: number) => void;
+    onProgress?: (progress: UploadProgress) => void;
 }
 
-export const functionsCreateDeployment = async ({functionId,code,activate,entrypoint,commands,parseOutput = true, overrideForCli = false, sdk = undefined,onProgress = () => {}}: FunctionsCreateDeploymentRequestParams): Promise<any> => {
+export const functionsCreateDeployment = async ({functionId,code,activate,entrypoint,commands,parseOutput = true, overrideForCli = false, sdk = undefined,onProgress = (progress: any) => {}}: FunctionsCreateDeploymentRequestParams): Promise<any> => {
     let client = !sdk ? await sdkForProject() :
     sdk;
     let apiPath = '/functions/{functionId}/deployments'.replace('{functionId}', functionId);
@@ -629,15 +636,18 @@ export const functionsCreateDeployment = async ({functionId,code,activate,entryp
     const nodeStream = fs.createReadStream(filePath);
     const stream = convertReadStreamToReadableStream(nodeStream);
 
-    if (typeof filePath !== 'undefined') {
-        code = { type: 'file', stream, filename: pathLib.basename(filePath), size: fs.statSync(filePath).size };
-        payload['code'] = code
-    }
+    const codeUpload: FileInput = { 
+        type: 'file', 
+        stream, 
+        filename: pathLib.basename(filePath), 
+        size: fs.statSync(filePath).size 
+    };
+    payload['code'] = codeUpload;
     if (typeof activate !== 'undefined') {
         payload['activate'] = activate;
     }
 
-    const size = code.size;
+    const size = codeUpload.size;
 
     const apiHeaders = {
         'content-type': 'multipart/form-data',
@@ -679,7 +689,7 @@ export const functionsCreateDeployment = async ({functionId,code,activate,entryp
             apiHeaders['x-appwrite-id'] = id;
         }
 
-        payload['code'] = { type: 'file', file: new File([uploadableChunkTrimmed], code.filename), filename: code.filename };
+        payload['code'] = { type: 'file', file: new File([uploadableChunkTrimmed], codeUpload.filename), filename: codeUpload.filename };
 
         response = await client.call('post', apiPath, apiHeaders, payload);
 
@@ -702,7 +712,7 @@ export const functionsCreateDeployment = async ({functionId,code,activate,entryp
         currentPosition = 0;
     }
 
-    for await (const chunk of code.stream) {
+    for await (const chunk of codeUpload.stream) {
         for(const b of chunk) {
             uploadableChunk[currentPosition] = b;
 
@@ -1024,7 +1034,7 @@ interface FunctionsCreateExecutionRequestParams {
     async?: boolean;
     xpath?: string;
     method?: ExecutionMethod;
-    headers?: object;
+    headers?: string;
     scheduledAt?: string;
     overrideForCli?: boolean;
     parseOutput?: boolean;
