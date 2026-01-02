@@ -8,8 +8,15 @@ import {
   OAuthProvider,
 } from "@appwrite.io/console";
 
-const projectClient = await sdkForProject();
-const accountClient = new Account(projectClient as unknown as ConsoleClient);
+let accountClient: Account | null = null;
+
+const getAccountClient = async (): Promise<Account> => {
+  if (!accountClient) {
+    const projectClient = await sdkForProject();
+    accountClient = new Account(projectClient as unknown as ConsoleClient);
+  }
+  return accountClient;
+};
 
 export const account = new Command("account")
   .description(commandDescriptions["account"] ?? "")
@@ -21,7 +28,7 @@ account
   .command(`get`)
   .description(`Get the currently logged in user.`)
   .option(`--console`, `Get the resource console url`)
-  .action(actionRunner(async () => await accountClient.get()));
+  .action(actionRunner(async () => await (await getAccountClient()).get()));
 
 account
   .command(`create`)
@@ -41,14 +48,14 @@ account
   .action(
     actionRunner(
       async ({ userId, email, password, name }) =>
-        await accountClient.create(userId, email, password, name),
+        await (await getAccountClient()).create(userId, email, password, name),
     ),
   );
 
 account
   .command(`delete`)
   .description(`Delete the currently logged in user.`)
-  .action(actionRunner(async () => await accountClient.delete()));
+  .action(actionRunner(async () => await (await getAccountClient()).delete()));
 
 account
   .command(`update-email`)
@@ -63,7 +70,7 @@ account
   .action(
     actionRunner(
       async ({ email, password }) =>
-        await accountClient.updateEmail(email, password),
+        await (await getAccountClient()).updateEmail(email, password),
     ),
   );
 
@@ -82,7 +89,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ queries }) => await accountClient.listIdentities(queries),
+      async ({ queries }) =>
+        await (await getAccountClient()).listIdentities(queries),
     ),
   );
 
@@ -92,7 +100,8 @@ account
   .requiredOption(`--identity-id <identity-id>`, `Identity ID.`)
   .action(
     actionRunner(
-      async ({ identityId }) => await accountClient.deleteIdentity(identityId),
+      async ({ identityId }) =>
+        await (await getAccountClient()).deleteIdentity(identityId),
     ),
   );
 
@@ -101,7 +110,9 @@ account
   .description(
     `Use this endpoint to create a JSON Web Token. You can use the resulting JWT to authenticate on behalf of the current user when working with the Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes from its creation and will be invalid if the user will logout in that time frame.`,
   )
-  .action(actionRunner(async () => await accountClient.createJWT()));
+  .action(
+    actionRunner(async () => await (await getAccountClient()).createJWT()),
+  );
 
 account
   .command(`list-logs`)
@@ -119,7 +130,9 @@ account
       value === undefined ? true : parseBool(value),
   )
   .action(
-    actionRunner(async ({ queries }) => await accountClient.listLogs(queries)),
+    actionRunner(
+      async ({ queries }) => await (await getAccountClient()).listLogs(queries),
+    ),
   );
 
 account
@@ -131,7 +144,11 @@ account
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .action(actionRunner(async ({ mfa }) => await accountClient.updateMFA(mfa)));
+  .action(
+    actionRunner(
+      async ({ mfa }) => await (await getAccountClient()).updateMFA(mfa),
+    ),
+  );
 
 account
   .command(`create-mfa-authenticator`)
@@ -142,7 +159,9 @@ account
   .action(
     actionRunner(
       async ({ type }) =>
-        await accountClient.createMfaAuthenticator(type as AuthenticatorType),
+        await (
+          await getAccountClient()
+        ).createMfaAuthenticator(type as AuthenticatorType),
     ),
   );
 
@@ -156,10 +175,9 @@ account
   .action(
     actionRunner(
       async ({ type, otp }) =>
-        await accountClient.updateMfaAuthenticator(
-          type as AuthenticatorType,
-          otp,
-        ),
+        await (
+          await getAccountClient()
+        ).updateMfaAuthenticator(type as AuthenticatorType, otp),
     ),
   );
 
@@ -170,7 +188,9 @@ account
   .action(
     actionRunner(
       async ({ type }) =>
-        await accountClient.deleteMfaAuthenticator(type as AuthenticatorType),
+        await (
+          await getAccountClient()
+        ).deleteMfaAuthenticator(type as AuthenticatorType),
     ),
   );
 
@@ -186,7 +206,9 @@ account
   .action(
     actionRunner(
       async ({ factor }) =>
-        await accountClient.createMfaChallenge(factor as AuthenticationFactor),
+        await (
+          await getAccountClient()
+        ).createMfaChallenge(factor as AuthenticationFactor),
     ),
   );
 
@@ -200,7 +222,7 @@ account
   .action(
     actionRunner(
       async ({ challengeId, otp }) =>
-        await accountClient.updateMfaChallenge(challengeId, otp),
+        await (await getAccountClient()).updateMfaChallenge(challengeId, otp),
     ),
   );
 
@@ -209,14 +231,20 @@ account
   .description(
     `List the factors available on the account to be used as a MFA challange.`,
   )
-  .action(actionRunner(async () => await accountClient.listMfaFactors()));
+  .action(
+    actionRunner(async () => await (await getAccountClient()).listMfaFactors()),
+  );
 
 account
   .command(`get-mfa-recovery-codes`)
   .description(
     `Get recovery codes that can be used as backup for MFA flow. Before getting codes, they must be generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method. An OTP challenge is required to read recovery codes.`,
   )
-  .action(actionRunner(async () => await accountClient.getMfaRecoveryCodes()));
+  .action(
+    actionRunner(
+      async () => await (await getAccountClient()).getMfaRecoveryCodes(),
+    ),
+  );
 
 account
   .command(`create-mfa-recovery-codes`)
@@ -224,7 +252,9 @@ account
     `Generate recovery codes as backup for MFA flow. It's recommended to generate and show then immediately after user successfully adds their authehticator. Recovery codes can be used as a MFA verification type in [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge) method.`,
   )
   .action(
-    actionRunner(async () => await accountClient.createMfaRecoveryCodes()),
+    actionRunner(
+      async () => await (await getAccountClient()).createMfaRecoveryCodes(),
+    ),
   );
 
 account
@@ -233,7 +263,9 @@ account
     `Regenerate recovery codes that can be used as backup for MFA flow. Before regenerating codes, they must be first generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method. An OTP challenge is required to regenreate recovery codes.`,
   )
   .action(
-    actionRunner(async () => await accountClient.updateMfaRecoveryCodes()),
+    actionRunner(
+      async () => await (await getAccountClient()).updateMfaRecoveryCodes(),
+    ),
   );
 
 account
@@ -241,7 +273,9 @@ account
   .description(`Update currently logged in user account name.`)
   .requiredOption(`--name <name>`, `User name. Max length: 128 chars.`)
   .action(
-    actionRunner(async ({ name }) => await accountClient.updateName(name)),
+    actionRunner(
+      async ({ name }) => await (await getAccountClient()).updateName(name),
+    ),
   );
 
 account
@@ -260,7 +294,7 @@ account
   .action(
     actionRunner(
       async ({ password, oldPassword }) =>
-        await accountClient.updatePassword(password, oldPassword),
+        await (await getAccountClient()).updatePassword(password, oldPassword),
     ),
   );
 
@@ -280,7 +314,7 @@ account
   .action(
     actionRunner(
       async ({ phone, password }) =>
-        await accountClient.updatePhone(phone, password),
+        await (await getAccountClient()).updatePhone(phone, password),
     ),
   );
 
@@ -289,7 +323,9 @@ account
   .description(
     `Get the preferences as a key-value object for the currently logged in user.`,
   )
-  .action(actionRunner(async () => await accountClient.getPrefs()));
+  .action(
+    actionRunner(async () => await (await getAccountClient()).getPrefs()),
+  );
 
 account
   .command(`update-prefs`)
@@ -299,7 +335,8 @@ account
   .requiredOption(`--prefs <prefs>`, `Prefs key-value JSON object.`)
   .action(
     actionRunner(
-      async ({ prefs }) => await accountClient.updatePrefs(JSON.parse(prefs)),
+      async ({ prefs }) =>
+        await (await getAccountClient()).updatePrefs(JSON.parse(prefs)),
     ),
   );
 
@@ -315,7 +352,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ email, url }) => await accountClient.createRecovery(email, url),
+      async ({ email, url }) =>
+        await (await getAccountClient()).createRecovery(email, url),
     ),
   );
 
@@ -333,7 +371,9 @@ account
   .action(
     actionRunner(
       async ({ userId, secret, password }) =>
-        await accountClient.updateRecovery(userId, secret, password),
+        await (
+          await getAccountClient()
+        ).updateRecovery(userId, secret, password),
     ),
   );
 
@@ -343,14 +383,18 @@ account
     `Get the list of active sessions across different devices for the currently logged in user.`,
   )
   .option(`--console`, `Get the resource console url`)
-  .action(actionRunner(async () => await accountClient.listSessions()));
+  .action(
+    actionRunner(async () => await (await getAccountClient()).listSessions()),
+  );
 
 account
   .command(`delete-sessions`)
   .description(
     `Delete all sessions from the user account and remove any sessions cookies from the end client.`,
   )
-  .action(actionRunner(async () => await accountClient.deleteSessions()));
+  .action(
+    actionRunner(async () => await (await getAccountClient()).deleteSessions()),
+  );
 
 account
   .command(`create-anonymous-session`)
@@ -358,7 +402,9 @@ account
     `Use this endpoint to allow a new user to register an anonymous account in your project. This route will also create a new session for the user. To allow the new user to convert an anonymous account to a normal account, you need to update its [email and password](https://appwrite.io/docs/references/cloud/client-web/account#updateEmail) or create an [OAuth2 session](https://appwrite.io/docs/references/cloud/client-web/account#CreateOAuth2Session).`,
   )
   .action(
-    actionRunner(async () => await accountClient.createAnonymousSession()),
+    actionRunner(
+      async () => await (await getAccountClient()).createAnonymousSession(),
+    ),
   );
 
 account
@@ -374,7 +420,9 @@ account
   .action(
     actionRunner(
       async ({ email, password }) =>
-        await accountClient.createEmailPasswordSession(email, password),
+        await (
+          await getAccountClient()
+        ).createEmailPasswordSession(email, password),
     ),
   );
 
@@ -391,7 +439,7 @@ account
   .action(
     actionRunner(
       async ({ userId, secret }) =>
-        await accountClient.updateMagicURLSession(userId, secret),
+        await (await getAccountClient()).updateMagicURLSession(userId, secret),
     ),
   );
 
@@ -419,7 +467,9 @@ account
   .action(
     actionRunner(
       async ({ provider, success, failure, scopes }) =>
-        await accountClient.createOAuth2Session(
+        await (
+          await getAccountClient()
+        ).createOAuth2Session(
           provider as OAuthProvider,
           success,
           failure,
@@ -441,7 +491,7 @@ account
   .action(
     actionRunner(
       async ({ userId, secret }) =>
-        await accountClient.updatePhoneSession(userId, secret),
+        await (await getAccountClient()).updatePhoneSession(userId, secret),
     ),
   );
 
@@ -461,7 +511,7 @@ account
   .action(
     actionRunner(
       async ({ userId, secret }) =>
-        await accountClient.createSession(userId, secret),
+        await (await getAccountClient()).createSession(userId, secret),
     ),
   );
 
@@ -476,7 +526,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ sessionId }) => await accountClient.getSession(sessionId),
+      async ({ sessionId }) =>
+        await (await getAccountClient()).getSession(sessionId),
     ),
   );
 
@@ -491,7 +542,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ sessionId }) => await accountClient.updateSession(sessionId),
+      async ({ sessionId }) =>
+        await (await getAccountClient()).updateSession(sessionId),
     ),
   );
 
@@ -506,7 +558,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ sessionId }) => await accountClient.deleteSession(sessionId),
+      async ({ sessionId }) =>
+        await (await getAccountClient()).deleteSession(sessionId),
     ),
   );
 
@@ -515,7 +568,9 @@ account
   .description(
     `Block the currently logged in user account. Behind the scene, the user record is not deleted but permanently blocked from any access. To completely delete a user, use the Users API instead.`,
   )
-  .action(actionRunner(async () => await accountClient.updateStatus()));
+  .action(
+    actionRunner(async () => await (await getAccountClient()).updateStatus()),
+  );
 
 account
   .command(`create-push-target`)
@@ -537,7 +592,9 @@ account
   .action(
     actionRunner(
       async ({ targetId, identifier, providerId }) =>
-        await accountClient.createPushTarget(targetId, identifier, providerId),
+        await (
+          await getAccountClient()
+        ).createPushTarget(targetId, identifier, providerId),
     ),
   );
 
@@ -554,7 +611,7 @@ account
   .action(
     actionRunner(
       async ({ targetId, identifier }) =>
-        await accountClient.updatePushTarget(targetId, identifier),
+        await (await getAccountClient()).updatePushTarget(targetId, identifier),
     ),
   );
 
@@ -566,7 +623,8 @@ account
   .requiredOption(`--target-id <target-id>`, `Target ID.`)
   .action(
     actionRunner(
-      async ({ targetId }) => await accountClient.deletePushTarget(targetId),
+      async ({ targetId }) =>
+        await (await getAccountClient()).deletePushTarget(targetId),
     ),
   );
 
@@ -589,7 +647,9 @@ account
   .action(
     actionRunner(
       async ({ userId, email, phrase }) =>
-        await accountClient.createEmailToken(userId, email, phrase),
+        await (
+          await getAccountClient()
+        ).createEmailToken(userId, email, phrase),
     ),
   );
 
@@ -616,7 +676,9 @@ account
   .action(
     actionRunner(
       async ({ userId, email, url, phrase }) =>
-        await accountClient.createMagicURLToken(userId, email, url, phrase),
+        await (
+          await getAccountClient()
+        ).createMagicURLToken(userId, email, url, phrase),
     ),
   );
 
@@ -644,7 +706,9 @@ account
   .action(
     actionRunner(
       async ({ provider, success, failure, scopes }) =>
-        await accountClient.createOAuth2Token(
+        await (
+          await getAccountClient()
+        ).createOAuth2Token(
           provider as OAuthProvider,
           success,
           failure,
@@ -669,7 +733,7 @@ account
   .action(
     actionRunner(
       async ({ userId, phone }) =>
-        await accountClient.createPhoneToken(userId, phone),
+        await (await getAccountClient()).createPhoneToken(userId, phone),
     ),
   );
 
@@ -684,7 +748,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ url }) => await accountClient.createVerification(url),
+      async ({ url }) =>
+        await (await getAccountClient()).createVerification(url),
     ),
   );
 
@@ -699,7 +764,8 @@ account
   )
   .action(
     actionRunner(
-      async ({ url }) => await accountClient.createVerification(url),
+      async ({ url }) =>
+        await (await getAccountClient()).createVerification(url),
     ),
   );
 
@@ -713,7 +779,7 @@ account
   .action(
     actionRunner(
       async ({ userId, secret }) =>
-        await accountClient.updateVerification(userId, secret),
+        await (await getAccountClient()).updateVerification(userId, secret),
     ),
   );
 
@@ -727,7 +793,7 @@ account
   .action(
     actionRunner(
       async ({ userId, secret }) =>
-        await accountClient.updateVerification(userId, secret),
+        await (await getAccountClient()).updateVerification(userId, secret),
     ),
   );
 
@@ -737,7 +803,9 @@ account
     `Use this endpoint to send a verification SMS to the currently logged in user. This endpoint is meant for use after updating a user's phone number using the [accountUpdatePhone](https://appwrite.io/docs/references/cloud/client-web/account#updatePhone) endpoint. Learn more about how to [complete the verification process](https://appwrite.io/docs/references/cloud/client-web/account#updatePhoneVerification). The verification code sent to the user's phone number is valid for 15 minutes.`,
   )
   .action(
-    actionRunner(async () => await accountClient.createPhoneVerification()),
+    actionRunner(
+      async () => await (await getAccountClient()).createPhoneVerification(),
+    ),
   );
 
 account
@@ -750,6 +818,8 @@ account
   .action(
     actionRunner(
       async ({ userId, secret }) =>
-        await accountClient.updatePhoneVerification(userId, secret),
+        await (
+          await getAccountClient()
+        ).updatePhoneVerification(userId, secret),
     ),
   );

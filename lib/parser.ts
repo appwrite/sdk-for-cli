@@ -1,9 +1,8 @@
 import chalk from "chalk";
-import commander from "commander";
+import { InvalidArgumentError } from "commander";
 import Table from "cli-table3";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const { description } = require("../../package.json");
+import packageJson from "../package.json" with { type: "json" };
+const { description } = packageJson;
 import { globalConfig } from "./config.js";
 import os from "os";
 import Client from "./client.js";
@@ -192,7 +191,7 @@ export const actionRunner = <T extends (...args: any[]) => Promise<any>>(
 export const parseInteger = (value: string): number => {
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
-    throw new commander.InvalidArgumentError("Not a number.");
+    throw new InvalidArgumentError("Not a number.");
   }
   return parsedValue;
 };
@@ -200,7 +199,7 @@ export const parseInteger = (value: string): number => {
 export const parseBool = (value: string): boolean => {
   if (value === "true") return true;
   if (value === "false") return false;
-  throw new commander.InvalidArgumentError("Not a boolean.");
+  throw new InvalidArgumentError("Not a boolean.");
 };
 
 export const log = (message?: string): void => {

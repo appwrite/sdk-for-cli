@@ -7,9 +7,8 @@ process.stdout.columns = 100;
 
 import { program } from "commander";
 import chalk from "chalk";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const { version } = require("../package.json");
+import packageJson from "./package.json" with { type: "json" };
+const { version } = packageJson;
 import { commandDescriptions, cliConfig } from "./lib/parser.js";
 import { client } from "./lib/commands/generic.js";
 import { getLatestVersion, compareVersions } from "./lib/utils.js";
@@ -46,8 +45,9 @@ import { teams } from "./lib/commands/teams.js";
 import { tokens } from "./lib/commands/tokens.js";
 import { users } from "./lib/commands/users.js";
 import { vcs } from "./lib/commands/vcs.js";
+import searchList from "inquirer-search-list";
 
-inquirer.registerPrompt("search-list", require("inquirer-search-list"));
+inquirer.registerPrompt("search-list", searchList);
 
 /**
  * Check for updates and show version information

@@ -14,9 +14,8 @@ import {
   commandDescriptions,
 } from "../parser.js";
 import { getLatestVersion, compareVersions } from "../utils.js";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const { version } = require("../../../package.json");
+import packageJson from "../../package.json" with { type: "json" };
+const { version } = packageJson;
 
 /**
  * Check if the CLI was installed via npm
