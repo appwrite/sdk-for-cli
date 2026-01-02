@@ -1,2 +1,2 @@
 appwrite proxy delete-rule \
-    --rule-id <RULE_ID>
+ --rule-id <RULE_ID>

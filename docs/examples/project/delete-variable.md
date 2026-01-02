@@ -1,2 +1,2 @@
 appwrite project delete-variable \
-    --variable-id <VARIABLE_ID>
+ --variable-id <VARIABLE_ID>

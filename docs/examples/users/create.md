@@ -1,2 +1,2 @@
 appwrite users create \
-    --user-id <USER_ID>
+ --user-id <USER_ID>

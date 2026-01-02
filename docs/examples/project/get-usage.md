@@ -1,3 +1,3 @@
 appwrite project get-usage \
-    --start-date '' \
-    --end-date ''
+ --start-date '' \
+ --end-date ''

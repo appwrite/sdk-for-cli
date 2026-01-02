@@ -1,4 +1,4 @@
 appwrite functions create-vcs-deployment \
-    --function-id <FUNCTION_ID> \
-    --type branch \
-    --reference <REFERENCE>
+ --function-id <FUNCTION_ID> \
+ --type branch \
+ --reference <REFERENCE>

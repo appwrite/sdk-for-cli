@@ -1,2 +1,2 @@
 appwrite tables-db delete \
-    --database-id <DATABASE_ID>
+ --database-id <DATABASE_ID>

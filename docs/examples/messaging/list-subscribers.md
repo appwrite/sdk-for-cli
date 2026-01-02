@@ -1,2 +1,2 @@
 appwrite messaging list-subscribers \
-    --topic-id <TOPIC_ID>
+ --topic-id <TOPIC_ID>

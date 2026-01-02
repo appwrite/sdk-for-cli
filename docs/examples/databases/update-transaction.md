@@ -1,2 +1,2 @@
 appwrite databases update-transaction \
-    --transaction-id <TRANSACTION_ID>
+ --transaction-id <TRANSACTION_ID>

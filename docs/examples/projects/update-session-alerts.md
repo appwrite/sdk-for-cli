@@ -1,3 +1,3 @@
 appwrite projects update-session-alerts \
-    --project-id <PROJECT_ID> \
-    --alerts false
+ --project-id <PROJECT_ID> \
+ --alerts false

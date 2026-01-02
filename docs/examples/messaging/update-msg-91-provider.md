@@ -1,2 +1,2 @@
 appwrite messaging update-msg-91-provider \
-    --provider-id <PROVIDER_ID>
+ --provider-id <PROVIDER_ID>

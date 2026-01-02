@@ -1,2 +1,2 @@
 appwrite projects list-webhooks \
-    --project-id <PROJECT_ID>
+ --project-id <PROJECT_ID>

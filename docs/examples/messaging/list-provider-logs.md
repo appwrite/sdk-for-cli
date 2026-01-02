@@ -1,2 +1,2 @@
 appwrite messaging list-provider-logs \
-    --provider-id <PROVIDER_ID>
+ --provider-id <PROVIDER_ID>

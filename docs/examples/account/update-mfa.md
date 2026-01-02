@@ -1,2 +1,2 @@
 appwrite account update-mfa \
-    --mfa false
+ --mfa false

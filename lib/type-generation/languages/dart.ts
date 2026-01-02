@@ -1,102 +1,116 @@
-import fs = require('fs');
-import path = require('path');
-import { AttributeType } from '../attribute';
-import { LanguageMeta, Attribute, Collection } from './language';
+import fs from "fs";
+import path from "path";
+import { AttributeType } from "../attribute.js";
+import { LanguageMeta, Attribute, Collection } from "./language.js";
 
 export class Dart extends LanguageMeta {
-    getPackageName(): string {
-        const pubspecPath = path.join(process.cwd(), 'pubspec.yaml');
-        if (fs.existsSync(pubspecPath)) {
-            const pubspecContent = fs.readFileSync(pubspecPath, 'utf8');
-            const lines = pubspecContent.split('\n');
+  getPackageName(): string {
+    const pubspecPath = path.join(process.cwd(), "pubspec.yaml");
+    if (fs.existsSync(pubspecPath)) {
+      const pubspecContent = fs.readFileSync(pubspecPath, "utf8");
+      const lines = pubspecContent.split("\n");
 
-            const dependenciesIndex = lines.findIndex((line) => line.trim() === 'dependencies:');
+      const dependenciesIndex = lines.findIndex(
+        (line) => line.trim() === "dependencies:",
+      );
 
-            if (dependenciesIndex !== -1) {
-                const indent = lines[dependenciesIndex].search(/\S|$/);
-                const dependencies: string[] = [];
-                for (let i = dependenciesIndex + 1; i < lines.length; i++) {
-                    const line = lines[i];
-                    if (line.trim() === '') continue;
+      if (dependenciesIndex !== -1) {
+        const indent = lines[dependenciesIndex].search(/\S|$/);
+        const dependencies: string[] = [];
+        for (let i = dependenciesIndex + 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.trim() === "") continue;
 
-                    const lineIndent = line.search(/\S|$/);
-                    if (lineIndent <= indent && line.trim() !== '') {
-                        break;
-                    }
+          const lineIndent = line.search(/\S|$/);
+          if (lineIndent <= indent && line.trim() !== "") {
+            break;
+          }
 
-                    dependencies.push(line.trim());
-                }
-
-                if (dependencies.some((dep) => dep.startsWith('dart_appwrite:'))) {
-                    return 'dart_appwrite';
-                }
-                if (dependencies.some((dep) => dep.startsWith('appwrite:'))) {
-                    return 'appwrite';
-                }
-            }
+          dependencies.push(line.trim());
         }
 
-        return 'appwrite';
+        if (dependencies.some((dep) => dep.startsWith("dart_appwrite:"))) {
+          return "dart_appwrite";
+        }
+        if (dependencies.some((dep) => dep.startsWith("appwrite:"))) {
+          return "appwrite";
+        }
+      }
     }
 
-    getType(attribute: Attribute, collections?: Collection[], collectionName?: string): string {
-        let type = '';
-        switch (attribute.type) {
-            case AttributeType.STRING:
-            case AttributeType.EMAIL:
-            case AttributeType.DATETIME:
-                type = 'String';
-                if (attribute.format === AttributeType.ENUM) {
-                    type = LanguageMeta.toPascalCase(collectionName!) + LanguageMeta.toPascalCase(attribute.key);
-                }
-                break;
-            case AttributeType.INTEGER:
-                type = 'int';
-                break;
-            case AttributeType.FLOAT:
-                type = 'double';
-                break;
-            case AttributeType.BOOLEAN:
-                type = 'bool';
-                break;
-            case AttributeType.RELATIONSHIP:
-                const relatedCollection = collections?.find((c) => c.$id === attribute.relatedCollection);
-                if (!relatedCollection) {
-                    throw new Error(`Related collection with ID '${attribute.relatedCollection}' not found.`);
-                }
-                type = LanguageMeta.toPascalCase(relatedCollection.name);
-                if (
-                    (attribute.relationType === 'oneToMany' && attribute.side === 'parent') ||
-                    (attribute.relationType === 'manyToOne' && attribute.side === 'child') ||
-                    attribute.relationType === 'manyToMany'
-                ) {
-                    type = `List<${type}>`;
-                }
-                break;
-            case AttributeType.POINT:
-                type = 'List<double>';
-                break;
-            case AttributeType.LINESTRING:
-                type = 'List<List<double>>';
-                break;
-            case AttributeType.POLYGON:
-                type = 'List<List<List<double>>>';
-                break;
-            default:
-                throw new Error(`Unknown attribute type: ${attribute.type}`);
-        }
-        if (attribute.array) {
-            type = `List<${type}>`;
-        }
-        if (!attribute.required) {
-            type += '?';
-        }
-        return type;
-    }
+    return "appwrite";
+  }
 
-    getTemplate(): string {
-        return `// This file is auto-generated by the Appwrite CLI. 
-// You can regenerate it by running \`appwrite ${process.argv.slice(2).join(' ')}\`.
+  getType(
+    attribute: Attribute,
+    collections?: Collection[],
+    collectionName?: string,
+  ): string {
+    let type = "";
+    switch (attribute.type) {
+      case AttributeType.STRING:
+      case AttributeType.EMAIL:
+      case AttributeType.DATETIME:
+        type = "String";
+        if (attribute.format === AttributeType.ENUM) {
+          type =
+            LanguageMeta.toPascalCase(collectionName!) +
+            LanguageMeta.toPascalCase(attribute.key);
+        }
+        break;
+      case AttributeType.INTEGER:
+        type = "int";
+        break;
+      case AttributeType.FLOAT:
+        type = "double";
+        break;
+      case AttributeType.BOOLEAN:
+        type = "bool";
+        break;
+      case AttributeType.RELATIONSHIP:
+        const relatedCollection = collections?.find(
+          (c) => c.$id === attribute.relatedCollection,
+        );
+        if (!relatedCollection) {
+          throw new Error(
+            `Related collection with ID '${attribute.relatedCollection}' not found.`,
+          );
+        }
+        type = LanguageMeta.toPascalCase(relatedCollection.name);
+        if (
+          (attribute.relationType === "oneToMany" &&
+            attribute.side === "parent") ||
+          (attribute.relationType === "manyToOne" &&
+            attribute.side === "child") ||
+          attribute.relationType === "manyToMany"
+        ) {
+          type = `List<${type}>`;
+        }
+        break;
+      case AttributeType.POINT:
+        type = "List<double>";
+        break;
+      case AttributeType.LINESTRING:
+        type = "List<List<double>>";
+        break;
+      case AttributeType.POLYGON:
+        type = "List<List<List<double>>>";
+        break;
+      default:
+        throw new Error(`Unknown attribute type: ${attribute.type}`);
+    }
+    if (attribute.array) {
+      type = `List<${type}>`;
+    }
+    if (!attribute.required) {
+      type += "?";
+    }
+    return type;
+  }
+
+  getTemplate(): string {
+    return `// This file is auto-generated by the Appwrite CLI. 
+// You can regenerate it by running \`appwrite ${process.argv.slice(2).join(" ")}\`.
 <% const __relatedImportsSeen = new Set();
    const sortedAttributes = collection.attributes.slice().sort((a, b) => {
      if (a.required === b.required) return 0;
@@ -195,10 +209,9 @@ map['<%= attribute.key %>'] != null ? <%- toPascalCase(collections.find(c => c.$
   }
 }
 `;
-    }
+  }
 
-    getFileName(collection: Collection): string {
-        return LanguageMeta.toSnakeCase(collection.name) + '.dart';
-    }
+  getFileName(collection: Collection): string {
+    return LanguageMeta.toSnakeCase(collection.name) + ".dart";
+  }
 }
-

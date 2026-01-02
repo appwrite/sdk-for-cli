@@ -1,2 +1,2 @@
 appwrite account update-prefs \
-    --prefs '{ "key": "value" }'
+ --prefs '{ "key": "value" }'

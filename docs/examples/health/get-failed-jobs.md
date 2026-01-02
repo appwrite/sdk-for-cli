@@ -1,2 +1,2 @@
 appwrite health get-failed-jobs \
-    --name v1-database
+ --name v1-database

@@ -1,3 +1,3 @@
 appwrite project create-variable \
-    --key <KEY> \
-    --value <VALUE>
+ --key <KEY> \
+ --value <VALUE>

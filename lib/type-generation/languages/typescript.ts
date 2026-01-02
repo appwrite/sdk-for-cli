@@ -1,89 +1,106 @@
-import fs = require('fs');
-import path = require('path');
-import { AttributeType } from '../attribute';
-import { LanguageMeta, Attribute, Collection } from './language';
+import fs from "fs";
+import path from "path";
+import { AttributeType } from "../attribute.js";
+import { LanguageMeta, Attribute, Collection } from "./language.js";
 
 export class TypeScript extends LanguageMeta {
-    getType(attribute: Attribute, collections?: Collection[], collectionName?: string): string {
-        let type = '';
-        switch (attribute.type) {
-            case AttributeType.STRING:
-            case AttributeType.EMAIL:
-            case AttributeType.DATETIME:
-            case AttributeType.IP:
-            case AttributeType.URL:
-                type = 'string';
-                if (attribute.format === AttributeType.ENUM) {
-                    type = LanguageMeta.toPascalCase(collectionName!) + LanguageMeta.toPascalCase(attribute.key);
-                }
-                break;
-            case AttributeType.INTEGER:
-                type = 'number';
-                break;
-            case AttributeType.FLOAT:
-                type = 'number';
-                break;
-            case AttributeType.BOOLEAN:
-                type = 'boolean';
-                break;
-            case AttributeType.RELATIONSHIP:
-                const relatedCollection = collections?.find((c) => c.$id === attribute.relatedCollection);
-                if (!relatedCollection) {
-                    throw new Error(`Related collection with ID '${attribute.relatedCollection}' not found.`);
-                }
-                type = LanguageMeta.toPascalCase(relatedCollection.name);
-                if (
-                    (attribute.relationType === 'oneToMany' && attribute.side === 'parent') ||
-                    (attribute.relationType === 'manyToOne' && attribute.side === 'child') ||
-                    attribute.relationType === 'manyToMany'
-                ) {
-                    type = `${type}[]`;
-                }
-                break;
-            case AttributeType.POINT:
-                type = 'Array<number>';
-                break;
-            case AttributeType.LINESTRING:
-                type = 'Array<Array<number>>';
-                break;
-            case AttributeType.POLYGON:
-                type = 'Array<Array<Array<number>>>';
-                break;
-            default:
-                throw new Error(`Unknown attribute type: ${attribute.type}`);
+  getType(
+    attribute: Attribute,
+    collections?: Collection[],
+    collectionName?: string,
+  ): string {
+    let type = "";
+    switch (attribute.type) {
+      case AttributeType.STRING:
+      case AttributeType.EMAIL:
+      case AttributeType.DATETIME:
+      case AttributeType.IP:
+      case AttributeType.URL:
+        type = "string";
+        if (attribute.format === AttributeType.ENUM) {
+          type =
+            LanguageMeta.toPascalCase(collectionName!) +
+            LanguageMeta.toPascalCase(attribute.key);
         }
-        if (attribute.array) {
-            type += '[]';
+        break;
+      case AttributeType.INTEGER:
+        type = "number";
+        break;
+      case AttributeType.FLOAT:
+        type = "number";
+        break;
+      case AttributeType.BOOLEAN:
+        type = "boolean";
+        break;
+      case AttributeType.RELATIONSHIP:
+        const relatedCollection = collections?.find(
+          (c) => c.$id === attribute.relatedCollection,
+        );
+        if (!relatedCollection) {
+          throw new Error(
+            `Related collection with ID '${attribute.relatedCollection}' not found.`,
+          );
         }
-        if (!attribute.required && attribute.default === null) {
-            type += ' | null';
+        type = LanguageMeta.toPascalCase(relatedCollection.name);
+        if (
+          (attribute.relationType === "oneToMany" &&
+            attribute.side === "parent") ||
+          (attribute.relationType === "manyToOne" &&
+            attribute.side === "child") ||
+          attribute.relationType === "manyToMany"
+        ) {
+          type = `${type}[]`;
         }
-        return type;
+        break;
+      case AttributeType.POINT:
+        type = "Array<number>";
+        break;
+      case AttributeType.LINESTRING:
+        type = "Array<Array<number>>";
+        break;
+      case AttributeType.POLYGON:
+        type = "Array<Array<Array<number>>>";
+        break;
+      default:
+        throw new Error(`Unknown attribute type: ${attribute.type}`);
+    }
+    if (attribute.array) {
+      type += "[]";
+    }
+    if (!attribute.required && attribute.default === null) {
+      type += " | null";
+    }
+    return type;
+  }
+
+  isSingleFile(): boolean {
+    return true;
+  }
+
+  private _getAppwriteDependency(): string {
+    if (fs.existsSync(path.resolve(process.cwd(), "package.json"))) {
+      const packageJsonRaw = fs.readFileSync(
+        path.resolve(process.cwd(), "package.json"),
+      );
+      const packageJson = JSON.parse(packageJsonRaw.toString("utf-8"));
+      return packageJson.dependencies &&
+        packageJson.dependencies["node-appwrite"]
+        ? "node-appwrite"
+        : "appwrite";
     }
 
-    isSingleFile(): boolean {
-        return true;
+    if (fs.existsSync(path.resolve(process.cwd(), "deno.json"))) {
+      return "https://deno.land/x/appwrite/mod.ts";
     }
 
-    private _getAppwriteDependency(): string {
-        if (fs.existsSync(path.resolve(process.cwd(), 'package.json'))) {
-            const packageJsonRaw = fs.readFileSync(path.resolve(process.cwd(), 'package.json'));
-            const packageJson = JSON.parse(packageJsonRaw.toString('utf-8'));
-            return packageJson.dependencies && packageJson.dependencies['node-appwrite'] ? 'node-appwrite' : 'appwrite';
-        }
+    return "appwrite";
+  }
 
-        if (fs.existsSync(path.resolve(process.cwd(), 'deno.json'))) {
-            return 'https://deno.land/x/appwrite/mod.ts';
-        }
-
-        return 'appwrite';
-    }
-
-    getTemplate(): string {
-        return `import type { Models } from '${this._getAppwriteDependency()}';
+  getTemplate(): string {
+    return `import type { Models } from '${this._getAppwriteDependency()}';
 
 // This file is auto-generated by the Appwrite CLI.
-// You can regenerate it by running \`appwrite ${process.argv.slice(2).join(' ')}\`.
+// You can regenerate it by running \`appwrite ${process.argv.slice(2).join(" ")}\`.
 
 <% for (const collection of collections) { -%>
 <% for (const attribute of collection.attributes) { -%>
@@ -108,9 +125,9 @@ export type <%- toPascalCase(collection.name) %> = Models.Row & {
 }<% if (index < collections.length - 1) { %>
 <% } %>
 <% } -%>`;
-    }
+  }
 
-    getFileName(_: Collection | undefined): string {
-        return 'appwrite.d.ts';
-    }
+  getFileName(_: Collection | undefined): string {
+    return "appwrite.d.ts";
+  }
 }

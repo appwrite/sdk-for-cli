@@ -1,2 +1,2 @@
 appwrite proxy update-rule-verification \
-    --rule-id <RULE_ID>
+ --rule-id <RULE_ID>

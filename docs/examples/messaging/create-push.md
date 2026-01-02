@@ -1,2 +1,2 @@
 appwrite messaging create-push \
-    --message-id <MESSAGE_ID>
+ --message-id <MESSAGE_ID>

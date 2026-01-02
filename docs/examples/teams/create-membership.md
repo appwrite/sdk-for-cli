@@ -1,3 +1,3 @@
 appwrite teams create-membership \
-    --team-id <TEAM_ID> \
-    --roles one two three
+ --team-id <TEAM_ID> \
+ --roles one two three

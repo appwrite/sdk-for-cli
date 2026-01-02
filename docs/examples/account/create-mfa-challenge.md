@@ -1,2 +1,2 @@
 appwrite account create-mfa-challenge \
-    --factor email
+ --factor email

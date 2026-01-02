@@ -1,2 +1,2 @@
 appwrite messaging list-targets \
-    --message-id <MESSAGE_ID>
+ --message-id <MESSAGE_ID>
