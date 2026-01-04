@@ -28,6 +28,7 @@ import {
   success,
   log,
   warn,
+  error,
   actionRunner,
   commandDescriptions,
 } from "../parser.js";
@@ -49,6 +50,14 @@ interface PullSitesOptions {
 export const pullResources = async ({
   skipDeprecated = false,
 }: PullResourcesOptions = {}): Promise<void> => {
+  const project = localConfig.getProject();
+  if (!project.projectId) {
+    error(
+      "Project configuration not found. Please run 'appwrite init project' to initialize your project first.",
+    );
+    process.exit(1);
+  }
+
   const actions: Record<string, (options?: any) => Promise<void>> = {
     settings: pullSettings,
     functions: pullFunctions,

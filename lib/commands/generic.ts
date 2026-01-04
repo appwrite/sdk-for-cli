@@ -84,7 +84,7 @@ export const loginCommand = async ({
   globalConfig.setEmail(answers.email);
 
   let client = await sdkForConsole(false);
-  let accountClient = new Account(client as unknown as ConsoleClient);
+  let accountClient = new Account(client);
 
   let account;
 
