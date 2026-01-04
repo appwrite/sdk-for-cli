@@ -3,11 +3,7 @@ import path from "path";
 import childProcess from "child_process";
 import { Command } from "commander";
 import inquirer from "inquirer";
-import { projectsCreate, projectsGet } from "./projects.js";
-import { storageCreateBucket } from "./storage.js";
-import { messagingCreateTopic } from "./messaging.js";
-import { functionsCreate } from "./functions.js";
-import { databasesCreateCollection } from "./databases.js";
+import { getProjectsService, getSitesService } from "../services.js";
 import { pullResources } from "./pull.js";
 import ID from "../id.js";
 import { localConfig, globalConfig } from "../config.js";
@@ -33,7 +29,6 @@ import {
   actionRunner,
   commandDescriptions,
 } from "../parser.js";
-import { sitesListTemplates } from "./sites.js";
 import { sdkForConsole } from "../sdks.js";
 import { isCloud } from "../utils.js";
 import { Account, Client as ConsoleClient } from "@appwrite.io/console";
@@ -106,7 +101,8 @@ const initProject = async ({
       projectId ?? (await inquirer.prompt([questionsInitProject[4]])).id;
 
     try {
-      await projectsGet({ projectId, parseOutput: false });
+      const projectsService = await getProjectsService();
+      await projectsService.get(projectId);
     } catch (e: any) {
       if (e.code === 404) {
         answers.start = "new";
@@ -122,12 +118,13 @@ const initProject = async ({
   const url = new URL("https://cloud.appwrite.io/v1");
 
   if (answers.start === "new") {
-    response = await projectsCreate({
-      projectId: answers.id,
-      name: answers.project,
-      teamId: answers.organization,
-      parseOutput: false,
-    });
+    const projectsService = await getProjectsService();
+    response = await projectsService.create(
+      answers.id,
+      answers.project,
+      answers.organization,
+      answers.region,
+    );
 
     localConfig.setProject(response["$id"]);
     if (answers.region) {
@@ -466,12 +463,12 @@ const initSite = async (): Promise<void> => {
 
   let templateDetails: any;
   try {
-    const response = await sitesListTemplates({
-      frameworks: [answers.framework.key],
-      useCases: ["starter"],
-      limit: 1,
-      parseOutput: false,
-    });
+    const sitesService = await getSitesService();
+    const response = await sitesService.listTemplates(
+      [answers.framework.key],
+      ["starter"],
+      1,
+    );
     if (response.total == 0) {
       throw new Error(
         `No starter template found for framework ${answers.framework.key}`,

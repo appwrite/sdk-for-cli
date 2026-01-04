@@ -1,0 +1,856 @@
+import { Command } from "commander";
+import { sdkForProject } from "../../sdks.js";
+import {
+  actionRunner,
+  commandDescriptions,
+  parseBool,
+  parseInteger,
+} from "../../parser.js";
+import {
+  Client as ConsoleClient,
+  Functions,
+  UsageRange,
+  TemplateReferenceType,
+  VCSReferenceType,
+  DeploymentDownloadType,
+  ExecutionMethod,
+} from "@appwrite.io/console";
+
+let functionsClient: Functions | null = null;
+
+const getFunctionsClient = async (): Promise<Functions> => {
+  if (!functionsClient) {
+    const sdkClient = await sdkForProject();
+    functionsClient = new Functions(sdkClient as unknown as ConsoleClient);
+  }
+  return functionsClient;
+};
+
+export const functions = new Command("functions")
+  .description(commandDescriptions["functions"] ?? "")
+  .configureHelp({
+    helpWidth: process.stdout.columns || 80,
+  });
+
+functions
+  .command(`list`)
+  .description(
+    `Get a list of all the project's functions. You can use the query params to filter your results.`,
+  )
+  .option(
+    `--queries [queries...]`,
+    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId`,
+  )
+  .option(
+    `--search <search>`,
+    `Search term to filter your list results. Max length: 256 chars.`,
+  )
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ queries, search, total }) =>
+        await (await getFunctionsClient()).list(queries, search, total),
+    ),
+  );
+
+functions
+  .command(`create`)
+  .description(
+    `Create a new function. You can pass a list of [permissions](https://appwrite.io/docs/permissions) to allow different project users or team with access to execute the function using the client API.`,
+  )
+  .requiredOption(
+    `--function-id <function-id>`,
+    `Function ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
+  )
+  .requiredOption(`--name <name>`, `Function name. Max length: 128 chars.`)
+  .requiredOption(`--runtime <runtime>`, `Execution runtime.`)
+  .option(
+    `--execute [execute...]`,
+    `An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`,
+  )
+  .option(
+    `--events [events...]`,
+    `Events list. Maximum of 100 events are allowed.`,
+  )
+  .option(`--schedule <schedule>`, `Schedule CRON syntax.`)
+  .option(
+    `--timeout <timeout>`,
+    `Function maximum execution time in seconds.`,
+    parseInteger,
+  )
+  .option(
+    `--enabled [value]`,
+    `Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--logging [value]`,
+    `When disabled, executions will exclude logs and errors, and will be slightly faster.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--entrypoint <entrypoint>`,
+    `Entrypoint File. This path is relative to the "providerRootDirectory".`,
+  )
+  .option(`--commands <commands>`, `Build Commands.`)
+  .option(
+    `--scopes [scopes...]`,
+    `List of scopes allowed for API key auto-generated for every execution. Maximum of 100 scopes are allowed.`,
+  )
+  .option(
+    `--installation-id <installation-id>`,
+    `Appwrite Installation ID for VCS (Version Control System) deployment.`,
+  )
+  .option(
+    `--provider-repository-id <provider-repository-id>`,
+    `Repository ID of the repo linked to the function.`,
+  )
+  .option(
+    `--provider-branch <provider-branch>`,
+    `Production branch for the repo linked to the function.`,
+  )
+  .option(
+    `--provider-silent-mode [value]`,
+    `Is the VCS (Version Control System) connection in silent mode for the repo linked to the function? In silent mode, comments will not be made on commits and pull requests.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--provider-root-directory <provider-root-directory>`,
+    `Path to function code in the linked repo.`,
+  )
+  .option(
+    `--specification <specification>`,
+    `Runtime specification for the function and builds.`,
+  )
+  .action(
+    actionRunner(
+      async ({
+        functionId,
+        name,
+        runtime,
+        execute,
+        events,
+        schedule,
+        timeout,
+        enabled,
+        logging,
+        entrypoint,
+        commands,
+        scopes,
+        installationId,
+        providerRepositoryId,
+        providerBranch,
+        providerSilentMode,
+        providerRootDirectory,
+        specification,
+      }) =>
+        await (
+          await getFunctionsClient()
+        ).create(
+          functionId,
+          name,
+          runtime,
+          execute,
+          events,
+          schedule,
+          timeout,
+          enabled,
+          logging,
+          entrypoint,
+          commands,
+          scopes,
+          installationId,
+          providerRepositoryId,
+          providerBranch,
+          providerSilentMode,
+          providerRootDirectory,
+          specification,
+        ),
+    ),
+  );
+
+functions
+  .command(`list-runtimes`)
+  .description(
+    `Get a list of all runtimes that are currently active on your instance.`,
+  )
+  .action(
+    actionRunner(async () => await (await getFunctionsClient()).listRuntimes()),
+  );
+
+functions
+  .command(`list-specifications`)
+  .description(`List allowed function specifications for this instance.`)
+  .action(
+    actionRunner(
+      async () => await (await getFunctionsClient()).listSpecifications(),
+    ),
+  );
+
+functions
+  .command(`list-templates`)
+  .description(
+    `List available function templates. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.`,
+  )
+  .option(
+    `--runtimes [runtimes...]`,
+    `List of runtimes allowed for filtering function templates. Maximum of 100 runtimes are allowed.`,
+  )
+  .option(
+    `--use-cases [use-cases...]`,
+    `List of use cases allowed for filtering function templates. Maximum of 100 use cases are allowed.`,
+  )
+  .option(
+    `--limit <limit>`,
+    `Limit the number of templates returned in the response. Default limit is 25, and maximum limit is 5000.`,
+    parseInteger,
+  )
+  .option(
+    `--offset <offset>`,
+    `Offset the list of returned templates. Maximum offset is 5000.`,
+    parseInteger,
+  )
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ runtimes, useCases, limit, offset, total }) =>
+        await (
+          await getFunctionsClient()
+        ).listTemplates(runtimes, useCases, limit, offset, total),
+    ),
+  );
+
+functions
+  .command(`get-template`)
+  .description(
+    `Get a function template using ID. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.`,
+  )
+  .requiredOption(`--template-id <template-id>`, `Template ID.`)
+  .action(
+    actionRunner(
+      async ({ templateId }) =>
+        await (await getFunctionsClient()).getTemplate(templateId),
+    ),
+  );
+
+functions
+  .command(`list-usage`)
+  .description(
+    `Get usage metrics and statistics for all functions in the project. View statistics including total deployments, builds, logs, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`,
+  )
+  .option(`--range <range>`, `Date range.`)
+  .action(
+    actionRunner(
+      async ({ range }) =>
+        await (await getFunctionsClient()).listUsage(range as UsageRange),
+    ),
+  );
+
+functions
+  .command(`get`)
+  .description(`Get a function by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId }) =>
+        await (await getFunctionsClient()).get(functionId),
+    ),
+  );
+
+functions
+  .command(`update`)
+  .description(`Update function by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--name <name>`, `Function name. Max length: 128 chars.`)
+  .option(`--runtime <runtime>`, `Execution runtime.`)
+  .option(
+    `--execute [execute...]`,
+    `An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`,
+  )
+  .option(
+    `--events [events...]`,
+    `Events list. Maximum of 100 events are allowed.`,
+  )
+  .option(`--schedule <schedule>`, `Schedule CRON syntax.`)
+  .option(
+    `--timeout <timeout>`,
+    `Maximum execution time in seconds.`,
+    parseInteger,
+  )
+  .option(
+    `--enabled [value]`,
+    `Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--logging [value]`,
+    `When disabled, executions will exclude logs and errors, and will be slightly faster.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--entrypoint <entrypoint>`,
+    `Entrypoint File. This path is relative to the "providerRootDirectory".`,
+  )
+  .option(`--commands <commands>`, `Build Commands.`)
+  .option(
+    `--scopes [scopes...]`,
+    `List of scopes allowed for API Key auto-generated for every execution. Maximum of 100 scopes are allowed.`,
+  )
+  .option(
+    `--installation-id <installation-id>`,
+    `Appwrite Installation ID for VCS (Version Controle System) deployment.`,
+  )
+  .option(
+    `--provider-repository-id <provider-repository-id>`,
+    `Repository ID of the repo linked to the function`,
+  )
+  .option(
+    `--provider-branch <provider-branch>`,
+    `Production branch for the repo linked to the function`,
+  )
+  .option(
+    `--provider-silent-mode [value]`,
+    `Is the VCS (Version Control System) connection in silent mode for the repo linked to the function? In silent mode, comments will not be made on commits and pull requests.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--provider-root-directory <provider-root-directory>`,
+    `Path to function code in the linked repo.`,
+  )
+  .option(
+    `--specification <specification>`,
+    `Runtime specification for the function and builds.`,
+  )
+  .action(
+    actionRunner(
+      async ({
+        functionId,
+        name,
+        runtime,
+        execute,
+        events,
+        schedule,
+        timeout,
+        enabled,
+        logging,
+        entrypoint,
+        commands,
+        scopes,
+        installationId,
+        providerRepositoryId,
+        providerBranch,
+        providerSilentMode,
+        providerRootDirectory,
+        specification,
+      }) =>
+        await (
+          await getFunctionsClient()
+        ).update(
+          functionId,
+          name,
+          runtime,
+          execute,
+          events,
+          schedule,
+          timeout,
+          enabled,
+          logging,
+          entrypoint,
+          commands,
+          scopes,
+          installationId,
+          providerRepositoryId,
+          providerBranch,
+          providerSilentMode,
+          providerRootDirectory,
+          specification,
+        ),
+    ),
+  );
+
+functions
+  .command(`delete`)
+  .description(`Delete a function by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId }) =>
+        await (await getFunctionsClient()).delete(functionId),
+    ),
+  );
+
+functions
+  .command(`update-function-deployment`)
+  .description(
+    `Update the function active deployment. Use this endpoint to switch the code deployment that should be used when visitor opens your function.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, deploymentId }) =>
+        await (
+          await getFunctionsClient()
+        ).updateFunctionDeployment(functionId, deploymentId),
+    ),
+  );
+
+functions
+  .command(`list-deployments`)
+  .description(
+    `Get a list of all the function's code deployments. You can use the query params to filter your results.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .option(
+    `--queries [queries...]`,
+    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`,
+  )
+  .option(
+    `--search <search>`,
+    `Search term to filter your list results. Max length: 256 chars.`,
+  )
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, queries, search, total }) =>
+        await (
+          await getFunctionsClient()
+        ).listDeployments(functionId, queries, search, total),
+    ),
+  );
+
+functions
+  .command(`create-deployment`)
+  .description(
+    `Create a new function code deployment. Use this endpoint to upload a new version of your code function. To execute your newly uploaded code, you'll need to update the function's deployment to use your new deployment UID.
+
+This endpoint accepts a tar.gz file compressed with your code. Make sure to include any dependencies your code has within the compressed file. You can learn more about code packaging in the [Appwrite Cloud Functions tutorial](https://appwrite.io/docs/functions).
+
+Use the "command" param to set the entrypoint used to execute your code.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .option(`--entrypoint <entrypoint>`, `Entrypoint File.`)
+  .option(`--commands <commands>`, `Build Commands.`)
+  .requiredOption(
+    `--code <code>`,
+    `Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.`,
+  )
+  .requiredOption(
+    `--activate <activate>`,
+    `Automatically activate the deployment when it is finished building.`,
+    parseBool,
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, entrypoint, commands, code, activate }) =>
+        await (
+          await getFunctionsClient()
+        ).createDeployment(functionId, entrypoint, commands, code, activate),
+    ),
+  );
+
+functions
+  .command(`create-duplicate-deployment`)
+  .description(
+    `Create a new build for an existing function deployment. This endpoint allows you to rebuild a deployment with the updated function configuration, including its entrypoint and build commands if they have been modified. The build process will be queued and executed asynchronously. The original deployment's code will be preserved and used for the new build.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
+  .option(`--build-id <build-id>`, `Build unique ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, deploymentId, buildId }) =>
+        await (
+          await getFunctionsClient()
+        ).createDuplicateDeployment(functionId, deploymentId, buildId),
+    ),
+  );
+
+functions
+  .command(`create-template-deployment`)
+  .description(
+    `Create a deployment based on a template.
+
+Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/products/functions/templates) to find the template details.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(
+    `--repository <repository>`,
+    `Repository name of the template.`,
+  )
+  .requiredOption(`--owner <owner>`, `The name of the owner of the template.`)
+  .requiredOption(
+    `--root-directory <root-directory>`,
+    `Path to function code in the template repo.`,
+  )
+  .requiredOption(
+    `--type <type>`,
+    `Type for the reference provided. Can be commit, branch, or tag`,
+  )
+  .requiredOption(
+    `--reference <reference>`,
+    `Reference value, can be a commit hash, branch name, or release tag`,
+  )
+  .option(
+    `--activate [value]`,
+    `Automatically activate the deployment when it is finished building.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({
+        functionId,
+        repository,
+        owner,
+        rootDirectory,
+        xType,
+        reference,
+        activate,
+      }) =>
+        await (
+          await getFunctionsClient()
+        ).createTemplateDeployment(
+          functionId,
+          repository,
+          owner,
+          rootDirectory,
+          xType as TemplateReferenceType,
+          reference,
+          activate,
+        ),
+    ),
+  );
+
+functions
+  .command(`create-vcs-deployment`)
+  .description(
+    `Create a deployment when a function is connected to VCS.
+
+This endpoint lets you create deployment from a branch, commit, or a tag.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(
+    `--type <type>`,
+    `Type of reference passed. Allowed values are: branch, commit`,
+  )
+  .requiredOption(
+    `--reference <reference>`,
+    `VCS reference to create deployment from. Depending on type this can be: branch name, commit hash`,
+  )
+  .option(
+    `--activate [value]`,
+    `Automatically activate the deployment when it is finished building.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, xType, reference, activate }) =>
+        await (
+          await getFunctionsClient()
+        ).createVcsDeployment(
+          functionId,
+          xType as VCSReferenceType,
+          reference,
+          activate,
+        ),
+    ),
+  );
+
+functions
+  .command(`get-deployment`)
+  .description(`Get a function deployment by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, deploymentId }) =>
+        await (
+          await getFunctionsClient()
+        ).getDeployment(functionId, deploymentId),
+    ),
+  );
+
+functions
+  .command(`delete-deployment`)
+  .description(`Delete a code deployment by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, deploymentId }) =>
+        await (
+          await getFunctionsClient()
+        ).deleteDeployment(functionId, deploymentId),
+    ),
+  );
+
+functions
+  .command(`get-deployment-download`)
+  .description(
+    `Get a function deployment content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
+  .option(
+    `--type <type>`,
+    `Deployment file to download. Can be: "source", "output".`,
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, deploymentId, xType }) =>
+        await (
+          await getFunctionsClient()
+        ).getDeploymentDownload(
+          functionId,
+          deploymentId,
+          xType as DeploymentDownloadType,
+        ),
+    ),
+  );
+
+functions
+  .command(`update-deployment-status`)
+  .description(
+    `Cancel an ongoing function deployment build. If the build is already in progress, it will be stopped and marked as canceled. If the build hasn't started yet, it will be marked as canceled without executing. You cannot cancel builds that have already completed (status 'ready') or failed. The response includes the final build status and details.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, deploymentId }) =>
+        await (
+          await getFunctionsClient()
+        ).updateDeploymentStatus(functionId, deploymentId),
+    ),
+  );
+
+functions
+  .command(`list-executions`)
+  .description(
+    `Get a list of all the current user function execution logs. You can use the query params to filter your results.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .option(
+    `--queries [queries...]`,
+    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`,
+  )
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, queries, total }) =>
+        await (
+          await getFunctionsClient()
+        ).listExecutions(functionId, queries, total),
+    ),
+  );
+
+functions
+  .command(`create-execution`)
+  .description(
+    `Trigger a function execution. The returned object will return you the current execution status. You can ping the \`Get Execution\` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .option(
+    `--body <body>`,
+    `HTTP body of execution. Default value is empty string.`,
+  )
+  .option(
+    `--async [value]`,
+    `Execute code in the background. Default value is false.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--path <path>`,
+    `HTTP path of execution. Path can include query params. Default value is /`,
+  )
+  .option(
+    `--method <method>`,
+    `HTTP method of execution. Default value is POST.`,
+  )
+  .option(
+    `--headers <headers>`,
+    `HTTP headers of execution. Defaults to empty.`,
+  )
+  .option(
+    `--scheduled-at <scheduled-at>`,
+    `Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.`,
+  )
+  .action(
+    actionRunner(
+      async ({
+        functionId,
+        body,
+        xAsync,
+        path,
+        method,
+        headers,
+        scheduledAt,
+      }) =>
+        await (
+          await getFunctionsClient()
+        ).createExecution(
+          functionId,
+          body,
+          xAsync,
+          path,
+          method as ExecutionMethod,
+          JSON.parse(headers),
+          scheduledAt,
+        ),
+    ),
+  );
+
+functions
+  .command(`get-execution`)
+  .description(`Get a function execution log by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--execution-id <execution-id>`, `Execution ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, executionId }) =>
+        await (
+          await getFunctionsClient()
+        ).getExecution(functionId, executionId),
+    ),
+  );
+
+functions
+  .command(`delete-execution`)
+  .description(`Delete a function execution by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .requiredOption(`--execution-id <execution-id>`, `Execution ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, executionId }) =>
+        await (
+          await getFunctionsClient()
+        ).deleteExecution(functionId, executionId),
+    ),
+  );
+
+functions
+  .command(`get-usage`)
+  .description(
+    `Get usage metrics and statistics for a for a specific function. View statistics including total deployments, builds, executions, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function ID.`)
+  .option(`--range <range>`, `Date range.`)
+  .action(
+    actionRunner(
+      async ({ functionId, range }) =>
+        await (
+          await getFunctionsClient()
+        ).getUsage(functionId, range as UsageRange),
+    ),
+  );
+
+functions
+  .command(`list-variables`)
+  .description(`Get a list of all variables of a specific function.`)
+  .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId }) =>
+        await (await getFunctionsClient()).listVariables(functionId),
+    ),
+  );
+
+functions
+  .command(`create-variable`)
+  .description(
+    `Create a new function environment variable. These variables can be accessed in the function at runtime as environment variables.`,
+  )
+  .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .requiredOption(`--key <key>`, `Variable key. Max length: 255 chars.`)
+  .requiredOption(`--value <value>`, `Variable value. Max length: 8192 chars.`)
+  .option(
+    `--secret [value]`,
+    `Secret variables can be updated or deleted, but only functions can read them during build and runtime.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, key, value, secret }) =>
+        await (
+          await getFunctionsClient()
+        ).createVariable(functionId, key, value, secret),
+    ),
+  );
+
+functions
+  .command(`get-variable`)
+  .description(`Get a variable by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, variableId }) =>
+        await (await getFunctionsClient()).getVariable(functionId, variableId),
+    ),
+  );
+
+functions
+  .command(`update-variable`)
+  .description(`Update variable by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
+  .requiredOption(`--key <key>`, `Variable key. Max length: 255 chars.`)
+  .option(`--value <value>`, `Variable value. Max length: 8192 chars.`)
+  .option(
+    `--secret [value]`,
+    `Secret variables can be updated or deleted, but only functions can read them during build and runtime.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ functionId, variableId, key, value, secret }) =>
+        await (
+          await getFunctionsClient()
+        ).updateVariable(functionId, variableId, key, value, secret),
+    ),
+  );
+
+functions
+  .command(`delete-variable`)
+  .description(`Delete a variable by its unique ID.`)
+  .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
+  .action(
+    actionRunner(
+      async ({ functionId, variableId }) =>
+        await (
+          await getFunctionsClient()
+        ).deleteVariable(functionId, variableId),
+    ),
+  );

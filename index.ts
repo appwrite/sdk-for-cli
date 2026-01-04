@@ -26,25 +26,25 @@ import { pull } from "./lib/commands/pull.js";
 import { run } from "./lib/commands/run.js";
 import { push, deploy } from "./lib/commands/push.js";
 import { update } from "./lib/commands/update.js";
-import { account } from "./lib/commands/account.js";
-import { console } from "./lib/commands/console.js";
-import { databases } from "./lib/commands/databases.js";
-import { functions } from "./lib/commands/functions.js";
-import { graphql } from "./lib/commands/graphql.js";
-import { health } from "./lib/commands/health.js";
-import { locale } from "./lib/commands/locale.js";
-import { messaging } from "./lib/commands/messaging.js";
-import { migrations } from "./lib/commands/migrations.js";
-import { project } from "./lib/commands/project.js";
-import { projects } from "./lib/commands/projects.js";
-import { proxy } from "./lib/commands/proxy.js";
-import { sites } from "./lib/commands/sites.js";
-import { storage } from "./lib/commands/storage.js";
-import { tablesDB } from "./lib/commands/tables-db.js";
-import { teams } from "./lib/commands/teams.js";
-import { tokens } from "./lib/commands/tokens.js";
-import { users } from "./lib/commands/users.js";
-import { vcs } from "./lib/commands/vcs.js";
+import { account } from "./lib/commands/services/account.js";
+import { console } from "./lib/commands/services/console.js";
+import { databases } from "./lib/commands/services/databases.js";
+import { functions } from "./lib/commands/services/functions.js";
+import { graphql } from "./lib/commands/services/graphql.js";
+import { health } from "./lib/commands/services/health.js";
+import { locale } from "./lib/commands/services/locale.js";
+import { messaging } from "./lib/commands/services/messaging.js";
+import { migrations } from "./lib/commands/services/migrations.js";
+import { project } from "./lib/commands/services/project.js";
+import { projects } from "./lib/commands/services/projects.js";
+import { proxy } from "./lib/commands/services/proxy.js";
+import { sites } from "./lib/commands/services/sites.js";
+import { storage } from "./lib/commands/services/storage.js";
+import { tablesdb } from "./lib/commands/services/tablesdb.js";
+import { teams } from "./lib/commands/services/teams.js";
+import { tokens } from "./lib/commands/services/tokens.js";
+import { users } from "./lib/commands/services/users.js";
+import { vcs } from "./lib/commands/services/vcs.js";
 import searchList from "inquirer-search-list";
 
 inquirer.registerPrompt("search-list", searchList);
@@ -156,7 +156,7 @@ if (process.argv.includes("-v") || process.argv.includes("--version")) {
     .addCommand(proxy)
     .addCommand(sites)
     .addCommand(storage)
-    .addCommand(tablesDB)
+    .addCommand(tablesdb)
     .addCommand(teams)
     .addCommand(tokens)
     .addCommand(users)

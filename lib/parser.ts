@@ -5,7 +5,7 @@ import packageJson from "../package.json" with { type: "json" };
 const { description } = packageJson;
 import { globalConfig } from "./config.js";
 import os from "os";
-import Client from "./client.js";
+import { Client } from "@appwrite.io/console";
 import { isCloud } from "./utils.js";
 import type { CliConfig } from "./types.js";
 
@@ -119,10 +119,10 @@ export const parseError = (err: Error): void => {
 
       try {
         const client = new Client().setEndpoint(endpoint);
-        const res = await client.call<{ version: string }>(
+        const res = (await client.call(
           "get",
-          "/health/version",
-        );
+          new URL("/health/version", endpoint),
+        )) as { version: string };
         appwriteVersion = res.version;
       } catch {
         // Silently fail

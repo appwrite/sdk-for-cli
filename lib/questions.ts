@@ -1,28 +1,18 @@
 import chalk from "chalk";
-import Client from "./client.js";
 import { localConfig, globalConfig } from "./config.js";
-import { projectsList } from "./commands/projects.js";
-import { organizationsList } from "./commands/organizations.js";
-import { teamsList } from "./commands/teams.js";
-import {
-  functionsListRuntimes,
-  functionsListSpecifications,
-  functionsList,
-} from "./commands/functions.js";
 import { sdkForConsole } from "./sdks.js";
 import { validateRequired } from "./validations.js";
 import { paginate } from "./paginate.js";
 import { checkDeployConditions, isCloud } from "./utils.js";
-import { databasesList } from "./commands/databases.js";
-import JSONbig from "json-bigint";
+import { Account, Client } from "@appwrite.io/console";
 import {
-  sitesListFrameworks,
-  sitesListSpecifications,
-  sitesList,
-} from "./commands/sites.js";
-import { Account, Client as ConsoleClient } from "@appwrite.io/console";
-
-const JSONbigConfig = JSONbig({ storeAsString: false });
+  getOrganizationsService,
+  getTeamsService,
+  getProjectsService,
+  getFunctionsService,
+  getSitesService,
+  getDatabasesService,
+} from "./services.js";
 
 interface Answers {
   override?: boolean;
@@ -195,13 +185,15 @@ export const questionsInitProject: Question[] = [
       let client = await sdkForConsole(true);
       const { teams } = isCloud()
         ? await paginate(
-            organizationsList,
-            { parseOutput: false, sdk: client },
+            async (opts: { sdk?: Client } = {}) =>
+              (await getOrganizationsService(opts.sdk)).list(),
+            { sdk: client },
             100,
             "teams",
           )
         : await paginate(
-            teamsList,
+            async (opts: { sdk?: Client } = {}) =>
+              (await getTeamsService(opts.sdk)).list(),
             { parseOutput: false, sdk: client },
             100,
             "teams",
@@ -253,7 +245,7 @@ export const questionsInitProject: Question[] = [
       ];
 
       const { projects } = await paginate(
-        projectsList,
+        async () => (await getProjectsService()).list(queries),
         { parseOutput: false },
         100,
         "projects",
@@ -284,10 +276,12 @@ export const questionsInitProject: Question[] = [
     message: "Select your Appwrite Cloud region",
     choices: async () => {
       let client = await sdkForConsole(true);
-      let response = await client.call<{ regions: any[] }>(
+      const endpoint =
+        globalConfig.getEndpoint() || "https://cloud.appwrite.io/v1";
+      let response = (await client.call(
         "GET",
-        "/console/regions",
-      );
+        new URL(endpoint + "/console/regions"),
+      )) as { regions: any[] };
       let regions = response.regions || [];
       if (!regions.length) {
         throw new Error(
@@ -347,7 +341,7 @@ export const questionsPullFunctions: Question[] = [
     validate: (value: any) => validateRequired("function", value),
     choices: async () => {
       const { functions } = await paginate(
-        functionsList,
+        async () => (await getFunctionsService()).list(),
         { parseOutput: false },
         100,
         "functions",
@@ -382,7 +376,7 @@ export const questionsPullSites: Question[] = [
     validate: (value: any) => validateRequired("site", value),
     choices: async () => {
       const { sites } = await paginate(
-        sitesList,
+        async () => (await getSitesService()).list(),
         { parseOutput: false },
         100,
         "sites",
@@ -427,9 +421,7 @@ export const questionsCreateFunction: Question[] = [
     name: "runtime",
     message: "What runtime would you like to use?",
     choices: async () => {
-      let response = await functionsListRuntimes({
-        parseOutput: false,
-      });
+      let response = await (await getFunctionsService()).listRuntimes();
       let runtimes = response["runtimes"];
       let choices = runtimes.map((runtime: any, idx: number) => {
         return {
@@ -451,9 +443,7 @@ export const questionsCreateFunction: Question[] = [
     name: "specification",
     message: "What specification would you like to use?",
     choices: async () => {
-      let response = await functionsListSpecifications({
-        parseOutput: false,
-      });
+      let response = await (await getFunctionsService()).listSpecifications();
       let specifications = response["specifications"];
       let choices = specifications.map((spec: any, idx: number) => {
         return {
@@ -690,9 +680,7 @@ export const questionsPullCollection: Question[] = [
     message: "From which database would you like to pull collections?",
     validate: (value: any) => validateRequired("collection", value),
     choices: async () => {
-      let response = await databasesList({
-        parseOutput: false,
-      });
+      let response = await (await getDatabasesService()).list();
       let databases = response["databases"];
 
       if (databases.length <= 0) {
@@ -791,10 +779,10 @@ export const questionGetEndpoint: Question[] = [
       }
       let client = new Client().setEndpoint(value);
       try {
-        let response = await client.call<{ version?: string }>(
+        let response = (await client.call(
           "get",
-          "/health/version",
-        );
+          new URL(value + "/health/version"),
+        )) as { version?: string };
         if (response.version) {
           return true;
         } else {
@@ -1065,7 +1053,7 @@ export const questionsListFactors: Question[] = [
       "Your account is protected by multi-factor authentication. Please choose one for verification.",
     choices: async () => {
       let client = await sdkForConsole(false);
-      const accountClient = new Account(client as unknown as ConsoleClient);
+      const accountClient = new Account(client);
       const factors = await accountClient.listMfaFactors();
 
       const choices = [
@@ -1148,9 +1136,7 @@ export const questionsCreateSite: Question[] = [
     name: "framework",
     message: "What framework would you like to use?",
     choices: async () => {
-      let response = await sitesListFrameworks({
-        parseOutput: false,
-      });
+      let response = await (await getSitesService()).listFrameworks();
       let frameworks = response["frameworks"];
       let choices = frameworks.map((framework: any) => {
         return {
@@ -1166,9 +1152,7 @@ export const questionsCreateSite: Question[] = [
     name: "specification",
     message: "What specification would you like to use?",
     choices: async () => {
-      let response = await sitesListSpecifications({
-        parseOutput: false,
-      });
+      let response = await (await getSitesService()).listSpecifications();
       let specifications = response["specifications"];
       let choices = specifications.map((spec: any) => {
         return {

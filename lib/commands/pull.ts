@@ -3,26 +3,16 @@ import chalk from "chalk";
 import tar from "tar";
 import { Command } from "commander";
 import inquirer from "inquirer";
-import { messagingListTopics } from "./messaging.js";
-import { teamsList } from "./teams.js";
-import { projectsGet } from "./projects.js";
 import {
-  functionsList,
-  functionsGetDeploymentDownload,
-  functionsListDeployments,
-} from "./functions.js";
-import {
-  sitesList,
-  sitesGetDeploymentDownload,
-  sitesListDeployments,
-} from "./sites.js";
-import {
-  databasesGet,
-  databasesListCollections,
-  databasesList,
-} from "./databases.js";
-import { tablesDBList, tablesDBGet, tablesDBListTables } from "./tables-db.js";
-import { storageListBuckets } from "./storage.js";
+  getMessagingService,
+  getTeamsService,
+  getProjectsService,
+  getFunctionsService,
+  getSitesService,
+  getDatabasesService,
+  getTablesDBService,
+  getStorageService,
+} from "../services.js";
 import { localConfig } from "../config.js";
 import { paginate } from "../paginate.js";
 import {
@@ -93,10 +83,10 @@ const pullSettings = async (): Promise<void> => {
   log("Pulling project settings ...");
 
   try {
-    let response = await projectsGet({
-      parseOutput: false,
-      projectId: localConfig.getProject().projectId,
-    });
+    const projectsService = await getProjectsService();
+    let response = await projectsService.get(
+      localConfig.getProject().projectId,
+    );
 
     localConfig.setProject(response.$id, response.name, response);
 
@@ -115,10 +105,10 @@ const pullFunctions = async ({
   log("Fetching functions ...");
   let total = 0;
 
-  const fetchResponse = await functionsList({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const functionsService = await getFunctionsService();
+  const fetchResponse = await functionsService.list([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["functions"].length <= 0) {
     log("No functions found.");
     success(`Successfully pulled ${chalk.bold(total)} functions.`);
@@ -126,8 +116,14 @@ const pullFunctions = async ({
   }
 
   const functions = cliConfig.all
-    ? (await paginate(functionsList, { parseOutput: false }, 100, "functions"))
-        .functions
+    ? (
+        await paginate(
+          async () => (await getFunctionsService()).list(),
+          {},
+          100,
+          "functions",
+        )
+      ).functions
     : (await inquirer.prompt(questionsPullFunctions)).functions;
 
   let allowCodePull: boolean | null = cliConfig.force === true ? true : null;
@@ -168,14 +164,13 @@ const pullFunctions = async ({
     let deploymentId: string | null = null;
 
     try {
-      const fetchResponse = await functionsListDeployments({
-        functionId: func["$id"],
-        queries: [
+      const fetchResponse = await functionsService.listDeployments(
+        func["$id"],
+        [
           JSON.stringify({ method: "limit", values: [1] }),
           JSON.stringify({ method: "orderDesc", values: ["$id"] }),
         ],
-        parseOutput: false,
-      });
+      );
 
       if (fetchResponse["total"] > 0) {
         deploymentId = fetchResponse["deployments"][0]["$id"];
@@ -192,13 +187,12 @@ const pullFunctions = async ({
     log("Pulling latest deployment code ...");
 
     const compressedFileName = `${func["$id"]}-${+new Date()}.tar.gz`;
-    await functionsGetDeploymentDownload({
-      functionId: func["$id"],
+    const downloadBuffer = await functionsService.getDeploymentDownload(
+      func["$id"],
       deploymentId,
-      destination: compressedFileName,
-      overrideForCli: true,
-      parseOutput: false,
-    });
+    );
+
+    fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
 
     tar.extract({
       sync: true,
@@ -234,10 +228,10 @@ const pullSites = async ({
   log("Fetching sites ...");
   let total = 0;
 
-  const fetchResponse = await sitesList({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const sitesService = await getSitesService();
+  const fetchResponse = await sitesService.list([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["sites"].length <= 0) {
     log("No sites found.");
     success(`Successfully pulled ${chalk.bold(total)} sites.`);
@@ -245,7 +239,14 @@ const pullSites = async ({
   }
 
   const sites = cliConfig.all
-    ? (await paginate(sitesList, { parseOutput: false }, 100, "sites")).sites
+    ? (
+        await paginate(
+          async () => (await getSitesService()).list(),
+          {},
+          100,
+          "sites",
+        )
+      ).sites
     : (await inquirer.prompt(questionsPullSites)).sites;
 
   let allowCodePull: boolean | null = cliConfig.force === true ? true : null;
@@ -286,14 +287,10 @@ const pullSites = async ({
     let deploymentId: string | null = null;
 
     try {
-      const fetchResponse = await sitesListDeployments({
-        siteId: site["$id"],
-        queries: [
-          JSON.stringify({ method: "limit", values: [1] }),
-          JSON.stringify({ method: "orderDesc", values: ["$id"] }),
-        ],
-        parseOutput: false,
-      });
+      const fetchResponse = await sitesService.listDeployments(site["$id"], [
+        JSON.stringify({ method: "limit", values: [1] }),
+        JSON.stringify({ method: "orderDesc", values: ["$id"] }),
+      ]);
 
       if (fetchResponse["total"] > 0) {
         deploymentId = fetchResponse["deployments"][0]["$id"];
@@ -310,13 +307,12 @@ const pullSites = async ({
     log("Pulling latest deployment code ...");
 
     const compressedFileName = `${site["$id"]}-${+new Date()}.tar.gz`;
-    await sitesGetDeploymentDownload({
-      siteId: site["$id"],
+    const downloadBuffer = await sitesService.getDeploymentDownload(
+      site["$id"],
       deploymentId,
-      destination: compressedFileName,
-      overrideForCli: true,
-      parseOutput: false,
-    });
+    );
+
+    fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
 
     tar.extract({
       sync: true,
@@ -351,10 +347,10 @@ const pullCollection = async (): Promise<void> => {
   let totalDatabases = 0;
   let totalCollections = 0;
 
-  const fetchResponse = await databasesList({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const databasesService = await getDatabasesService();
+  const fetchResponse = await databasesService.list([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["databases"].length <= 0) {
     log("No collections found.");
     success(
@@ -368,7 +364,12 @@ const pullCollection = async (): Promise<void> => {
   if (databases.length === 0) {
     if (cliConfig.all) {
       databases = (
-        await paginate(databasesList, { parseOutput: false }, 100, "databases")
+        await paginate(
+          async () => (await getDatabasesService()).list(),
+          {},
+          100,
+          "databases",
+        )
       ).databases.map((database: any) => database.$id);
     } else {
       databases = (await inquirer.prompt(questionsPullCollection)).databases;
@@ -376,10 +377,7 @@ const pullCollection = async (): Promise<void> => {
   }
 
   for (const databaseId of databases) {
-    const database = await databasesGet({
-      databaseId,
-      parseOutput: false,
-    });
+    const database = await databasesService.get(databaseId);
 
     totalDatabases++;
     log(
@@ -389,11 +387,8 @@ const pullCollection = async (): Promise<void> => {
     localConfig.addDatabase(database);
 
     const { collections } = await paginate(
-      databasesListCollections,
-      {
-        databaseId,
-        parseOutput: false,
-      },
+      async () => (await getDatabasesService()).listCollections(databaseId),
+      {},
       100,
       "collections",
     );
@@ -418,10 +413,10 @@ const pullTable = async (): Promise<void> => {
   let totalTablesDBs = 0;
   let totalTables = 0;
 
-  const fetchResponse = await tablesDBList({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const tablesDBService = await getTablesDBService();
+  const fetchResponse = await tablesDBService.list([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["databases"].length <= 0) {
     log("No tables found.");
     success(
@@ -435,7 +430,12 @@ const pullTable = async (): Promise<void> => {
   if (databases.length === 0) {
     if (cliConfig.all) {
       databases = (
-        await paginate(tablesDBList, { parseOutput: false }, 100, "databases")
+        await paginate(
+          async () => (await getTablesDBService()).list(),
+          {},
+          100,
+          "databases",
+        )
       ).databases.map((database: any) => database.$id);
     } else {
       databases = (await inquirer.prompt(questionsPullCollection)).databases;
@@ -443,10 +443,7 @@ const pullTable = async (): Promise<void> => {
   }
 
   for (const databaseId of databases) {
-    const database = await tablesDBGet({
-      databaseId,
-      parseOutput: false,
-    });
+    const database = await tablesDBService.get(databaseId);
 
     totalTablesDBs++;
     log(`Pulling all tables from ${chalk.bold(database["name"])} database ...`);
@@ -454,11 +451,8 @@ const pullTable = async (): Promise<void> => {
     localConfig.addTablesDB(database);
 
     const { tables } = await paginate(
-      tablesDBListTables,
-      {
-        databaseId,
-        parseOutput: false,
-      },
+      async () => (await getTablesDBService()).listTables(databaseId),
+      {},
       100,
       "tables",
     );
@@ -482,10 +476,10 @@ const pullBucket = async (): Promise<void> => {
   log("Fetching buckets ...");
   let total = 0;
 
-  const fetchResponse = await storageListBuckets({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const storageService = await getStorageService();
+  const fetchResponse = await storageService.listBuckets([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["buckets"].length <= 0) {
     log("No buckets found.");
     success(`Successfully pulled ${chalk.bold(total)} buckets.`);
@@ -493,8 +487,8 @@ const pullBucket = async (): Promise<void> => {
   }
 
   const { buckets } = await paginate(
-    storageListBuckets,
-    { parseOutput: false },
+    async () => (await getStorageService()).listBuckets(),
+    {},
     100,
     "buckets",
   );
@@ -512,10 +506,10 @@ const pullTeam = async (): Promise<void> => {
   log("Fetching teams ...");
   let total = 0;
 
-  const fetchResponse = await teamsList({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const teamsService = await getTeamsService();
+  const fetchResponse = await teamsService.list([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["teams"].length <= 0) {
     log("No teams found.");
     success(`Successfully pulled ${chalk.bold(total)} teams.`);
@@ -523,8 +517,8 @@ const pullTeam = async (): Promise<void> => {
   }
 
   const { teams } = await paginate(
-    teamsList,
-    { parseOutput: false },
+    async () => (await getTeamsService()).list(),
+    {},
     100,
     "teams",
   );
@@ -542,10 +536,10 @@ const pullMessagingTopic = async (): Promise<void> => {
   log("Fetching topics ...");
   let total = 0;
 
-  const fetchResponse = await messagingListTopics({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
-    parseOutput: false,
-  });
+  const messagingService = await getMessagingService();
+  const fetchResponse = await messagingService.listTopics([
+    JSON.stringify({ method: "limit", values: [1] }),
+  ]);
   if (fetchResponse["topics"].length <= 0) {
     log("No topics found.");
     success(`Successfully pulled ${chalk.bold(total)} topics.`);
@@ -553,8 +547,8 @@ const pullMessagingTopic = async (): Promise<void> => {
   }
 
   const { topics } = await paginate(
-    messagingListTopics,
-    { parseOutput: false },
+    async () => (await getMessagingService()).listTopics(),
+    {},
     100,
     "topics",
   );

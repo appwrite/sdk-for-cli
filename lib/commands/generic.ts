@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import { Command } from "commander";
-import Client from "../client.js";
+import { Client } from "@appwrite.io/console";
 import { sdkForConsole } from "../sdks.js";
 import { globalConfig, localConfig } from "../config.js";
 import {
@@ -335,10 +335,10 @@ export const client = new Command("client")
             if (selfSigned || globalConfig.getSelfSigned()) {
               clientInstance.setSelfSigned(true);
             }
-            let response = await clientInstance.call<{ version?: string }>(
+            let response = (await clientInstance.call(
               "GET",
-              "/health/version",
-            );
+              new URL(endpoint + "/health/version"),
+            )) as { version?: string };
             if (!response.version) {
               throw new Error();
             }

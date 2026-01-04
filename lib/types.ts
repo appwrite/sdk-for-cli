@@ -1,5 +1,6 @@
 import type { File } from "undici";
 import type { ReadableStream } from "node:stream/web";
+import type { Models } from "@appwrite.io/console";
 
 export type ResponseType = "json" | "arraybuffer";
 
@@ -107,7 +108,7 @@ export interface ProjectSettings {
       passwordDictionary?: boolean;
       personalDataCheck?: boolean;
       sessionAlerts?: boolean;
-      mockNumbers?: string[];
+      mockNumbers?: Models.MockNumber[];
     };
   };
 }
@@ -139,7 +140,7 @@ export interface RawProjectSettings {
   authPasswordDictionary?: boolean;
   authPersonalDataCheck?: boolean;
   authSessionAlerts?: boolean;
-  authMockNumbers?: string[];
+  authMockNumbers?: Models.MockNumber[];
 }
 
 export interface DatabaseConfig {

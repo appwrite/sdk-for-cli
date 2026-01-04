@@ -1,8 +1,8 @@
 import { EventEmitter } from "node:events";
-import { projectsCreateJWT } from "../commands/projects.js";
 import { localConfig } from "../config.js";
-import { usersGet, usersCreateJWT } from "../commands/users.js";
 import { log } from "../parser.js";
+import { sdkForConsole } from "../sdks.js";
+import { Projects, Users } from "@appwrite.io/console";
 
 export const openRuntimesVersion = "v4";
 
@@ -107,6 +107,10 @@ export const JwtManager = {
     userId: string | null = null,
     projectScopes: string[] = [],
   ): Promise<void> {
+    const consoleClient = await sdkForConsole();
+    const usersClient = new Users(consoleClient);
+    const projectsClient = new Projects(consoleClient);
+
     if (this.timerWarn) {
       clearTimeout(this.timerWarn);
     }
@@ -135,23 +139,20 @@ export const JwtManager = {
     ); // 60 mins
 
     if (userId) {
-      await usersGet({
+      await usersClient.get({
         userId,
-        parseOutput: false,
       });
-      const userResponse: any = await usersCreateJWT({
+      const userResponse: any = await usersClient.createJWT({
         userId,
         duration: 60 * 60,
-        parseOutput: false,
       });
       this.userJwt = userResponse.jwt;
     }
 
-    const functionResponse: any = await projectsCreateJWT({
+    const functionResponse: any = await projectsClient.createJWT({
       projectId: localConfig.getProject().projectId!,
       scopes: projectScopes,
       duration: 60 * 60,
-      parseOutput: false,
     });
     this.functionJwt = functionResponse.jwt;
   },

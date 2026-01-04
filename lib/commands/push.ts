@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import { parse as parseDotenv } from "dotenv";
 import chalk from "chalk";
 import inquirer from "inquirer";
@@ -46,108 +45,18 @@ import {
   drawTable,
 } from "../parser.js";
 import {
-  proxyCreateFunctionRule,
-  proxyCreateSiteRule,
-  proxyListRules,
-} from "./proxy.js";
-import { consoleVariables } from "./console.js";
+  getProxyService,
+  getConsoleService,
+  getFunctionsService,
+  getSitesService,
+  getDatabasesService,
+  getTablesDBService,
+  getStorageService,
+  getMessagingService,
+  getTeamsService,
+  getProjectsService,
+} from "../services.js";
 import { sdkForConsole } from "../sdks.js";
-import {
-  functionsGet,
-  functionsCreate,
-  functionsUpdate,
-  functionsCreateDeployment,
-  functionsGetDeployment,
-  functionsListVariables,
-  functionsDeleteVariable,
-  functionsCreateVariable,
-} from "./functions.js";
-import {
-  sitesGet,
-  sitesCreate,
-  sitesUpdate,
-  sitesCreateDeployment,
-  sitesGetDeployment,
-  sitesCreateVariable,
-  sitesListVariables,
-  sitesDeleteVariable,
-} from "./sites.js";
-import {
-  databasesGet,
-  databasesCreate,
-  databasesUpdate,
-  databasesCreateBooleanAttribute,
-  databasesGetCollection,
-  databasesCreateCollection,
-  databasesCreateStringAttribute,
-  databasesCreateIntegerAttribute,
-  databasesCreateFloatAttribute,
-  databasesCreateEmailAttribute,
-  databasesCreateDatetimeAttribute,
-  databasesCreateIndex,
-  databasesCreateUrlAttribute,
-  databasesCreateIpAttribute,
-  databasesCreateEnumAttribute,
-  databasesUpdateBooleanAttribute,
-  databasesUpdateStringAttribute,
-  databasesUpdateIntegerAttribute,
-  databasesUpdateFloatAttribute,
-  databasesUpdateEmailAttribute,
-  databasesUpdateDatetimeAttribute,
-  databasesUpdateUrlAttribute,
-  databasesUpdateIpAttribute,
-  databasesUpdateEnumAttribute,
-  databasesUpdateRelationshipAttribute,
-  databasesCreateRelationshipAttribute,
-  databasesCreatePointAttribute,
-  databasesUpdatePointAttribute,
-  databasesCreateLineAttribute,
-  databasesUpdateLineAttribute,
-  databasesCreatePolygonAttribute,
-  databasesUpdatePolygonAttribute,
-  databasesDeleteAttribute,
-  databasesDeleteIndex,
-  databasesListAttributes,
-  databasesListIndexes,
-  databasesUpdateCollection,
-} from "./databases.js";
-import {
-  tablesDBCreate,
-  tablesDBGet,
-  tablesDBUpdate,
-  tablesDBCreateTable,
-  tablesDBGetTable,
-  tablesDBUpdateTable,
-  tablesDBList,
-  tablesDBDelete,
-  tablesDBListTables,
-  tablesDBDeleteTable,
-} from "./tables-db.js";
-import {
-  storageGetBucket,
-  storageUpdateBucket,
-  storageCreateBucket,
-} from "./storage.js";
-import {
-  messagingGetTopic,
-  messagingUpdateTopic,
-  messagingCreateTopic,
-} from "./messaging.js";
-import { teamsGet, teamsUpdateName, teamsCreate } from "./teams.js";
-import {
-  projectsGet,
-  projectsUpdate,
-  projectsUpdateServiceStatus,
-  projectsUpdateAuthStatus,
-  projectsUpdateAuthDuration,
-  projectsUpdateAuthLimit,
-  projectsUpdateAuthSessionsLimit,
-  projectsUpdateAuthPasswordDictionary,
-  projectsUpdateAuthPasswordHistory,
-  projectsUpdatePersonalDataCheck,
-  projectsUpdateSessionAlerts,
-  projectsUpdateMockNumbers,
-} from "./projects.js";
 import { ApiService, AuthMethod } from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
 
@@ -218,12 +127,13 @@ const awaitPools: AwaitPools = {
       return false;
     }
 
-    const { total } = await databasesListAttributes({
+    const databasesService = await getDatabasesService();
+    const response = await databasesService.listAttributes(
       databaseId,
       collectionId,
-      queries: [JSON.stringify({ method: "limit", values: [1] })],
-      parseOutput: false,
-    });
+      [JSON.stringify({ method: "limit", values: [1] })],
+    );
+    const { total } = response;
 
     if (total === 0) {
       return true;
@@ -259,12 +169,13 @@ const awaitPools: AwaitPools = {
       return false;
     }
 
-    const { total } = await databasesListIndexes({
+    const databasesService = await getDatabasesService();
+    const response = await databasesService.listIndexes(
       databaseId,
       collectionId,
-      queries: [JSON.stringify({ method: "limit", values: [1] })],
-      parseOutput: false,
-    });
+      [JSON.stringify({ method: "limit", values: [1] })],
+    );
+    const { total } = response;
 
     if (total === 0) {
       return true;
@@ -315,11 +226,17 @@ const awaitPools: AwaitPools = {
     }
 
     const { attributes } = await paginate(
-      databasesListAttributes,
+      async (args: any) => {
+        const databasesService = await getDatabasesService();
+        return await databasesService.listAttributes(
+          args.databaseId,
+          args.collectionId,
+          args.queries || [],
+        );
+      },
       {
         databaseId,
         collectionId,
-        parseOutput: false,
       },
       100,
       "attributes",
@@ -366,11 +283,17 @@ const awaitPools: AwaitPools = {
     }
 
     const { attributes } = await paginate(
-      databasesListAttributes,
+      async (args: any) => {
+        const databasesService = await getDatabasesService();
+        return await databasesService.listAttributes(
+          args.databaseId,
+          args.collectionId,
+          args.queries || [],
+        );
+      },
       {
         databaseId,
         collectionId,
-        parseOutput: false,
       },
       100,
       "attributes",
@@ -427,11 +350,17 @@ const awaitPools: AwaitPools = {
     }
 
     const { indexes } = await paginate(
-      databasesListIndexes,
+      async (args: any) => {
+        const databasesService = await getDatabasesService();
+        return await databasesService.listIndexes(
+          args.databaseId,
+          args.collectionId,
+          args.queries || [],
+        );
+      },
       {
         databaseId,
         collectionId,
-        parseOutput: false,
       },
       100,
       "indexes",
@@ -478,11 +407,17 @@ const awaitPools: AwaitPools = {
     }
 
     const { indexes } = await paginate(
-      databasesListIndexes,
+      async (args: any) => {
+        const databasesService = await getDatabasesService();
+        return await databasesService.listIndexes(
+          args.databaseId,
+          args.collectionId,
+          args.queries || [],
+        );
+      },
       {
         databaseId,
         collectionId,
-        parseOutput: false,
       },
       100,
       "indexes",
@@ -568,7 +503,6 @@ const approveChanges = async (
       try {
         const options: Record<string, any> = {
           [resourceName]: localResource["$id"],
-          parseOutput: false,
         };
 
         if (secondId !== "" && secondResourceName !== "") {
@@ -660,287 +594,262 @@ const getObjectChanges = (
   return changes;
 };
 
-const createAttribute = (
+const createAttribute = async (
   databaseId: string,
   collectionId: string,
   attribute: any,
 ): Promise<any> => {
+  const databasesService = await getDatabasesService();
   switch (attribute.type) {
     case "string":
       switch (attribute.format) {
         case "email":
-          return databasesCreateEmailAttribute({
+          return databasesService.createEmailAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+            attribute.array,
+          );
         case "url":
-          return databasesCreateUrlAttribute({
+          return databasesService.createUrlAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+            attribute.array,
+          );
         case "ip":
-          return databasesCreateIpAttribute({
+          return databasesService.createIpAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+            attribute.array,
+          );
         case "enum":
-          return databasesCreateEnumAttribute({
+          return databasesService.createEnumAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            elements: attribute.elements,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.elements,
+            attribute.required,
+            attribute.default,
+            attribute.array,
+          );
         default:
-          return databasesCreateStringAttribute({
+          return databasesService.createStringAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            size: attribute.size,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-            encrypt: attribute.encrypt,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.size,
+            attribute.required,
+            attribute.default,
+            attribute.array,
+            attribute.encrypt,
+          );
       }
     case "integer":
-      return databasesCreateIntegerAttribute({
+      return databasesService.createIntegerAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-        array: attribute.array,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.min,
+        attribute.max,
+        attribute.default,
+        attribute.array,
+      );
     case "double":
-      return databasesCreateFloatAttribute({
+      return databasesService.createFloatAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-        array: attribute.array,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.min,
+        attribute.max,
+        attribute.default,
+        attribute.array,
+      );
     case "boolean":
-      return databasesCreateBooleanAttribute({
+      return databasesService.createBooleanAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        array: attribute.array,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+        attribute.array,
+      );
     case "datetime":
-      return databasesCreateDatetimeAttribute({
+      return databasesService.createDatetimeAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        array: attribute.array,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+        attribute.array,
+      );
     case "relationship":
-      return databasesCreateRelationshipAttribute({
+      return databasesService.createRelationshipAttribute(
         databaseId,
         collectionId,
-        relatedCollectionId:
-          attribute.relatedTable ?? attribute.relatedCollection,
-        type: attribute.relationType,
-        twoWay: attribute.twoWay,
-        key: attribute.key,
-        twoWayKey: attribute.twoWayKey,
-        onDelete: attribute.onDelete,
-        parseOutput: false,
-      });
+        attribute.relatedTable ?? attribute.relatedCollection,
+        attribute.relationType,
+        attribute.twoWay,
+        attribute.key,
+        attribute.twoWayKey,
+        attribute.onDelete,
+      );
     case "point":
-      return databasesCreatePointAttribute({
+      return databasesService.createPointAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     case "linestring":
-      return databasesCreateLineAttribute({
+      return databasesService.createLineAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     case "polygon":
-      return databasesCreatePolygonAttribute({
+      return databasesService.createPolygonAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     default:
       throw new Error(`Unsupported attribute type: ${attribute.type}`);
   }
 };
 
-const updateAttribute = (
+const updateAttribute = async (
   databaseId: string,
   collectionId: string,
   attribute: any,
 ): Promise<any> => {
+  const databasesService = await getDatabasesService();
   switch (attribute.type) {
     case "string":
       switch (attribute.format) {
         case "email":
-          return databasesUpdateEmailAttribute({
+          return databasesService.updateEmailAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+          );
         case "url":
-          return databasesUpdateUrlAttribute({
+          return databasesService.updateUrlAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+          );
         case "ip":
-          return databasesUpdateIpAttribute({
+          return databasesService.updateIpAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+          );
         case "enum":
-          return databasesUpdateEnumAttribute({
+          return databasesService.updateEnumAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            elements: attribute.elements,
-            required: attribute.required,
-            xdefault: attribute.default,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.elements,
+            attribute.required,
+            attribute.default,
+          );
         default:
-          return databasesUpdateStringAttribute({
+          return databasesService.updateStringAttribute(
             databaseId,
             collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            parseOutput: false,
-          });
+            attribute.key,
+            attribute.required,
+            attribute.default,
+          );
       }
     case "integer":
-      return databasesUpdateIntegerAttribute({
+      return databasesService.updateIntegerAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.min,
+        attribute.max,
+        attribute.default,
+      );
     case "double":
-      return databasesUpdateFloatAttribute({
+      return databasesService.updateFloatAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.min,
+        attribute.max,
+        attribute.default,
+      );
     case "boolean":
-      return databasesUpdateBooleanAttribute({
+      return databasesService.updateBooleanAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     case "datetime":
-      return databasesUpdateDatetimeAttribute({
+      return databasesService.updateDatetimeAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     case "relationship":
-      return databasesUpdateRelationshipAttribute({
+      return databasesService.updateRelationshipAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        onDelete: attribute.onDelete,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.onDelete,
+      );
     case "point":
-      return databasesUpdatePointAttribute({
+      return databasesService.updatePointAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     case "linestring":
-      return databasesUpdateLineAttribute({
+      return databasesService.updateLineAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     case "polygon":
-      return databasesUpdatePolygonAttribute({
+      return databasesService.updatePolygonAttribute(
         databaseId,
         collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        parseOutput: false,
-      });
+        attribute.key,
+        attribute.required,
+        attribute.default,
+      );
     default:
       throw new Error(`Unsupported attribute type: ${attribute.type}`);
   }
@@ -954,22 +863,21 @@ const deleteAttribute = async (
     `Deleting ${isIndex ? "index" : "attribute"} ${attribute.key} of ${collection.name} ( ${collection["$id"]} )`,
   );
 
+  const databasesService = await getDatabasesService();
   if (isIndex) {
-    await databasesDeleteIndex({
-      databaseId: collection["databaseId"],
-      collectionId: collection["$id"],
-      key: attribute.key,
-      parseOutput: false,
-    });
+    await databasesService.deleteIndex(
+      collection["databaseId"],
+      collection["$id"],
+      attribute.key,
+    );
     return;
   }
 
-  await databasesDeleteAttribute({
-    databaseId: collection["databaseId"],
-    collectionId: collection["$id"],
-    key: attribute.key,
-    parseOutput: false,
-  });
+  await databasesService.deleteAttribute(
+    collection["databaseId"],
+    collection["$id"],
+    attribute.key,
+  );
 };
 
 const isEqual = (a: any, b: any): boolean => {
@@ -1241,16 +1149,16 @@ const createIndexes = async (
 ): Promise<void> => {
   log(`Creating indexes ...`);
 
+  const databasesService = await getDatabasesService();
   for (let index of indexes) {
-    await databasesCreateIndex({
-      databaseId: collection["databaseId"],
-      collectionId: collection["$id"],
-      key: index.key,
-      type: index.type,
-      attributes: index.columns ?? index.attributes,
-      orders: index.orders,
-      parseOutput: false,
-    });
+    await databasesService.createIndex(
+      collection["databaseId"],
+      collection["$id"],
+      index.key,
+      index.type,
+      index.columns ?? index.attributes,
+      index.orders,
+    );
   }
 
   const result = await awaitPools.expectIndexes(
@@ -1347,10 +1255,10 @@ const pushSettings = async (): Promise<void> => {
   checkDeployConditions(localConfig);
 
   try {
-    let response = await projectsGet({
-      parseOutput: false,
-      projectId: localConfig.getProject().projectId,
-    });
+    const projectsService = await getProjectsService();
+    let response = await projectsService.get(
+      localConfig.getProject().projectId,
+    );
 
     const remoteSettings = localConfig.createSettingsObject(response ?? {});
     const localSettings = localConfig.getProject().projectSettings ?? {};
@@ -1390,86 +1298,73 @@ const pushSettings = async (): Promise<void> => {
   try {
     log("Pushing project settings ...");
 
+    const projectsService = await getProjectsService();
     const projectId = localConfig.getProject().projectId;
     const projectName = localConfig.getProject().projectName;
     const settings = localConfig.getProject().projectSettings ?? {};
 
     if (projectName) {
       log("Applying project name ...");
-      await projectsUpdate({
-        projectId,
-        name: projectName,
-        parseOutput: false,
-      });
+      await projectsService.update(projectId, projectName);
     }
 
     if (settings.services) {
       log("Applying service statuses ...");
       for (let [service, status] of Object.entries(settings.services)) {
-        await projectsUpdateServiceStatus({
+        await projectsService.updateServiceStatus(
           projectId,
-          service: service as ApiService,
+          service as ApiService,
           status,
-          parseOutput: false,
-        });
+        );
       }
     }
 
     if (settings.auth) {
       if (settings.auth.security) {
         log("Applying auth security settings ...");
-        await projectsUpdateAuthDuration({
+        await projectsService.updateAuthDuration(
           projectId,
-          duration: settings.auth.security.duration,
-          parseOutput: false,
-        });
-        await projectsUpdateAuthLimit({
+          settings.auth.security.duration,
+        );
+        await projectsService.updateAuthLimit(
           projectId,
-          limit: settings.auth.security.limit,
-          parseOutput: false,
-        });
-        await projectsUpdateAuthSessionsLimit({
+          settings.auth.security.limit,
+        );
+        await projectsService.updateAuthSessionsLimit(
           projectId,
-          limit: settings.auth.security.sessionsLimit,
-          parseOutput: false,
-        });
-        await projectsUpdateAuthPasswordDictionary({
+          settings.auth.security.sessionsLimit,
+        );
+        await projectsService.updateAuthPasswordDictionary(
           projectId,
-          enabled: settings.auth.security.passwordDictionary,
-          parseOutput: false,
-        });
-        await projectsUpdateAuthPasswordHistory({
+          settings.auth.security.passwordDictionary,
+        );
+        await projectsService.updateAuthPasswordHistory(
           projectId,
-          limit: settings.auth.security.passwordHistory,
-          parseOutput: false,
-        });
-        await projectsUpdatePersonalDataCheck({
+          settings.auth.security.passwordHistory,
+        );
+        await projectsService.updatePersonalDataCheck(
           projectId,
-          enabled: settings.auth.security.personalDataCheck,
-          parseOutput: false,
-        });
-        await projectsUpdateSessionAlerts({
+          settings.auth.security.personalDataCheck,
+        );
+        await projectsService.updateSessionAlerts(
           projectId,
-          alerts: settings.auth.security.sessionAlerts,
-          parseOutput: false,
-        });
-        await projectsUpdateMockNumbers({
+          settings.auth.security.sessionAlerts,
+        );
+        await projectsService.updateMockNumbers(
           projectId,
-          numbers: settings.auth.security.mockNumbers,
-          parseOutput: false,
-        });
+          settings.auth.security.mockNumbers,
+        );
       }
 
       if (settings.auth.methods) {
         log("Applying auth methods statuses ...");
 
         for (let [method, status] of Object.entries(settings.auth.methods)) {
-          await projectsUpdateAuthStatus({
+          await projectsService.updateAuthStatus(
             projectId,
-            method: method as AuthMethod,
+            method as AuthMethod,
             status,
-            parseOutput: false,
-          });
+          );
         }
       }
     }
@@ -1547,9 +1442,17 @@ const pushSite = async (
   }
 
   if (
-    !(await approveChanges(sites, sitesGet, KeysSite, "siteId", "sites", [
-      "vars",
-    ]))
+    !(await approveChanges(
+      sites,
+      async (args: any) => {
+        const sitesService = await getSitesService();
+        return await sitesService.get(args.siteId);
+      },
+      KeysSite,
+      "siteId",
+      "sites",
+      ["vars"],
+    ))
   ) {
     return;
   }
@@ -1579,11 +1482,9 @@ const pushSite = async (
 
       updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
 
+      const sitesService = await getSitesService();
       try {
-        response = await sitesGet({
-          siteId: site["$id"],
-          parseOutput: false,
-        });
+        response = await sitesService.get(site["$id"]);
         siteExists = true;
         if (response.framework !== site.framework) {
           updaterRow.fail({
@@ -1594,21 +1495,20 @@ const pushSite = async (
 
         updaterRow.update({ status: "Updating" }).replaceSpinner(SPINNER_ARC);
 
-        response = await sitesUpdate({
-          siteId: site["$id"],
-          name: site.name,
-          framework: site.framework,
-          buildRuntime: site.buildRuntime,
-          specification: site.specification,
-          timeout: site.timeout,
-          enabled: site.enabled,
-          logging: site.logging,
-          adapter: site.adapter,
-          buildCommand: site.buildCommand,
-          installCommand: site.installCommand,
-          outputDirectory: site.outputDirectory,
-          parseOutput: false,
-        });
+        response = await sitesService.update(
+          site["$id"],
+          site.name,
+          site.framework,
+          site.buildRuntime,
+          site.specification,
+          site.timeout,
+          site.enabled,
+          site.logging,
+          site.adapter,
+          site.buildCommand,
+          site.installCommand,
+          site.outputDirectory,
+        );
       } catch (e: any) {
         if (Number(e.code) === 404) {
           siteExists = false;
@@ -1625,28 +1525,25 @@ const pushSite = async (
         updaterRow.update({ status: "Creating" }).replaceSpinner(SPINNER_DOTS);
 
         try {
-          response = await sitesCreate({
-            siteId: site.$id,
-            name: site.name,
-            framework: site.framework,
-            specification: site.specification,
-            buildRuntime: site.buildRuntime,
-            buildCommand: site.buildCommand,
-            installCommand: site.installCommand,
-            outputDirectory: site.outputDirectory,
-            adapter: site.adapter,
-            timeout: site.timeout,
-            enabled: site.enabled,
-            logging: site.logging,
-            parseOutput: false,
-          });
+          response = await sitesService.create(
+            site.$id,
+            site.name,
+            site.framework,
+            site.specification,
+            site.buildRuntime,
+            site.buildCommand,
+            site.installCommand,
+            site.outputDirectory,
+            site.adapter,
+            site.timeout,
+            site.enabled,
+            site.logging,
+          );
 
           let domain = "";
           try {
-            const variables = await consoleVariables({
-              parseOutput: false,
-              sdk: await sdkForConsole(),
-            });
+            const consoleService = await getConsoleService();
+            const variables = await consoleService.variables();
             domain = ID.unique() + "." + variables["_APP_DOMAIN_SITES"];
           } catch (error) {
             console.error("Error fetching console variables.");
@@ -1654,10 +1551,8 @@ const pushSite = async (
           }
 
           try {
-            const rule = await proxyCreateSiteRule({
-              domain: domain,
-              siteId: site.$id,
-            });
+            const proxyService = await getProxyService();
+            const rule = await proxyService.createSiteRule(domain, site.$id);
           } catch (error) {
             console.error("Error creating site rule.");
             throw error;
@@ -1678,11 +1573,13 @@ const pushSite = async (
           .update({ status: "Creating variables" })
           .replaceSpinner(SPINNER_ARC);
 
+        const sitesService = await getSitesService();
         const { variables } = await paginate(
-          sitesListVariables,
+          async (args: any) => {
+            return await sitesService.listVariables(args.siteId);
+          },
           {
             siteId: site["$id"],
-            parseOutput: false,
           },
           100,
           "variables",
@@ -1690,11 +1587,8 @@ const pushSite = async (
 
         await Promise.all(
           variables.map(async (variable: any) => {
-            await sitesDeleteVariable({
-              siteId: site["$id"],
-              variableId: variable["$id"],
-              parseOutput: false,
-            });
+            const sitesService = await getSitesService();
+            await sitesService.deleteVariable(site["$id"], variable["$id"]);
           }),
         );
 
@@ -1715,13 +1609,13 @@ const pushSite = async (
         }
         await Promise.all(
           envVariables.map(async (variable) => {
-            await sitesCreateVariable({
-              siteId: site["$id"],
-              key: variable.key,
-              value: variable.value,
-              parseOutput: false,
-              secret: false,
-            });
+            const sitesService = await getSitesService();
+            await sitesService.createVariable(
+              site["$id"],
+              variable.key,
+              variable.value,
+              false,
+            );
           }),
         );
       }
@@ -1736,11 +1630,14 @@ const pushSite = async (
 
       try {
         updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_ARC);
-        response = await sitesCreateDeployment({
+        const sitesService = await getSitesService();
+        response = await sitesService.createDeployment({
           siteId: site["$id"],
+          installCommand: site.installCommand,
+          buildCommand: site.buildCommand,
+          outputDirectory: site.outputDirectory,
           code: site.path,
           activate: true,
-          parseOutput: false,
         });
 
         updaterRow.update({ status: "Pushed" });
@@ -1773,38 +1670,36 @@ const pushSite = async (
           let pollChecks = 0;
 
           while (true) {
-            response = await sitesGetDeployment({
-              siteId: site["$id"],
-              deploymentId: deploymentId,
-              parseOutput: false,
-            });
+            const sitesService = await getSitesService();
+            response = await sitesService.getDeployment(
+              site["$id"],
+              deploymentId,
+            );
 
             const status = response["status"];
             if (status === "ready") {
               successfullyDeployed++;
 
               let url = "";
-              const res = await proxyListRules({
-                parseOutput: false,
-                queries: [
-                  JSON.stringify({ method: "limit", values: [1] }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceType",
-                    values: ["site"],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceId",
-                    values: [site["$id"]],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "trigger",
-                    values: ["manual"],
-                  }),
-                ],
-              });
+              const proxyService = await getProxyService();
+              const res = await proxyService.listRules([
+                JSON.stringify({ method: "limit", values: [1] }),
+                JSON.stringify({
+                  method: "equal",
+                  attribute: "deploymentResourceType",
+                  values: ["site"],
+                }),
+                JSON.stringify({
+                  method: "equal",
+                  attribute: "deploymentResourceId",
+                  values: [site["$id"]],
+                }),
+                JSON.stringify({
+                  method: "equal",
+                  attribute: "trigger",
+                  values: ["manual"],
+                }),
+              ]);
 
               if (Number(res.total) === 1) {
                 url = res.rules[0].domain;
@@ -1951,7 +1846,10 @@ const pushFunction = async (
   if (
     !(await approveChanges(
       functions,
-      functionsGet,
+      async (args: any) => {
+        const functionsService = await getFunctionsService();
+        return await functionsService.get(args.functionId);
+      },
       KeysFunction,
       "functionId",
       "functions",
@@ -1985,11 +1883,9 @@ const pushFunction = async (
       });
 
       updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
+      const functionsService = await getFunctionsService();
       try {
-        response = await functionsGet({
-          functionId: func["$id"],
-          parseOutput: false,
-        });
+        response = await functionsService.get(func["$id"]);
         functionExists = true;
         if (response.runtime !== func.runtime) {
           updaterRow.fail({
@@ -2000,21 +1896,20 @@ const pushFunction = async (
 
         updaterRow.update({ status: "Updating" }).replaceSpinner(SPINNER_ARC);
 
-        response = await functionsUpdate({
-          functionId: func["$id"],
-          name: func.name,
-          specification: func.specification,
-          execute: func.execute,
-          events: func.events,
-          schedule: func.schedule,
-          timeout: func.timeout,
-          enabled: func.enabled,
-          logging: func.logging,
-          entrypoint: func.entrypoint,
-          commands: func.commands,
-          scopes: func.scopes,
-          parseOutput: false,
-        });
+        response = await functionsService.update(
+          func["$id"],
+          func.name,
+          func.specification,
+          func.execute,
+          func.events,
+          func.schedule,
+          func.timeout,
+          func.enabled,
+          func.logging,
+          func.entrypoint,
+          func.commands,
+          func.scopes,
+        );
       } catch (e: any) {
         if (Number(e.code) === 404) {
           functionExists = false;
@@ -2031,29 +1926,26 @@ const pushFunction = async (
         updaterRow.update({ status: "Creating" }).replaceSpinner(SPINNER_DOTS);
 
         try {
-          response = await functionsCreate({
-            functionId: func.$id,
-            name: func.name,
-            runtime: func.runtime,
-            specification: func.specification,
-            execute: func.execute,
-            events: func.events,
-            schedule: func.schedule,
-            timeout: func.timeout,
-            enabled: func.enabled,
-            logging: func.logging,
-            entrypoint: func.entrypoint,
-            commands: func.commands,
-            scopes: func.scopes,
-            parseOutput: false,
-          });
+          response = await functionsService.create(
+            func.$id,
+            func.name,
+            func.runtime,
+            func.specification,
+            func.execute,
+            func.events,
+            func.schedule,
+            func.timeout,
+            func.enabled,
+            func.logging,
+            func.entrypoint,
+            func.commands,
+            func.scopes,
+          );
 
           let domain = "";
           try {
-            const variables = await consoleVariables({
-              parseOutput: false,
-              sdk: await sdkForConsole(),
-            });
+            const consoleService = await getConsoleService();
+            const variables = await consoleService.variables();
             domain = ID.unique() + "." + variables["_APP_DOMAIN_FUNCTIONS"];
           } catch (error) {
             console.error("Error fetching console variables.");
@@ -2061,10 +1953,11 @@ const pushFunction = async (
           }
 
           try {
-            const rule = await proxyCreateFunctionRule({
-              domain: domain,
-              functionId: func.$id,
-            });
+            const proxyService = await getProxyService();
+            const rule = await proxyService.createFunctionRule(
+              domain,
+              func.$id,
+            );
           } catch (error) {
             console.error("Error creating function rule.");
             throw error;
@@ -2085,11 +1978,13 @@ const pushFunction = async (
           .update({ status: "Updating variables" })
           .replaceSpinner(SPINNER_ARC);
 
+        const functionsService = await getFunctionsService();
         const { variables } = await paginate(
-          functionsListVariables,
+          async (args: any) => {
+            return await functionsService.listVariables(args.functionId);
+          },
           {
             functionId: func["$id"],
-            parseOutput: false,
           },
           100,
           "variables",
@@ -2097,11 +1992,8 @@ const pushFunction = async (
 
         await Promise.all(
           variables.map(async (variable: any) => {
-            await functionsDeleteVariable({
-              functionId: func["$id"],
-              variableId: variable["$id"],
-              parseOutput: false,
-            });
+            const functionsService = await getFunctionsService();
+            await functionsService.deleteVariable(func["$id"], variable["$id"]);
           }),
         );
 
@@ -2122,13 +2014,13 @@ const pushFunction = async (
         }
         await Promise.all(
           envVariables.map(async (variable) => {
-            await functionsCreateVariable({
-              functionId: func["$id"],
-              key: variable.key,
-              value: variable.value,
-              parseOutput: false,
-              secret: false,
-            });
+            const functionsService = await getFunctionsService();
+            await functionsService.createVariable(
+              func["$id"],
+              variable.key,
+              variable.value,
+              false,
+            );
           }),
         );
       }
@@ -2143,13 +2035,13 @@ const pushFunction = async (
 
       try {
         updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_ARC);
-        response = await functionsCreateDeployment({
+        const functionsService = await getFunctionsService();
+        response = await functionsService.createDeployment({
           functionId: func["$id"],
           entrypoint: func.entrypoint,
           commands: func.commands,
           code: func.path,
           activate: true,
-          parseOutput: false,
         });
 
         updaterRow.update({ status: "Pushed" });
@@ -2182,38 +2074,36 @@ const pushFunction = async (
           let pollChecks = 0;
 
           while (true) {
-            response = await functionsGetDeployment({
-              functionId: func["$id"],
-              deploymentId: deploymentId,
-              parseOutput: false,
-            });
+            const functionsService = await getFunctionsService();
+            response = await functionsService.getDeployment(
+              func["$id"],
+              deploymentId,
+            );
 
             const status = response["status"];
             if (status === "ready") {
               successfullyDeployed++;
 
               let url = "";
-              const res = await proxyListRules({
-                parseOutput: false,
-                queries: [
-                  JSON.stringify({ method: "limit", values: [1] }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceType",
-                    values: ["function"],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceId",
-                    values: [func["$id"]],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "trigger",
-                    values: ["manual"],
-                  }),
-                ],
-              });
+              const proxyService = await getProxyService();
+              const res = await proxyService.listRules([
+                JSON.stringify({ method: "limit", values: [1] }),
+                JSON.stringify({
+                  method: "equal",
+                  attribute: "deploymentResourceType",
+                  values: ["function"],
+                }),
+                JSON.stringify({
+                  method: "equal",
+                  attribute: "deploymentResourceId",
+                  values: [func["$id"]],
+                }),
+                JSON.stringify({
+                  method: "equal",
+                  attribute: "trigger",
+                  values: ["manual"],
+                }),
+              ]);
 
               if (Number(res.total) === 1) {
                 url = res.rules[0].domain;
@@ -2299,8 +2189,11 @@ const checkAndApplyTablesDBChanges =
 
     const localTablesDBs = localConfig.getTablesDBs();
     const { databases: remoteTablesDBs } = await paginate(
-      tablesDBList,
-      { parseOutput: false },
+      async (args: any) => {
+        const tablesDBService = await getTablesDBService();
+        return await tablesDBService.list(args.queries || []);
+      },
+      {},
       100,
       "databases",
     );
@@ -2406,10 +2299,8 @@ const checkAndApplyTablesDBChanges =
     for (const db of toDelete) {
       try {
         log(`Deleting database ${db.name} ( ${db.$id} ) ...`);
-        await tablesDBDelete({
-          databaseId: db.$id,
-          parseOutput: false,
-        });
+        const tablesDBService = await getTablesDBService();
+        await tablesDBService.delete(db.$id);
         success(`Deleted ${db.name} ( ${db.$id} )`);
         needsResync = true;
       } catch (e: any) {
@@ -2426,12 +2317,8 @@ const checkAndApplyTablesDBChanges =
     for (const db of toCreate) {
       try {
         log(`Creating database ${db.name} ( ${db.$id} ) ...`);
-        await tablesDBCreate({
-          databaseId: db.$id,
-          name: db.name,
-          enabled: db.enabled,
-          parseOutput: false,
-        });
+        const tablesDBService = await getTablesDBService();
+        await tablesDBService.create(db.$id, db.name, db.enabled);
         success(`Created ${db.name} ( ${db.$id} )`);
       } catch (e: any) {
         error(
@@ -2447,12 +2334,8 @@ const checkAndApplyTablesDBChanges =
     for (const db of toUpdate) {
       try {
         log(`Updating database ${db.name} ( ${db.$id} ) ...`);
-        await tablesDBUpdate({
-          databaseId: db.$id,
-          name: db.name,
-          enabled: db.enabled,
-          parseOutput: false,
-        });
+        const tablesDBService = await getTablesDBService();
+        await tablesDBService.update(db.$id, db.name, db.enabled);
         success(`Updated ${db.name} ( ${db.$id} )`);
       } catch (e: any) {
         error(
@@ -2491,7 +2374,15 @@ const pushTable = async (
     log("Resyncing configuration due to tablesDB deletions ...");
 
     const remoteTablesDBs = (
-      await paginate(tablesDBList, { parseOutput: false }, 100, "databases")
+      await paginate(
+        async (args: any) => {
+          const tablesDBService = await getTablesDBService();
+          return await tablesDBService.list(args.queries || []);
+        },
+        {},
+        100,
+        "databases",
+      )
     ).databases;
     const localTablesDBs = localConfig.getTablesDBs();
 
@@ -2520,10 +2411,15 @@ const pushTable = async (
   for (const db of localTablesDBs) {
     try {
       const { tables: remoteTables } = await paginate(
-        tablesDBListTables,
+        async (args: any) => {
+          const tablesDBService = await getTablesDBService();
+          return await tablesDBService.listTables(
+            args.databaseId,
+            args.queries || [],
+          );
+        },
         {
           databaseId: db.$id,
-          parseOutput: false,
         },
         100,
         "tables",
@@ -2564,11 +2460,8 @@ const pushTable = async (
           log(
             `Deleting table ${table.name} ( ${table.$id} ) from database ${table.databaseName} ...`,
           );
-          await tablesDBDeleteTable({
-            databaseId: table.databaseId,
-            tableId: table.$id,
-            parseOutput: false,
-          });
+          const tablesDBService = await getTablesDBService();
+          await tablesDBService.deleteTable(table.databaseId, table.$id);
           success(`Deleted ${table.name} ( ${table.$id} )`);
         } catch (e: any) {
           error(
@@ -2610,7 +2503,10 @@ const pushTable = async (
   if (
     !(await approveChanges(
       tables,
-      tablesDBGetTable,
+      async (args: any) => {
+        const tablesDBService = await getTablesDBService();
+        return await tablesDBService.getTable(args.databaseId, args.tableId);
+      },
       KeysTable,
       "tableId",
       "tables",
@@ -2627,11 +2523,11 @@ const pushTable = async (
   await Promise.all(
     tables.map(async (table: any) => {
       try {
-        const remoteTable = await tablesDBGetTable({
-          databaseId: table["databaseId"],
-          tableId: table["$id"],
-          parseOutput: false,
-        });
+        const tablesDBService = await getTablesDBService();
+        const remoteTable = await tablesDBService.getTable(
+          table["databaseId"],
+          table["$id"],
+        );
 
         const changes: string[] = [];
         if (remoteTable.name !== table.name) changes.push("name");
@@ -2645,14 +2541,13 @@ const pushTable = async (
           changes.push("permissions");
 
         if (changes.length > 0) {
-          await tablesDBUpdateTable({
-            databaseId: table["databaseId"],
-            tableId: table["$id"],
-            name: table.name,
-            parseOutput: false,
-            rowSecurity: table.rowSecurity,
-            permissions: table["$permissions"],
-          });
+          await tablesDBService.updateTable(
+            table["databaseId"],
+            table["$id"],
+            table.name,
+            table.rowSecurity,
+            table["$permissions"],
+          );
 
           success(
             `Updated ${table.name} ( ${table["$id"]} ) - ${changes.join(", ")}`,
@@ -2667,14 +2562,14 @@ const pushTable = async (
           log(
             `Table ${table.name} does not exist in the project. Creating ... `,
           );
-          await tablesDBCreateTable({
-            databaseId: table["databaseId"],
-            tableId: table["$id"],
-            name: table.name,
-            rowSecurity: table.rowSecurity,
-            permissions: table["$permissions"],
-            parseOutput: false,
-          });
+          const tablesDBService = await getTablesDBService();
+          await tablesDBService.createTable(
+            table["databaseId"],
+            table["$id"],
+            table.name,
+            table.rowSecurity,
+            table["$permissions"],
+          );
 
           success(`Created ${table.name} ( ${table["$id"]} )`);
           tablesChanged.add(table["$id"]);
@@ -2786,29 +2681,25 @@ const pushCollection = async (
     databases.map(async (databaseId: any) => {
       const localDatabase = localConfig.getDatabase(databaseId);
 
+      const databasesService = await getDatabasesService();
       try {
-        const database = await databasesGet({
-          databaseId: databaseId,
-          parseOutput: false,
-        });
+        const database = await databasesService.get(databaseId);
 
         if (database.name !== (localDatabase.name ?? databaseId)) {
-          await databasesUpdate({
-            databaseId: databaseId,
-            name: localDatabase.name ?? databaseId,
-            parseOutput: false,
-          });
+          await databasesService.update(
+            databaseId,
+            localDatabase.name ?? databaseId,
+          );
 
           success(`Updated ${localDatabase.name} ( ${databaseId} ) name`);
         }
       } catch (err) {
         log(`Database ${databaseId} not found. Creating it now ...`);
 
-        await databasesCreate({
-          databaseId: databaseId,
-          name: localDatabase.name ?? databaseId,
-          parseOutput: false,
-        });
+        await databasesService.create(
+          databaseId,
+          localDatabase.name ?? databaseId,
+        );
       }
     }),
   );
@@ -2816,7 +2707,13 @@ const pushCollection = async (
   if (
     !(await approveChanges(
       collections,
-      databasesGetCollection,
+      async (args: any) => {
+        const databasesService = await getDatabasesService();
+        return await databasesService.getCollection(
+          args.databaseId,
+          args.collectionId,
+        );
+      },
       KeysCollection,
       "collectionId",
       "collections",
@@ -2831,19 +2728,18 @@ const pushCollection = async (
   await Promise.all(
     collections.map(async (collection: any) => {
       try {
-        const remoteCollection = await databasesGetCollection({
-          databaseId: collection["databaseId"],
-          collectionId: collection["$id"],
-          parseOutput: false,
-        });
+        const databasesService = await getDatabasesService();
+        const remoteCollection = await databasesService.getCollection(
+          collection["databaseId"],
+          collection["$id"],
+        );
 
         if (remoteCollection.name !== collection.name) {
-          await databasesUpdateCollection({
-            databaseId: collection["databaseId"],
-            collectionId: collection["$id"],
-            name: collection.name,
-            parseOutput: false,
-          });
+          await databasesService.updateCollection(
+            collection["databaseId"],
+            collection["$id"],
+            collection.name,
+          );
 
           success(`Updated ${collection.name} ( ${collection["$id"]} ) name`);
         }
@@ -2855,14 +2751,14 @@ const pushCollection = async (
           log(
             `Collection ${collection.name} does not exist in the project. Creating ... `,
           );
-          await databasesCreateCollection({
-            databaseId: collection["databaseId"],
-            collectionId: collection["$id"],
-            name: collection.name,
-            documentSecurity: collection.documentSecurity,
-            permissions: collection["$permissions"],
-            parseOutput: false,
-          });
+          const databasesService = await getDatabasesService();
+          await databasesService.createCollection(
+            collection["databaseId"],
+            collection["$id"],
+            collection.name,
+            collection.documentSecurity,
+            collection["$permissions"],
+          );
         } else {
           throw e;
         }
@@ -2962,7 +2858,10 @@ const pushBucket = async (
   if (
     !(await approveChanges(
       buckets,
-      storageGetBucket,
+      async (args: any) => {
+        const storageService = await getStorageService();
+        return await storageService.getBucket(args.bucketId);
+      },
       KeysStorage,
       "bucketId",
       "buckets",
@@ -2976,44 +2875,40 @@ const pushBucket = async (
   for (let bucket of buckets) {
     log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
 
+    const storageService = await getStorageService();
     try {
-      response = await storageGetBucket({
-        bucketId: bucket["$id"],
-        parseOutput: false,
-      });
+      response = await storageService.getBucket(bucket["$id"]);
 
-      await storageUpdateBucket({
-        bucketId: bucket["$id"],
-        name: bucket.name,
-        permissions: bucket["$permissions"],
-        fileSecurity: bucket.fileSecurity,
-        enabled: bucket.enabled,
-        maximumFileSize: bucket.maximumFileSize,
-        allowedFileExtensions: bucket.allowedFileExtensions,
-        encryption: bucket.encryption,
-        antivirus: bucket.antivirus,
-        compression: bucket.compression,
-        parseOutput: false,
-      });
+      await storageService.updateBucket(
+        bucket["$id"],
+        bucket.name,
+        bucket["$permissions"],
+        bucket.fileSecurity,
+        bucket.enabled,
+        bucket.maximumFileSize,
+        bucket.allowedFileExtensions,
+        bucket.encryption,
+        bucket.antivirus,
+        bucket.compression,
+      );
     } catch (e: any) {
       if (Number(e.code) === 404) {
         log(
           `Bucket ${bucket.name} does not exist in the project. Creating ... `,
         );
 
-        response = await storageCreateBucket({
-          bucketId: bucket["$id"],
-          name: bucket.name,
-          permissions: bucket["$permissions"],
-          fileSecurity: bucket.fileSecurity,
-          enabled: bucket.enabled,
-          maximumFileSize: bucket.maximumFileSize,
-          allowedFileExtensions: bucket.allowedFileExtensions,
-          compression: bucket.compression,
-          encryption: bucket.encryption,
-          antivirus: bucket.antivirus,
-          parseOutput: false,
-        });
+        response = await storageService.createBucket(
+          bucket["$id"],
+          bucket.name,
+          bucket["$permissions"],
+          bucket.fileSecurity,
+          bucket.enabled,
+          bucket.maximumFileSize,
+          bucket.allowedFileExtensions,
+          bucket.compression,
+          bucket.encryption,
+          bucket.antivirus,
+        );
       } else {
         throw e;
       }
@@ -3062,7 +2957,18 @@ const pushTeam = async (
     teams.push(...idTeams);
   }
 
-  if (!(await approveChanges(teams, teamsGet, KeysTeams, "teamId", "teams"))) {
+  if (
+    !(await approveChanges(
+      teams,
+      async (args: any) => {
+        const teamsService = await getTeamsService();
+        return await teamsService.get(args.teamId);
+      },
+      KeysTeams,
+      "teamId",
+      "teams",
+    ))
+  ) {
     return;
   }
 
@@ -3071,26 +2977,16 @@ const pushTeam = async (
   for (let team of teams) {
     log(`Pushing team ${chalk.bold(team["name"])} ...`);
 
+    const teamsService = await getTeamsService();
     try {
-      response = await teamsGet({
-        teamId: team["$id"],
-        parseOutput: false,
-      });
+      response = await teamsService.get(team["$id"]);
 
-      await teamsUpdateName({
-        teamId: team["$id"],
-        name: team.name,
-        parseOutput: false,
-      });
+      await teamsService.updateName(team["$id"], team.name);
     } catch (e: any) {
       if (Number(e.code) === 404) {
         log(`Team ${team.name} does not exist in the project. Creating ... `);
 
-        response = await teamsCreate({
-          teamId: team["$id"],
-          name: team.name,
-          parseOutput: false,
-        });
+        response = await teamsService.create(team["$id"], team.name);
       } else {
         throw e;
       }
@@ -3142,7 +3038,10 @@ const pushMessagingTopic = async (
   if (
     !(await approveChanges(
       topics,
-      messagingGetTopic,
+      async (args: any) => {
+        const messagingService = await getMessagingService();
+        return await messagingService.getTopic(args.topicId);
+      },
       KeysTopics,
       "topicId",
       "topics",
@@ -3156,29 +3055,25 @@ const pushMessagingTopic = async (
   for (let topic of topics) {
     log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
 
+    const messagingService = await getMessagingService();
     try {
-      response = await messagingGetTopic({
-        topicId: topic["$id"],
-        parseOutput: false,
-      });
+      response = await messagingService.getTopic(topic["$id"]);
       log(`Topic ${topic.name} ( ${topic["$id"]} ) already exists.`);
 
-      await messagingUpdateTopic({
-        topicId: topic["$id"],
-        name: topic.name,
-        subscribe: topic.subscribe,
-        parseOutput: false,
-      });
+      await messagingService.updateTopic(
+        topic["$id"],
+        topic.name,
+        topic.subscribe,
+      );
     } catch (e: any) {
       if (Number(e.code) === 404) {
         log(`Topic ${topic.name} does not exist in the project. Creating ... `);
 
-        response = await messagingCreateTopic({
-          topicId: topic["$id"],
-          name: topic.name,
-          subscribe: topic.subscribe,
-          parseOutput: false,
-        });
+        response = await messagingService.createTopic(
+          topic["$id"],
+          topic.name,
+          topic.subscribe,
+        );
 
         success(`Created ${topic.name} ( ${topic["$id"]} )`);
       } else {

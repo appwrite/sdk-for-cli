@@ -12,7 +12,7 @@ import path from "path";
 import { Command } from "commander";
 import { localConfig, globalConfig } from "../config.js";
 import { paginate } from "../paginate.js";
-import { functionsListVariables } from "./functions.js";
+import { getFunctionsService } from "../services.js";
 import { questionsRunFunctions } from "../questions.js";
 import {
   actionRunner,
@@ -171,11 +171,8 @@ const runFunction = async ({
   if (withVariables) {
     try {
       const { variables: remoteVariables } = await paginate(
-        functionsListVariables,
-        {
-          functionId: func["$id"],
-          parseOutput: false,
-        },
+        async () => (await getFunctionsService()).listVariables(func["$id"]),
+        {},
         100,
         "variables",
       );
