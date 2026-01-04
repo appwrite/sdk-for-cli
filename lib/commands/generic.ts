@@ -23,6 +23,7 @@ import {
   questionsMFAChallenge,
 } from "../questions.js";
 import { Account, Client as ConsoleClient } from "@appwrite.io/console";
+import ClientLegacy from "../client.js";
 
 const DEFAULT_ENDPOINT = "https://cloud.appwrite.io/v1";
 
@@ -83,22 +84,46 @@ export const loginCommand = async ({
   globalConfig.setEndpoint(configEndpoint);
   globalConfig.setEmail(answers.email);
 
+  // Use legacy client for login to extract cookies from response
+  const legacyClient = new ClientLegacy();
+  legacyClient.setEndpoint(configEndpoint);
+  legacyClient.setProject("console");
+
+  if (globalConfig.getSelfSigned()) {
+    legacyClient.setSelfSigned(true);
+  }
+
   let client = await sdkForConsole(false);
   let accountClient = new Account(client);
 
   let account;
 
   try {
-    await accountClient.createEmailPasswordSession({
-      email: answers.email,
-      password: answers.password,
-    });
+    await legacyClient.call(
+      "POST",
+      "/account/sessions/email",
+      {
+        "content-type": "application/json",
+      },
+      {
+        email: answers.email,
+        password: answers.password,
+      },
+    );
 
-    client.setCookie(globalConfig.getCookie());
+    const savedCookie = globalConfig.getCookie();
 
+    if (savedCookie) {
+      client.setCookie(savedCookie);
+    }
+
+    accountClient = new Account(client);
     account = await accountClient.get();
   } catch (err: any) {
-    if (err.response === "user_more_factors_required") {
+    if (
+      err.type === "user_more_factors_required" ||
+      err.response === "user_more_factors_required"
+    ) {
       const { factor } = mfa
         ? { factor: mfa }
         : await inquirer.prompt(questionsListFactors);
@@ -109,15 +134,32 @@ export const loginCommand = async ({
         ? { otp: code }
         : await inquirer.prompt(questionsMFAChallenge);
 
-      await accountClient.updateMfaChallenge(challenge.$id, otp);
+      await legacyClient.call(
+        "PUT",
+        "/account/sessions/mfa/challenge",
+        {
+          "content-type": "application/json",
+        },
+        {
+          challengeId: challenge.$id,
+          otp: otp,
+        },
+      );
 
+      const savedCookie = globalConfig.getCookie();
+      if (savedCookie) {
+        client.setCookie(savedCookie);
+      }
+
+      accountClient = new Account(client);
       account = await accountClient.get();
     } else {
       globalConfig.removeSession(id);
       globalConfig.setCurrentSession(oldCurrent);
       if (
         endpoint !== DEFAULT_ENDPOINT &&
-        err.response === "user_invalid_credentials"
+        (err.type === "user_invalid_credentials" ||
+          err.response === "user_invalid_credentials")
       ) {
         log("Use the --endpoint option for self-hosted instances");
       }
@@ -144,7 +186,7 @@ export const whoami = new Command("whoami")
       }
 
       let client = await sdkForConsole(false);
-      let accountClient = new Account(client as unknown as ConsoleClient);
+      let accountClient = new Account(client);
 
       let account;
 
@@ -203,7 +245,7 @@ export const login = new Command("login")
 const deleteSession = async (accountId: string): Promise<void> => {
   try {
     let client = await sdkForConsole();
-    let accountClient = new Account(client as unknown as ConsoleClient);
+    let accountClient = new Account(client);
 
     await accountClient.deleteSession("current");
   } catch (e) {
