@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Databases,
   UsageRange,
   RelationshipType,
@@ -20,7 +19,7 @@ let databasesClient: Databases | null = null;
 const getDatabasesClient = async (): Promise<Databases> => {
   if (!databasesClient) {
     const sdkClient = await sdkForProject();
-    databasesClient = new Databases(sdkClient as unknown as ConsoleClient);
+    databasesClient = new Databases(sdkClient);
   }
   return databasesClient;
 };

@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Messaging,
   MessagePriority,
   SmtpEncryption,
@@ -18,7 +17,7 @@ let messagingClient: Messaging | null = null;
 const getMessagingClient = async (): Promise<Messaging> => {
   if (!messagingClient) {
     const sdkClient = await sdkForProject();
-    messagingClient = new Messaging(sdkClient as unknown as ConsoleClient);
+    messagingClient = new Messaging(sdkClient);
   }
   return messagingClient;
 };

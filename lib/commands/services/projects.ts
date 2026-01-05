@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Projects,
   AuthMethod,
   OAuthProvider,
@@ -25,7 +24,7 @@ let projectsClient: Projects | null = null;
 const getProjectsClient = async (): Promise<Projects> => {
   if (!projectsClient) {
     const sdkClient = await sdkForProject();
-    projectsClient = new Projects(sdkClient as unknown as ConsoleClient);
+    projectsClient = new Projects(sdkClient);
   }
   return projectsClient;
 };

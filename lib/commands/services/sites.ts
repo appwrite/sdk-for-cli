@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Sites,
   UsageRange,
   TemplateReferenceType,
@@ -20,7 +19,7 @@ let sitesClient: Sites | null = null;
 const getSitesClient = async (): Promise<Sites> => {
   if (!sitesClient) {
     const sdkClient = await sdkForProject();
-    sitesClient = new Sites(sdkClient as unknown as ConsoleClient);
+    sitesClient = new Sites(sdkClient);
   }
   return sitesClient;
 };

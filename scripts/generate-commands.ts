@@ -361,7 +361,7 @@ function generateCommandFile(
   code += `import { sdkForProject } from "../../sdks.js";\n`;
   code += `import { actionRunner, commandDescriptions, parseBool, parseInteger } from "../../parser.js";\n`;
 
-  const imports: string[] = ["Client as ConsoleClient"];
+  const imports: string[] = [];
   serviceClassesNeeded.forEach((className) => imports.push(className));
   enumTypes.forEach((type) => imports.push(type));
 
@@ -386,7 +386,7 @@ function generateCommandFile(
     code += `const ${getterName} = async (): Promise<${className}> => {\n`;
     code += `  if (!${clientVarName}) {\n`;
     code += `    const sdkClient = await sdkForProject();\n`;
-    code += `    ${clientVarName} = new ${className}(sdkClient as unknown as ConsoleClient);\n`;
+    code += `    ${clientVarName} = new ${className}(sdkClient);\n`;
     code += `  }\n`;
     code += `  return ${clientVarName};\n`;
     code += `};\n\n`;

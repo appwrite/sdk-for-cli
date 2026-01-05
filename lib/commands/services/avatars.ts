@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Avatars,
   Browser,
   CreditCard,
@@ -20,7 +19,7 @@ let avatarsClient: Avatars | null = null;
 const getAvatarsClient = async (): Promise<Avatars> => {
   if (!avatarsClient) {
     const sdkClient = await sdkForProject();
-    avatarsClient = new Avatars(sdkClient as unknown as ConsoleClient);
+    avatarsClient = new Avatars(sdkClient);
   }
   return avatarsClient;
 };

@@ -6,14 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Client as ConsoleClient, Teams } from "@appwrite.io/console";
+import { Teams } from "@appwrite.io/console";
 
 let teamsClient: Teams | null = null;
 
 const getTeamsClient = async (): Promise<Teams> => {
   if (!teamsClient) {
     const sdkClient = await sdkForProject();
-    teamsClient = new Teams(sdkClient as unknown as ConsoleClient);
+    teamsClient = new Teams(sdkClient);
   }
   return teamsClient;
 };

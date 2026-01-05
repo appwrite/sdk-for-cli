@@ -6,14 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Client as ConsoleClient, Locale } from "@appwrite.io/console";
+import { Locale } from "@appwrite.io/console";
 
 let localeClient: Locale | null = null;
 
 const getLocaleClient = async (): Promise<Locale> => {
   if (!localeClient) {
     const sdkClient = await sdkForProject();
-    localeClient = new Locale(sdkClient as unknown as ConsoleClient);
+    localeClient = new Locale(sdkClient);
   }
   return localeClient;
 };

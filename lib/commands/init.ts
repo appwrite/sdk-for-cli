@@ -31,7 +31,7 @@ import {
 } from "../parser.js";
 import { sdkForConsole } from "../sdks.js";
 import { isCloud } from "../utils.js";
-import { Account, Client as ConsoleClient } from "@appwrite.io/console";
+import { Account } from "@appwrite.io/console";
 
 const initResources = async (): Promise<void> => {
   const actions: Record<string, (options?: any) => Promise<void>> = {
@@ -70,7 +70,7 @@ const initProject = async ({
       throw "";
     }
     const client = await sdkForConsole();
-    const accountClient = new Account(client as unknown as ConsoleClient);
+    const accountClient = new Account(client);
 
     await accountClient.get();
   } catch (e) {

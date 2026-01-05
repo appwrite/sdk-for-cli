@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   TablesDB,
   UsageRange,
   RelationshipType,
@@ -20,7 +19,7 @@ let tablesdbClient: TablesDB | null = null;
 const getTablesDBClient = async (): Promise<TablesDB> => {
   if (!tablesdbClient) {
     const sdkClient = await sdkForProject();
-    tablesdbClient = new TablesDB(sdkClient as unknown as ConsoleClient);
+    tablesdbClient = new TablesDB(sdkClient);
   }
   return tablesdbClient;
 };

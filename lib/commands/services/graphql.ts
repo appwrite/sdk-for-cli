@@ -6,14 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Client as ConsoleClient, Graphql } from "@appwrite.io/console";
+import { Graphql } from "@appwrite.io/console";
 
 let graphqlClient: Graphql | null = null;
 
 const getGraphqlClient = async (): Promise<Graphql> => {
   if (!graphqlClient) {
     const sdkClient = await sdkForProject();
-    graphqlClient = new Graphql(sdkClient as unknown as ConsoleClient);
+    graphqlClient = new Graphql(sdkClient);
   }
   return graphqlClient;
 };

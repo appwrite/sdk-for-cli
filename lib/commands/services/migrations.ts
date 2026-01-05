@@ -6,14 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Client as ConsoleClient, Migrations } from "@appwrite.io/console";
+import { Migrations } from "@appwrite.io/console";
 
 let migrationsClient: Migrations | null = null;
 
 const getMigrationsClient = async (): Promise<Migrations> => {
   if (!migrationsClient) {
     const sdkClient = await sdkForProject();
-    migrationsClient = new Migrations(sdkClient as unknown as ConsoleClient);
+    migrationsClient = new Migrations(sdkClient);
   }
   return migrationsClient;
 };

@@ -6,18 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Client as ConsoleClient,
-  Project,
-  ProjectUsageRange,
-} from "@appwrite.io/console";
+import { Project, ProjectUsageRange } from "@appwrite.io/console";
 
 let projectClient: Project | null = null;
 
 const getProjectClient = async (): Promise<Project> => {
   if (!projectClient) {
     const sdkClient = await sdkForProject();
-    projectClient = new Project(sdkClient as unknown as ConsoleClient);
+    projectClient = new Project(sdkClient);
   }
   return projectClient;
 };

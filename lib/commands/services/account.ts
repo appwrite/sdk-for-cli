@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Account,
   AuthenticatorType,
   AuthenticationFactor,
@@ -19,7 +18,7 @@ let accountClient: Account | null = null;
 const getAccountClient = async (): Promise<Account> => {
   if (!accountClient) {
     const sdkClient = await sdkForProject();
-    accountClient = new Account(sdkClient as unknown as ConsoleClient);
+    accountClient = new Account(sdkClient);
   }
   return accountClient;
 };

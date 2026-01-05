@@ -6,14 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Client as ConsoleClient, Tokens } from "@appwrite.io/console";
+import { Tokens } from "@appwrite.io/console";
 
 let tokensClient: Tokens | null = null;
 
 const getTokensClient = async (): Promise<Tokens> => {
   if (!tokensClient) {
     const sdkClient = await sdkForProject();
-    tokensClient = new Tokens(sdkClient as unknown as ConsoleClient);
+    tokensClient = new Tokens(sdkClient);
   }
   return tokensClient;
 };

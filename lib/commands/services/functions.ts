@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Functions,
   UsageRange,
   TemplateReferenceType,
@@ -21,7 +20,7 @@ let functionsClient: Functions | null = null;
 const getFunctionsClient = async (): Promise<Functions> => {
   if (!functionsClient) {
     const sdkClient = await sdkForProject();
-    functionsClient = new Functions(sdkClient as unknown as ConsoleClient);
+    functionsClient = new Functions(sdkClient);
   }
   return functionsClient;
 };

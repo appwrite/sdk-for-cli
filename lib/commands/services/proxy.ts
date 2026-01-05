@@ -6,18 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Client as ConsoleClient,
-  Proxy,
-  ProxyResourceType,
-} from "@appwrite.io/console";
+import { Proxy, ProxyResourceType } from "@appwrite.io/console";
 
 let proxyClient: Proxy | null = null;
 
 const getProxyClient = async (): Promise<Proxy> => {
   if (!proxyClient) {
     const sdkClient = await sdkForProject();
-    proxyClient = new Proxy(sdkClient as unknown as ConsoleClient);
+    proxyClient = new Proxy(sdkClient);
   }
   return proxyClient;
 };

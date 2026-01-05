@@ -6,19 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Client as ConsoleClient,
-  Console,
-  Assistant,
-  ConsoleResourceType,
-} from "@appwrite.io/console";
+import { Console, Assistant, ConsoleResourceType } from "@appwrite.io/console";
 
 let consoleClient: Console | null = null;
 
 const getConsoleClient = async (): Promise<Console> => {
   if (!consoleClient) {
     const sdkClient = await sdkForProject();
-    consoleClient = new Console(sdkClient as unknown as ConsoleClient);
+    consoleClient = new Console(sdkClient);
   }
   return consoleClient;
 };
@@ -28,7 +23,7 @@ let assistantClient: Assistant | null = null;
 const getAssistantClient = async (): Promise<Assistant> => {
   if (!assistantClient) {
     const sdkClient = await sdkForProject();
-    assistantClient = new Assistant(sdkClient as unknown as ConsoleClient);
+    assistantClient = new Assistant(sdkClient);
   }
   return assistantClient;
 };

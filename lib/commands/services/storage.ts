@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Storage,
   ImageGravity,
   ImageFormat,
@@ -19,7 +18,7 @@ let storageClient: Storage | null = null;
 const getStorageClient = async (): Promise<Storage> => {
   if (!storageClient) {
     const sdkClient = await sdkForProject();
-    storageClient = new Storage(sdkClient as unknown as ConsoleClient);
+    storageClient = new Storage(sdkClient);
   }
   return storageClient;
 };

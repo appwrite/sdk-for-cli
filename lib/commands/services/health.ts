@@ -6,14 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Client as ConsoleClient, Health } from "@appwrite.io/console";
+import { Health } from "@appwrite.io/console";
 
 let healthClient: Health | null = null;
 
 const getHealthClient = async (): Promise<Health> => {
   if (!healthClient) {
     const sdkClient = await sdkForProject();
-    healthClient = new Health(sdkClient as unknown as ConsoleClient);
+    healthClient = new Health(sdkClient);
   }
   return healthClient;
 };

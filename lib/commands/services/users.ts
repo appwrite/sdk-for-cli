@@ -7,7 +7,6 @@ import {
   parseInteger,
 } from "../../parser.js";
 import {
-  Client as ConsoleClient,
   Users,
   PasswordHash,
   UsageRange,
@@ -20,7 +19,7 @@ let usersClient: Users | null = null;
 const getUsersClient = async (): Promise<Users> => {
   if (!usersClient) {
     const sdkClient = await sdkForProject();
-    usersClient = new Users(sdkClient as unknown as ConsoleClient);
+    usersClient = new Users(sdkClient);
   }
   return usersClient;
 };

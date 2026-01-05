@@ -6,18 +6,14 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Client as ConsoleClient,
-  Vcs,
-  VCSDetectionType,
-} from "@appwrite.io/console";
+import { Vcs, VCSDetectionType } from "@appwrite.io/console";
 
 let vcsClient: Vcs | null = null;
 
 const getVcsClient = async (): Promise<Vcs> => {
   if (!vcsClient) {
     const sdkClient = await sdkForProject();
-    vcsClient = new Vcs(sdkClient as unknown as ConsoleClient);
+    vcsClient = new Vcs(sdkClient);
   }
   return vcsClient;
 };
