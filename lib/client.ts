@@ -28,7 +28,7 @@ class Client {
       "x-sdk-language": "cli",
       "x-sdk-version": "13.0.0-rc.1",
       "user-agent": `AppwriteCLI/13.0.0-rc.1 (${os.type()} ${os.version()}; ${os.arch()})`,
-      "X-Appwrite-Response-Format": "1.8.0",
+      "X-Appwrite-Response-Format": "1.8.1",
     };
   }
 
