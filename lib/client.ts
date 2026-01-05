@@ -1,7 +1,7 @@
 import os from "os";
 import { fetch, FormData, Agent } from "undici";
 import JSONbig from "json-bigint";
-import AppwriteException from "./exception.js";
+import { AppwriteException } from "@appwrite.io/console";
 import { globalConfig } from "./config.js";
 import chalk from "chalk";
 import type {
