@@ -305,10 +305,13 @@ const pullSites = async ({
     let deploymentId: string | null = null;
 
     try {
-      const fetchResponse = await sitesService.listDeployments(site["$id"], [
-        JSON.stringify({ method: "limit", values: [1] }),
-        JSON.stringify({ method: "orderDesc", values: ["$id"] }),
-      ]);
+      const fetchResponse = await sitesService.listDeployments({
+        siteId: site["$id"],
+        queries: [
+          JSON.stringify({ method: "limit", values: [1] }),
+          JSON.stringify({ method: "orderDesc", values: ["$id"] }),
+        ],
+      });
 
       if (fetchResponse["total"] > 0) {
         deploymentId = fetchResponse["deployments"][0]["$id"];
@@ -325,10 +328,10 @@ const pullSites = async ({
     log("Pulling latest deployment code ...");
 
     const compressedFileName = `${site["$id"]}-${+new Date()}.tar.gz`;
-    const downloadUrl = sitesService.getDeploymentDownload(
-      site["$id"],
-      deploymentId,
-    );
+    const downloadUrl = sitesService.getDeploymentDownload({
+      siteId: site["$id"],
+      deploymentId: deploymentId,
+    });
 
     const client = (await getSitesService()).client;
     const downloadBuffer = await client.call(

@@ -1249,14 +1249,14 @@ const pushResources = async ({
 
   if (cliConfig.all) {
     for (let action of Object.values(actions)) {
-      await action({ returnOnZero: true });
+      await action();
     }
   } else {
     const answers = await inquirer.prompt(questionsPushResources);
 
     const action = actions[answers.resource];
     if (action !== undefined) {
-      await action({ returnOnZero: true });
+      await action();
     }
   }
 };
@@ -1390,14 +1390,14 @@ interface PushSiteOptions {
   async?: boolean;
   code?: boolean;
   withVariables?: boolean;
-  returnOnZero?: boolean;
 }
 
-const pushSite = async (
-  { siteId, async: asyncDeploy, code, withVariables }: PushSiteOptions = {
-    returnOnZero: false,
-  },
-): Promise<void> => {
+const pushSite = async ({
+  siteId,
+  async: asyncDeploy,
+  code,
+  withVariables,
+}: PushSiteOptions = {}): Promise<void> => {
   process.chdir(localConfig.configDirectoryPath);
 
   const siteIds: string[] = [];
@@ -1456,7 +1456,7 @@ const pushSite = async (
       sites,
       async (args: any) => {
         const sitesService = await getSitesService();
-        return await sitesService.get(args.siteId);
+        return await sitesService.get({ siteId: args.siteId });
       },
       KeysSite,
       "siteId",
@@ -1494,7 +1494,7 @@ const pushSite = async (
 
       const sitesService = await getSitesService();
       try {
-        response = await sitesService.get(site["$id"]);
+        response = await sitesService.get({ siteId: site["$id"] });
         siteExists = true;
         if (response.framework !== site.framework) {
           updaterRow.fail({
@@ -1586,7 +1586,7 @@ const pushSite = async (
         const sitesService = await getSitesService();
         const { variables } = await paginate(
           async (args: any) => {
-            return await sitesService.listVariables(args.siteId);
+            return await sitesService.listVariables({ siteId: args.siteId });
           },
           {
             siteId: site["$id"],
@@ -1598,7 +1598,10 @@ const pushSite = async (
         await Promise.all(
           variables.map(async (variable: any) => {
             const sitesService = await getSitesService();
-            await sitesService.deleteVariable(site["$id"], variable["$id"]);
+            await sitesService.deleteVariable({
+              siteId: site["$id"],
+              variableId: variable["$id"],
+            });
           }),
         );
 
@@ -1620,12 +1623,12 @@ const pushSite = async (
         await Promise.all(
           envVariables.map(async (variable) => {
             const sitesService = await getSitesService();
-            await sitesService.createVariable(
-              site["$id"],
-              variable.key,
-              variable.value,
-              false,
-            );
+            await sitesService.createVariable({
+              siteId: site["$id"],
+              key: variable.key,
+              value: variable.value,
+              secret: false,
+            });
           }),
         );
       }
@@ -1681,10 +1684,10 @@ const pushSite = async (
 
           while (true) {
             const sitesService = await getSitesService();
-            response = await sitesService.getDeployment(
-              site["$id"],
-              deploymentId,
-            );
+            response = await sitesService.getDeployment({
+              siteId: site["$id"],
+              deploymentId: deploymentId,
+            });
 
             const status = response["status"];
             if (status === "ready") {
@@ -1789,17 +1792,14 @@ interface PushFunctionOptions {
   async?: boolean;
   code?: boolean;
   withVariables?: boolean;
-  returnOnZero?: boolean;
 }
 
-const pushFunction = async (
-  {
-    functionId,
-    async: asyncDeploy,
-    code,
-    withVariables,
-  }: PushFunctionOptions = { returnOnZero: false },
-): Promise<void> => {
+const pushFunction = async ({
+  functionId,
+  async: asyncDeploy,
+  code,
+  withVariables,
+}: PushFunctionOptions = {}): Promise<void> => {
   process.chdir(localConfig.configDirectoryPath);
 
   const functionIds: string[] = [];
@@ -1858,7 +1858,7 @@ const pushFunction = async (
       functions,
       async (args: any) => {
         const functionsService = await getFunctionsService();
-        return await functionsService.get(args.functionId);
+        return await functionsService.get({ functionId: args.functionId });
       },
       KeysFunction,
       "functionId",
@@ -1895,7 +1895,7 @@ const pushFunction = async (
       updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
       const functionsService = await getFunctionsService();
       try {
-        response = await functionsService.get(func["$id"]);
+        response = await functionsService.get({ functionId: func["$id"] });
         functionExists = true;
         if (response.runtime !== func.runtime) {
           updaterRow.fail({
@@ -1992,7 +1992,9 @@ const pushFunction = async (
         const functionsService = await getFunctionsService();
         const { variables } = await paginate(
           async (args: any) => {
-            return await functionsService.listVariables(args.functionId);
+            return await functionsService.listVariables({
+              functionId: args.functionId,
+            });
           },
           {
             functionId: func["$id"],
@@ -2004,7 +2006,10 @@ const pushFunction = async (
         await Promise.all(
           variables.map(async (variable: any) => {
             const functionsService = await getFunctionsService();
-            await functionsService.deleteVariable(func["$id"], variable["$id"]);
+            await functionsService.deleteVariable({
+              functionId: func["$id"],
+              variableId: variable["$id"],
+            });
           }),
         );
 
@@ -2026,12 +2031,12 @@ const pushFunction = async (
         await Promise.all(
           envVariables.map(async (variable) => {
             const functionsService = await getFunctionsService();
-            await functionsService.createVariable(
-              func["$id"],
-              variable.key,
-              variable.value,
-              false,
-            );
+            await functionsService.createVariable({
+              functionId: func["$id"],
+              key: variable.key,
+              value: variable.value,
+              secret: false,
+            });
           }),
         );
       }
@@ -2086,10 +2091,10 @@ const pushFunction = async (
 
           while (true) {
             const functionsService = await getFunctionsService();
-            response = await functionsService.getDeployment(
-              func["$id"],
-              deploymentId,
-            );
+            response = await functionsService.getDeployment({
+              functionId: func["$id"],
+              deploymentId: deploymentId,
+            });
 
             const status = response["status"];
             if (status === "ready") {
@@ -2364,13 +2369,12 @@ const checkAndApplyTablesDBChanges =
   };
 
 interface PushTableOptions {
-  returnOnZero?: boolean;
   attempts?: number;
 }
 
-const pushTable = async (
-  { returnOnZero, attempts }: PushTableOptions = { returnOnZero: false },
-): Promise<void> => {
+const pushTable = async ({
+  attempts,
+}: PushTableOptions = {}): Promise<void> => {
   const tables: any[] = [];
 
   if (attempts) {
