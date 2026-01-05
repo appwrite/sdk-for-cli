@@ -173,13 +173,13 @@ const pullFunctions = async ({
     let deploymentId: string | null = null;
 
     try {
-      const fetchResponse = await functionsService.listDeployments(
-        func["$id"],
-        [
+      const fetchResponse = await functionsService.listDeployments({
+        functionId: func["$id"],
+        queries: [
           JSON.stringify({ method: "limit", values: [1] }),
           JSON.stringify({ method: "orderDesc", values: ["$id"] }),
         ],
-      );
+      });
 
       if (fetchResponse["total"] > 0) {
         deploymentId = fetchResponse["deployments"][0]["$id"];
@@ -196,9 +196,18 @@ const pullFunctions = async ({
     log("Pulling latest deployment code ...");
 
     const compressedFileName = `${func["$id"]}-${+new Date()}.tar.gz`;
-    const downloadBuffer = await functionsService.getDeploymentDownload(
-      func["$id"],
-      deploymentId,
+    const downloadUrl = functionsService.getDeploymentDownload({
+      functionId: func["$id"],
+      deploymentId: deploymentId,
+    });
+
+    const client = (await getFunctionsService()).client;
+    const downloadBuffer = await client.call(
+      "get",
+      new URL(downloadUrl),
+      {},
+      {},
+      "arrayBuffer",
     );
 
     fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
@@ -316,9 +325,18 @@ const pullSites = async ({
     log("Pulling latest deployment code ...");
 
     const compressedFileName = `${site["$id"]}-${+new Date()}.tar.gz`;
-    const downloadBuffer = await sitesService.getDeploymentDownload(
+    const downloadUrl = sitesService.getDeploymentDownload(
       site["$id"],
       deploymentId,
+    );
+
+    const client = (await getSitesService()).client;
+    const downloadBuffer = await client.call(
+      "get",
+      new URL(downloadUrl),
+      {},
+      {},
+      "arrayBuffer",
     );
 
     fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
