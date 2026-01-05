@@ -15,7 +15,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node"],
+    "types": ["bun"],
     "noEmitOnError": false,
     "noImplicitAny": false
   },
