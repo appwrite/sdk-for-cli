@@ -40,18 +40,26 @@ jobs:
           bun run windows-x64
           bun run windows-arm64
 
-      - name: Publish NPM library
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm to latest version for OIDC support
+        run: npm install -g npm@latest
+
+      - name: Determine release tag
+        id: release_tag
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          if ${{ contains(github.event.release.tag_name, '-rc') }}; then
-            echo "Publishing Release Candidate ${{ github.event.release.tag_name}} to NPM"
-            bun publish --access public --tag next
+          if [[ "${{ github.ref }}" == *"-rc"* ]] || [[ "${{ github.ref }}" == *"-RC"* ]]; then
+            echo "tag=next" >> "$GITHUB_OUTPUT"
           else
-            echo "Publishing ${{ github.event.release.tag_name}} to NPM"
-            bun publish --access public
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Publish
+        run: npm publish --provenance --access public --tag ${{ steps.release_tag.outputs.tag }}
 
       - uses: fnkr/github-action-ghr@v1
         env:
