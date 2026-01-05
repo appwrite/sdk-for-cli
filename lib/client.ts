@@ -250,7 +250,11 @@ class Client {
     if (cookies && cookies.length > 0) {
       for (const cookie of cookies) {
         if (cookie.startsWith("a_session_console=")) {
-          globalConfig.setCookie(cookie);
+          // Extract only the name=value portion, removing Set-Cookie attributes
+          // Set-Cookie format: "name=value; expires=...; domain=...; etc"
+          // Cookie header should only contain: "name=value"
+          const cookieValue = cookie.split(";")[0].trim();
+          globalConfig.setCookie(cookieValue);
         }
       }
     }

@@ -16,22 +16,20 @@ export const sdkForConsole = async (
     );
   }
 
-  client
-    .setEndpoint(endpoint)
-    .setCookie(cookie)
-    .setProject("console")
-    .setSelfSigned(selfSigned)
-    .setLocale("en-US");
-
   client.headers = {
-    "content-type": "",
     "x-sdk-name": "Command Line",
     "x-sdk-platform": "console",
     "x-sdk-language": "cli",
     "x-sdk-version": "13.0.0-rc.2",
     "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
-    "X-Appwrite-Response-Format": "1.8.0",
   };
+
+  client
+    .setEndpoint(endpoint)
+    .setProject("console")
+    .setCookie(cookie)
+    .setSelfSigned(selfSigned)
+    .setLocale("en-US");
 
   return client;
 };
@@ -58,21 +56,19 @@ export const sdkForProject = async (): Promise<Client> => {
     );
   }
 
-  client
-    .setEndpoint(endpoint)
-    .setProject(project)
-    .setSelfSigned(selfSigned)
-    .setLocale("en-US");
-
   client.headers = {
-    "content-type": "",
     "x-sdk-name": "Command Line",
     "x-sdk-platform": "console",
     "x-sdk-language": "cli",
     "x-sdk-version": "13.0.0-rc.2",
     "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
-    "X-Appwrite-Response-Format": "1.8.0",
   };
+
+  client
+    .setEndpoint(endpoint)
+    .setProject(project)
+    .setSelfSigned(selfSigned)
+    .setLocale("en-US");
 
   if (cookie) {
     return client.setCookie(cookie).setMode("admin");
