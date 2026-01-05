@@ -88,7 +88,6 @@ export const loginCommand = async ({
   const legacyClient = new ClientLegacy();
   legacyClient.setEndpoint(configEndpoint);
   legacyClient.setProject("console");
-
   if (globalConfig.getSelfSigned()) {
     legacyClient.setSelfSigned(true);
   }
@@ -114,6 +113,7 @@ export const loginCommand = async ({
     const savedCookie = globalConfig.getCookie();
 
     if (savedCookie) {
+      legacyClient.setCookie(savedCookie);
       client.setCookie(savedCookie);
     }
 
@@ -127,16 +127,14 @@ export const loginCommand = async ({
       const { factor } = mfa
         ? { factor: mfa }
         : await inquirer.prompt(questionsListFactors);
-
       const challenge = await accountClient.createMfaChallenge(factor);
 
       const { otp } = code
         ? { otp: code }
         : await inquirer.prompt(questionsMFAChallenge);
-
       await legacyClient.call(
         "PUT",
-        "/account/sessions/mfa/challenge",
+        "/account/mfa/challenges",
         {
           "content-type": "application/json",
         },
