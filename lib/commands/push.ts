@@ -75,6 +75,49 @@ const changeableKeys = [
   "error",
 ];
 
+interface ObjectChange {
+  group: string;
+  setting: string;
+  remote: string;
+  local: string;
+}
+
+type ComparableValue = boolean | number | string | any[] | undefined;
+
+interface AttributeChange {
+  key: string;
+  attribute: any;
+  reason: string;
+  action: string;
+}
+
+interface PushResourcesOptions {
+  skipDeprecated?: boolean;
+}
+
+interface PushSiteOptions {
+  siteId?: string;
+  async?: boolean;
+  code?: boolean;
+  withVariables?: boolean;
+}
+
+interface PushFunctionOptions {
+  functionId?: string;
+  async?: boolean;
+  code?: boolean;
+  withVariables?: boolean;
+}
+
+interface TablesDBChangesResult {
+  applied: boolean;
+  resyncNeeded: boolean;
+}
+
+interface PushTableOptions {
+  attempts?: number;
+}
+
 interface AwaitPools {
   wipeAttributes: (
     databaseId: string,
@@ -561,17 +604,30 @@ const approveChanges = async (
   return false;
 };
 
-const getObjectChanges = (
-  remote: any,
-  local: any,
-  index: string,
+const getObjectChanges = <T extends Record<string, any>>(
+  remote: T,
+  local: T,
+  index: keyof T,
   what: string,
-): any[] => {
-  const changes: any[] = [];
+): ObjectChange[] => {
+  const changes: ObjectChange[] = [];
 
-  if (remote[index] && local[index]) {
-    for (let [service, status] of Object.entries(remote[index])) {
-      const localValue = local[index][service];
+  const remoteNested = remote[index];
+  const localNested = local[index];
+
+  if (
+    remoteNested &&
+    localNested &&
+    typeof remoteNested === "object" &&
+    !Array.isArray(remoteNested) &&
+    typeof localNested === "object" &&
+    !Array.isArray(localNested)
+  ) {
+    const remoteObj = remoteNested as Record<string, ComparableValue>;
+    const localObj = localNested as Record<string, ComparableValue>;
+
+    for (const [service, status] of Object.entries(remoteObj)) {
+      const localValue = localObj[service];
       let valuesEqual = false;
 
       if (Array.isArray(status) && Array.isArray(localValue)) {
@@ -584,8 +640,8 @@ const getObjectChanges = (
         changes.push({
           group: what,
           setting: service,
-          remote: chalk.red(status),
-          local: chalk.green(localValue),
+          remote: chalk.red(String(status ?? "")),
+          local: chalk.green(String(localValue ?? "")),
         });
       }
     }
@@ -604,129 +660,130 @@ const createAttribute = async (
     case "string":
       switch (attribute.format) {
         case "email":
-          return databasesService.createEmailAttribute(
+          return databasesService.createEmailAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-            attribute.array,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+            array: attribute.array,
+          });
         case "url":
-          return databasesService.createUrlAttribute(
+          return databasesService.createUrlAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-            attribute.array,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+            array: attribute.array,
+          });
         case "ip":
-          return databasesService.createIpAttribute(
+          return databasesService.createIpAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-            attribute.array,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+            array: attribute.array,
+          });
         case "enum":
-          return databasesService.createEnumAttribute(
+          return databasesService.createEnumAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.elements,
-            attribute.required,
-            attribute.default,
-            attribute.array,
-          );
+            key: attribute.key,
+            elements: attribute.elements,
+            required: attribute.required,
+            xdefault: attribute.default,
+            array: attribute.array,
+          });
         default:
-          return databasesService.createStringAttribute(
+          return databasesService.createStringAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.size,
-            attribute.required,
-            attribute.default,
-            attribute.array,
-            attribute.encrypt,
-          );
+            key: attribute.key,
+            size: attribute.size,
+            required: attribute.required,
+            xdefault: attribute.default,
+            array: attribute.array,
+            encrypt: attribute.encrypt,
+          });
       }
     case "integer":
-      return databasesService.createIntegerAttribute(
+      return databasesService.createIntegerAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.min,
-        attribute.max,
-        attribute.default,
-        attribute.array,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        min: attribute.min,
+        max: attribute.max,
+        xdefault: attribute.default,
+        array: attribute.array,
+      });
     case "double":
-      return databasesService.createFloatAttribute(
+      return databasesService.createFloatAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.min,
-        attribute.max,
-        attribute.default,
-        attribute.array,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        min: attribute.min,
+        max: attribute.max,
+        xdefault: attribute.default,
+        array: attribute.array,
+      });
     case "boolean":
-      return databasesService.createBooleanAttribute(
+      return databasesService.createBooleanAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-        attribute.array,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+        array: attribute.array,
+      });
     case "datetime":
-      return databasesService.createDatetimeAttribute(
+      return databasesService.createDatetimeAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-        attribute.array,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+        array: attribute.array,
+      });
     case "relationship":
-      return databasesService.createRelationshipAttribute(
+      return databasesService.createRelationshipAttribute({
         databaseId,
         collectionId,
-        attribute.relatedTable ?? attribute.relatedCollection,
-        attribute.relationType,
-        attribute.twoWay,
-        attribute.key,
-        attribute.twoWayKey,
-        attribute.onDelete,
-      );
+        relatedCollectionId:
+          attribute.relatedTable ?? attribute.relatedCollection,
+        type: attribute.relationType,
+        twoWay: attribute.twoWay,
+        key: attribute.key,
+        twoWayKey: attribute.twoWayKey,
+        onDelete: attribute.onDelete,
+      });
     case "point":
-      return databasesService.createPointAttribute(
+      return databasesService.createPointAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     case "linestring":
-      return databasesService.createLineAttribute(
+      return databasesService.createLineAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     case "polygon":
-      return databasesService.createPolygonAttribute(
+      return databasesService.createPolygonAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     default:
       throw new Error(`Unsupported attribute type: ${attribute.type}`);
   }
@@ -742,114 +799,114 @@ const updateAttribute = async (
     case "string":
       switch (attribute.format) {
         case "email":
-          return databasesService.updateEmailAttribute(
+          return databasesService.updateEmailAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+          });
         case "url":
-          return databasesService.updateUrlAttribute(
+          return databasesService.updateUrlAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+          });
         case "ip":
-          return databasesService.updateIpAttribute(
+          return databasesService.updateIpAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+          });
         case "enum":
-          return databasesService.updateEnumAttribute(
+          return databasesService.updateEnumAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.elements,
-            attribute.required,
-            attribute.default,
-          );
+            key: attribute.key,
+            elements: attribute.elements,
+            required: attribute.required,
+            xdefault: attribute.default,
+          });
         default:
-          return databasesService.updateStringAttribute(
+          return databasesService.updateStringAttribute({
             databaseId,
             collectionId,
-            attribute.key,
-            attribute.required,
-            attribute.default,
-          );
+            key: attribute.key,
+            required: attribute.required,
+            xdefault: attribute.default,
+          });
       }
     case "integer":
-      return databasesService.updateIntegerAttribute(
+      return databasesService.updateIntegerAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.min,
-        attribute.max,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        min: attribute.min,
+        max: attribute.max,
+        xdefault: attribute.default,
+      });
     case "double":
-      return databasesService.updateFloatAttribute(
+      return databasesService.updateFloatAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.min,
-        attribute.max,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        min: attribute.min,
+        max: attribute.max,
+        xdefault: attribute.default,
+      });
     case "boolean":
-      return databasesService.updateBooleanAttribute(
+      return databasesService.updateBooleanAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     case "datetime":
-      return databasesService.updateDatetimeAttribute(
+      return databasesService.updateDatetimeAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     case "relationship":
-      return databasesService.updateRelationshipAttribute(
+      return databasesService.updateRelationshipAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.onDelete,
-      );
+        key: attribute.key,
+        onDelete: attribute.onDelete,
+      });
     case "point":
-      return databasesService.updatePointAttribute(
+      return databasesService.updatePointAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     case "linestring":
-      return databasesService.updateLineAttribute(
+      return databasesService.updateLineAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     case "polygon":
-      return databasesService.updatePolygonAttribute(
+      return databasesService.updatePolygonAttribute({
         databaseId,
         collectionId,
-        attribute.key,
-        attribute.required,
-        attribute.default,
-      );
+        key: attribute.key,
+        required: attribute.required,
+        xdefault: attribute.default,
+      });
     default:
       throw new Error(`Unsupported attribute type: ${attribute.type}`);
   }
@@ -933,13 +990,6 @@ const compareAttribute = (
 
   return reason;
 };
-
-interface AttributeChange {
-  key: string;
-  attribute: any;
-  reason: string;
-  action: string;
-}
 
 /**
  * Check if attribute non-changeable fields has been changed
@@ -1225,10 +1275,6 @@ const createColumns = async (columns: any[], table: any): Promise<void> => {
   success(`Created ${columns.length} columns`);
 };
 
-interface PushResourcesOptions {
-  skipDeprecated?: boolean;
-}
-
 const pushResources = async ({
   skipDeprecated = false,
 }: PushResourcesOptions = {}): Promise<void> => {
@@ -1384,13 +1430,6 @@ const pushSettings = async (): Promise<void> => {
     throw e;
   }
 };
-
-interface PushSiteOptions {
-  siteId?: string;
-  async?: boolean;
-  code?: boolean;
-  withVariables?: boolean;
-}
 
 const pushSite = async ({
   siteId,
@@ -1786,13 +1825,6 @@ const pushSite = async ({
     });
   }
 };
-
-interface PushFunctionOptions {
-  functionId?: string;
-  async?: boolean;
-  code?: boolean;
-  withVariables?: boolean;
-}
 
 const pushFunction = async ({
   functionId,
@@ -2194,11 +2226,6 @@ const pushFunction = async ({
   }
 };
 
-interface TablesDBChangesResult {
-  applied: boolean;
-  resyncNeeded: boolean;
-}
-
 const checkAndApplyTablesDBChanges =
   async (): Promise<TablesDBChangesResult> => {
     log("Checking for tablesDB changes ...");
@@ -2367,10 +2394,6 @@ const checkAndApplyTablesDBChanges =
 
     return { applied: true, resyncNeeded: needsResync };
   };
-
-interface PushTableOptions {
-  attempts?: number;
-}
 
 const pushTable = async ({
   attempts,
