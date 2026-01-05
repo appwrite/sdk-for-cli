@@ -2,7 +2,6 @@ import fs from "fs";
 import { parse as parseDotenv } from "dotenv";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import JSONbig from "json-bigint";
 import { Command } from "commander";
 import ID from "../id.js";
 import {
@@ -56,15 +55,11 @@ import {
   getTeamsService,
   getProjectsService,
 } from "../services.js";
-import { sdkForConsole } from "../sdks.js";
 import { ApiService, AuthMethod } from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
 
-const JSONbigNative = JSONbig({ storeAsString: false });
-
 const STEP_SIZE = 100; // Resources
 const POLL_DEBOUNCE = 2000; // Milliseconds
-const POLL_MAX_DEBOUNCE = 1800; // Times of POLL_DEBOUNCE (1 hour)
 const POLL_DEFAULT_VALUE = 30;
 
 let pollMaxDebounces = POLL_DEFAULT_VALUE;
@@ -86,29 +81,34 @@ interface AwaitPools {
     collectionId: string,
     iteration?: number,
   ) => Promise<boolean>;
+
   wipeIndexes: (
     databaseId: string,
     collectionId: string,
     iteration?: number,
   ) => Promise<boolean>;
+
   deleteAttributes: (
     databaseId: string,
     collectionId: string,
     attributeKeys: any[],
     iteration?: number,
   ) => Promise<boolean>;
+
   expectAttributes: (
     databaseId: string,
     collectionId: string,
     attributeKeys: string[],
     iteration?: number,
   ) => Promise<boolean>;
+
   deleteIndexes: (
     databaseId: string,
     collectionId: string,
     indexesKeys: any[],
     iteration?: number,
   ) => Promise<boolean>;
+
   expectIndexes: (
     databaseId: string,
     collectionId: string,
@@ -1225,7 +1225,13 @@ const createColumns = async (columns: any[], table: any): Promise<void> => {
   success(`Created ${columns.length} columns`);
 };
 
-const pushResources = async (): Promise<void> => {
+interface PushResourcesOptions {
+  skipDeprecated?: boolean;
+}
+
+const pushResources = async ({
+  skipDeprecated = false,
+}: PushResourcesOptions = {}): Promise<void> => {
   const actions: Record<string, (options?: any) => Promise<void>> = {
     settings: pushSettings,
     functions: pushFunction,
@@ -1236,6 +1242,10 @@ const pushResources = async (): Promise<void> => {
     teams: pushTeam,
     messages: pushMessagingTopic,
   };
+
+  if (skipDeprecated) {
+    delete actions.collections;
+  }
 
   if (cliConfig.all) {
     for (let action of Object.values(actions)) {
@@ -1495,20 +1505,20 @@ const pushSite = async (
 
         updaterRow.update({ status: "Updating" }).replaceSpinner(SPINNER_ARC);
 
-        response = await sitesService.update(
-          site["$id"],
-          site.name,
-          site.framework,
-          site.buildRuntime,
-          site.specification,
-          site.timeout,
-          site.enabled,
-          site.logging,
-          site.adapter,
-          site.buildCommand,
-          site.installCommand,
-          site.outputDirectory,
-        );
+        response = await sitesService.update({
+          siteId: site["$id"],
+          name: site.name,
+          framework: site.framework,
+          enabled: site.enabled,
+          logging: site.logging,
+          timeout: site.timeout,
+          installCommand: site.installCommand,
+          buildCommand: site.buildCommand,
+          outputDirectory: site.outputDirectory,
+          buildRuntime: site.buildRuntime,
+          adapter: site.adapter,
+          specification: site.specification,
+        });
       } catch (e: any) {
         if (Number(e.code) === 404) {
           siteExists = false;
@@ -1525,20 +1535,20 @@ const pushSite = async (
         updaterRow.update({ status: "Creating" }).replaceSpinner(SPINNER_DOTS);
 
         try {
-          response = await sitesService.create(
-            site.$id,
-            site.name,
-            site.framework,
-            site.specification,
-            site.buildRuntime,
-            site.buildCommand,
-            site.installCommand,
-            site.outputDirectory,
-            site.adapter,
-            site.timeout,
-            site.enabled,
-            site.logging,
-          );
+          response = await sitesService.create({
+            siteId: site.$id,
+            name: site.name,
+            framework: site.framework,
+            enabled: site.enabled,
+            logging: site.logging,
+            timeout: site.timeout,
+            installCommand: site.installCommand,
+            buildCommand: site.buildCommand,
+            outputDirectory: site.outputDirectory,
+            buildRuntime: site.buildRuntime,
+            adapter: site.adapter,
+            specification: site.specification,
+          });
 
           let domain = "";
           try {
@@ -1896,20 +1906,21 @@ const pushFunction = async (
 
         updaterRow.update({ status: "Updating" }).replaceSpinner(SPINNER_ARC);
 
-        response = await functionsService.update(
-          func["$id"],
-          func.name,
-          func.specification,
-          func.execute,
-          func.events,
-          func.schedule,
-          func.timeout,
-          func.enabled,
-          func.logging,
-          func.entrypoint,
-          func.commands,
-          func.scopes,
-        );
+        response = await functionsService.update({
+          functionId: func["$id"],
+          name: func.name,
+          runtime: func.runtime,
+          execute: func.execute,
+          events: func.events,
+          schedule: func.schedule,
+          timeout: func.timeout,
+          enabled: func.enabled,
+          logging: func.logging,
+          entrypoint: func.entrypoint,
+          commands: func.commands,
+          scopes: func.scopes,
+          specification: func.specification,
+        });
       } catch (e: any) {
         if (Number(e.code) === 404) {
           functionExists = false;
@@ -1926,21 +1937,21 @@ const pushFunction = async (
         updaterRow.update({ status: "Creating" }).replaceSpinner(SPINNER_DOTS);
 
         try {
-          response = await functionsService.create(
-            func.$id,
-            func.name,
-            func.runtime,
-            func.specification,
-            func.execute,
-            func.events,
-            func.schedule,
-            func.timeout,
-            func.enabled,
-            func.logging,
-            func.entrypoint,
-            func.commands,
-            func.scopes,
-          );
+          response = await functionsService.create({
+            functionId: func.$id,
+            name: func.name,
+            runtime: func.runtime,
+            execute: func.execute,
+            events: func.events,
+            schedule: func.schedule,
+            timeout: func.timeout,
+            enabled: func.enabled,
+            logging: func.logging,
+            entrypoint: func.entrypoint,
+            commands: func.commands,
+            scopes: func.scopes,
+            specification: func.specification,
+          });
 
           let domain = "";
           try {
@@ -2269,8 +2280,6 @@ const checkAndApplyTablesDBChanges =
     }
 
     if (changes.length === 0) {
-      console.log("No changes found in tablesDB resource");
-      console.log();
       return { applied: false, resyncNeeded: false };
     }
 
@@ -2470,10 +2479,7 @@ const pushTable = async (
         }
       }
     }
-  } else {
-    console.log("No tables found to delete");
   }
-  console.log();
 
   if (cliConfig.all) {
     checkDeployConditions(localConfig);
@@ -2630,14 +2636,7 @@ const pushTable = async (
   success(`Successfully pushed ${tablesChanged.size} tables`);
 };
 
-interface PushCollectionOptions {
-  returnOnZero?: boolean;
-  attempts?: number;
-}
-
-const pushCollection = async (
-  { returnOnZero, attempts }: PushCollectionOptions = { returnOnZero: false },
-): Promise<void> => {
+const pushCollection = async ({ attempts }): Promise<void> => {
   warn(
     "appwrite push collection has been deprecated. Please consider using 'appwrite push tables' instead",
   );
@@ -2816,13 +2815,7 @@ const pushCollection = async (
   success(`Successfully pushed ${numberOfCollections} collections`);
 };
 
-interface PushBucketOptions {
-  returnOnZero?: boolean;
-}
-
-const pushBucket = async (
-  { returnOnZero }: PushBucketOptions = { returnOnZero: false },
-): Promise<void> => {
+const pushBucket = async (): Promise<void> => {
   let response: any = {};
 
   let bucketIds: string[] = [];
@@ -2918,13 +2911,7 @@ const pushBucket = async (
   success(`Successfully pushed ${buckets.length} buckets.`);
 };
 
-interface PushTeamOptions {
-  returnOnZero?: boolean;
-}
-
-const pushTeam = async (
-  { returnOnZero }: PushTeamOptions = { returnOnZero: false },
-): Promise<void> => {
+const pushTeam = async (): Promise<void> => {
   let response: any = {};
 
   let teamIds: string[] = [];
@@ -2996,13 +2983,7 @@ const pushTeam = async (
   success(`Successfully pushed ${teams.length} teams.`);
 };
 
-interface PushMessagingTopicOptions {
-  returnOnZero?: boolean;
-}
-
-const pushMessagingTopic = async (
-  { returnOnZero }: PushMessagingTopicOptions = { returnOnZero: false },
-): Promise<void> => {
+const pushMessagingTopic = async (): Promise<void> => {
   let response: any = {};
 
   let topicsIds: string[] = [];
@@ -3087,7 +3068,7 @@ const pushMessagingTopic = async (
 
 export const push = new Command("push")
   .description(commandDescriptions["push"])
-  .action(actionRunner(pushResources));
+  .action(actionRunner(() => pushResources({ skipDeprecated: true })));
 
 push
   .command("all")
@@ -3095,7 +3076,7 @@ push
   .action(
     actionRunner(() => {
       cliConfig.all = true;
-      return pushResources();
+      return pushResources({ skipDeprecated: true });
     }),
   );
 
