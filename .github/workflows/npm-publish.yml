@@ -21,6 +21,7 @@ jobs:
           cd ./ldid
           sudo make
           sudo make install
+<<<<<<< Updated upstream
       - name: Install dependenices and build for Linux and Windows
         run: | 
           npm install
@@ -30,6 +31,19 @@ jobs:
           npm run windows-arm64
           npm run mac-x64
           npm run mac-arm64
+=======
+
+      - name: Install dependencies and build for Linux and Windows
+        run: |
+          bun install
+          bun run linux-x64
+          bun run linux-arm64
+          bun run mac-x64
+          bun run mac-arm64
+          bun run windows-x64
+          bun run windows-arm64
+
+>>>>>>> Stashed changes
       - name: Publish NPM library
         run: npm publish
         env:

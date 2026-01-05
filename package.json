@@ -14,6 +14,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+<<<<<<< Updated upstream
     "linux-x64": "pkg -t node16-linux-x64 -o build/appwrite-cli-linux-x64 package.json",
     "linux-arm64": "pkg -t node16-linux-arm64 -o build/appwrite-cli-linux-arm64 package.json",
     "mac-x64": "pkg -t node16-macos-x64 -o build/appwrite-cli-darwin-x64 package.json",
@@ -23,6 +24,18 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
+=======
+    "linux-x64": "bun run build && bun build ./dist/index.js --compile --sourcemap=inline --target=bun-linux-x64 --outfile build/appwrite-cli-linux-x64",
+    "linux-arm64": "bun run build && bun build ./dist/index.js --compile --sourcemap=inline --target=bun-linux-arm64 --outfile build/appwrite-cli-linux-arm64",
+    "mac-x64": "bun run build && bun build ./dist/index.js --compile --sourcemap=inline --target=bun-darwin-x64 --outfile build/appwrite-cli-darwin-x64",
+    "mac-arm64": "bun run build && bun build ./dist/index.js --compile --sourcemap=inline --target=bun-darwin-arm64 --outfile build/appwrite-cli-darwin-arm64",
+    "windows-x64": "bun run build && bun build ./dist/index.js --compile --sourcemap=inline --target=bun-windows-x64 --outfile build/appwrite-cli-win-x64.exe",
+    "windows-arm64": "bun run build && esbuild dist/index.js --bundle --platform=node --format=cjs --outfile=dist/bundle.cjs --external:@appwrite.io/console --external:fsevents && pkg dist/bundle.cjs -t node18-win-arm64 -o build/appwrite-cli-win-arm64.exe"
+  },
+  "dependencies": {
+    "@appwrite.io/console": "^2.1.0",
+    "@types/bun": "^1.3.5",
+>>>>>>> Stashed changes
     "chalk": "4.1.2",
     "cli-table3": "^0.6.1",
     "commander": "^8.3.0",
@@ -31,7 +44,20 @@
     "tar": "^6.1.11"
   },
   "devDependencies": {
+<<<<<<< Updated upstream
     "pkg": "5.5.1"
+=======
+    "@types/cli-progress": "^3.11.5",
+    "@types/inquirer": "^8.2.10",
+    "@types/json-bigint": "^1.0.4",
+    "@types/node": "^18.19.0",
+    "@types/tar": "^6.1.11",
+    "@yao-pkg/pkg": "^6.11.0",
+    "esbuild": "^0.27.2",
+    "prettier": "^3.7.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.3.3"
+>>>>>>> Stashed changes
   },
   "pkg": {
     "scripts": [

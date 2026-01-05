@@ -1,0 +1,20 @@
+export declare enum CreditCard {
+    AmericanExpress = "amex",
+    Argencard = "argencard",
+    Cabal = "cabal",
+    Cencosud = "cencosud",
+    DinersClub = "diners",
+    Discover = "discover",
+    Elo = "elo",
+    Hipercard = "hipercard",
+    JCB = "jcb",
+    Mastercard = "mastercard",
+    Naranja = "naranja",
+    TarjetaShopping = "targeta-shopping",
+    UnionPay = "unionpay",
+    Visa = "visa",
+    MIR = "mir",
+    Maestro = "maestro",
+    Rupay = "rupay"
+}
+//# sourceMappingURL=credit-card.d.ts.map

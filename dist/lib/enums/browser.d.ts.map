@@ -1,0 +1,1 @@
+{"version":3,"file":"browser.d.ts","sourceRoot":"","sources":["../../../lib/enums/browser.ts"],"names":[],"mappings":"AAAA,oBAAY,OAAO;IACjB,YAAY,OAAO;IACnB,kBAAkB,OAAO;IACzB,YAAY,OAAO;IACnB,eAAe,OAAO;IACtB,kBAAkB,OAAO;IACzB,QAAQ,OAAO;IACf,cAAc,OAAO;IACrB,MAAM,OAAO;IACb,YAAY,OAAO;IACnB,aAAa,OAAO;IACpB,gBAAgB,OAAO;IACvB,SAAS,OAAO;IAChB,KAAK,OAAO;IACZ,SAAS,OAAO;CACjB"}

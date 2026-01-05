@@ -1,0 +1,1 @@
+{"version":3,"file":"framework.d.ts","sourceRoot":"","sources":["../../../lib/enums/framework.ts"],"names":[],"mappings":"AAAA,oBAAY,SAAS;IACnB,MAAM,WAAW;IACjB,OAAO,YAAY;IACnB,MAAM,WAAW;IACjB,KAAK,UAAU;IACf,IAAI,SAAS;IACb,GAAG,QAAQ;IACX,SAAS,cAAc;IACvB,KAAK,UAAU;IACf,aAAa,mBAAmB;IAChC,KAAK,UAAU;IACf,IAAI,SAAS;IACb,OAAO,YAAY;IACnB,WAAW,iBAAiB;IAC5B,IAAI,SAAS;IACb,KAAK,UAAU;CAChB"}
