@@ -45,7 +45,12 @@ import {
 import type { ConfigType } from "./config.js";
 import { createSettingsObject } from "./config.js";
 import { ProjectNotInitializedError } from "./errors.js";
-import type { ProjectSettings, RawProjectSettings } from "../types.js";
+import type {
+  ProjectSettings,
+  RawProjectSettings,
+  FunctionConfig,
+  SiteConfig,
+} from "../types.js";
 
 export interface PullOptions {
   all?: boolean;
@@ -278,7 +283,7 @@ export class Pull {
    */
   public async pullFunctions(
     options: PullFunctionsOptions = {},
-  ): Promise<any[]> {
+  ): Promise<FunctionConfig[]> {
     const originalCwd = process.cwd();
     process.chdir(this.configDirectoryPath);
 
@@ -312,16 +317,30 @@ export class Pull {
         functions = allFunctions;
       }
 
-      const result: any[] = [];
+      const result: FunctionConfig[] = [];
 
       for (const func of functions) {
         const funcPath = `functions/${func.name}`;
-        func["path"] = funcPath;
+        const holdingVars = func.vars || [];
 
-        const holdingVars = func["vars"] || [];
-        delete func["vars"];
+        const functionConfig: FunctionConfig = {
+          $id: func.$id,
+          name: func.name,
+          runtime: func.runtime,
+          path: funcPath,
+          entrypoint: func.entrypoint,
+          execute: func.execute,
+          enabled: func.enabled,
+          logging: func.logging,
+          events: func.events,
+          schedule: func.schedule,
+          timeout: func.timeout,
+          commands: func.commands,
+          scopes: func.scopes,
+          specification: func.specification,
+        };
 
-        result.push(func);
+        result.push(functionConfig);
 
         if (!fs.existsSync(funcPath)) {
           fs.mkdirSync(funcPath, { recursive: true });
@@ -356,7 +375,9 @@ export class Pull {
   /**
    * Pull sites from the project
    */
-  public async pullSites(options: PullSitesOptions = {}): Promise<any[]> {
+  public async pullSites(
+    options: PullSitesOptions = {},
+  ): Promise<SiteConfig[]> {
     const originalCwd = process.cwd();
     process.chdir(this.configDirectoryPath);
 
@@ -394,16 +415,30 @@ export class Pull {
         ? allSites.filter((s) => options.siteIds!.includes(s.$id))
         : allSites;
 
-      const result: any[] = [];
+      const result: SiteConfig[] = [];
 
       for (const site of sites) {
         const sitePath = `sites/${site.name}`;
-        site["path"] = sitePath;
+        const holdingVars = site.vars || [];
 
-        const holdingVars = site["vars"] || [];
-        delete site["vars"];
+        const siteConfig: SiteConfig = {
+          $id: site.$id,
+          name: site.name,
+          path: sitePath,
+          framework: site.framework,
+          enabled: site.enabled,
+          logging: site.logging,
+          timeout: site.timeout,
+          buildRuntime: site.buildRuntime,
+          adapter: site.adapter,
+          installCommand: site.installCommand,
+          buildCommand: site.buildCommand,
+          outputDirectory: site.outputDirectory,
+          fallbackFile: site.fallbackFile,
+          specification: site.specification,
+        };
 
-        result.push(site);
+        result.push(siteConfig);
 
         if (!fs.existsSync(sitePath)) {
           fs.mkdirSync(sitePath, { recursive: true });
