@@ -150,7 +150,14 @@ export class Pull {
       "arrayBuffer",
     );
 
-    fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
+    try {
+      fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(
+        `Failed to write deployment archive to "${compressedFileName}": ${message}`,
+      );
+    }
 
     tar.extract({
       sync: true,
