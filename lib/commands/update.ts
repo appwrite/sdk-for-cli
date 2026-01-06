@@ -1,18 +1,8 @@
-import fs from "fs";
-import path from "path";
 import { spawn } from "child_process";
 import { Command } from "commander";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import {
-  success,
-  log,
-  warn,
-  error,
-  hint,
-  actionRunner,
-  commandDescriptions,
-} from "../parser.js";
+import { success, log, warn, error, hint, actionRunner } from "../parser.js";
 import { getLatestVersion, compareVersions } from "../utils.js";
 import packageJson from "../../package.json" with { type: "json" };
 const { version } = packageJson;

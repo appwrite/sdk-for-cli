@@ -7,7 +7,6 @@ import ID from "../id.js";
 import {
   localConfig,
   globalConfig,
-  KeysAttributes,
   KeysFunction,
   KeysSite,
   whitelistKeys,
@@ -57,23 +56,17 @@ import {
 } from "../services.js";
 import { ApiService, AuthMethod } from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
+import { Pools } from "./utils/pools.js";
+import { Attributes, Collection } from "./utils/attributes.js";
 
-const STEP_SIZE = 100; // Resources
 const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
 
 let pollMaxDebounces = POLL_DEFAULT_VALUE;
 
-const changeableKeys = [
-  "status",
-  "required",
-  "xdefault",
-  "elements",
-  "min",
-  "max",
-  "default",
-  "error",
-];
+// Shared instances
+const pools = new Pools(pollMaxDebounces);
+const attributes = new Attributes(pools);
 
 interface ObjectChange {
   group: string;
@@ -83,13 +76,6 @@ interface ObjectChange {
 }
 
 type ComparableValue = boolean | number | string | any[] | undefined;
-
-interface AttributeChange {
-  key: string;
-  attribute: any;
-  reason: string;
-  action: string;
-}
 
 interface PushResourcesOptions {
   skipDeprecated?: boolean;
@@ -118,383 +104,6 @@ interface PushTableOptions {
   attempts?: number;
 }
 
-interface AwaitPools {
-  wipeAttributes: (
-    databaseId: string,
-    collectionId: string,
-    iteration?: number,
-  ) => Promise<boolean>;
-
-  wipeIndexes: (
-    databaseId: string,
-    collectionId: string,
-    iteration?: number,
-  ) => Promise<boolean>;
-
-  deleteAttributes: (
-    databaseId: string,
-    collectionId: string,
-    attributeKeys: any[],
-    iteration?: number,
-  ) => Promise<boolean>;
-
-  expectAttributes: (
-    databaseId: string,
-    collectionId: string,
-    attributeKeys: string[],
-    iteration?: number,
-  ) => Promise<boolean>;
-
-  deleteIndexes: (
-    databaseId: string,
-    collectionId: string,
-    indexesKeys: any[],
-    iteration?: number,
-  ) => Promise<boolean>;
-
-  expectIndexes: (
-    databaseId: string,
-    collectionId: string,
-    indexKeys: string[],
-    iteration?: number,
-  ) => Promise<boolean>;
-}
-
-const awaitPools: AwaitPools = {
-  wipeAttributes: async (
-    databaseId: string,
-    collectionId: string,
-    iteration: number = 1,
-  ): Promise<boolean> => {
-    if (iteration > pollMaxDebounces) {
-      return false;
-    }
-
-    const databasesService = await getDatabasesService();
-    const response = await databasesService.listAttributes(
-      databaseId,
-      collectionId,
-      [JSON.stringify({ method: "limit", values: [1] })],
-    );
-    const { total } = response;
-
-    if (total === 0) {
-      return true;
-    }
-
-    if (pollMaxDebounces === POLL_DEFAULT_VALUE) {
-      let steps = Math.max(1, Math.ceil(total / STEP_SIZE));
-      if (steps > 1 && iteration === 1) {
-        pollMaxDebounces *= steps;
-
-        log(
-          "Found a large number of attributes, increasing timeout to " +
-            (pollMaxDebounces * POLL_DEBOUNCE) / 1000 / 60 +
-            " minutes",
-        );
-      }
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_DEBOUNCE));
-
-    return await awaitPools.wipeAttributes(
-      databaseId,
-      collectionId,
-      iteration + 1,
-    );
-  },
-  wipeIndexes: async (
-    databaseId: string,
-    collectionId: string,
-    iteration: number = 1,
-  ): Promise<boolean> => {
-    if (iteration > pollMaxDebounces) {
-      return false;
-    }
-
-    const databasesService = await getDatabasesService();
-    const response = await databasesService.listIndexes(
-      databaseId,
-      collectionId,
-      [JSON.stringify({ method: "limit", values: [1] })],
-    );
-    const { total } = response;
-
-    if (total === 0) {
-      return true;
-    }
-
-    if (pollMaxDebounces === POLL_DEFAULT_VALUE) {
-      let steps = Math.max(1, Math.ceil(total / STEP_SIZE));
-      if (steps > 1 && iteration === 1) {
-        pollMaxDebounces *= steps;
-
-        log(
-          "Found a large number of indexes, increasing timeout to " +
-            (pollMaxDebounces * POLL_DEBOUNCE) / 1000 / 60 +
-            " minutes",
-        );
-      }
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_DEBOUNCE));
-
-    return await awaitPools.wipeIndexes(
-      databaseId,
-      collectionId,
-      iteration + 1,
-    );
-  },
-  deleteAttributes: async (
-    databaseId: string,
-    collectionId: string,
-    attributeKeys: any[],
-    iteration: number = 1,
-  ): Promise<boolean> => {
-    if (iteration > pollMaxDebounces) {
-      return false;
-    }
-
-    if (pollMaxDebounces === POLL_DEFAULT_VALUE) {
-      let steps = Math.max(1, Math.ceil(attributeKeys.length / STEP_SIZE));
-      if (steps > 1 && iteration === 1) {
-        pollMaxDebounces *= steps;
-
-        log(
-          "Found a large number of attributes to be deleted. Increasing timeout to " +
-            (pollMaxDebounces * POLL_DEBOUNCE) / 1000 / 60 +
-            " minutes",
-        );
-      }
-    }
-
-    const { attributes } = await paginate(
-      async (args: any) => {
-        const databasesService = await getDatabasesService();
-        return await databasesService.listAttributes(
-          args.databaseId,
-          args.collectionId,
-          args.queries || [],
-        );
-      },
-      {
-        databaseId,
-        collectionId,
-      },
-      100,
-      "attributes",
-    );
-
-    const ready = attributeKeys.filter((attribute: any) =>
-      attributes.includes(attribute.key),
-    );
-
-    if (ready.length === 0) {
-      return true;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_DEBOUNCE));
-
-    return await awaitPools.expectAttributes(
-      databaseId,
-      collectionId,
-      attributeKeys,
-      iteration + 1,
-    );
-  },
-  expectAttributes: async (
-    databaseId: string,
-    collectionId: string,
-    attributeKeys: string[],
-    iteration: number = 1,
-  ): Promise<boolean> => {
-    if (iteration > pollMaxDebounces) {
-      return false;
-    }
-
-    if (pollMaxDebounces === POLL_DEFAULT_VALUE) {
-      let steps = Math.max(1, Math.ceil(attributeKeys.length / STEP_SIZE));
-      if (steps > 1 && iteration === 1) {
-        pollMaxDebounces *= steps;
-
-        log(
-          "Creating a large number of attributes, increasing timeout to " +
-            (pollMaxDebounces * POLL_DEBOUNCE) / 1000 / 60 +
-            " minutes",
-        );
-      }
-    }
-
-    const { attributes } = await paginate(
-      async (args: any) => {
-        const databasesService = await getDatabasesService();
-        return await databasesService.listAttributes(
-          args.databaseId,
-          args.collectionId,
-          args.queries || [],
-        );
-      },
-      {
-        databaseId,
-        collectionId,
-      },
-      100,
-      "attributes",
-    );
-
-    const ready = attributes
-      .filter((attribute: any) => {
-        if (attributeKeys.includes(attribute.key)) {
-          if (["stuck", "failed"].includes(attribute.status)) {
-            throw new Error(`Attribute '${attribute.key}' failed!`);
-          }
-
-          return attribute.status === "available";
-        }
-
-        return false;
-      })
-      .map((attribute: any) => attribute.key);
-
-    if (ready.length === attributeKeys.length) {
-      return true;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_DEBOUNCE));
-
-    return await awaitPools.expectAttributes(
-      databaseId,
-      collectionId,
-      attributeKeys,
-      iteration + 1,
-    );
-  },
-  deleteIndexes: async (
-    databaseId: string,
-    collectionId: string,
-    indexesKeys: any[],
-    iteration: number = 1,
-  ): Promise<boolean> => {
-    if (iteration > pollMaxDebounces) {
-      return false;
-    }
-
-    if (pollMaxDebounces === POLL_DEFAULT_VALUE) {
-      let steps = Math.max(1, Math.ceil(indexesKeys.length / STEP_SIZE));
-      if (steps > 1 && iteration === 1) {
-        pollMaxDebounces *= steps;
-
-        log(
-          "Found a large number of indexes to be deleted. Increasing timeout to " +
-            (pollMaxDebounces * POLL_DEBOUNCE) / 1000 / 60 +
-            " minutes",
-        );
-      }
-    }
-
-    const { indexes } = await paginate(
-      async (args: any) => {
-        const databasesService = await getDatabasesService();
-        return await databasesService.listIndexes(
-          args.databaseId,
-          args.collectionId,
-          args.queries || [],
-        );
-      },
-      {
-        databaseId,
-        collectionId,
-      },
-      100,
-      "indexes",
-    );
-
-    const ready = indexesKeys.filter((index: any) =>
-      indexes.includes(index.key),
-    );
-
-    if (ready.length === 0) {
-      return true;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_DEBOUNCE));
-
-    return await awaitPools.expectIndexes(
-      databaseId,
-      collectionId,
-      indexesKeys,
-      iteration + 1,
-    );
-  },
-  expectIndexes: async (
-    databaseId: string,
-    collectionId: string,
-    indexKeys: string[],
-    iteration: number = 1,
-  ): Promise<boolean> => {
-    if (iteration > pollMaxDebounces) {
-      return false;
-    }
-
-    if (pollMaxDebounces === POLL_DEFAULT_VALUE) {
-      let steps = Math.max(1, Math.ceil(indexKeys.length / STEP_SIZE));
-      if (steps > 1 && iteration === 1) {
-        pollMaxDebounces *= steps;
-
-        log(
-          "Creating a large number of indexes, increasing timeout to " +
-            (pollMaxDebounces * POLL_DEBOUNCE) / 1000 / 60 +
-            " minutes",
-        );
-      }
-    }
-
-    const { indexes } = await paginate(
-      async (args: any) => {
-        const databasesService = await getDatabasesService();
-        return await databasesService.listIndexes(
-          args.databaseId,
-          args.collectionId,
-          args.queries || [],
-        );
-      },
-      {
-        databaseId,
-        collectionId,
-      },
-      100,
-      "indexes",
-    );
-
-    const ready = indexes
-      .filter((index: any) => {
-        if (indexKeys.includes(index.key)) {
-          if (["stuck", "failed"].includes(index.status)) {
-            throw new Error(`Index '${index.key}' failed!`);
-          }
-
-          return index.status === "available";
-        }
-
-        return false;
-      })
-      .map((index: any) => index.key);
-
-    if (ready.length >= indexKeys.length) {
-      return true;
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, POLL_DEBOUNCE));
-
-    return await awaitPools.expectIndexes(
-      databaseId,
-      collectionId,
-      indexKeys,
-      iteration + 1,
-    );
-  },
-};
-
 const getConfirmation = async (): Promise<boolean> => {
   if (cliConfig.force) {
     return true;
@@ -522,6 +131,7 @@ const getConfirmation = async (): Promise<boolean> => {
   warn("Skipping push action. Changes were not applied.");
   return false;
 };
+
 const isEmpty = (value: any): boolean =>
   value === null ||
   value === undefined ||
@@ -648,631 +258,6 @@ const getObjectChanges = <T extends Record<string, any>>(
   }
 
   return changes;
-};
-
-const createAttribute = async (
-  databaseId: string,
-  collectionId: string,
-  attribute: any,
-): Promise<any> => {
-  const databasesService = await getDatabasesService();
-  switch (attribute.type) {
-    case "string":
-      switch (attribute.format) {
-        case "email":
-          return databasesService.createEmailAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-          });
-        case "url":
-          return databasesService.createUrlAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-          });
-        case "ip":
-          return databasesService.createIpAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-          });
-        case "enum":
-          return databasesService.createEnumAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            elements: attribute.elements,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-          });
-        default:
-          return databasesService.createStringAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            size: attribute.size,
-            required: attribute.required,
-            xdefault: attribute.default,
-            array: attribute.array,
-            encrypt: attribute.encrypt,
-          });
-      }
-    case "integer":
-      return databasesService.createIntegerAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-        array: attribute.array,
-      });
-    case "double":
-      return databasesService.createFloatAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-        array: attribute.array,
-      });
-    case "boolean":
-      return databasesService.createBooleanAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        array: attribute.array,
-      });
-    case "datetime":
-      return databasesService.createDatetimeAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-        array: attribute.array,
-      });
-    case "relationship":
-      return databasesService.createRelationshipAttribute({
-        databaseId,
-        collectionId,
-        relatedCollectionId:
-          attribute.relatedTable ?? attribute.relatedCollection,
-        type: attribute.relationType,
-        twoWay: attribute.twoWay,
-        key: attribute.key,
-        twoWayKey: attribute.twoWayKey,
-        onDelete: attribute.onDelete,
-      });
-    case "point":
-      return databasesService.createPointAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    case "linestring":
-      return databasesService.createLineAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    case "polygon":
-      return databasesService.createPolygonAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    default:
-      throw new Error(`Unsupported attribute type: ${attribute.type}`);
-  }
-};
-
-const updateAttribute = async (
-  databaseId: string,
-  collectionId: string,
-  attribute: any,
-): Promise<any> => {
-  const databasesService = await getDatabasesService();
-  switch (attribute.type) {
-    case "string":
-      switch (attribute.format) {
-        case "email":
-          return databasesService.updateEmailAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-          });
-        case "url":
-          return databasesService.updateUrlAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-          });
-        case "ip":
-          return databasesService.updateIpAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-          });
-        case "enum":
-          return databasesService.updateEnumAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            elements: attribute.elements,
-            required: attribute.required,
-            xdefault: attribute.default,
-          });
-        default:
-          return databasesService.updateStringAttribute({
-            databaseId,
-            collectionId,
-            key: attribute.key,
-            required: attribute.required,
-            xdefault: attribute.default,
-          });
-      }
-    case "integer":
-      return databasesService.updateIntegerAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-      });
-    case "double":
-      return databasesService.updateFloatAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        min: attribute.min,
-        max: attribute.max,
-        xdefault: attribute.default,
-      });
-    case "boolean":
-      return databasesService.updateBooleanAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    case "datetime":
-      return databasesService.updateDatetimeAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    case "relationship":
-      return databasesService.updateRelationshipAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        onDelete: attribute.onDelete,
-      });
-    case "point":
-      return databasesService.updatePointAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    case "linestring":
-      return databasesService.updateLineAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    case "polygon":
-      return databasesService.updatePolygonAttribute({
-        databaseId,
-        collectionId,
-        key: attribute.key,
-        required: attribute.required,
-        xdefault: attribute.default,
-      });
-    default:
-      throw new Error(`Unsupported attribute type: ${attribute.type}`);
-  }
-};
-const deleteAttribute = async (
-  collection: any,
-  attribute: any,
-  isIndex: boolean = false,
-): Promise<void> => {
-  log(
-    `Deleting ${isIndex ? "index" : "attribute"} ${attribute.key} of ${collection.name} ( ${collection["$id"]} )`,
-  );
-
-  const databasesService = await getDatabasesService();
-  if (isIndex) {
-    await databasesService.deleteIndex(
-      collection["databaseId"],
-      collection["$id"],
-      attribute.key,
-    );
-    return;
-  }
-
-  await databasesService.deleteAttribute(
-    collection["databaseId"],
-    collection["$id"],
-    attribute.key,
-  );
-};
-
-const isEqual = (a: any, b: any): boolean => {
-  if (a === b) return true;
-
-  if (a && b && typeof a === "object" && typeof b === "object") {
-    if (
-      a.constructor &&
-      a.constructor.name === "BigNumber" &&
-      b.constructor &&
-      b.constructor.name === "BigNumber"
-    ) {
-      return a.eq(b);
-    }
-
-    if (typeof a.equals === "function") {
-      return a.equals(b);
-    }
-
-    if (typeof a.eq === "function") {
-      return a.eq(b);
-    }
-  }
-
-  if (typeof a === "number" && typeof b === "number") {
-    if (isNaN(a) && isNaN(b)) return true;
-    if (!isFinite(a) && !isFinite(b)) return a === b;
-    return Math.abs(a - b) < Number.EPSILON;
-  }
-
-  return false;
-};
-
-const compareAttribute = (
-  remote: any,
-  local: any,
-  reason: string,
-  key: string,
-): string => {
-  if (isEmpty(remote) && isEmpty(local)) {
-    return reason;
-  }
-
-  if (Array.isArray(remote) && Array.isArray(local)) {
-    if (JSON.stringify(remote) !== JSON.stringify(local)) {
-      const bol = reason === "" ? "" : "\n";
-      reason += `${bol}${key} changed from ${chalk.red(remote)} to ${chalk.green(local)}`;
-    }
-  } else if (!isEqual(remote, local)) {
-    const bol = reason === "" ? "" : "\n";
-    reason += `${bol}${key} changed from ${chalk.red(remote)} to ${chalk.green(local)}`;
-  }
-
-  return reason;
-};
-
-/**
- * Check if attribute non-changeable fields has been changed
- * If so return the differences as an object.
- */
-const checkAttributeChanges = (
-  remote: any,
-  local: any,
-  collection: any,
-  recreating: boolean = true,
-): AttributeChange | undefined => {
-  if (local === undefined) {
-    return undefined;
-  }
-
-  const keyName = `${chalk.yellow(local.key)} in ${collection.name} (${collection["$id"]})`;
-  const action = chalk.cyan(recreating ? "recreating" : "changing");
-  let reason = "";
-  let attribute = recreating ? remote : local;
-
-  for (let key of Object.keys(remote)) {
-    if (!KeysAttributes.has(key)) {
-      continue;
-    }
-
-    if (changeableKeys.includes(key)) {
-      if (!recreating) {
-        reason = compareAttribute(remote[key], local[key], reason, key);
-      }
-      continue;
-    }
-
-    if (!recreating) {
-      continue;
-    }
-
-    reason = compareAttribute(remote[key], local[key], reason, key);
-  }
-
-  return reason === ""
-    ? undefined
-    : { key: keyName, attribute, reason, action };
-};
-
-/**
- * Check if attributes contain the given attribute
- */
-const attributesContains = (attribute: any, attributes: any[]): any =>
-  attributes.find((attr) => attr.key === attribute.key);
-
-const generateChangesObject = (
-  attribute: any,
-  collection: any,
-  isAdding: boolean,
-): AttributeChange => {
-  return {
-    key: `${chalk.yellow(attribute.key)} in ${collection.name} (${collection["$id"]})`,
-    attribute: attribute,
-    reason: isAdding
-      ? "Field isn't present on the remote server"
-      : "Field isn't present on the appwrite.config.json file",
-    action: isAdding ? chalk.green("adding") : chalk.red("deleting"),
-  };
-};
-
-/**
- * Filter deleted and recreated attributes,
- * return list of attributes to create
- */
-const attributesToCreate = async (
-  remoteAttributes: any[],
-  localAttributes: any[],
-  collection: any,
-  isIndex: boolean = false,
-): Promise<any[]> => {
-  const deleting = remoteAttributes
-    .filter((attribute) => !attributesContains(attribute, localAttributes))
-    .map((attr) => generateChangesObject(attr, collection, false));
-  const adding = localAttributes
-    .filter((attribute) => !attributesContains(attribute, remoteAttributes))
-    .map((attr) => generateChangesObject(attr, collection, true));
-  const conflicts = remoteAttributes
-    .map((attribute) =>
-      checkAttributeChanges(
-        attribute,
-        attributesContains(attribute, localAttributes),
-        collection,
-      ),
-    )
-    .filter((attribute) => attribute !== undefined) as AttributeChange[];
-  const changes = remoteAttributes
-    .map((attribute) =>
-      checkAttributeChanges(
-        attribute,
-        attributesContains(attribute, localAttributes),
-        collection,
-        false,
-      ),
-    )
-    .filter((attribute) => attribute !== undefined)
-    .filter(
-      (attribute) =>
-        conflicts.filter((attr) => attribute!.key === attr.key).length !== 1,
-    ) as AttributeChange[];
-
-  let changedAttributes: any[] = [];
-  const changing = [...deleting, ...adding, ...conflicts, ...changes];
-  if (changing.length === 0) {
-    return changedAttributes;
-  }
-
-  log(
-    !cliConfig.force
-      ? "There are pending changes in your collection deployment"
-      : "List of applied changes",
-  );
-
-  drawTable(
-    changing.map((change) => {
-      return { Key: change.key, Action: change.action, Reason: change.reason };
-    }),
-  );
-
-  if (!cliConfig.force) {
-    if (deleting.length > 0 && !isIndex) {
-      console.log(
-        `${chalk.red("------------------------------------------------------")}`,
-      );
-      console.log(
-        `${chalk.red("| WARNING: Attribute deletion may cause loss of data |")}`,
-      );
-      console.log(
-        `${chalk.red("------------------------------------------------------")}`,
-      );
-      console.log();
-    }
-    if (conflicts.length > 0 && !isIndex) {
-      console.log(
-        `${chalk.red("--------------------------------------------------------")}`,
-      );
-      console.log(
-        `${chalk.red("| WARNING: Attribute recreation may cause loss of data |")}`,
-      );
-      console.log(
-        `${chalk.red("--------------------------------------------------------")}`,
-      );
-      console.log();
-    }
-
-    if ((await getConfirmation()) !== true) {
-      return changedAttributes;
-    }
-  }
-
-  if (conflicts.length > 0) {
-    changedAttributes = conflicts.map((change) => change.attribute);
-    await Promise.all(
-      changedAttributes.map((changed) =>
-        deleteAttribute(collection, changed, isIndex),
-      ),
-    );
-    remoteAttributes = remoteAttributes.filter(
-      (attribute) => !attributesContains(attribute, changedAttributes),
-    );
-  }
-
-  if (changes.length > 0) {
-    changedAttributes = changes.map((change) => change.attribute);
-    await Promise.all(
-      changedAttributes.map((changed) =>
-        updateAttribute(collection["databaseId"], collection["$id"], changed),
-      ),
-    );
-  }
-
-  const deletingAttributes = deleting.map((change) => change.attribute);
-  await Promise.all(
-    deletingAttributes.map((attribute) =>
-      deleteAttribute(collection, attribute, isIndex),
-    ),
-  );
-  const attributeKeys = [
-    ...remoteAttributes.map((attribute: any) => attribute.key),
-    ...deletingAttributes.map((attribute: any) => attribute.key),
-  ];
-
-  if (attributeKeys.length) {
-    const deleteAttributesPoolStatus = await awaitPools.deleteAttributes(
-      collection["databaseId"],
-      collection["$id"],
-      attributeKeys,
-    );
-
-    if (!deleteAttributesPoolStatus) {
-      throw new Error("Attribute deletion timed out.");
-    }
-  }
-
-  return localAttributes.filter(
-    (attribute) => !attributesContains(attribute, remoteAttributes),
-  );
-};
-
-const createIndexes = async (
-  indexes: any[],
-  collection: any,
-): Promise<void> => {
-  log(`Creating indexes ...`);
-
-  const databasesService = await getDatabasesService();
-  for (let index of indexes) {
-    await databasesService.createIndex(
-      collection["databaseId"],
-      collection["$id"],
-      index.key,
-      index.type,
-      index.columns ?? index.attributes,
-      index.orders,
-    );
-  }
-
-  const result = await awaitPools.expectIndexes(
-    collection["databaseId"],
-    collection["$id"],
-    indexes.map((index: any) => index.key),
-  );
-
-  if (!result) {
-    throw new Error("Index creation timed out.");
-  }
-
-  success(`Created ${indexes.length} indexes`);
-};
-
-const createAttributes = async (
-  attributes: any[],
-  collection: any,
-): Promise<void> => {
-  for (let attribute of attributes) {
-    if (attribute.side !== "child") {
-      await createAttribute(
-        collection["databaseId"],
-        collection["$id"],
-        attribute,
-      );
-    }
-  }
-
-  const result = await awaitPools.expectAttributes(
-    collection["databaseId"],
-    collection["$id"],
-    collection.attributes
-      .filter((attribute: any) => attribute.side !== "child")
-      .map((attribute: any) => attribute.key),
-  );
-
-  if (!result) {
-    throw new Error(`Attribute creation timed out.`);
-  }
-
-  success(`Created ${attributes.length} attributes`);
-};
-
-const createColumns = async (columns: any[], table: any): Promise<void> => {
-  for (let column of columns) {
-    if (column.side !== "child") {
-      await createAttribute(table["databaseId"], table["$id"], column);
-    }
-  }
-
-  const result = await awaitPools.expectAttributes(
-    table["databaseId"],
-    table["$id"],
-    table.columns
-      .filter((column: any) => column.side !== "child")
-      .map((column: any) => column.key),
-  );
-
-  if (!result) {
-    throw new Error(`Column creation timed out.`);
-  }
-
-  success(`Created ${columns.length} columns`);
 };
 
 const pushResources = async ({
@@ -2402,6 +1387,7 @@ const pushTable = async ({
 
   if (attempts) {
     pollMaxDebounces = attempts;
+    pools.setPollMaxDebounces(attempts);
   }
 
   const { applied: tablesDBApplied, resyncNeeded } =
@@ -2619,15 +1605,15 @@ const pushTable = async ({
     let indexes = table.indexes;
 
     if (table.isExisted) {
-      columns = await attributesToCreate(
+      columns = await attributes.attributesToCreate(
         table.remoteVersion.columns,
         table.columns,
-        table,
+        table as Collection,
       );
-      indexes = await attributesToCreate(
+      indexes = await attributes.attributesToCreate(
         table.remoteVersion.indexes,
         table.indexes,
-        table,
+        table as Collection,
         true,
       );
 
@@ -2646,13 +1632,13 @@ const pushTable = async ({
     );
 
     try {
-      await createColumns(columns, table);
+      await attributes.createColumns(columns, table as Collection);
     } catch (e) {
       throw e;
     }
 
     try {
-      await createIndexes(indexes, table);
+      await attributes.createIndexes(indexes, table as Collection);
     } catch (e) {
       throw e;
     }
@@ -2671,6 +1657,7 @@ const pushCollection = async ({ attempts }): Promise<void> => {
 
   if (attempts) {
     pollMaxDebounces = attempts;
+    pools.setPollMaxDebounces(attempts);
   }
 
   if (cliConfig.all) {
@@ -2794,25 +1781,25 @@ const pushCollection = async ({ attempts }): Promise<void> => {
   let numberOfCollections = 0;
   // Serialize attribute actions
   for (let collection of collections) {
-    let attributes = collection.attributes;
+    let collectionAttributes = collection.attributes;
     let indexes = collection.indexes;
 
     if (collection.isExisted) {
-      attributes = await attributesToCreate(
+      collectionAttributes = await attributes.attributesToCreate(
         collection.remoteVersion.attributes,
         collection.attributes,
-        collection,
+        collection as Collection,
       );
-      indexes = await attributesToCreate(
+      indexes = await attributes.attributesToCreate(
         collection.remoteVersion.indexes,
         collection.indexes,
-        collection,
+        collection as Collection,
         true,
       );
 
       if (
-        Array.isArray(attributes) &&
-        attributes.length <= 0 &&
+        Array.isArray(collectionAttributes) &&
+        collectionAttributes.length <= 0 &&
         Array.isArray(indexes) &&
         indexes.length <= 0
       ) {
@@ -2825,13 +1812,16 @@ const pushCollection = async ({ attempts }): Promise<void> => {
     );
 
     try {
-      await createAttributes(attributes, collection);
+      await attributes.createAttributes(
+        collectionAttributes,
+        collection as Collection,
+      );
     } catch (e) {
       throw e;
     }
 
     try {
-      await createIndexes(indexes, collection);
+      await attributes.createIndexes(indexes, collection as Collection);
     } catch (e) {
       throw e;
     }
