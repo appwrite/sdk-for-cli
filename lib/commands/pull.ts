@@ -220,7 +220,7 @@ export class Pull {
         const funcPath = func.path || `functions/${func.name}`;
         func["path"] = funcPath;
 
-        const holdingVars = func["vars"];
+        const holdingVars = func["vars"] || [];
         delete func["vars"];
 
         result.push(func);
@@ -337,7 +337,7 @@ export class Pull {
         const sitePath = site.path || `sites/${site.name}`;
         site["path"] = sitePath;
 
-        const holdingVars = site["vars"];
+        const holdingVars = site["vars"] || [];
         delete site["vars"];
 
         result.push(site);
