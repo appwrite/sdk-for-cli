@@ -476,9 +476,9 @@ export class Pull {
   }> {
     const tablesDBService = new TablesDB(this.projectClient);
 
-    const fetchResponse = await tablesDBService.list([
-      JSON.stringify({ method: "limit", values: [1] }),
-    ]);
+    const fetchResponse = await tablesDBService.list({
+      queries: [JSON.stringify({ method: "limit", values: [1] })],
+    });
 
     if (fetchResponse["databases"].length <= 0) {
       return { databases: [], tables: [] };
@@ -525,9 +525,9 @@ export class Pull {
   public async pullBuckets(): Promise<any[]> {
     const storageService = new Storage(this.projectClient);
 
-    const fetchResponse = await storageService.listBuckets([
-      JSON.stringify({ method: "limit", values: [1] }),
-    ]);
+    const fetchResponse = await storageService.listBuckets({
+      queries: [JSON.stringify({ method: "limit", values: [1] })],
+    });
 
     if (fetchResponse["buckets"].length <= 0) {
       return [];
@@ -549,9 +549,9 @@ export class Pull {
   public async pullTeams(): Promise<any[]> {
     const teamsService = new Teams(this.projectClient);
 
-    const fetchResponse = await teamsService.list([
-      JSON.stringify({ method: "limit", values: [1] }),
-    ]);
+    const fetchResponse = await teamsService.list({
+      queries: [JSON.stringify({ method: "limit", values: [1] })],
+    });
 
     if (fetchResponse["teams"].length <= 0) {
       return [];
@@ -573,9 +573,9 @@ export class Pull {
   public async pullMessagingTopics(): Promise<any[]> {
     const messagingService = new Messaging(this.projectClient);
 
-    const fetchResponse = await messagingService.listTopics([
-      JSON.stringify({ method: "limit", values: [1] }),
-    ]);
+    const fetchResponse = await messagingService.listTopics({
+      queries: [JSON.stringify({ method: "limit", values: [1] })],
+    });
 
     if (fetchResponse["topics"].length <= 0) {
       return [];
@@ -719,9 +719,9 @@ const pullSites = async ({
   log("Fetching sites ...");
 
   const sitesService = await getSitesService();
-  const fetchResponse = await sitesService.list([
-    JSON.stringify({ method: "limit", values: [1] }),
-  ]);
+  const fetchResponse = await sitesService.list({
+    queries: [JSON.stringify({ method: "limit", values: [1] })],
+  });
   if (fetchResponse["sites"].length <= 0) {
     log("No sites found.");
     success(`Successfully pulled ${chalk.bold(0)} sites.`);
@@ -776,9 +776,9 @@ const pullCollection = async (): Promise<void> => {
   log("Fetching collections ...");
 
   const databasesService = await getDatabasesService();
-  const fetchResponse = await databasesService.list([
-    JSON.stringify({ method: "limit", values: [1] }),
-  ]);
+  const fetchResponse = await databasesService.list({
+    queries: [JSON.stringify({ method: "limit", values: [1] })],
+  });
   if (fetchResponse["databases"].length <= 0) {
     log("No collections found.");
     success(
@@ -810,9 +810,9 @@ const pullTable = async (): Promise<void> => {
   log("Fetching tables ...");
 
   const tablesDBService = await getTablesDBService();
-  const fetchResponse = await tablesDBService.list([
-    JSON.stringify({ method: "limit", values: [1] }),
-  ]);
+  const fetchResponse = await tablesDBService.list({
+    queries: [JSON.stringify({ method: "limit", values: [1] })],
+  });
   if (fetchResponse["databases"].length <= 0) {
     log("No tables found.");
     success(
