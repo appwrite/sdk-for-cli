@@ -42,6 +42,7 @@ import {
 import type { ConfigType } from "./config.js";
 import { createSettingsObject } from "./config.js";
 import { ProjectNotInitializedError } from "./errors.js";
+import type { ProjectSettings, RawProjectSettings } from "../types.js";
 
 export interface PullOptions {
   all?: boolean;
@@ -71,6 +72,12 @@ interface PullSitesOptions {
 
 interface PullResourcesOptions {
   skipDeprecated?: boolean;
+}
+
+export interface PullSettingsResult {
+  projectName: string;
+  settings: ProjectSettings;
+  rawSettings: RawProjectSettings;
 }
 
 async function createPullInstance(): Promise<Pull> {
@@ -240,13 +247,15 @@ export class Pull {
   /**
    * Pull project settings
    */
-  public async pullSettings(projectId: string): Promise<any> {
+  public async pullSettings(projectId: string): Promise<PullSettingsResult> {
     const projectsService = new Projects(this.consoleClient);
     const response = await projectsService.get(projectId);
+    const rawSettings = response as RawProjectSettings;
 
     return {
       projectName: response.name,
-      settings: createSettingsObject(response),
+      settings: createSettingsObject(rawSettings),
+      rawSettings,
     };
   }
 
@@ -627,10 +636,11 @@ const pullSettings = async (): Promise<void> => {
     const projectId = localConfig.getProject().projectId;
     const settings = await pullInstance.pullSettings(projectId);
 
-    localConfig.setProject(projectId, settings.projectName, {
-      name: settings.projectName,
-      ...settings.settings,
-    });
+    localConfig.setProject(
+      projectId,
+      settings.projectName,
+      settings.rawSettings,
+    );
 
     success(`Successfully pulled ${chalk.bold("all")} project settings.`);
   } catch (e) {

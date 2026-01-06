@@ -1,9 +1,12 @@
 import { z } from "zod";
+import type { ProjectSettings, RawProjectSettings } from "../types.js";
 
 const INT64_MIN = BigInt("-9223372036854775808");
 const INT64_MAX = BigInt("9223372036854775807");
 
-const createSettingsObject = (settings: any) => {
+const createSettingsObject = (
+  settings: RawProjectSettings,
+): ProjectSettings => {
   return {
     services: {
       account: settings.serviceStatusForAccount,
