@@ -630,11 +630,12 @@ export class Attributes {
     ];
 
     if (attributeKeys.length) {
-      const deleteAttributesPoolStatus = await this.pools.deleteAttributes(
-        collection["databaseId"],
-        collection["$id"],
-        attributeKeys,
-      );
+      const deleteAttributesPoolStatus =
+        await this.pools.waitForAttributeDeletion(
+          collection["databaseId"],
+          collection["$id"],
+          attributeKeys,
+        );
 
       if (!deleteAttributesPoolStatus) {
         throw new Error("Attribute deletion timed out.");

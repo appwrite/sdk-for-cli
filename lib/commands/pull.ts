@@ -236,7 +236,7 @@ export class Pull {
     if (shouldPullAll || options.tables) {
       const { databases, tables } = await this.pullTables();
       updatedConfig.databases = databases;
-      updatedConfig.collections = tables;
+      updatedConfig.tablesDB = tables;
     }
 
     if (options.collections) {

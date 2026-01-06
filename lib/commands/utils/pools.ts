@@ -1,4 +1,4 @@
-import { getDatabasesService, getTablesDBService } from "../../services.js";
+import { getDatabasesService } from "../../services.js";
 import { paginate } from "../../paginate.js";
 import { log } from "../../parser.js";
 
@@ -100,7 +100,7 @@ export class Pools {
     return await this.wipeIndexes(databaseId, collectionId, iteration + 1);
   };
 
-  public deleteAttributes = async (
+  public waitForAttributeDeletion = async (
     databaseId: string,
     collectionId: string,
     attributeKeys: any[],
@@ -126,11 +126,11 @@ export class Pools {
     const { attributes } = await paginate(
       async (args: any) => {
         const databasesService = await getDatabasesService();
-        return await databasesService.listAttributes(
-          args.databaseId,
-          args.collectionId,
-          args.queries || [],
-        );
+        return await databasesService.listAttributes({
+          databaseId: args.databaseId,
+          collectionId: args.collectionId,
+          queries: args.queries || [],
+        });
       },
       {
         databaseId,
