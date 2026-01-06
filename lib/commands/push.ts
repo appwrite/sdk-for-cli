@@ -9,14 +9,13 @@ import {
   globalConfig,
   KeysFunction,
   KeysSite,
-  whitelistKeys,
   KeysTopics,
   KeysStorage,
   KeysTeams,
   KeysCollection,
   KeysTable,
 } from "../config.js";
-import { Spinner, SPINNER_ARC, SPINNER_DOTS } from "../spinner.js";
+import { Spinner, SPINNER_DOTS } from "../spinner.js";
 import { paginate } from "../paginate.js";
 import {
   questionsPushBuckets,
@@ -26,8 +25,6 @@ import {
   questionsGetEntrypoint,
   questionsPushCollections,
   questionsPushTables,
-  questionPushChanges,
-  questionPushChangesConfirmation,
   questionsPushMessagingTopics,
   questionsPushResources,
 } from "../questions.js";
@@ -58,18 +55,16 @@ import { ApiService, AuthMethod } from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
 import { Pools } from "./utils/pools.js";
 import { Attributes, Collection } from "./utils/attributes.js";
+import {
+  getConfirmation,
+  approveChanges,
+  getObjectChanges,
+} from "./utils/change-approval.js";
+import { checkAndApplyTablesDBChanges } from "./utils/database-sync.js";
+import type { ConfigType } from "./config.js";
 
 const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
-
-interface ObjectChange {
-  group: string;
-  setting: string;
-  remote: string;
-  local: string;
-}
-
-type ComparableValue = boolean | number | string | any[] | undefined;
 
 interface PushResourcesOptions {
   skipDeprecated?: boolean;
@@ -89,170 +84,1202 @@ interface PushFunctionOptions {
   withVariables?: boolean;
 }
 
-interface TablesDBChangesResult {
-  applied: boolean;
-  resyncNeeded: boolean;
-}
-
 interface PushTableOptions {
   attempts?: number;
 }
 
-const getConfirmation = async (): Promise<boolean> => {
-  if (cliConfig.force) {
-    return true;
-  }
+export class Push {
+  constructor() {}
 
-  async function fixConfirmation(): Promise<string> {
-    const answers = await inquirer.prompt(questionPushChangesConfirmation);
-    if (answers.changes !== "YES" && answers.changes !== "NO") {
-      return await fixConfirmation();
+  public async pushSettings(config: ConfigType): Promise<void> {
+    const projectsService = await getProjectsService();
+    const projectId = config.projectId;
+    const projectName = config.projectName;
+    const settings = config.settings ?? {};
+
+    if (projectName) {
+      await projectsService.update(projectId, projectName);
     }
 
-    return answers.changes;
+    if (settings.services) {
+      for (let [service, status] of Object.entries(settings.services)) {
+        await projectsService.updateServiceStatus(
+          projectId,
+          service as ApiService,
+          status,
+        );
+      }
+    }
+
+    if (settings.auth) {
+      if (settings.auth.security) {
+        await projectsService.updateAuthDuration(
+          projectId,
+          settings.auth.security.duration,
+        );
+        await projectsService.updateAuthLimit(
+          projectId,
+          settings.auth.security.limit,
+        );
+        await projectsService.updateAuthSessionsLimit(
+          projectId,
+          settings.auth.security.sessionsLimit,
+        );
+        await projectsService.updateAuthPasswordDictionary(
+          projectId,
+          settings.auth.security.passwordDictionary,
+        );
+        await projectsService.updateAuthPasswordHistory(
+          projectId,
+          settings.auth.security.passwordHistory,
+        );
+        await projectsService.updatePersonalDataCheck(
+          projectId,
+          settings.auth.security.personalDataCheck,
+        );
+        await projectsService.updateSessionAlerts(
+          projectId,
+          settings.auth.security.sessionAlerts,
+        );
+        await projectsService.updateMockNumbers(
+          projectId,
+          settings.auth.security.mockNumbers,
+        );
+      }
+
+      if (settings.auth.methods) {
+        for (let [method, status] of Object.entries(settings.auth.methods)) {
+          await projectsService.updateAuthStatus(
+            projectId,
+            method as AuthMethod,
+            status,
+          );
+        }
+      }
+    }
   }
 
-  let answers = await inquirer.prompt(questionPushChanges);
+  public async pushBucket(bucket: any): Promise<void> {
+    const storageService = await getStorageService();
 
-  if (answers.changes !== "YES" && answers.changes !== "NO") {
-    answers.changes = await fixConfirmation();
+    try {
+      await storageService.getBucket(bucket["$id"]);
+      await storageService.updateBucket({
+        bucketId: bucket["$id"],
+        name: bucket.name,
+        permissions: bucket["$permissions"],
+        fileSecurity: bucket.fileSecurity,
+        enabled: bucket.enabled,
+        maximumFileSize: bucket.maximumFileSize,
+        allowedFileExtensions: bucket.allowedFileExtensions,
+        encryption: bucket.encryption,
+        antivirus: bucket.antivirus,
+        compression: bucket.compression,
+      });
+    } catch (e: any) {
+      if (Number(e.code) === 404) {
+        await storageService.createBucket({
+          bucketId: bucket["$id"],
+          name: bucket.name,
+          permissions: bucket["$permissions"],
+          fileSecurity: bucket.fileSecurity,
+          enabled: bucket.enabled,
+          maximumFileSize: bucket.maximumFileSize,
+          allowedFileExtensions: bucket.allowedFileExtensions,
+          compression: bucket.compression,
+          encryption: bucket.encryption,
+          antivirus: bucket.antivirus,
+        });
+      } else {
+        throw e;
+      }
+    }
   }
 
-  if (answers.changes === "YES") {
-    return true;
+  public async pushTeam(team: any): Promise<void> {
+    const teamsService = await getTeamsService();
+
+    try {
+      await teamsService.get(team["$id"]);
+      await teamsService.updateName(team["$id"], team.name);
+    } catch (e: any) {
+      if (Number(e.code) === 404) {
+        await teamsService.create(team["$id"], team.name);
+      } else {
+        throw e;
+      }
+    }
   }
 
-  warn("Skipping push action. Changes were not applied.");
-  return false;
-};
+  public async pushMessagingTopic(topic: any): Promise<void> {
+    const messagingService = await getMessagingService();
 
-const isEmpty = (value: any): boolean =>
-  value === null ||
-  value === undefined ||
-  (typeof value === "string" && value.trim().length === 0) ||
-  (Array.isArray(value) && value.length === 0);
+    try {
+      await messagingService.getTopic(topic["$id"]);
+      await messagingService.updateTopic(
+        topic["$id"],
+        topic.name,
+        topic.subscribe,
+      );
+    } catch (e: any) {
+      if (Number(e.code) === 404) {
+        await messagingService.createTopic(
+          topic["$id"],
+          topic.name,
+          topic.subscribe,
+        );
+      } else {
+        throw e;
+      }
+    }
+  }
 
-const approveChanges = async (
-  resource: any[],
-  resourceGetFunction: Function,
-  keys: Set<string>,
-  resourceName: string,
-  resourcePlural: string,
-  skipKeys: string[] = [],
-  secondId: string = "",
-  secondResourceName: string = "",
-): Promise<boolean> => {
-  log("Checking for changes ...");
-  const changes: any[] = [];
+  public async pushFunction(
+    functions: any[],
+    options: {
+      async?: boolean;
+      code?: boolean;
+      withVariables?: boolean;
+    } = {},
+  ): Promise<{
+    successfullyPushed: number;
+    successfullyDeployed: number;
+    failedDeployments: any[];
+    errors: any[];
+  }> {
+    const { async: asyncDeploy, code, withVariables } = options;
 
-  await Promise.all(
-    resource.map(async (localResource) => {
-      try {
-        const options: Record<string, any> = {
-          [resourceName]: localResource["$id"],
-        };
+    Spinner.start(false);
+    let successfullyPushed = 0;
+    let successfullyDeployed = 0;
+    const failedDeployments: any[] = [];
+    const errors: any[] = [];
 
-        if (secondId !== "" && secondResourceName !== "") {
-          options[secondResourceName] = localResource[secondId];
+    await Promise.all(
+      functions.map(async (func: any) => {
+        let response: any = {};
+
+        const ignore = func.ignore ? "appwrite.config.json" : ".gitignore";
+        let functionExists = false;
+        let deploymentCreated = false;
+
+        const updaterRow = new Spinner({
+          status: "",
+          resource: func.name,
+          id: func["$id"],
+          end: `Ignoring using: ${ignore}`,
+        });
+
+        updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
+        const functionsService = await getFunctionsService();
+        try {
+          response = await functionsService.get({ functionId: func["$id"] });
+          functionExists = true;
+          if (response.runtime !== func.runtime) {
+            updaterRow.fail({
+              errorMessage: `Runtime mismatch! (local=${func.runtime},remote=${response.runtime}) Please delete remote function or update your appwrite.config.json`,
+            });
+            return;
+          }
+
+          updaterRow
+            .update({ status: "Updating" })
+            .replaceSpinner(SPINNER_DOTS);
+
+          response = await functionsService.update({
+            functionId: func["$id"],
+            name: func.name,
+            runtime: func.runtime,
+            execute: func.execute,
+            events: func.events,
+            schedule: func.schedule,
+            timeout: func.timeout,
+            enabled: func.enabled,
+            logging: func.logging,
+            entrypoint: func.entrypoint,
+            commands: func.commands,
+            scopes: func.scopes,
+            specification: func.specification,
+          });
+        } catch (e: any) {
+          if (Number(e.code) === 404) {
+            functionExists = false;
+          } else {
+            errors.push(e);
+            updaterRow.fail({
+              errorMessage:
+                e.message ?? "General error occurs please try again",
+            });
+            return;
+          }
         }
 
-        const remoteResource = await resourceGetFunction(options);
+        if (!functionExists) {
+          updaterRow
+            .update({ status: "Creating" })
+            .replaceSpinner(SPINNER_DOTS);
 
-        for (let [key, value] of Object.entries(
-          whitelistKeys(remoteResource, keys),
-        )) {
-          if (skipKeys.includes(key)) {
-            continue;
-          }
+          try {
+            response = await functionsService.create({
+              functionId: func.$id,
+              name: func.name,
+              runtime: func.runtime,
+              execute: func.execute,
+              events: func.events,
+              schedule: func.schedule,
+              timeout: func.timeout,
+              enabled: func.enabled,
+              logging: func.logging,
+              entrypoint: func.entrypoint,
+              commands: func.commands,
+              scopes: func.scopes,
+              specification: func.specification,
+            });
 
-          if (isEmpty(value) && isEmpty(localResource[key])) {
-            continue;
-          }
-
-          if (Array.isArray(value) && Array.isArray(localResource[key])) {
-            if (JSON.stringify(value) !== JSON.stringify(localResource[key])) {
-              changes.push({
-                id: localResource["$id"],
-                key,
-                remote: chalk.red((value as string[]).join("\n")),
-                local: chalk.green(localResource[key].join("\n")),
-              });
+            let domain = "";
+            try {
+              const consoleService = await getConsoleService();
+              const variables = await consoleService.variables();
+              domain = ID.unique() + "." + variables["_APP_DOMAIN_FUNCTIONS"];
+            } catch (error) {
+              console.error("Error fetching console variables.");
+              throw error;
             }
-          } else if (value !== localResource[key]) {
-            changes.push({
-              id: localResource["$id"],
-              key,
-              remote: chalk.red(value),
-              local: chalk.green(localResource[key]),
+
+            try {
+              const proxyService = await getProxyService();
+              await proxyService.createFunctionRule(domain, func.$id);
+            } catch (error) {
+              console.error("Error creating function rule.");
+              throw error;
+            }
+
+            updaterRow.update({ status: "Created" });
+          } catch (e: any) {
+            errors.push(e);
+            updaterRow.fail({
+              errorMessage:
+                e.message ?? "General error occurs please try again",
+            });
+            return;
+          }
+        }
+
+        if (withVariables) {
+          updaterRow
+            .update({ status: "Updating variables" })
+            .replaceSpinner(SPINNER_DOTS);
+
+          const functionsService = await getFunctionsService();
+          const { variables } = await paginate(
+            async (args: any) => {
+              return await functionsService.listVariables({
+                functionId: args.functionId,
+              });
+            },
+            {
+              functionId: func["$id"],
+            },
+            100,
+            "variables",
+          );
+
+          await Promise.all(
+            variables.map(async (variable: any) => {
+              const functionsService = await getFunctionsService();
+              await functionsService.deleteVariable({
+                functionId: func["$id"],
+                variableId: variable["$id"],
+              });
+            }),
+          );
+
+          const envFileLocation = `${func["path"]}/.env`;
+          let envVariables: Array<{ key: string; value: string }> = [];
+          try {
+            if (fs.existsSync(envFileLocation)) {
+              const envObject = parseDotenv(
+                fs.readFileSync(envFileLocation, "utf8"),
+              );
+              envVariables = Object.entries(envObject || {}).map(
+                ([key, value]) => ({ key, value }),
+              );
+            }
+          } catch (error) {
+            envVariables = [];
+          }
+          await Promise.all(
+            envVariables.map(async (variable) => {
+              const functionsService = await getFunctionsService();
+              await functionsService.createVariable({
+                functionId: func["$id"],
+                key: variable.key,
+                value: variable.value,
+                secret: false,
+              });
+            }),
+          );
+        }
+
+        if (code === false) {
+          successfullyPushed++;
+          successfullyDeployed++;
+          updaterRow.update({ status: "Pushed" });
+          updaterRow.stopSpinner();
+          return;
+        }
+
+        try {
+          updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_DOTS);
+          const functionsService = await getFunctionsService();
+          response = await functionsService.createDeployment({
+            functionId: func["$id"],
+            entrypoint: func.entrypoint,
+            commands: func.commands,
+            code: func.path,
+            activate: true,
+          });
+
+          updaterRow.update({ status: "Pushed" });
+          deploymentCreated = true;
+          successfullyPushed++;
+        } catch (e: any) {
+          errors.push(e);
+
+          switch (e.code) {
+            case "ENOENT":
+              updaterRow.fail({
+                errorMessage: "Not found in the current directory. Skipping...",
+              });
+              break;
+            default:
+              updaterRow.fail({
+                errorMessage:
+                  e.message ?? "An unknown error occurred. Please try again.",
+              });
+          }
+        }
+
+        if (deploymentCreated && !asyncDeploy) {
+          try {
+            const deploymentId = response["$id"];
+            updaterRow.update({
+              status: "Deploying",
+              end: "Checking deployment status...",
+            });
+
+            while (true) {
+              const functionsService = await getFunctionsService();
+              response = await functionsService.getDeployment({
+                functionId: func["$id"],
+                deploymentId: deploymentId,
+              });
+
+              const status = response["status"];
+              if (status === "ready") {
+                successfullyDeployed++;
+
+                let url = "";
+                const proxyService = await getProxyService();
+                const res = await proxyService.listRules([
+                  JSON.stringify({ method: "limit", values: [1] }),
+                  JSON.stringify({
+                    method: "equal",
+                    attribute: "deploymentResourceType",
+                    values: ["function"],
+                  }),
+                  JSON.stringify({
+                    method: "equal",
+                    attribute: "deploymentResourceId",
+                    values: [func["$id"]],
+                  }),
+                  JSON.stringify({
+                    method: "equal",
+                    attribute: "trigger",
+                    values: ["manual"],
+                  }),
+                ]);
+
+                if (Number(res.total) === 1) {
+                  url = res.rules[0].domain;
+                }
+
+                updaterRow.update({ status: "Deployed", end: url });
+
+                break;
+              } else if (status === "failed") {
+                failedDeployments.push({
+                  name: func["name"],
+                  $id: func["$id"],
+                  deployment: response["$id"],
+                });
+                updaterRow.fail({ errorMessage: `Failed to deploy` });
+
+                break;
+              } else {
+                updaterRow.update({
+                  status: "Deploying",
+                  end: `Current status: ${status}`,
+                });
+              }
+
+              await new Promise((resolve) =>
+                setTimeout(resolve, POLL_DEBOUNCE * 1.5),
+              );
+            }
+          } catch (e: any) {
+            errors.push(e);
+            updaterRow.fail({
+              errorMessage:
+                e.message ?? "Unknown error occurred. Please try again",
             });
           }
         }
-      } catch (e: any) {
-        if (Number(e.code) !== 404) {
-          throw e;
-        }
-      }
-    }),
-  );
 
-  if (changes.length === 0) {
-    return true;
+        updaterRow.stopSpinner();
+      }),
+    );
+
+    Spinner.stop();
+
+    return {
+      successfullyPushed,
+      successfullyDeployed,
+      failedDeployments,
+      errors,
+    };
   }
 
-  drawTable(changes);
-  if ((await getConfirmation()) === true) {
-    return true;
-  }
+  public async pushSite(
+    sites: any[],
+    options: {
+      async?: boolean;
+      code?: boolean;
+      withVariables?: boolean;
+    } = {},
+  ): Promise<{
+    successfullyPushed: number;
+    successfullyDeployed: number;
+    failedDeployments: any[];
+    errors: any[];
+  }> {
+    const { async: asyncDeploy, code, withVariables } = options;
 
-  success(`Successfully pushed 0 ${resourcePlural}.`);
-  return false;
-};
+    Spinner.start(false);
+    let successfullyPushed = 0;
+    let successfullyDeployed = 0;
+    const failedDeployments: any[] = [];
+    const errors: any[] = [];
 
-const getObjectChanges = <T extends Record<string, any>>(
-  remote: T,
-  local: T,
-  index: keyof T,
-  what: string,
-): ObjectChange[] => {
-  const changes: ObjectChange[] = [];
+    await Promise.all(
+      sites.map(async (site: any) => {
+        let response: any = {};
 
-  const remoteNested = remote[index];
-  const localNested = local[index];
+        const ignore = site.ignore ? "appwrite.config.json" : ".gitignore";
+        let siteExists = false;
+        let deploymentCreated = false;
 
-  if (
-    remoteNested &&
-    localNested &&
-    typeof remoteNested === "object" &&
-    !Array.isArray(remoteNested) &&
-    typeof localNested === "object" &&
-    !Array.isArray(localNested)
-  ) {
-    const remoteObj = remoteNested as Record<string, ComparableValue>;
-    const localObj = localNested as Record<string, ComparableValue>;
-
-    for (const [service, status] of Object.entries(remoteObj)) {
-      const localValue = localObj[service];
-      let valuesEqual = false;
-
-      if (Array.isArray(status) && Array.isArray(localValue)) {
-        valuesEqual = JSON.stringify(status) === JSON.stringify(localValue);
-      } else {
-        valuesEqual = status === localValue;
-      }
-
-      if (!valuesEqual) {
-        changes.push({
-          group: what,
-          setting: service,
-          remote: chalk.red(String(status ?? "")),
-          local: chalk.green(String(localValue ?? "")),
+        const updaterRow = new Spinner({
+          status: "",
+          resource: site.name,
+          id: site["$id"],
+          end: `Ignoring using: ${ignore}`,
         });
+
+        updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
+
+        const sitesService = await getSitesService();
+        try {
+          response = await sitesService.get({ siteId: site["$id"] });
+          siteExists = true;
+          if (response.framework !== site.framework) {
+            updaterRow.fail({
+              errorMessage: `Framework mismatch! (local=${site.framework},remote=${response.framework}) Please delete remote site or update your appwrite.config.json`,
+            });
+            return;
+          }
+
+          updaterRow
+            .update({ status: "Updating" })
+            .replaceSpinner(SPINNER_DOTS);
+
+          response = await sitesService.update({
+            siteId: site["$id"],
+            name: site.name,
+            framework: site.framework,
+            enabled: site.enabled,
+            logging: site.logging,
+            timeout: site.timeout,
+            installCommand: site.installCommand,
+            buildCommand: site.buildCommand,
+            outputDirectory: site.outputDirectory,
+            buildRuntime: site.buildRuntime,
+            adapter: site.adapter,
+            specification: site.specification,
+          });
+        } catch (e: any) {
+          if (Number(e.code) === 404) {
+            siteExists = false;
+          } else {
+            errors.push(e);
+            updaterRow.fail({
+              errorMessage:
+                e.message ?? "General error occurs please try again",
+            });
+            return;
+          }
+        }
+
+        if (!siteExists) {
+          updaterRow
+            .update({ status: "Creating" })
+            .replaceSpinner(SPINNER_DOTS);
+
+          try {
+            response = await sitesService.create({
+              siteId: site.$id,
+              name: site.name,
+              framework: site.framework,
+              enabled: site.enabled,
+              logging: site.logging,
+              timeout: site.timeout,
+              installCommand: site.installCommand,
+              buildCommand: site.buildCommand,
+              outputDirectory: site.outputDirectory,
+              buildRuntime: site.buildRuntime,
+              adapter: site.adapter,
+              specification: site.specification,
+            });
+
+            let domain = "";
+            try {
+              const consoleService = await getConsoleService();
+              const variables = await consoleService.variables();
+              domain = ID.unique() + "." + variables["_APP_DOMAIN_SITES"];
+            } catch (error) {
+              console.error("Error fetching console variables.");
+              throw error;
+            }
+
+            try {
+              const proxyService = await getProxyService();
+              await proxyService.createSiteRule(domain, site.$id);
+            } catch (error) {
+              console.error("Error creating site rule.");
+              throw error;
+            }
+
+            updaterRow.update({ status: "Created" });
+          } catch (e: any) {
+            errors.push(e);
+            updaterRow.fail({
+              errorMessage:
+                e.message ?? "General error occurs please try again",
+            });
+            return;
+          }
+        }
+
+        if (withVariables) {
+          updaterRow
+            .update({ status: "Creating variables" })
+            .replaceSpinner(SPINNER_DOTS);
+
+          const sitesService = await getSitesService();
+          const { variables } = await paginate(
+            async (args: any) => {
+              return await sitesService.listVariables({ siteId: args.siteId });
+            },
+            {
+              siteId: site["$id"],
+            },
+            100,
+            "variables",
+          );
+
+          await Promise.all(
+            variables.map(async (variable: any) => {
+              const sitesService = await getSitesService();
+              await sitesService.deleteVariable({
+                siteId: site["$id"],
+                variableId: variable["$id"],
+              });
+            }),
+          );
+
+          const envFileLocation = `${site["path"]}/.env`;
+          let envVariables: Array<{ key: string; value: string }> = [];
+          try {
+            if (fs.existsSync(envFileLocation)) {
+              const envObject = parseDotenv(
+                fs.readFileSync(envFileLocation, "utf8"),
+              );
+              envVariables = Object.entries(envObject || {}).map(
+                ([key, value]) => ({ key, value }),
+              );
+            }
+          } catch (error) {
+            envVariables = [];
+          }
+          await Promise.all(
+            envVariables.map(async (variable) => {
+              const sitesService = await getSitesService();
+              await sitesService.createVariable({
+                siteId: site["$id"],
+                key: variable.key,
+                value: variable.value,
+                secret: false,
+              });
+            }),
+          );
+        }
+
+        if (code === false) {
+          successfullyPushed++;
+          successfullyDeployed++;
+          updaterRow.update({ status: "Pushed" });
+          updaterRow.stopSpinner();
+          return;
+        }
+
+        try {
+          updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_DOTS);
+          const sitesService = await getSitesService();
+          response = await sitesService.createDeployment({
+            siteId: site["$id"],
+            installCommand: site.installCommand,
+            buildCommand: site.buildCommand,
+            outputDirectory: site.outputDirectory,
+            code: site.path,
+            activate: true,
+          });
+
+          updaterRow.update({ status: "Pushed" });
+          deploymentCreated = true;
+          successfullyPushed++;
+        } catch (e: any) {
+          errors.push(e);
+
+          switch (e.code) {
+            case "ENOENT":
+              updaterRow.fail({
+                errorMessage: "Not found in the current directory. Skipping...",
+              });
+              break;
+            default:
+              updaterRow.fail({
+                errorMessage:
+                  e.message ?? "An unknown error occurred. Please try again.",
+              });
+          }
+        }
+
+        if (deploymentCreated && !asyncDeploy) {
+          try {
+            const deploymentId = response["$id"];
+            updaterRow.update({
+              status: "Deploying",
+              end: "Checking deployment status...",
+            });
+
+            while (true) {
+              const sitesService = await getSitesService();
+              response = await sitesService.getDeployment({
+                siteId: site["$id"],
+                deploymentId: deploymentId,
+              });
+
+              const status = response["status"];
+              if (status === "ready") {
+                successfullyDeployed++;
+
+                let url = "";
+                const proxyService = await getProxyService();
+                const res = await proxyService.listRules([
+                  JSON.stringify({ method: "limit", values: [1] }),
+                  JSON.stringify({
+                    method: "equal",
+                    attribute: "deploymentResourceType",
+                    values: ["site"],
+                  }),
+                  JSON.stringify({
+                    method: "equal",
+                    attribute: "deploymentResourceId",
+                    values: [site["$id"]],
+                  }),
+                  JSON.stringify({
+                    method: "equal",
+                    attribute: "trigger",
+                    values: ["manual"],
+                  }),
+                ]);
+
+                if (Number(res.total) === 1) {
+                  url = res.rules[0].domain;
+                }
+
+                updaterRow.update({ status: "Deployed", end: url });
+
+                break;
+              } else if (status === "failed") {
+                failedDeployments.push({
+                  name: site["name"],
+                  $id: site["$id"],
+                  deployment: response["$id"],
+                });
+                updaterRow.fail({ errorMessage: `Failed to deploy` });
+
+                break;
+              } else {
+                updaterRow.update({
+                  status: "Deploying",
+                  end: `Current status: ${status}`,
+                });
+              }
+
+              await new Promise((resolve) =>
+                setTimeout(resolve, POLL_DEBOUNCE * 1.5),
+              );
+            }
+          } catch (e: any) {
+            errors.push(e);
+            updaterRow.fail({
+              errorMessage:
+                e.message ?? "Unknown error occurred. Please try again",
+            });
+          }
+        }
+
+        updaterRow.stopSpinner();
+      }),
+    );
+
+    Spinner.stop();
+
+    return {
+      successfullyPushed,
+      successfullyDeployed,
+      failedDeployments,
+      errors,
+    };
+  }
+
+  public async pushSingleFunction(
+    func: any,
+    options: {
+      withVariables?: boolean;
+      code?: boolean;
+    } = {},
+  ): Promise<{
+    success: boolean;
+    deploymentId?: string;
+    error?: string;
+    errorCode?: string;
+  }> {
+    const functionsService = await getFunctionsService();
+    let functionExists = false;
+
+    try {
+      const response = await functionsService.get({ functionId: func["$id"] });
+      functionExists = true;
+
+      if (response.runtime !== func.runtime) {
+        return {
+          success: false,
+          error: `Runtime mismatch! (local=${func.runtime},remote=${response.runtime}) Please delete remote function or update your appwrite.config.json`,
+        };
       }
+
+      await functionsService.update({
+        functionId: func["$id"],
+        name: func.name,
+        runtime: func.runtime,
+        execute: func.execute,
+        events: func.events,
+        schedule: func.schedule,
+        timeout: func.timeout,
+        enabled: func.enabled,
+        logging: func.logging,
+        entrypoint: func.entrypoint,
+        commands: func.commands,
+        scopes: func.scopes,
+        specification: func.specification,
+      });
+    } catch (e: any) {
+      if (Number(e.code) === 404) {
+        functionExists = false;
+      } else {
+        return { success: false, error: e.message };
+      }
+    }
+
+    if (!functionExists) {
+      try {
+        await functionsService.create({
+          functionId: func.$id,
+          name: func.name,
+          runtime: func.runtime,
+          execute: func.execute,
+          events: func.events,
+          schedule: func.schedule,
+          timeout: func.timeout,
+          enabled: func.enabled,
+          logging: func.logging,
+          entrypoint: func.entrypoint,
+          commands: func.commands,
+          scopes: func.scopes,
+          specification: func.specification,
+        });
+
+        let domain = "";
+        try {
+          const consoleService = await getConsoleService();
+          const variables = await consoleService.variables();
+          domain = ID.unique() + "." + variables["_APP_DOMAIN_FUNCTIONS"];
+        } catch (error) {
+          return { success: false, error: "Error fetching console variables." };
+        }
+
+        try {
+          const proxyService = await getProxyService();
+          await proxyService.createFunctionRule(domain, func.$id);
+        } catch (error) {
+          return { success: false, error: "Error creating function rule." };
+        }
+      } catch (e: any) {
+        return { success: false, error: e.message };
+      }
+    }
+
+    if (options.withVariables) {
+      try {
+        const { variables } = await paginate(
+          async (args: any) => {
+            return await functionsService.listVariables({
+              functionId: args.functionId,
+            });
+          },
+          { functionId: func["$id"] },
+          100,
+          "variables",
+        );
+
+        await Promise.all(
+          variables.map(async (variable: any) => {
+            await functionsService.deleteVariable({
+              functionId: func["$id"],
+              variableId: variable["$id"],
+            });
+          }),
+        );
+
+        const envFileLocation = `${func["path"]}/.env`;
+        let envVariables: Array<{ key: string; value: string }> = [];
+        try {
+          if (fs.existsSync(envFileLocation)) {
+            const envObject = parseDotenv(
+              fs.readFileSync(envFileLocation, "utf8"),
+            );
+            envVariables = Object.entries(envObject || {}).map(
+              ([key, value]) => ({ key, value }),
+            );
+          }
+        } catch (error) {
+          envVariables = [];
+        }
+
+        await Promise.all(
+          envVariables.map(async (variable) => {
+            await functionsService.createVariable({
+              functionId: func["$id"],
+              key: variable.key,
+              value: variable.value,
+              secret: false,
+            });
+          }),
+        );
+      } catch (e: any) {
+        return {
+          success: false,
+          error: `Failed to update variables: ${e.message}`,
+        };
+      }
+    }
+
+    if (options.code === false) {
+      return { success: true };
+    }
+
+    try {
+      const response = await functionsService.createDeployment({
+        functionId: func["$id"],
+        entrypoint: func.entrypoint,
+        commands: func.commands,
+        code: func.path,
+        activate: true,
+      });
+
+      return { success: true, deploymentId: response["$id"] };
+    } catch (e: any) {
+      return {
+        success: false,
+        error: e.message ?? "An unknown error occurred. Please try again.",
+        errorCode: e.code,
+      };
     }
   }
 
-  return changes;
-};
+  public async pushSingleSite(
+    site: any,
+    options: {
+      withVariables?: boolean;
+      code?: boolean;
+    } = {},
+  ): Promise<{
+    success: boolean;
+    deploymentId?: string;
+    error?: string;
+    errorCode?: string;
+  }> {
+    const sitesService = await getSitesService();
+    let siteExists = false;
+
+    try {
+      const response = await sitesService.get({ siteId: site["$id"] });
+      siteExists = true;
+
+      if (response.framework !== site.framework) {
+        return {
+          success: false,
+          error: `Framework mismatch! (local=${site.framework},remote=${response.framework}) Please delete remote site or update your appwrite.config.json`,
+        };
+      }
+
+      await sitesService.update({
+        siteId: site["$id"],
+        name: site.name,
+        framework: site.framework,
+        enabled: site.enabled,
+        logging: site.logging,
+        timeout: site.timeout,
+        installCommand: site.installCommand,
+        buildCommand: site.buildCommand,
+        outputDirectory: site.outputDirectory,
+        buildRuntime: site.buildRuntime,
+        adapter: site.adapter,
+        specification: site.specification,
+      });
+    } catch (e: any) {
+      if (Number(e.code) === 404) {
+        siteExists = false;
+      } else {
+        return { success: false, error: e.message };
+      }
+    }
+
+    if (!siteExists) {
+      try {
+        await sitesService.create({
+          siteId: site.$id,
+          name: site.name,
+          framework: site.framework,
+          enabled: site.enabled,
+          logging: site.logging,
+          timeout: site.timeout,
+          installCommand: site.installCommand,
+          buildCommand: site.buildCommand,
+          outputDirectory: site.outputDirectory,
+          buildRuntime: site.buildRuntime,
+          adapter: site.adapter,
+          specification: site.specification,
+        });
+
+        let domain = "";
+        try {
+          const consoleService = await getConsoleService();
+          const variables = await consoleService.variables();
+          domain = ID.unique() + "." + variables["_APP_DOMAIN_SITES"];
+        } catch (error) {
+          return { success: false, error: "Error fetching console variables." };
+        }
+
+        try {
+          const proxyService = await getProxyService();
+          await proxyService.createSiteRule(domain, site.$id);
+        } catch (error) {
+          return { success: false, error: "Error creating site rule." };
+        }
+      } catch (e: any) {
+        return { success: false, error: e.message };
+      }
+    }
+
+    if (options.withVariables) {
+      try {
+        const { variables } = await paginate(
+          async (args: any) => {
+            return await sitesService.listVariables({ siteId: args.siteId });
+          },
+          { siteId: site["$id"] },
+          100,
+          "variables",
+        );
+
+        await Promise.all(
+          variables.map(async (variable: any) => {
+            await sitesService.deleteVariable({
+              siteId: site["$id"],
+              variableId: variable["$id"],
+            });
+          }),
+        );
+
+        const envFileLocation = `${site["path"]}/.env`;
+        let envVariables: Array<{ key: string; value: string }> = [];
+        try {
+          if (fs.existsSync(envFileLocation)) {
+            const envObject = parseDotenv(
+              fs.readFileSync(envFileLocation, "utf8"),
+            );
+            envVariables = Object.entries(envObject || {}).map(
+              ([key, value]) => ({ key, value }),
+            );
+          }
+        } catch (error) {
+          envVariables = [];
+        }
+
+        await Promise.all(
+          envVariables.map(async (variable) => {
+            await sitesService.createVariable({
+              siteId: site["$id"],
+              key: variable.key,
+              value: variable.value,
+              secret: false,
+            });
+          }),
+        );
+      } catch (e: any) {
+        return {
+          success: false,
+          error: `Failed to update variables: ${e.message}`,
+        };
+      }
+    }
+
+    if (options.code === false) {
+      return { success: true };
+    }
+
+    try {
+      const response = await sitesService.createDeployment({
+        siteId: site["$id"],
+        installCommand: site.installCommand,
+        buildCommand: site.buildCommand,
+        outputDirectory: site.outputDirectory,
+        code: site.path,
+        activate: true,
+      });
+
+      return { success: true, deploymentId: response["$id"] };
+    } catch (e: any) {
+      return {
+        success: false,
+        error: e.message ?? "An unknown error occurred. Please try again.",
+        errorCode: e.code,
+      };
+    }
+  }
+
+  public async getDeploymentStatus(
+    resourceId: string,
+    deploymentId: string,
+    resourceType: "function" | "site",
+  ): Promise<{
+    status: string;
+    url?: string;
+  }> {
+    if (resourceType === "function") {
+      const functionsService = await getFunctionsService();
+      const response = await functionsService.getDeployment({
+        functionId: resourceId,
+        deploymentId: deploymentId,
+      });
+
+      const status = response["status"];
+      let url = "";
+
+      if (status === "ready") {
+        const proxyService = await getProxyService();
+        const res = await proxyService.listRules([
+          JSON.stringify({ method: "limit", values: [1] }),
+          JSON.stringify({
+            method: "equal",
+            attribute: "deploymentResourceType",
+            values: ["function"],
+          }),
+          JSON.stringify({
+            method: "equal",
+            attribute: "deploymentResourceId",
+            values: [resourceId],
+          }),
+          JSON.stringify({
+            method: "equal",
+            attribute: "trigger",
+            values: ["manual"],
+          }),
+        ]);
+
+        if (Number(res.total) === 1) {
+          url = res.rules[0].domain;
+        }
+      }
+
+      return { status, url };
+    } else {
+      const sitesService = await getSitesService();
+      const response = await sitesService.getDeployment({
+        siteId: resourceId,
+        deploymentId: deploymentId,
+      });
+
+      const status = response["status"];
+      let url = "";
+
+      if (status === "ready") {
+        const proxyService = await getProxyService();
+        const res = await proxyService.listRules([
+          JSON.stringify({ method: "limit", values: [1] }),
+          JSON.stringify({
+            method: "equal",
+            attribute: "deploymentResourceType",
+            values: ["site"],
+          }),
+          JSON.stringify({
+            method: "equal",
+            attribute: "deploymentResourceId",
+            values: [resourceId],
+          }),
+          JSON.stringify({
+            method: "equal",
+            attribute: "trigger",
+            values: ["manual"],
+          }),
+        ]);
+
+        if (Number(res.total) === 1) {
+          url = res.rules[0].domain;
+        }
+      }
+
+      return { status, url };
+    }
+  }
+}
+
+async function createPushInstance(): Promise<Push> {
+  return new Push();
+}
 
 const pushResources = async ({
   skipDeprecated = false,
@@ -333,76 +1360,33 @@ const pushSettings = async (): Promise<void> => {
   try {
     log("Pushing project settings ...");
 
-    const projectsService = await getProjectsService();
-    const projectId = localConfig.getProject().projectId;
-    const projectName = localConfig.getProject().projectName;
-    const settings = localConfig.getProject().projectSettings ?? {};
+    const pushInstance = await createPushInstance();
+    const config = localConfig.getProject();
+    const settings = config.projectSettings ?? {};
 
-    if (projectName) {
+    if (config.projectName) {
       log("Applying project name ...");
-      await projectsService.update(projectId, projectName);
     }
 
     if (settings.services) {
       log("Applying service statuses ...");
-      for (let [service, status] of Object.entries(settings.services)) {
-        await projectsService.updateServiceStatus(
-          projectId,
-          service as ApiService,
-          status,
-        );
-      }
     }
 
     if (settings.auth) {
       if (settings.auth.security) {
         log("Applying auth security settings ...");
-        await projectsService.updateAuthDuration(
-          projectId,
-          settings.auth.security.duration,
-        );
-        await projectsService.updateAuthLimit(
-          projectId,
-          settings.auth.security.limit,
-        );
-        await projectsService.updateAuthSessionsLimit(
-          projectId,
-          settings.auth.security.sessionsLimit,
-        );
-        await projectsService.updateAuthPasswordDictionary(
-          projectId,
-          settings.auth.security.passwordDictionary,
-        );
-        await projectsService.updateAuthPasswordHistory(
-          projectId,
-          settings.auth.security.passwordHistory,
-        );
-        await projectsService.updatePersonalDataCheck(
-          projectId,
-          settings.auth.security.personalDataCheck,
-        );
-        await projectsService.updateSessionAlerts(
-          projectId,
-          settings.auth.security.sessionAlerts,
-        );
-        await projectsService.updateMockNumbers(
-          projectId,
-          settings.auth.security.mockNumbers,
-        );
       }
 
       if (settings.auth.methods) {
         log("Applying auth methods statuses ...");
-
-        for (let [method, status] of Object.entries(settings.auth.methods)) {
-          await projectsService.updateAuthStatus(
-            projectId,
-            method as AuthMethod,
-            status,
-          );
-        }
       }
     }
+
+    await pushInstance.pushSettings({
+      projectId: config.projectId,
+      projectName: config.projectName,
+      settings: config.projectSettings,
+    });
 
     success(`Successfully pushed ${chalk.bold("all")} project settings.`);
   } catch (e) {
@@ -487,293 +1471,19 @@ const pushSite = async ({
 
   log("Pushing sites ...");
 
-  Spinner.start(false);
-  let successfullyPushed = 0;
-  let successfullyDeployed = 0;
-  const failedDeployments: any[] = [];
-  const errors: any[] = [];
+  const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushSite(sites, {
+    async: asyncDeploy,
+    code,
+    withVariables,
+  });
 
-  await Promise.all(
-    sites.map(async (site: any) => {
-      let response: any = {};
-
-      const ignore = site.ignore ? "appwrite.config.json" : ".gitignore";
-      let siteExists = false;
-      let deploymentCreated = false;
-
-      const updaterRow = new Spinner({
-        status: "",
-        resource: site.name,
-        id: site["$id"],
-        end: `Ignoring using: ${ignore}`,
-      });
-
-      updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
-
-      const sitesService = await getSitesService();
-      try {
-        response = await sitesService.get({ siteId: site["$id"] });
-        siteExists = true;
-        if (response.framework !== site.framework) {
-          updaterRow.fail({
-            errorMessage: `Framework mismatch! (local=${site.framework},remote=${response.framework}) Please delete remote site or update your appwrite.config.json`,
-          });
-          return;
-        }
-
-        updaterRow.update({ status: "Updating" }).replaceSpinner(SPINNER_ARC);
-
-        response = await sitesService.update({
-          siteId: site["$id"],
-          name: site.name,
-          framework: site.framework,
-          enabled: site.enabled,
-          logging: site.logging,
-          timeout: site.timeout,
-          installCommand: site.installCommand,
-          buildCommand: site.buildCommand,
-          outputDirectory: site.outputDirectory,
-          buildRuntime: site.buildRuntime,
-          adapter: site.adapter,
-          specification: site.specification,
-        });
-      } catch (e: any) {
-        if (Number(e.code) === 404) {
-          siteExists = false;
-        } else {
-          errors.push(e);
-          updaterRow.fail({
-            errorMessage: e.message ?? "General error occurs please try again",
-          });
-          return;
-        }
-      }
-
-      if (!siteExists) {
-        updaterRow.update({ status: "Creating" }).replaceSpinner(SPINNER_DOTS);
-
-        try {
-          response = await sitesService.create({
-            siteId: site.$id,
-            name: site.name,
-            framework: site.framework,
-            enabled: site.enabled,
-            logging: site.logging,
-            timeout: site.timeout,
-            installCommand: site.installCommand,
-            buildCommand: site.buildCommand,
-            outputDirectory: site.outputDirectory,
-            buildRuntime: site.buildRuntime,
-            adapter: site.adapter,
-            specification: site.specification,
-          });
-
-          let domain = "";
-          try {
-            const consoleService = await getConsoleService();
-            const variables = await consoleService.variables();
-            domain = ID.unique() + "." + variables["_APP_DOMAIN_SITES"];
-          } catch (error) {
-            console.error("Error fetching console variables.");
-            throw error;
-          }
-
-          try {
-            const proxyService = await getProxyService();
-            const rule = await proxyService.createSiteRule(domain, site.$id);
-          } catch (error) {
-            console.error("Error creating site rule.");
-            throw error;
-          }
-
-          updaterRow.update({ status: "Created" });
-        } catch (e: any) {
-          errors.push(e);
-          updaterRow.fail({
-            errorMessage: e.message ?? "General error occurs please try again",
-          });
-          return;
-        }
-      }
-
-      if (withVariables) {
-        updaterRow
-          .update({ status: "Creating variables" })
-          .replaceSpinner(SPINNER_ARC);
-
-        const sitesService = await getSitesService();
-        const { variables } = await paginate(
-          async (args: any) => {
-            return await sitesService.listVariables({ siteId: args.siteId });
-          },
-          {
-            siteId: site["$id"],
-          },
-          100,
-          "variables",
-        );
-
-        await Promise.all(
-          variables.map(async (variable: any) => {
-            const sitesService = await getSitesService();
-            await sitesService.deleteVariable({
-              siteId: site["$id"],
-              variableId: variable["$id"],
-            });
-          }),
-        );
-
-        const envFileLocation = `${site["path"]}/.env`;
-        let envVariables: Array<{ key: string; value: string }> = [];
-        try {
-          if (fs.existsSync(envFileLocation)) {
-            const envObject = parseDotenv(
-              fs.readFileSync(envFileLocation, "utf8"),
-            );
-            envVariables = Object.entries(envObject || {}).map(
-              ([key, value]) => ({ key, value }),
-            );
-          }
-        } catch (error) {
-          // Handle parsing errors gracefully
-          envVariables = [];
-        }
-        await Promise.all(
-          envVariables.map(async (variable) => {
-            const sitesService = await getSitesService();
-            await sitesService.createVariable({
-              siteId: site["$id"],
-              key: variable.key,
-              value: variable.value,
-              secret: false,
-            });
-          }),
-        );
-      }
-
-      if (code === false) {
-        successfullyPushed++;
-        successfullyDeployed++;
-        updaterRow.update({ status: "Pushed" });
-        updaterRow.stopSpinner();
-        return;
-      }
-
-      try {
-        updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_ARC);
-        const sitesService = await getSitesService();
-        response = await sitesService.createDeployment({
-          siteId: site["$id"],
-          installCommand: site.installCommand,
-          buildCommand: site.buildCommand,
-          outputDirectory: site.outputDirectory,
-          code: site.path,
-          activate: true,
-        });
-
-        updaterRow.update({ status: "Pushed" });
-        deploymentCreated = true;
-        successfullyPushed++;
-      } catch (e: any) {
-        errors.push(e);
-
-        switch (e.code) {
-          case "ENOENT":
-            updaterRow.fail({
-              errorMessage: "Not found in the current directory. Skipping...",
-            });
-            break;
-          default:
-            updaterRow.fail({
-              errorMessage:
-                e.message ?? "An unknown error occurred. Please try again.",
-            });
-        }
-      }
-
-      if (deploymentCreated && !asyncDeploy) {
-        try {
-          const deploymentId = response["$id"];
-          updaterRow.update({
-            status: "Deploying",
-            end: "Checking deployment status...",
-          });
-          let pollChecks = 0;
-
-          while (true) {
-            const sitesService = await getSitesService();
-            response = await sitesService.getDeployment({
-              siteId: site["$id"],
-              deploymentId: deploymentId,
-            });
-
-            const status = response["status"];
-            if (status === "ready") {
-              successfullyDeployed++;
-
-              let url = "";
-              const proxyService = await getProxyService();
-              const res = await proxyService.listRules([
-                JSON.stringify({ method: "limit", values: [1] }),
-                JSON.stringify({
-                  method: "equal",
-                  attribute: "deploymentResourceType",
-                  values: ["site"],
-                }),
-                JSON.stringify({
-                  method: "equal",
-                  attribute: "deploymentResourceId",
-                  values: [site["$id"]],
-                }),
-                JSON.stringify({
-                  method: "equal",
-                  attribute: "trigger",
-                  values: ["manual"],
-                }),
-              ]);
-
-              if (Number(res.total) === 1) {
-                url = res.rules[0].domain;
-              }
-
-              updaterRow.update({ status: "Deployed", end: url });
-
-              break;
-            } else if (status === "failed") {
-              failedDeployments.push({
-                name: site["name"],
-                $id: site["$id"],
-                deployment: response["$id"],
-              });
-              updaterRow.fail({ errorMessage: `Failed to deploy` });
-
-              break;
-            } else {
-              updaterRow.update({
-                status: "Deploying",
-                end: `Current status: ${status}`,
-              });
-            }
-
-            pollChecks++;
-            await new Promise((resolve) =>
-              setTimeout(resolve, POLL_DEBOUNCE * 1.5),
-            );
-          }
-        } catch (e: any) {
-          errors.push(e);
-          updaterRow.fail({
-            errorMessage:
-              e.message ?? "Unknown error occurred. Please try again",
-          });
-        }
-      }
-
-      updaterRow.stopSpinner();
-    }),
-  );
-
-  Spinner.stop();
+  const {
+    successfullyPushed,
+    successfullyDeployed,
+    failedDeployments,
+    errors,
+  } = result;
 
   failedDeployments.forEach((failed) => {
     const { name, deployment, $id } = failed;
@@ -854,7 +1564,6 @@ const pushFunction = async ({
   });
 
   log("Validating functions ...");
-  // Validation is done BEFORE pushing so the deployment process can be run in async with progress update
   for (let func of functions) {
     if (!func.entrypoint) {
       log(`Function ${func.name} is missing an entrypoint.`);
@@ -882,298 +1591,19 @@ const pushFunction = async ({
 
   log("Pushing functions ...");
 
-  Spinner.start(false);
-  let successfullyPushed = 0;
-  let successfullyDeployed = 0;
-  const failedDeployments: any[] = [];
-  const errors: any[] = [];
+  const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushFunction(functions, {
+    async: asyncDeploy,
+    code,
+    withVariables,
+  });
 
-  await Promise.all(
-    functions.map(async (func: any) => {
-      let response: any = {};
-
-      const ignore = func.ignore ? "appwrite.config.json" : ".gitignore";
-      let functionExists = false;
-      let deploymentCreated = false;
-
-      const updaterRow = new Spinner({
-        status: "",
-        resource: func.name,
-        id: func["$id"],
-        end: `Ignoring using: ${ignore}`,
-      });
-
-      updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
-      const functionsService = await getFunctionsService();
-      try {
-        response = await functionsService.get({ functionId: func["$id"] });
-        functionExists = true;
-        if (response.runtime !== func.runtime) {
-          updaterRow.fail({
-            errorMessage: `Runtime mismatch! (local=${func.runtime},remote=${response.runtime}) Please delete remote function or update your appwrite.config.json`,
-          });
-          return;
-        }
-
-        updaterRow.update({ status: "Updating" }).replaceSpinner(SPINNER_ARC);
-
-        response = await functionsService.update({
-          functionId: func["$id"],
-          name: func.name,
-          runtime: func.runtime,
-          execute: func.execute,
-          events: func.events,
-          schedule: func.schedule,
-          timeout: func.timeout,
-          enabled: func.enabled,
-          logging: func.logging,
-          entrypoint: func.entrypoint,
-          commands: func.commands,
-          scopes: func.scopes,
-          specification: func.specification,
-        });
-      } catch (e: any) {
-        if (Number(e.code) === 404) {
-          functionExists = false;
-        } else {
-          errors.push(e);
-          updaterRow.fail({
-            errorMessage: e.message ?? "General error occurs please try again",
-          });
-          return;
-        }
-      }
-
-      if (!functionExists) {
-        updaterRow.update({ status: "Creating" }).replaceSpinner(SPINNER_DOTS);
-
-        try {
-          response = await functionsService.create({
-            functionId: func.$id,
-            name: func.name,
-            runtime: func.runtime,
-            execute: func.execute,
-            events: func.events,
-            schedule: func.schedule,
-            timeout: func.timeout,
-            enabled: func.enabled,
-            logging: func.logging,
-            entrypoint: func.entrypoint,
-            commands: func.commands,
-            scopes: func.scopes,
-            specification: func.specification,
-          });
-
-          let domain = "";
-          try {
-            const consoleService = await getConsoleService();
-            const variables = await consoleService.variables();
-            domain = ID.unique() + "." + variables["_APP_DOMAIN_FUNCTIONS"];
-          } catch (error) {
-            console.error("Error fetching console variables.");
-            throw error;
-          }
-
-          try {
-            const proxyService = await getProxyService();
-            const rule = await proxyService.createFunctionRule(
-              domain,
-              func.$id,
-            );
-          } catch (error) {
-            console.error("Error creating function rule.");
-            throw error;
-          }
-
-          updaterRow.update({ status: "Created" });
-        } catch (e: any) {
-          errors.push(e);
-          updaterRow.fail({
-            errorMessage: e.message ?? "General error occurs please try again",
-          });
-          return;
-        }
-      }
-
-      if (withVariables) {
-        updaterRow
-          .update({ status: "Updating variables" })
-          .replaceSpinner(SPINNER_ARC);
-
-        const functionsService = await getFunctionsService();
-        const { variables } = await paginate(
-          async (args: any) => {
-            return await functionsService.listVariables({
-              functionId: args.functionId,
-            });
-          },
-          {
-            functionId: func["$id"],
-          },
-          100,
-          "variables",
-        );
-
-        await Promise.all(
-          variables.map(async (variable: any) => {
-            const functionsService = await getFunctionsService();
-            await functionsService.deleteVariable({
-              functionId: func["$id"],
-              variableId: variable["$id"],
-            });
-          }),
-        );
-
-        const envFileLocation = `${func["path"]}/.env`;
-        let envVariables: Array<{ key: string; value: string }> = [];
-        try {
-          if (fs.existsSync(envFileLocation)) {
-            const envObject = parseDotenv(
-              fs.readFileSync(envFileLocation, "utf8"),
-            );
-            envVariables = Object.entries(envObject || {}).map(
-              ([key, value]) => ({ key, value }),
-            );
-          }
-        } catch (error) {
-          // Handle parsing errors gracefully
-          envVariables = [];
-        }
-        await Promise.all(
-          envVariables.map(async (variable) => {
-            const functionsService = await getFunctionsService();
-            await functionsService.createVariable({
-              functionId: func["$id"],
-              key: variable.key,
-              value: variable.value,
-              secret: false,
-            });
-          }),
-        );
-      }
-
-      if (code === false) {
-        successfullyPushed++;
-        successfullyDeployed++;
-        updaterRow.update({ status: "Pushed" });
-        updaterRow.stopSpinner();
-        return;
-      }
-
-      try {
-        updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_ARC);
-        const functionsService = await getFunctionsService();
-        response = await functionsService.createDeployment({
-          functionId: func["$id"],
-          entrypoint: func.entrypoint,
-          commands: func.commands,
-          code: func.path,
-          activate: true,
-        });
-
-        updaterRow.update({ status: "Pushed" });
-        deploymentCreated = true;
-        successfullyPushed++;
-      } catch (e: any) {
-        errors.push(e);
-
-        switch (e.code) {
-          case "ENOENT":
-            updaterRow.fail({
-              errorMessage: "Not found in the current directory. Skipping...",
-            });
-            break;
-          default:
-            updaterRow.fail({
-              errorMessage:
-                e.message ?? "An unknown error occurred. Please try again.",
-            });
-        }
-      }
-
-      if (deploymentCreated && !asyncDeploy) {
-        try {
-          const deploymentId = response["$id"];
-          updaterRow.update({
-            status: "Deploying",
-            end: "Checking deployment status...",
-          });
-          let pollChecks = 0;
-
-          while (true) {
-            const functionsService = await getFunctionsService();
-            response = await functionsService.getDeployment({
-              functionId: func["$id"],
-              deploymentId: deploymentId,
-            });
-
-            const status = response["status"];
-            if (status === "ready") {
-              successfullyDeployed++;
-
-              let url = "";
-              const proxyService = await getProxyService();
-              const res = await proxyService.listRules([
-                JSON.stringify({ method: "limit", values: [1] }),
-                JSON.stringify({
-                  method: "equal",
-                  attribute: "deploymentResourceType",
-                  values: ["function"],
-                }),
-                JSON.stringify({
-                  method: "equal",
-                  attribute: "deploymentResourceId",
-                  values: [func["$id"]],
-                }),
-                JSON.stringify({
-                  method: "equal",
-                  attribute: "trigger",
-                  values: ["manual"],
-                }),
-              ]);
-
-              if (Number(res.total) === 1) {
-                url = res.rules[0].domain;
-              }
-
-              updaterRow.update({ status: "Deployed", end: url });
-
-              break;
-            } else if (status === "failed") {
-              failedDeployments.push({
-                name: func["name"],
-                $id: func["$id"],
-                deployment: response["$id"],
-              });
-              updaterRow.fail({ errorMessage: `Failed to deploy` });
-
-              break;
-            } else {
-              updaterRow.update({
-                status: "Deploying",
-                end: `Current status: ${status}`,
-              });
-            }
-
-            pollChecks++;
-            await new Promise((resolve) =>
-              setTimeout(resolve, POLL_DEBOUNCE * 1.5),
-            );
-          }
-        } catch (e: any) {
-          errors.push(e);
-          updaterRow.fail({
-            errorMessage:
-              e.message ?? "Unknown error occurred. Please try again",
-          });
-        }
-      }
-
-      updaterRow.stopSpinner();
-    }),
-  );
-
-  Spinner.stop();
+  const {
+    successfullyPushed,
+    successfullyDeployed,
+    failedDeployments,
+    errors,
+  } = result;
 
   failedDeployments.forEach((failed) => {
     const { name, deployment, $id } = failed;
@@ -1204,175 +1634,6 @@ const pushFunction = async ({
     });
   }
 };
-
-const checkAndApplyTablesDBChanges =
-  async (): Promise<TablesDBChangesResult> => {
-    log("Checking for tablesDB changes ...");
-
-    const localTablesDBs = localConfig.getTablesDBs();
-    const { databases: remoteTablesDBs } = await paginate(
-      async (args: any) => {
-        const tablesDBService = await getTablesDBService();
-        return await tablesDBService.list(args.queries || []);
-      },
-      {},
-      100,
-      "databases",
-    );
-
-    if (localTablesDBs.length === 0 && remoteTablesDBs.length === 0) {
-      return { applied: false, resyncNeeded: false };
-    }
-
-    const changes: any[] = [];
-    const toCreate: any[] = [];
-    const toUpdate: any[] = [];
-    const toDelete: any[] = [];
-
-    // Check for deletions - remote DBs that aren't in local config
-    for (const remoteDB of remoteTablesDBs) {
-      const localDB = localTablesDBs.find((db: any) => db.$id === remoteDB.$id);
-      if (!localDB) {
-        toDelete.push(remoteDB);
-        changes.push({
-          id: remoteDB.$id,
-          action: chalk.red("deleting"),
-          key: "Database",
-          remote: remoteDB.name,
-          local: "(deleted locally)",
-        });
-      }
-    }
-
-    // Check for additions and updates
-    for (const localDB of localTablesDBs) {
-      const remoteDB = remoteTablesDBs.find(
-        (db: any) => db.$id === localDB.$id,
-      );
-
-      if (!remoteDB) {
-        toCreate.push(localDB);
-        changes.push({
-          id: localDB.$id,
-          action: chalk.green("creating"),
-          key: "Database",
-          remote: "(does not exist)",
-          local: localDB.name,
-        });
-      } else {
-        let hasChanges = false;
-
-        if (remoteDB.name !== localDB.name) {
-          hasChanges = true;
-          changes.push({
-            id: localDB.$id,
-            action: chalk.yellow("updating"),
-            key: "Name",
-            remote: remoteDB.name,
-            local: localDB.name,
-          });
-        }
-
-        if (remoteDB.enabled !== localDB.enabled) {
-          hasChanges = true;
-          changes.push({
-            id: localDB.$id,
-            action: chalk.yellow("updating"),
-            key: "Enabled",
-            remote: remoteDB.enabled,
-            local: localDB.enabled,
-          });
-        }
-
-        if (hasChanges) {
-          toUpdate.push(localDB);
-        }
-      }
-    }
-
-    if (changes.length === 0) {
-      return { applied: false, resyncNeeded: false };
-    }
-
-    log("Found changes in tablesDB resource:");
-    drawTable(changes);
-
-    if (toDelete.length > 0) {
-      console.log(
-        `${chalk.red("------------------------------------------------------------------")}`,
-      );
-      console.log(
-        `${chalk.red("| WARNING: Database deletion will also delete all related tables |")}`,
-      );
-      console.log(
-        `${chalk.red("------------------------------------------------------------------")}`,
-      );
-      console.log();
-    }
-
-    if ((await getConfirmation()) !== true) {
-      return { applied: false, resyncNeeded: false };
-    }
-
-    // Apply deletions first
-    let needsResync = false;
-    for (const db of toDelete) {
-      try {
-        log(`Deleting database ${db.name} ( ${db.$id} ) ...`);
-        const tablesDBService = await getTablesDBService();
-        await tablesDBService.delete(db.$id);
-        success(`Deleted ${db.name} ( ${db.$id} )`);
-        needsResync = true;
-      } catch (e: any) {
-        error(
-          `Failed to delete database ${db.name} ( ${db.$id} ): ${e.message}`,
-        );
-        throw new Error(
-          `Database sync failed during deletion of ${db.$id}. Some changes may have been applied.`,
-        );
-      }
-    }
-
-    // Apply creations
-    for (const db of toCreate) {
-      try {
-        log(`Creating database ${db.name} ( ${db.$id} ) ...`);
-        const tablesDBService = await getTablesDBService();
-        await tablesDBService.create(db.$id, db.name, db.enabled);
-        success(`Created ${db.name} ( ${db.$id} )`);
-      } catch (e: any) {
-        error(
-          `Failed to create database ${db.name} ( ${db.$id} ): ${e.message}`,
-        );
-        throw new Error(
-          `Database sync failed during creation of ${db.$id}. Some changes may have been applied.`,
-        );
-      }
-    }
-
-    // Apply updates
-    for (const db of toUpdate) {
-      try {
-        log(`Updating database ${db.name} ( ${db.$id} ) ...`);
-        const tablesDBService = await getTablesDBService();
-        await tablesDBService.update(db.$id, db.name, db.enabled);
-        success(`Updated ${db.name} ( ${db.$id} )`);
-      } catch (e: any) {
-        error(
-          `Failed to update database ${db.name} ( ${db.$id} ): ${e.message}`,
-        );
-        throw new Error(
-          `Database sync failed during update of ${db.$id}. Some changes may have been applied.`,
-        );
-      }
-    }
-
-    if (toDelete.length === 0) {
-      console.log();
-    }
-
-    return { applied: true, resyncNeeded: needsResync };
-  };
 
 const pushTable = async ({
   attempts,
@@ -1826,8 +2087,6 @@ const pushCollection = async ({
 };
 
 const pushBucket = async (): Promise<void> => {
-  let response: any = {};
-
   let bucketIds: string[] = [];
   const configBuckets = localConfig.getBuckets();
 
@@ -1875,55 +2134,17 @@ const pushBucket = async (): Promise<void> => {
 
   log("Pushing buckets ...");
 
+  const pushInstance = await createPushInstance();
+
   for (let bucket of buckets) {
     log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
-
-    const storageService = await getStorageService();
-    try {
-      response = await storageService.getBucket(bucket["$id"]);
-
-      await storageService.updateBucket(
-        bucket["$id"],
-        bucket.name,
-        bucket["$permissions"],
-        bucket.fileSecurity,
-        bucket.enabled,
-        bucket.maximumFileSize,
-        bucket.allowedFileExtensions,
-        bucket.encryption,
-        bucket.antivirus,
-        bucket.compression,
-      );
-    } catch (e: any) {
-      if (Number(e.code) === 404) {
-        log(
-          `Bucket ${bucket.name} does not exist in the project. Creating ... `,
-        );
-
-        response = await storageService.createBucket(
-          bucket["$id"],
-          bucket.name,
-          bucket["$permissions"],
-          bucket.fileSecurity,
-          bucket.enabled,
-          bucket.maximumFileSize,
-          bucket.allowedFileExtensions,
-          bucket.compression,
-          bucket.encryption,
-          bucket.antivirus,
-        );
-      } else {
-        throw e;
-      }
-    }
+    await pushInstance.pushBucket(bucket);
   }
 
   success(`Successfully pushed ${buckets.length} buckets.`);
 };
 
 const pushTeam = async (): Promise<void> => {
-  let response: any = {};
-
   let teamIds: string[] = [];
   const configTeams = localConfig.getTeams();
 
@@ -1971,31 +2192,17 @@ const pushTeam = async (): Promise<void> => {
 
   log("Pushing teams ...");
 
+  const pushInstance = await createPushInstance();
+
   for (let team of teams) {
     log(`Pushing team ${chalk.bold(team["name"])} ...`);
-
-    const teamsService = await getTeamsService();
-    try {
-      response = await teamsService.get(team["$id"]);
-
-      await teamsService.updateName(team["$id"], team.name);
-    } catch (e: any) {
-      if (Number(e.code) === 404) {
-        log(`Team ${team.name} does not exist in the project. Creating ... `);
-
-        response = await teamsService.create(team["$id"], team.name);
-      } else {
-        throw e;
-      }
-    }
+    await pushInstance.pushTeam(team);
   }
 
   success(`Successfully pushed ${teams.length} teams.`);
 };
 
 const pushMessagingTopic = async (): Promise<void> => {
-  let response: any = {};
-
   let topicsIds: string[] = [];
   const configTopics = localConfig.getMessagingTopics();
 
@@ -2043,34 +2250,12 @@ const pushMessagingTopic = async (): Promise<void> => {
 
   log("Pushing topics ...");
 
+  const pushInstance = await createPushInstance();
+
   for (let topic of topics) {
     log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
-
-    const messagingService = await getMessagingService();
-    try {
-      response = await messagingService.getTopic(topic["$id"]);
-      log(`Topic ${topic.name} ( ${topic["$id"]} ) already exists.`);
-
-      await messagingService.updateTopic(
-        topic["$id"],
-        topic.name,
-        topic.subscribe,
-      );
-    } catch (e: any) {
-      if (Number(e.code) === 404) {
-        log(`Topic ${topic.name} does not exist in the project. Creating ... `);
-
-        response = await messagingService.createTopic(
-          topic["$id"],
-          topic.name,
-          topic.subscribe,
-        );
-
-        success(`Created ${topic.name} ( ${topic["$id"]} )`);
-      } else {
-        throw e;
-      }
-    }
+    await pushInstance.pushMessagingTopic(topic);
+    success(`Created ${topic.name} ( ${topic["$id"]} )`);
   }
 
   success(`Successfully pushed ${topics.length} topics.`);
