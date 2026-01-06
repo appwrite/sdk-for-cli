@@ -60,11 +60,13 @@ export interface PullOptions {
 interface PullFunctionsOptions {
   code?: boolean;
   withVariables?: boolean;
+  functionIds?: string[];
 }
 
 interface PullSitesOptions {
   code?: boolean;
   withVariables?: boolean;
+  siteIds?: string[];
 }
 
 interface PullResourcesOptions {
@@ -201,12 +203,16 @@ export class Pull {
         return [];
       }
 
-      const { functions } = await paginate(
+      const { functions: allFunctions } = await paginate(
         async () => new Functions(this.projectClient).list(),
         {},
         100,
         "functions",
       );
+
+      const functions = options.functionIds
+        ? allFunctions.filter((f) => options.functionIds!.includes(f.$id))
+        : allFunctions;
 
       const result: any[] = [];
 
@@ -314,12 +320,16 @@ export class Pull {
         return [];
       }
 
-      const { sites } = await paginate(
+      const { sites: allSites } = await paginate(
         async () => new Sites(this.projectClient).list(),
         {},
         100,
         "sites",
       );
+
+      const sites = options.siteIds
+        ? allSites.filter((s) => options.siteIds!.includes(s.$id))
+        : allSites;
 
       const result: any[] = [];
 
@@ -683,19 +693,16 @@ const pullFunctions = async ({
   }
 
   const shouldPullCode = code !== false && allowCodePull === true;
+  const selectedFunctionIds = functionsToCheck.map((f: any) => f.$id);
 
   const pullInstance = await createPullInstance();
   const functions = await pullInstance.pullFunctions({
     code: shouldPullCode,
     withVariables,
+    functionIds: selectedFunctionIds,
   });
 
-  const selectedFunctionIds = new Set(functionsToCheck.map((f: any) => f.$id));
-  const filteredFunctions = functions.filter((f) =>
-    selectedFunctionIds.has(f.$id),
-  );
-
-  for (const func of filteredFunctions) {
+  for (const func of functions) {
     log(`Pulling function ${chalk.bold(func["name"])} ...`);
     const localFunction = localConfig.getFunction(func.$id);
     func["path"] = localFunction["path"] || func["path"];
@@ -706,9 +713,7 @@ const pullFunctions = async ({
     warn("Source code download skipped.");
   }
 
-  success(
-    `Successfully pulled ${chalk.bold(filteredFunctions.length)} functions.`,
-  );
+  success(`Successfully pulled ${chalk.bold(functions.length)} functions.`);
 };
 
 const pullSites = async ({
@@ -745,17 +750,16 @@ const pullSites = async ({
   }
 
   const shouldPullCode = code !== false && allowCodePull === true;
+  const selectedSiteIds = sitesToCheck.map((s: any) => s.$id);
 
   const pullInstance = await createPullInstance();
   const sites = await pullInstance.pullSites({
     code: shouldPullCode,
     withVariables,
+    siteIds: selectedSiteIds,
   });
 
-  const selectedSiteIds = new Set(sitesToCheck.map((s: any) => s.$id));
-  const filteredSites = sites.filter((s) => selectedSiteIds.has(s.$id));
-
-  for (const site of filteredSites) {
+  for (const site of sites) {
     log(`Pulling site ${chalk.bold(site["name"])} ...`);
     const localSite = localConfig.getSite(site.$id);
     site["path"] = localSite["path"] || site["path"];
@@ -766,7 +770,7 @@ const pullSites = async ({
     warn("Source code download skipped.");
   }
 
-  success(`Successfully pulled ${chalk.bold(filteredSites.length)} sites.`);
+  success(`Successfully pulled ${chalk.bold(sites.length)} sites.`);
 };
 
 const pullCollection = async (): Promise<void> => {
