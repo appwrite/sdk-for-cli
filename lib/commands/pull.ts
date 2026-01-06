@@ -101,6 +101,73 @@ export class Pull {
   }
 
   /**
+   * Download and extract deployment code for a resource
+   */
+  private async downloadDeploymentCode(params: {
+    resourceId: string;
+    resourcePath: string;
+    holdingVars: any[];
+    withVariables?: boolean;
+    listDeployments: () => Promise<any>;
+    getDownloadUrl: (deploymentId: string) => string;
+  }): Promise<void> {
+    const {
+      resourceId,
+      resourcePath,
+      holdingVars,
+      withVariables,
+      listDeployments,
+      getDownloadUrl,
+    } = params;
+
+    let deploymentId: string | null = null;
+    try {
+      const deployments = await listDeployments();
+      if (deployments["total"] > 0) {
+        deploymentId = deployments["deployments"][0]["$id"];
+      }
+    } catch {}
+
+    if (deploymentId === null) {
+      return;
+    }
+
+    const compressedFileName = `${resourceId}-${+new Date()}.tar.gz`;
+    const downloadUrl = getDownloadUrl(deploymentId);
+
+    const downloadBuffer = await this.projectClient.call(
+      "get",
+      new URL(downloadUrl),
+      {},
+      {},
+      "arrayBuffer",
+    );
+
+    fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
+
+    tar.extract({
+      sync: true,
+      cwd: resourcePath,
+      file: compressedFileName,
+      strict: false,
+    });
+
+    fs.rmSync(compressedFileName);
+
+    if (withVariables) {
+      const envFileLocation = `${resourcePath}/.env`;
+      try {
+        fs.rmSync(envFileLocation);
+      } catch {}
+
+      fs.writeFileSync(
+        envFileLocation,
+        holdingVars.map((r: any) => `${r.key}=${r.value}\n`).join(""),
+      );
+    }
+  }
+
+  /**
    * Pull resources from Appwrite project and return updated config
    *
    * @param config - Current configuration object
@@ -229,70 +296,26 @@ export class Pull {
           fs.mkdirSync(funcPath, { recursive: true });
         }
 
-        if (options.code === false) {
-          continue;
-        }
-
-        let deploymentId: string | null = null;
-        try {
-          const deployments = await functionsService.listDeployments({
-            functionId: func["$id"],
-            queries: [
-              JSON.stringify({ method: "limit", values: [1] }),
-              JSON.stringify({
-                method: "orderDesc",
-                values: ["$id"],
+        if (options.code !== false) {
+          await this.downloadDeploymentCode({
+            resourceId: func["$id"],
+            resourcePath: funcPath,
+            holdingVars,
+            withVariables: options.withVariables,
+            listDeployments: () =>
+              functionsService.listDeployments({
+                functionId: func["$id"],
+                queries: [
+                  JSON.stringify({ method: "limit", values: [1] }),
+                  JSON.stringify({ method: "orderDesc", values: ["$id"] }),
+                ],
               }),
-            ],
+            getDownloadUrl: (deploymentId) =>
+              functionsService.getDeploymentDownload({
+                functionId: func["$id"],
+                deploymentId,
+              }),
           });
-
-          if (deployments["total"] > 0) {
-            deploymentId = deployments["deployments"][0]["$id"];
-          }
-        } catch {}
-
-        if (deploymentId === null) {
-          continue;
-        }
-
-        const compressedFileName = `${func["$id"]}-${+new Date()}.tar.gz`;
-        const downloadUrl = functionsService.getDeploymentDownload({
-          functionId: func["$id"],
-          deploymentId: deploymentId,
-        });
-
-        const downloadBuffer = await this.projectClient.call(
-          "get",
-          new URL(downloadUrl),
-          {},
-          {},
-          "arrayBuffer",
-        );
-
-        fs.writeFileSync(
-          compressedFileName,
-          Buffer.from(downloadBuffer as any),
-        );
-
-        tar.extract({
-          sync: true,
-          cwd: funcPath,
-          file: compressedFileName,
-          strict: false,
-        });
-
-        fs.rmSync(compressedFileName);
-
-        if (options.withVariables) {
-          const envFileLocation = `${funcPath}/.env`;
-          try {
-            fs.rmSync(envFileLocation);
-          } catch {}
-
-          fs.writeFileSync(
-            envFileLocation,
-            holdingVars.map((r: any) => `${r.key}=${r.value}\n`).join(""),
-          );
         }
       }
 
@@ -346,70 +369,26 @@ export class Pull {
           fs.mkdirSync(sitePath, { recursive: true });
         }
 
-        if (options.code === false) {
-          continue;
-        }
-
-        let deploymentId: string | null = null;
-        try {
-          const deployments = await sitesService.listDeployments({
-            siteId: site["$id"],
-            queries: [
-              JSON.stringify({ method: "limit", values: [1] }),
-              JSON.stringify({
-                method: "orderDesc",
-                values: ["$id"],
+        if (options.code !== false) {
+          await this.downloadDeploymentCode({
+            resourceId: site["$id"],
+            resourcePath: sitePath,
+            holdingVars,
+            withVariables: options.withVariables,
+            listDeployments: () =>
+              sitesService.listDeployments({
+                siteId: site["$id"],
+                queries: [
+                  JSON.stringify({ method: "limit", values: [1] }),
+                  JSON.stringify({ method: "orderDesc", values: ["$id"] }),
+                ],
               }),
-            ],
+            getDownloadUrl: (deploymentId) =>
+              sitesService.getDeploymentDownload({
+                siteId: site["$id"],
+                deploymentId,
+              }),
           });
-
-          if (deployments["total"] > 0) {
-            deploymentId = deployments["deployments"][0]["$id"];
-          }
-        } catch {}
-
-        if (deploymentId === null) {
-          continue;
-        }
-
-        const compressedFileName = `${site["$id"]}-${+new Date()}.tar.gz`;
-        const downloadUrl = sitesService.getDeploymentDownload({
-          siteId: site["$id"],
-          deploymentId: deploymentId,
-        });
-
-        const downloadBuffer = await this.projectClient.call(
-          "get",
-          new URL(downloadUrl),
-          {},
-          {},
-          "arrayBuffer",
-        );
-
-        fs.writeFileSync(
-          compressedFileName,
-          Buffer.from(downloadBuffer as any),
-        );
-
-        tar.extract({
-          sync: true,
-          cwd: sitePath,
-          file: compressedFileName,
-          strict: false,
-        });
-
-        fs.rmSync(compressedFileName);
-
-        if (options.withVariables) {
-          const envFileLocation = `${sitePath}/.env`;
-          try {
-            fs.rmSync(envFileLocation);
-          } catch {}
-
-          fs.writeFileSync(
-            envFileLocation,
-            holdingVars.map((r: any) => `${r.key}=${r.value}\n`).join(""),
-          );
         }
       }
 
