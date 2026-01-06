@@ -336,10 +336,7 @@ export class Pull {
             listDeployments: () =>
               functionsService.listDeployments({
                 functionId: func["$id"],
-                queries: [
-                  JSON.stringify({ method: "limit", values: [1] }),
-                  JSON.stringify({ method: "orderDesc", values: ["$id"] }),
-                ],
+                queries: [Query.limit(1), Query.orderDesc("$id")],
               }),
             getDownloadUrl: (deploymentId) =>
               functionsService.getDeploymentDownload({
@@ -421,10 +418,7 @@ export class Pull {
             listDeployments: () =>
               sitesService.listDeployments({
                 siteId: site["$id"],
-                queries: [
-                  JSON.stringify({ method: "limit", values: [1] }),
-                  JSON.stringify({ method: "orderDesc", values: ["$id"] }),
-                ],
+                queries: [Query.limit(1), Query.orderDesc("$id")],
               }),
             getDownloadUrl: (deploymentId) =>
               sitesService.getDeploymentDownload({
@@ -450,9 +444,7 @@ export class Pull {
   }> {
     const databasesService = new Databases(this.projectClient);
 
-    const fetchResponse = await databasesService.list([
-      JSON.stringify({ method: "limit", values: [1] }),
-    ]);
+    const fetchResponse = await databasesService.list([Query.limit(1)]);
 
     if (fetchResponse["databases"].length <= 0) {
       return { databases: [], collections: [] };
@@ -504,7 +496,7 @@ export class Pull {
     const tablesDBService = new TablesDB(this.projectClient);
 
     const fetchResponse = await tablesDBService.list({
-      queries: [JSON.stringify({ method: "limit", values: [1] })],
+      queries: [Query.limit(1)],
     });
 
     if (fetchResponse["databases"].length <= 0) {
@@ -553,7 +545,7 @@ export class Pull {
     const storageService = new Storage(this.projectClient);
 
     const fetchResponse = await storageService.listBuckets({
-      queries: [JSON.stringify({ method: "limit", values: [1] })],
+      queries: [Query.limit(1)],
     });
 
     if (fetchResponse["buckets"].length <= 0) {
@@ -577,7 +569,7 @@ export class Pull {
     const teamsService = new Teams(this.projectClient);
 
     const fetchResponse = await teamsService.list({
-      queries: [JSON.stringify({ method: "limit", values: [1] })],
+      queries: [Query.limit(1)],
     });
 
     if (fetchResponse["teams"].length <= 0) {
@@ -601,7 +593,7 @@ export class Pull {
     const messagingService = new Messaging(this.projectClient);
 
     const fetchResponse = await messagingService.listTopics({
-      queries: [JSON.stringify({ method: "limit", values: [1] })],
+      queries: [Query.limit(1)],
     });
 
     if (fetchResponse["topics"].length <= 0) {
@@ -689,9 +681,7 @@ const pullFunctions = async ({
   log("Fetching functions ...");
 
   const functionsService = await getFunctionsService();
-  const fetchResponse = await functionsService.list([
-    JSON.stringify({ method: "limit", values: [1] }),
-  ]);
+  const fetchResponse = await functionsService.list([Query.limit(1)]);
   if (fetchResponse["functions"].length <= 0) {
     log("No functions found.");
     success(`Successfully pulled ${chalk.bold(0)} functions.`);
@@ -747,7 +737,7 @@ const pullSites = async ({
 
   const sitesService = await getSitesService();
   const fetchResponse = await sitesService.list({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
+    queries: [Query.limit(1)],
   });
   if (fetchResponse["sites"].length <= 0) {
     log("No sites found.");
@@ -804,7 +794,7 @@ const pullCollection = async (): Promise<void> => {
 
   const databasesService = await getDatabasesService();
   const fetchResponse = await databasesService.list({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
+    queries: [Query.limit(1)],
   });
   if (fetchResponse["databases"].length <= 0) {
     log("No collections found.");
@@ -838,7 +828,7 @@ const pullTable = async (): Promise<void> => {
 
   const tablesDBService = await getTablesDBService();
   const fetchResponse = await tablesDBService.list({
-    queries: [JSON.stringify({ method: "limit", values: [1] })],
+    queries: [Query.limit(1)],
   });
   if (fetchResponse["databases"].length <= 0) {
     log("No tables found.");
