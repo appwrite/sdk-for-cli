@@ -84,6 +84,14 @@ const FunctionSchema = z
   })
   .strict();
 
+const DatabaseSchema = z
+  .object({
+    $id: z.string(),
+    name: z.string(),
+    enabled: z.boolean().optional(),
+  })
+  .strict();
+
 const int64Schema = z.preprocess(
   (val) => {
     if (typeof val === "bigint") {
@@ -186,6 +194,7 @@ const AttributeSchema = AttributeSchemaBase.refine(
     path: ["default"],
   },
 );
+const ColumnSchema = AttributeSchema;
 
 const IndexSchema = z
   .object({
@@ -193,6 +202,16 @@ const IndexSchema = z
     type: z.string(),
     status: z.string().optional(),
     attributes: z.array(z.string()),
+    orders: z.array(z.string()).optional(),
+  })
+  .strict();
+
+const IndexTableSchema = z
+  .object({
+    key: z.string(),
+    type: z.string(),
+    status: z.string().optional(),
+    columns: z.array(z.string()),
     orders: z.array(z.string()).optional(),
   })
   .strict();
@@ -247,13 +266,55 @@ const CollectionSchema = z
     }
   });
 
-const DatabaseSchema = z
+const TablesDBSchema = z
   .object({
     $id: z.string(),
+    $permissions: z.array(z.string()).optional(),
+    databaseId: z.string(),
     name: z.string(),
     enabled: z.boolean().optional(),
+    rowSecurity: z.boolean().default(true),
+    columns: z.array(ColumnSchema).optional(),
+    indexes: z.array(IndexTableSchema).optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((data, ctx) => {
+    if (data.columns && data.columns.length > 0) {
+      const seenKeys = new Set<string>();
+      const duplicateKeys = new Set<string>();
+
+      data.columns.forEach((col, index) => {
+        if (seenKeys.has(col.key)) {
+          duplicateKeys.add(col.key);
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Column with the key '${col.key}' already exists. Column keys must be unique, try again with a different key.`,
+            path: ["columns", index, "key"],
+          });
+        } else {
+          seenKeys.add(col.key);
+        }
+      });
+    }
+
+    if (data.indexes && data.indexes.length > 0) {
+      const seenKeys = new Set<string>();
+      const duplicateKeys = new Set<string>();
+
+      data.indexes.forEach((index, indexPos) => {
+        if (seenKeys.has(index.key)) {
+          duplicateKeys.add(index.key);
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Index with the key '${index.key}' already exists. Index keys must be unique, try again with a different key.`,
+            path: ["indexes", indexPos, "key"],
+          });
+        } else {
+          seenKeys.add(index.key);
+        }
+      });
+    }
+  });
 
 const BucketSchema = z
   .object({
@@ -367,6 +428,7 @@ const configSchema = z
     sites: z.array(SiteSchema).optional(),
     databases: z.array(DatabaseSchema).optional(),
     collections: z.array(CollectionSchema).optional(),
+    tablesDB: z.array(TablesDBSchema).optional(),
     topics: z.array(TopicSchema).optional(),
     teams: z.array(TeamSchema).optional(),
     buckets: z.array(BucketSchema).optional(),
@@ -375,19 +437,52 @@ const configSchema = z
   .strict();
 
 export type ConfigType = z.infer<typeof configSchema>;
+export type SettingsType = z.infer<typeof SettingsSchema>;
+export type FunctionType = z.infer<typeof FunctionSchema>;
+export type SiteType = z.infer<typeof SiteSchema>;
+export type DatabaseType = z.infer<typeof DatabaseSchema>;
+export type CollectionType = z.infer<typeof CollectionSchema>;
+export type TablesDBType = z.infer<typeof TablesDBSchema>;
+export type TopicType = z.infer<typeof TopicSchema>;
+export type TeamType = z.infer<typeof TeamSchema>;
+export type MessageType = z.infer<typeof MessageSchema>;
+export type BucketType = z.infer<typeof BucketSchema>;
+
 export {
   configSchema,
+
+  /** Project Settings */
+  SettingsSchema,
+
+  /** Functions and Sites */
   SiteSchema,
   FunctionSchema,
-  CollectionSchema,
+
+  /** Databases */
   DatabaseSchema,
-  BucketSchema,
-  TopicSchema,
-  TeamSchema,
-  MessageSchema,
-  SettingsSchema,
+
+  /** Collections (legacy) */
+  CollectionSchema,
   AttributeSchema,
-  AttributeSchemaBase,
   IndexSchema,
+
+  /** Tables */
+  TablesDBSchema,
+  ColumnSchema,
+  IndexTableSchema,
+
+  /** Topics */
+  TopicSchema,
+
+  /** Teams */
+  TeamSchema,
+
+  /** Messages */
+  MessageSchema,
+
+  /** Buckets */
+  BucketSchema,
+
+  /** Helper functions */
   createSettingsObject,
 };
