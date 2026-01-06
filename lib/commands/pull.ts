@@ -106,7 +106,7 @@ export class Pull {
   private async downloadDeploymentCode(params: {
     resourceId: string;
     resourcePath: string;
-    holdingVars: any[];
+    holdingVars: { key: string; value: string }[];
     withVariables?: boolean;
     listDeployments: () => Promise<any>;
     getDownloadUrl: (deploymentId: string) => string;
@@ -162,7 +162,7 @@ export class Pull {
 
       fs.writeFileSync(
         envFileLocation,
-        holdingVars.map((r: any) => `${r.key}=${r.value}\n`).join(""),
+        holdingVars.map((r) => `${r.key}=${r.value}\n`).join(""),
       );
     }
   }
