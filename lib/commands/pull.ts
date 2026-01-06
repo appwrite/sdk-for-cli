@@ -383,10 +383,10 @@ export class Pull {
 
     try {
       const sitesService = new Sites(this.projectClient);
-      let allSites: Models.Site[];
+      let sites: Models.Site[];
 
       if (options.siteIds && options.siteIds.length > 0) {
-        allSites = await Promise.all(
+        sites = await Promise.all(
           options.siteIds.map((id) =>
             sitesService.get({
               siteId: id,
@@ -408,12 +408,8 @@ export class Pull {
           100,
           "sites",
         );
-        allSites = fetchedSites;
+        sites = fetchedSites;
       }
-
-      const sites = options.siteIds
-        ? allSites.filter((s) => options.siteIds!.includes(s.$id))
-        : allSites;
 
       const result: SiteConfig[] = [];
 
