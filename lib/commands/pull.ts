@@ -933,7 +933,7 @@ export const pull = new Command("pull")
 
 pull
   .command("all")
-  .description("Pull all resource.")
+  .description("Pull all resources")
   .action(
     actionRunner(() => {
       cliConfig.all = true;
