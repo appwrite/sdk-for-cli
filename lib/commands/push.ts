@@ -62,12 +62,6 @@ import { Attributes, Collection } from "./utils/attributes.js";
 const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
 
-let pollMaxDebounces = POLL_DEFAULT_VALUE;
-
-// Shared instances
-const pools = new Pools(pollMaxDebounces);
-const attributes = new Attributes(pools);
-
 interface ObjectChange {
   group: string;
   setting: string;
@@ -1385,13 +1379,11 @@ const pushTable = async ({
 }: PushTableOptions = {}): Promise<void> => {
   const tables: any[] = [];
 
-  if (attempts) {
-    pollMaxDebounces = attempts;
-    pools.setPollMaxDebounces(attempts);
-  }
+  const pollMaxDebounces = attempts ?? POLL_DEFAULT_VALUE;
+  const pools = new Pools(pollMaxDebounces);
+  const attributes = new Attributes(pools);
 
-  const { applied: tablesDBApplied, resyncNeeded } =
-    await checkAndApplyTablesDBChanges();
+  const { resyncNeeded } = await checkAndApplyTablesDBChanges();
   if (resyncNeeded) {
     log("Resyncing configuration due to tablesDB deletions ...");
 
@@ -1649,16 +1641,17 @@ const pushTable = async ({
   success(`Successfully pushed ${tablesChanged.size} tables`);
 };
 
-const pushCollection = async ({ attempts }): Promise<void> => {
+const pushCollection = async ({
+  attempts,
+}: PushTableOptions = {}): Promise<void> => {
   warn(
     "appwrite push collection has been deprecated. Please consider using 'appwrite push tables' instead",
   );
   const collections: any[] = [];
 
-  if (attempts) {
-    pollMaxDebounces = attempts;
-    pools.setPollMaxDebounces(attempts);
-  }
+  // Create fresh instances per operation to avoid shared state issues
+  const pools = new Pools(attempts ?? POLL_DEFAULT_VALUE);
+  const attributes = new Attributes(pools);
 
   if (cliConfig.all) {
     checkDeployConditions(localConfig);
