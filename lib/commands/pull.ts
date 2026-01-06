@@ -13,6 +13,9 @@ import {
   TablesDB,
   Teams,
   Client,
+  AppwriteException,
+  Query,
+  Models,
 } from "@appwrite.io/console";
 import {
   getFunctionsService,
@@ -133,7 +136,11 @@ export class Pull {
       if (deployments["total"] > 0) {
         deploymentId = deployments["deployments"][0]["$id"];
       }
-    } catch {}
+    } catch (e: unknown) {
+      if (e instanceof AppwriteException) {
+        error(e.message);
+      }
+    }
 
     if (deploymentId === null) {
       return;
@@ -277,30 +284,38 @@ export class Pull {
 
     try {
       const functionsService = new Functions(this.projectClient);
+      let functions: Models.Function[];
 
-      const fetchResponse = await functionsService.list([
-        JSON.stringify({ method: "limit", values: [1] }),
-      ]);
+      if (options.functionIds && options.functionIds.length > 0) {
+        functions = await Promise.all(
+          options.functionIds.map((id) =>
+            functionsService.get({
+              functionId: id,
+            }),
+          ),
+        );
+      } else {
+        const fetchResponse = await functionsService.list({
+          queries: [Query.limit(1)],
+        });
 
-      if (fetchResponse["functions"].length <= 0) {
-        return [];
+        if (fetchResponse["functions"].length <= 0) {
+          return [];
+        }
+
+        const { functions: allFunctions } = await paginate(
+          async () => new Functions(this.projectClient).list(),
+          {},
+          100,
+          "functions",
+        );
+        functions = allFunctions;
       }
-
-      const { functions: allFunctions } = await paginate(
-        async () => new Functions(this.projectClient).list(),
-        {},
-        100,
-        "functions",
-      );
-
-      const functions = options.functionIds
-        ? allFunctions.filter((f) => options.functionIds!.includes(f.$id))
-        : allFunctions;
 
       const result: any[] = [];
 
       for (const func of functions) {
-        const funcPath = func.path || `functions/${func.name}`;
+        const funcPath = `functions/${func.name}`;
         func["path"] = funcPath;
 
         const holdingVars = func["vars"] || [];
@@ -350,21 +365,33 @@ export class Pull {
 
     try {
       const sitesService = new Sites(this.projectClient);
+      let allSites: Models.Site[];
 
-      const fetchResponse = await sitesService.list([
-        JSON.stringify({ method: "limit", values: [1] }),
-      ]);
+      if (options.siteIds && options.siteIds.length > 0) {
+        allSites = await Promise.all(
+          options.siteIds.map((id) =>
+            sitesService.get({
+              siteId: id,
+            }),
+          ),
+        );
+      } else {
+        const fetchResponse = await sitesService.list({
+          queries: [Query.limit(1)],
+        });
 
-      if (fetchResponse["sites"].length <= 0) {
-        return [];
+        if (fetchResponse["sites"].length <= 0) {
+          return [];
+        }
+
+        const { sites: fetchedSites } = await paginate(
+          async () => new Sites(this.projectClient).list(),
+          {},
+          100,
+          "sites",
+        );
+        allSites = fetchedSites;
       }
-
-      const { sites: allSites } = await paginate(
-        async () => new Sites(this.projectClient).list(),
-        {},
-        100,
-        "sites",
-      );
 
       const sites = options.siteIds
         ? allSites.filter((s) => options.siteIds!.includes(s.$id))
@@ -373,7 +400,7 @@ export class Pull {
       const result: any[] = [];
 
       for (const site of sites) {
-        const sitePath = site.path || `sites/${site.name}`;
+        const sitePath = `sites/${site.name}`;
         site["path"] = sitePath;
 
         const holdingVars = site["vars"] || [];
