@@ -51,10 +51,12 @@ import {
   getTeamsService,
   getProjectsService,
 } from "../services.js";
+import { sdkForProject, sdkForConsole } from "../sdks.js";
 import {
   ApiService,
   AuthMethod,
   AppwriteException,
+  Client,
 } from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
 import { Pools } from "./utils/pools.js";
@@ -93,10 +95,16 @@ interface PushTableOptions {
 }
 
 export class Push {
-  constructor() {}
+  private projectClient: Client;
+  private consoleClient: Client;
+
+  constructor(projectClient: Client, consoleClient: Client) {
+    this.projectClient = projectClient;
+    this.consoleClient = consoleClient;
+  }
 
   public async pushSettings(config: ConfigType): Promise<void> {
-    const projectsService = await getProjectsService();
+    const projectsService = await getProjectsService(this.consoleClient);
     const projectId = config.projectId;
     const projectName = config.projectName;
     const settings = config.settings ?? {};
@@ -167,7 +175,7 @@ export class Push {
   }
 
   public async pushBucket(bucket: any): Promise<void> {
-    const storageService = await getStorageService();
+    const storageService = await getStorageService(this.projectClient);
 
     try {
       await storageService.getBucket(bucket["$id"]);
@@ -204,7 +212,7 @@ export class Push {
   }
 
   public async pushTeam(team: any): Promise<void> {
-    const teamsService = await getTeamsService();
+    const teamsService = await getTeamsService(this.projectClient);
 
     try {
       await teamsService.get(team["$id"]);
@@ -225,7 +233,7 @@ export class Push {
   }
 
   public async pushMessagingTopic(topic: any): Promise<void> {
-    const messagingService = await getMessagingService();
+    const messagingService = await getMessagingService(this.projectClient);
 
     try {
       await messagingService.getTopic(topic["$id"]);
@@ -245,6 +253,79 @@ export class Push {
         throw e;
       }
     }
+  }
+
+  public async pushBuckets(buckets: any[]): Promise<{
+    successfullyPushed: number;
+    errors: any[];
+  }> {
+    let successfullyPushed = 0;
+    const errors: any[] = [];
+
+    for (const bucket of buckets) {
+      try {
+        log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
+        await this.pushBucket(bucket);
+        successfullyPushed++;
+      } catch (e: any) {
+        errors.push(e);
+        error(`Failed to push bucket ${bucket["name"]}: ${e.message}`);
+      }
+    }
+
+    return {
+      successfullyPushed,
+      errors,
+    };
+  }
+
+  public async pushTeams(teams: any[]): Promise<{
+    successfullyPushed: number;
+    errors: any[];
+  }> {
+    let successfullyPushed = 0;
+    const errors: any[] = [];
+
+    for (const team of teams) {
+      try {
+        log(`Pushing team ${chalk.bold(team["name"])} ...`);
+        await this.pushTeam(team);
+        successfullyPushed++;
+      } catch (e: any) {
+        errors.push(e);
+        error(`Failed to push team ${team["name"]}: ${e.message}`);
+      }
+    }
+
+    return {
+      successfullyPushed,
+      errors,
+    };
+  }
+
+  public async pushMessagingTopics(topics: any[]): Promise<{
+    successfullyPushed: number;
+    errors: any[];
+  }> {
+    let successfullyPushed = 0;
+    const errors: any[] = [];
+
+    for (const topic of topics) {
+      try {
+        log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
+        await this.pushMessagingTopic(topic);
+        success(`Created ${topic.name} ( ${topic["$id"]} )`);
+        successfullyPushed++;
+      } catch (e: any) {
+        errors.push(e);
+        error(`Failed to push topic ${topic["name"]}: ${e.message}`);
+      }
+    }
+
+    return {
+      successfullyPushed,
+      errors,
+    };
   }
 
   public async pushFunction(
@@ -284,7 +365,7 @@ export class Push {
         });
 
         updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
-        const functionsService = await getFunctionsService();
+        const functionsService = await getFunctionsService(this.projectClient);
         try {
           response = await functionsService.get({ functionId: func["$id"] });
           functionExists = true;
@@ -351,7 +432,9 @@ export class Push {
 
             let domain = "";
             try {
-              const consoleService = await getConsoleService();
+              const consoleService = await getConsoleService(
+                this.projectClient,
+              );
               const variables = await consoleService.variables();
               domain = ID.unique() + "." + variables["_APP_DOMAIN_FUNCTIONS"];
             } catch (error) {
@@ -360,7 +443,7 @@ export class Push {
             }
 
             try {
-              const proxyService = await getProxyService();
+              const proxyService = await getProxyService(this.projectClient);
               await proxyService.createFunctionRule(domain, func.$id);
             } catch (error) {
               console.error("Error creating function rule.");
@@ -383,10 +466,12 @@ export class Push {
             .update({ status: "Updating variables" })
             .replaceSpinner(SPINNER_DOTS);
 
-          const functionsService = await getFunctionsService();
+          const functionsServiceForVars = await getFunctionsService(
+            this.projectClient,
+          );
           const { variables } = await paginate(
             async (args: any) => {
-              return await functionsService.listVariables({
+              return await functionsServiceForVars.listVariables({
                 functionId: args.functionId,
               });
             },
@@ -399,8 +484,10 @@ export class Push {
 
           await Promise.all(
             variables.map(async (variable: any) => {
-              const functionsService = await getFunctionsService();
-              await functionsService.deleteVariable({
+              const functionsServiceDel = await getFunctionsService(
+                this.projectClient,
+              );
+              await functionsServiceDel.deleteVariable({
                 functionId: func["$id"],
                 variableId: variable["$id"],
               });
@@ -423,8 +510,10 @@ export class Push {
           }
           await Promise.all(
             envVariables.map(async (variable) => {
-              const functionsService = await getFunctionsService();
-              await functionsService.createVariable({
+              const functionsServiceCreate = await getFunctionsService(
+                this.projectClient,
+              );
+              await functionsServiceCreate.createVariable({
                 functionId: func["$id"],
                 key: variable.key,
                 value: variable.value,
@@ -444,8 +533,10 @@ export class Push {
 
         try {
           updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_DOTS);
-          const functionsService = await getFunctionsService();
-          response = await functionsService.createDeployment({
+          const functionsServiceDeploy = await getFunctionsService(
+            this.projectClient,
+          );
+          response = await functionsServiceDeploy.createDeployment({
             functionId: func["$id"],
             entrypoint: func.entrypoint,
             commands: func.commands,
@@ -482,8 +573,10 @@ export class Push {
             });
 
             while (true) {
-              const functionsService = await getFunctionsService();
-              response = await functionsService.getDeployment({
+              const functionsServicePoll = await getFunctionsService(
+                this.projectClient,
+              );
+              response = await functionsServicePoll.getDeployment({
                 functionId: func["$id"],
                 deploymentId: deploymentId,
               });
@@ -493,8 +586,10 @@ export class Push {
                 successfullyDeployed++;
 
                 let url = "";
-                const proxyService = await getProxyService();
-                const res = await proxyService.listRules([
+                const proxyServiceUrl = await getProxyService(
+                  this.projectClient,
+                );
+                const res = await proxyServiceUrl.listRules([
                   JSON.stringify({ method: "limit", values: [1] }),
                   JSON.stringify({
                     method: "equal",
@@ -601,7 +696,7 @@ export class Push {
 
         updaterRow.update({ status: "Getting" }).startSpinner(SPINNER_DOTS);
 
-        const sitesService = await getSitesService();
+        const sitesService = await getSitesService(this.projectClient);
         try {
           response = await sitesService.get({ siteId: site["$id"] });
           siteExists = true;
@@ -666,7 +761,9 @@ export class Push {
 
             let domain = "";
             try {
-              const consoleService = await getConsoleService();
+              const consoleService = await getConsoleService(
+                this.projectClient,
+              );
               const variables = await consoleService.variables();
               domain = ID.unique() + "." + variables["_APP_DOMAIN_SITES"];
             } catch (error) {
@@ -675,7 +772,7 @@ export class Push {
             }
 
             try {
-              const proxyService = await getProxyService();
+              const proxyService = await getProxyService(this.projectClient);
               await proxyService.createSiteRule(domain, site.$id);
             } catch (error) {
               console.error("Error creating site rule.");
@@ -698,10 +795,12 @@ export class Push {
             .update({ status: "Creating variables" })
             .replaceSpinner(SPINNER_DOTS);
 
-          const sitesService = await getSitesService();
+          const sitesServiceForVars = await getSitesService(this.projectClient);
           const { variables } = await paginate(
             async (args: any) => {
-              return await sitesService.listVariables({ siteId: args.siteId });
+              return await sitesServiceForVars.listVariables({
+                siteId: args.siteId,
+              });
             },
             {
               siteId: site["$id"],
@@ -712,8 +811,8 @@ export class Push {
 
           await Promise.all(
             variables.map(async (variable: any) => {
-              const sitesService = await getSitesService();
-              await sitesService.deleteVariable({
+              const sitesServiceDel = await getSitesService(this.projectClient);
+              await sitesServiceDel.deleteVariable({
                 siteId: site["$id"],
                 variableId: variable["$id"],
               });
@@ -736,8 +835,10 @@ export class Push {
           }
           await Promise.all(
             envVariables.map(async (variable) => {
-              const sitesService = await getSitesService();
-              await sitesService.createVariable({
+              const sitesServiceCreate = await getSitesService(
+                this.projectClient,
+              );
+              await sitesServiceCreate.createVariable({
                 siteId: site["$id"],
                 key: variable.key,
                 value: variable.value,
@@ -757,8 +858,8 @@ export class Push {
 
         try {
           updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_DOTS);
-          const sitesService = await getSitesService();
-          response = await sitesService.createDeployment({
+          const sitesServiceDeploy = await getSitesService(this.projectClient);
+          response = await sitesServiceDeploy.createDeployment({
             siteId: site["$id"],
             installCommand: site.installCommand,
             buildCommand: site.buildCommand,
@@ -796,8 +897,10 @@ export class Push {
             });
 
             while (true) {
-              const sitesService = await getSitesService();
-              response = await sitesService.getDeployment({
+              const sitesServicePoll = await getSitesService(
+                this.projectClient,
+              );
+              response = await sitesServicePoll.getDeployment({
                 siteId: site["$id"],
                 deploymentId: deploymentId,
               });
@@ -807,8 +910,10 @@ export class Push {
                 successfullyDeployed++;
 
                 let url = "";
-                const proxyService = await getProxyService();
-                const res = await proxyService.listRules([
+                const proxyServiceUrl = await getProxyService(
+                  this.projectClient,
+                );
+                const res = await proxyServiceUrl.listRules([
                   JSON.stringify({ method: "limit", values: [1] }),
                   JSON.stringify({
                     method: "equal",
@@ -886,7 +991,7 @@ export class Push {
     url?: string;
   }> {
     if (resourceType === "function") {
-      const functionsService = await getFunctionsService();
+      const functionsService = await getFunctionsService(this.projectClient);
       const response = await functionsService.getDeployment({
         functionId: resourceId,
         deploymentId: deploymentId,
@@ -896,7 +1001,7 @@ export class Push {
       let url = "";
 
       if (status === "ready") {
-        const proxyService = await getProxyService();
+        const proxyService = await getProxyService(this.projectClient);
         const res = await proxyService.listRules([
           JSON.stringify({ method: "limit", values: [1] }),
           JSON.stringify({
@@ -923,7 +1028,7 @@ export class Push {
 
       return { status, url };
     } else {
-      const sitesService = await getSitesService();
+      const sitesService = await getSitesService(this.projectClient);
       const response = await sitesService.getDeployment({
         siteId: resourceId,
         deploymentId: deploymentId,
@@ -933,7 +1038,7 @@ export class Push {
       let url = "";
 
       if (status === "ready") {
-        const proxyService = await getProxyService();
+        const proxyService = await getProxyService(this.projectClient);
         const res = await proxyService.listRules([
           JSON.stringify({ method: "limit", values: [1] }),
           JSON.stringify({
@@ -964,7 +1069,9 @@ export class Push {
 }
 
 async function createPushInstance(): Promise<Push> {
-  return new Push();
+  const projectClient = await sdkForProject();
+  const consoleClient = await sdkForConsole();
+  return new Push(projectClient, consoleClient);
 }
 
 const pushResources = async ({
@@ -1821,13 +1928,19 @@ const pushBucket = async (): Promise<void> => {
   log("Pushing buckets ...");
 
   const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushBuckets(buckets);
 
-  for (let bucket of buckets) {
-    log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
-    await pushInstance.pushBucket(bucket);
+  const { successfullyPushed, errors } = result;
+
+  if (successfullyPushed === 0) {
+    error("No buckets were pushed.");
+  } else {
+    success(`Successfully pushed ${successfullyPushed} buckets.`);
   }
 
-  success(`Successfully pushed ${buckets.length} buckets.`);
+  if (cliConfig.verbose) {
+    errors.forEach((e) => console.error(e));
+  }
 };
 
 const pushTeam = async (): Promise<void> => {
@@ -1879,13 +1992,19 @@ const pushTeam = async (): Promise<void> => {
   log("Pushing teams ...");
 
   const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushTeams(teams);
 
-  for (let team of teams) {
-    log(`Pushing team ${chalk.bold(team["name"])} ...`);
-    await pushInstance.pushTeam(team);
+  const { successfullyPushed, errors } = result;
+
+  if (successfullyPushed === 0) {
+    error("No teams were pushed.");
+  } else {
+    success(`Successfully pushed ${successfullyPushed} teams.`);
   }
 
-  success(`Successfully pushed ${teams.length} teams.`);
+  if (cliConfig.verbose) {
+    errors.forEach((e) => console.error(e));
+  }
 };
 
 const pushMessagingTopic = async (): Promise<void> => {
@@ -1937,14 +2056,19 @@ const pushMessagingTopic = async (): Promise<void> => {
   log("Pushing topics ...");
 
   const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushMessagingTopics(topics);
 
-  for (let topic of topics) {
-    log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
-    await pushInstance.pushMessagingTopic(topic);
-    success(`Created ${topic.name} ( ${topic["$id"]} )`);
+  const { successfullyPushed, errors } = result;
+
+  if (successfullyPushed === 0) {
+    error("No topics were pushed.");
+  } else {
+    success(`Successfully pushed ${successfullyPushed} topics.`);
   }
 
-  success(`Successfully pushed ${topics.length} topics.`);
+  if (cliConfig.verbose) {
+    errors.forEach((e) => console.error(e));
+  }
 };
 
 export const push = new Command("push")
