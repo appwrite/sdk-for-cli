@@ -51,7 +51,11 @@ import {
   getTeamsService,
   getProjectsService,
 } from "../services.js";
-import { ApiService, AuthMethod } from "@appwrite.io/console";
+import {
+  ApiService,
+  AuthMethod,
+  AppwriteException,
+} from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
 import { Pools } from "./utils/pools.js";
 import { Attributes, Collection } from "./utils/attributes.js";
@@ -98,62 +102,65 @@ export class Push {
     const settings = config.settings ?? {};
 
     if (projectName) {
-      await projectsService.update(projectId, projectName);
+      await projectsService.update({
+        projectId: projectId,
+        name: projectName,
+      });
     }
 
     if (settings.services) {
       for (let [service, status] of Object.entries(settings.services)) {
-        await projectsService.updateServiceStatus(
-          projectId,
-          service as ApiService,
-          status,
-        );
+        await projectsService.updateServiceStatus({
+          projectId: projectId,
+          service: service as ApiService,
+          status: status,
+        });
       }
     }
 
     if (settings.auth) {
       if (settings.auth.security) {
-        await projectsService.updateAuthDuration(
+        await projectsService.updateAuthDuration({
           projectId,
-          settings.auth.security.duration,
-        );
-        await projectsService.updateAuthLimit(
+          duration: settings.auth.security.duration,
+        });
+        await projectsService.updateAuthLimit({
           projectId,
-          settings.auth.security.limit,
-        );
-        await projectsService.updateAuthSessionsLimit(
+          limit: settings.auth.security.limit,
+        });
+        await projectsService.updateAuthSessionsLimit({
           projectId,
-          settings.auth.security.sessionsLimit,
-        );
-        await projectsService.updateAuthPasswordDictionary(
+          limit: settings.auth.security.sessionsLimit,
+        });
+        await projectsService.updateAuthPasswordDictionary({
           projectId,
-          settings.auth.security.passwordDictionary,
-        );
-        await projectsService.updateAuthPasswordHistory(
+          enabled: settings.auth.security.passwordDictionary,
+        });
+        await projectsService.updateAuthPasswordHistory({
           projectId,
-          settings.auth.security.passwordHistory,
-        );
-        await projectsService.updatePersonalDataCheck(
+          limit: settings.auth.security.passwordHistory,
+        });
+        await projectsService.updatePersonalDataCheck({
           projectId,
-          settings.auth.security.personalDataCheck,
-        );
-        await projectsService.updateSessionAlerts(
+          enabled: settings.auth.security.personalDataCheck,
+        });
+        await projectsService.updateSessionAlerts({
           projectId,
-          settings.auth.security.sessionAlerts,
-        );
-        await projectsService.updateMockNumbers(
+          alerts: settings.auth.security.sessionAlerts,
+        });
+        await projectsService.updateMockNumbers({
           projectId,
-          settings.auth.security.mockNumbers,
-        );
+          numbers: settings.auth.security.mockNumbers,
+        });
       }
 
       if (settings.auth.methods) {
         for (let [method, status] of Object.entries(settings.auth.methods)) {
-          await projectsService.updateAuthStatus(
+          await projectsService.updateAuthStatus({
             projectId,
-            method as AuthMethod,
-            status,
-          );
+            method: method as AuthMethod,
+            status: status,
+          });
         }
       }
     }
@@ -176,8 +183,8 @@ export class Push {
         antivirus: bucket.antivirus,
         compression: bucket.compression,
       });
-    } catch (e: any) {
-      if (Number(e.code) === 404) {
+    } catch (e: unknown) {
+      if (e instanceof AppwriteException && Number(e.code) === 404) {
         await storageService.createBucket({
           bucketId: bucket["$id"],
           name: bucket.name,
@@ -201,10 +208,16 @@ export class Push {
 
     try {
       await teamsService.get(team["$id"]);
-      await teamsService.updateName(team["$id"], team.name);
-    } catch (e: any) {
-      if (Number(e.code) === 404) {
-        await teamsService.create(team["$id"], team.name);
+      await teamsService.updateName({
+        teamId: team["$id"],
+        name: team.name,
+      });
+    } catch (e: unknown) {
+      if (e instanceof AppwriteException && Number(e.code) === 404) {
+        await teamsService.create({
+          teamId: team["$id"],
+          name: team.name,
+        });
       } else {
         throw e;
       }
@@ -216,18 +229,18 @@ export class Push {
 
     try {
       await messagingService.getTopic(topic["$id"]);
-      await messagingService.updateTopic(
-        topic["$id"],
-        topic.name,
-        topic.subscribe,
-      );
-    } catch (e: any) {
-      if (Number(e.code) === 404) {
-        await messagingService.createTopic(
-          topic["$id"],
-          topic.name,
-          topic.subscribe,
-        );
+      await messagingService.updateTopic({
+        topicId: topic["$id"],
+        name: topic.name,
+        subscribe: topic.subscribe,
+      });
+    } catch (e: unknown) {
+      if (e instanceof AppwriteException && Number(e.code) === 404) {
+        await messagingService.createTopic({
+          topicId: topic["$id"],
+          name: topic.name,
+          subscribe: topic.subscribe,
+        });
       } else {
         throw e;
       }
