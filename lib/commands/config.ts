@@ -136,7 +136,7 @@ const int64Schema = z.preprocess(
 
       if (val < INT64_MIN || val > INT64_MAX) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: `must be between ${INT64_MIN} and ${INT64_MAX} (64-bit signed integer range)`,
         });
       }
