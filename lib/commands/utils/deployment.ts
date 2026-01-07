@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import tar from "tar";
 import { Client, AppwriteException } from "@appwrite.io/console";
+import { error } from "../../parser.js";
 
 const POLL_DEBOUNCE = 2000; // Milliseconds
 
@@ -59,7 +60,7 @@ export async function downloadDeploymentCode(params: {
     }
   } catch (e: unknown) {
     if (e instanceof AppwriteException) {
-      this.error(e.message);
+      error(e.message);
       return;
     } else {
       throw e;
