@@ -46,6 +46,9 @@ import { tokens } from "./lib/commands/services/tokens.js";
 import { users } from "./lib/commands/services/users.js";
 import { vcs } from "./lib/commands/services/vcs.js";
 import searchList from "inquirer-search-list";
+import { Push } from "./lib/commands/push.js";
+import { Pull } from "./lib/commands/pull.js";
+import { Schema } from "./lib/commands/schema.js";
 
 inquirer.registerPrompt("search-list", searchList);
 
@@ -166,3 +169,5 @@ if (process.argv.includes("-v") || process.argv.includes("--version")) {
 
   process.stdout.columns = oldWidth;
 }
+
+export { Schema, Push, Pull };

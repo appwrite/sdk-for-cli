@@ -75,8 +75,18 @@ import { checkAndApplyTablesDBChanges } from "./utils/database-sync.js";
 const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
 
-interface PushResourcesOptions {
+export interface PushOptions {
   skipDeprecated?: boolean;
+  functionOptions?: {
+    async?: boolean;
+    code?: boolean;
+    withVariables?: boolean;
+  };
+  siteOptions?: {
+    async?: boolean;
+    code?: boolean;
+    withVariables?: boolean;
+  };
 }
 
 interface PushSiteOptions {
@@ -108,20 +118,7 @@ export class Push {
 
   public async pushResources(
     config: ConfigType,
-    options: {
-      skipDeprecated?: boolean;
-      functionOptions?: {
-        async?: boolean;
-        code?: boolean;
-        withVariables?: boolean;
-      };
-      siteOptions?: {
-        async?: boolean;
-        code?: boolean;
-        withVariables?: boolean;
-      };
-      attempts?: number;
-    } = { skipDeprecated: true },
+    options: PushOptions = { skipDeprecated: true },
   ): Promise<{
     results: Record<string, any>;
     errors: any[];
@@ -228,7 +225,7 @@ export class Push {
     if (config.tables && config.tables.length > 0) {
       try {
         log("Pushing tables ...");
-        const result = await this.pushTables(config.tables, options.attempts);
+        const result = await this.pushTables(config.tables);
         results.tables = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -257,10 +254,7 @@ export class Push {
             };
           },
         );
-        const result = await this.pushCollections(
-          collectionsWithDbNames,
-          options.attempts,
-        );
+        const result = await this.pushCollections(collectionsWithDbNames);
         results.collections = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -1275,14 +1269,11 @@ export class Push {
     };
   }
 
-  public async pushCollections(
-    collections: any[],
-    attempts?: number,
-  ): Promise<{
+  public async pushCollections(collections: any[]): Promise<{
     successfullyPushed: number;
     errors: any[];
   }> {
-    const pools = new Pools(attempts ?? POLL_DEFAULT_VALUE);
+    const pools = new Pools(POLL_DEFAULT_VALUE);
     const attributes = new Attributes(pools);
 
     const errors: any[] = [];
@@ -1438,7 +1429,9 @@ async function createPushInstance(): Promise<Push> {
 
 const pushResources = async ({
   skipDeprecated = false,
-}: PushResourcesOptions = {}): Promise<void> => {
+}: {
+  skipDeprecated?: boolean;
+} = {}): Promise<void> => {
   if (cliConfig.all) {
     checkDeployConditions(localConfig);
 
@@ -1966,9 +1959,7 @@ const pushTable = async ({
   }
 };
 
-const pushCollection = async ({
-  attempts,
-}: PushTableOptions = {}): Promise<void> => {
+const pushCollection = async ({}: PushTableOptions = {}): Promise<void> => {
   warn(
     "appwrite push collection has been deprecated. Please consider using 'appwrite push tables' instead",
   );
@@ -2029,7 +2020,7 @@ const pushCollection = async ({
   log("Pushing collections ...");
 
   const pushInstance = await createPushInstance();
-  const result = await pushInstance.pushCollections(collections, attempts);
+  const result = await pushInstance.pushCollections(collections);
 
   const { successfullyPushed, errors } = result;
 
