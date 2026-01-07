@@ -51,6 +51,7 @@ import type {
   FunctionConfig,
   SiteConfig,
 } from "../types.js";
+import { downloadDeploymentCode } from "./utils/deployment.js";
 
 export interface PullOptions {
   all?: boolean;
@@ -141,84 +142,6 @@ export class Pull {
   private warn(message: string): void {
     if (!this.silent) {
       warn(message);
-    }
-  }
-
-  /**
-   * Download and extract deployment code for a resource
-   */
-  private async downloadDeploymentCode(params: {
-    resourceId: string;
-    resourcePath: string;
-    holdingVars: { key: string; value: string }[];
-    withVariables?: boolean;
-    listDeployments: () => Promise<any>;
-    getDownloadUrl: (deploymentId: string) => string;
-  }): Promise<void> {
-    const {
-      resourceId,
-      resourcePath,
-      holdingVars,
-      withVariables,
-      listDeployments,
-      getDownloadUrl,
-    } = params;
-
-    let deploymentId: string | null = null;
-    try {
-      const deployments = await listDeployments();
-      if (deployments["total"] > 0) {
-        deploymentId = deployments["deployments"][0]["$id"];
-      }
-    } catch (e: unknown) {
-      if (e instanceof AppwriteException) {
-        error(e.message);
-      }
-    }
-
-    if (deploymentId === null) {
-      return;
-    }
-
-    const compressedFileName = `${resourceId}-${+new Date()}.tar.gz`;
-    const downloadUrl = getDownloadUrl(deploymentId);
-
-    const downloadBuffer = await this.projectClient.call(
-      "get",
-      new URL(downloadUrl),
-      {},
-      {},
-      "arrayBuffer",
-    );
-
-    try {
-      fs.writeFileSync(compressedFileName, Buffer.from(downloadBuffer as any));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      throw new Error(
-        `Failed to write deployment archive to "${compressedFileName}": ${message}`,
-      );
-    }
-
-    tar.extract({
-      sync: true,
-      cwd: resourcePath,
-      file: compressedFileName,
-      strict: false,
-    });
-
-    fs.rmSync(compressedFileName);
-
-    if (withVariables) {
-      const envFileLocation = `${resourcePath}/.env`;
-      try {
-        fs.rmSync(envFileLocation);
-      } catch {}
-
-      fs.writeFileSync(
-        envFileLocation,
-        holdingVars.map((r) => `${r.key}=${r.value}\n`).join(""),
-      );
     }
   }
 
@@ -385,7 +308,7 @@ export class Pull {
         }
 
         if (options.code !== false) {
-          await this.downloadDeploymentCode({
+          await downloadDeploymentCode({
             resourceId: func["$id"],
             resourcePath: funcPath,
             holdingVars,
@@ -400,6 +323,7 @@ export class Pull {
                 functionId: func["$id"],
                 deploymentId,
               }),
+            projectClient: this.projectClient,
           });
         }
       }
@@ -492,7 +416,7 @@ export class Pull {
         }
 
         if (options.code !== false) {
-          await this.downloadDeploymentCode({
+          await downloadDeploymentCode({
             resourceId: site["$id"],
             resourcePath: sitePath,
             holdingVars,
@@ -507,6 +431,7 @@ export class Pull {
                 siteId: site["$id"],
                 deploymentId,
               }),
+            projectClient: this.projectClient,
           });
         }
       }

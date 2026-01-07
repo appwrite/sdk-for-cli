@@ -21,7 +21,7 @@ import type { SettingsType } from "./config.js";
 import type { ConfigType } from "./config.js";
 import { Spinner, SPINNER_DOTS } from "../spinner.js";
 import { paginate } from "../paginate.js";
-import { packageDirectory } from "../utils.js";
+import { pushDeployment } from "./utils/deployment.js";
 import {
   questionsPushBuckets,
   questionsPushTeams,
@@ -705,16 +705,23 @@ export class Push {
             this.projectClient,
           );
 
-          const codeFile = await packageDirectory(func.path);
-          response = await functionsServiceDeploy.createDeployment({
-            functionId: func["$id"],
-            entrypoint: func.entrypoint,
-            commands: func.commands,
-            code: codeFile,
-            activate: true,
+          const result = await pushDeployment({
+            resourcePath: func.path,
+            createDeployment: async (codeFile) => {
+              return await functionsServiceDeploy.createDeployment({
+                functionId: func["$id"],
+                entrypoint: func.entrypoint,
+                commands: func.commands,
+                code: codeFile,
+                activate: true,
+              });
+            },
+            pollForStatus: false,
           });
 
+          response = result.deployment;
           updaterRow.update({ status: "Pushed" });
+
           deploymentCreated = true;
           successfullyPushed++;
         } catch (e: any) {
@@ -779,7 +786,7 @@ export class Push {
                 ]);
 
                 if (Number(res.total) === 1) {
-                  url = res.rules[0].domain;
+                  url = `https://${res.rules[0].domain}`;
                 }
 
                 updaterRow.update({ status: "Deployed", end: url });
@@ -1030,16 +1037,22 @@ export class Push {
           updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_DOTS);
           const sitesServiceDeploy = await getSitesService(this.projectClient);
 
-          const codeFile = await packageDirectory(site.path);
-          response = await sitesServiceDeploy.createDeployment({
-            siteId: site["$id"],
-            installCommand: site.installCommand,
-            buildCommand: site.buildCommand,
-            outputDirectory: site.outputDirectory,
-            code: codeFile,
-            activate: true,
+          const result = await pushDeployment({
+            resourcePath: site.path,
+            createDeployment: async (codeFile) => {
+              return await sitesServiceDeploy.createDeployment({
+                siteId: site["$id"],
+                installCommand: site.installCommand,
+                buildCommand: site.buildCommand,
+                outputDirectory: site.outputDirectory,
+                code: codeFile,
+                activate: true,
+              });
+            },
+            pollForStatus: false,
           });
 
+          response = result.deployment;
           updaterRow.update({ status: "Pushed" });
           deploymentCreated = true;
           successfullyPushed++;
@@ -1105,7 +1118,7 @@ export class Push {
                 ]);
 
                 if (Number(res.total) === 1) {
-                  url = res.rules[0].domain;
+                  url = `https://${res.rules[0].domain}`;
                 }
 
                 updaterRow.update({ status: "Deployed", end: url });
