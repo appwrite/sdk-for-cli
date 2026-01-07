@@ -5,6 +5,7 @@ import childProcess from "child_process";
 import chalk from "chalk";
 import { fetch } from "undici";
 import { localConfig, globalConfig } from "./config.js";
+import tar from "tar";
 
 /**
  * Get the latest version from npm registry
@@ -349,4 +350,27 @@ export function isCloud(): boolean {
   const endpoint = globalConfig.getEndpoint() || "https://cloud.appwrite.io/v1";
   const hostname = new URL(endpoint).hostname;
   return hostname.endsWith("appwrite.io");
+}
+
+/**
+ * Package a directory into a tar.gz File object for deployment
+ */
+export async function packageDirectory(dirPath: string): Promise<File> {
+  const tempFile = `${dirPath.replace(/[^a-zA-Z0-9]/g, "_")}-${Date.now()}.tar.gz`;
+
+  await tar.create(
+    {
+      gzip: true,
+      file: tempFile,
+      cwd: dirPath,
+    },
+    ["."],
+  );
+
+  const buffer = fs.readFileSync(tempFile);
+  fs.unlinkSync(tempFile);
+
+  return new File([buffer], path.basename(tempFile), {
+    type: "application/gzip",
+  });
 }

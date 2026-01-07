@@ -1,4 +1,6 @@
 import fs from "fs";
+import path from "path";
+import tar from "tar";
 import { parse as parseDotenv } from "dotenv";
 import chalk from "chalk";
 import inquirer from "inquirer";
@@ -19,6 +21,7 @@ import type { SettingsType } from "./config.js";
 import type { ConfigType } from "./config.js";
 import { Spinner, SPINNER_DOTS } from "../spinner.js";
 import { paginate } from "../paginate.js";
+import { packageDirectory } from "../utils.js";
 import {
   questionsPushBuckets,
   questionsPushTeams,
@@ -701,11 +704,13 @@ export class Push {
           const functionsServiceDeploy = await getFunctionsService(
             this.projectClient,
           );
+
+          const codeFile = await packageDirectory(func.path);
           response = await functionsServiceDeploy.createDeployment({
             functionId: func["$id"],
             entrypoint: func.entrypoint,
             commands: func.commands,
-            code: func.path,
+            code: codeFile,
             activate: true,
           });
 
@@ -1024,12 +1029,14 @@ export class Push {
         try {
           updaterRow.update({ status: "Pushing" }).replaceSpinner(SPINNER_DOTS);
           const sitesServiceDeploy = await getSitesService(this.projectClient);
+
+          const codeFile = await packageDirectory(site.path);
           response = await sitesServiceDeploy.createDeployment({
             siteId: site["$id"],
             installCommand: site.installCommand,
             buildCommand: site.buildCommand,
             outputDirectory: site.outputDirectory,
-            code: site.path,
+            code: codeFile,
             activate: true,
           });
 

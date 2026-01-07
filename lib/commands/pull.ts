@@ -101,11 +101,13 @@ export class Pull {
   private projectClient: Client;
   private consoleClient: Client;
   private configDirectoryPath: string;
+  private silent: boolean;
 
-  constructor(projectClient: Client, consoleClient: Client) {
+  constructor(projectClient: Client, consoleClient: Client, silent = false) {
     this.projectClient = projectClient;
     this.consoleClient = consoleClient;
     this.configDirectoryPath = process.cwd();
+    this.silent = silent;
   }
 
   /**
@@ -113,6 +115,33 @@ export class Pull {
    */
   public setConfigDirectoryPath(path: string): void {
     this.configDirectoryPath = path;
+  }
+
+  /**
+   * Log a message (respects silent mode)
+   */
+  private log(message: string): void {
+    if (!this.silent) {
+      log(message);
+    }
+  }
+
+  /**
+   * Log a success message (respects silent mode)
+   */
+  private success(message: string): void {
+    if (!this.silent) {
+      success(message);
+    }
+  }
+
+  /**
+   * Log a warning message (respects silent mode)
+   */
+  private warn(message: string): void {
+    if (!this.silent) {
+      warn(message);
+    }
   }
 
   /**
@@ -267,12 +296,15 @@ export class Pull {
    * Pull project settings
    */
   public async pullSettings(projectId: string): Promise<PullSettingsResult> {
+    this.log("Pulling project settings ...");
+
     const projectsService = new Projects(this.consoleClient);
-    const response = await projectsService.get(projectId);
-    const rawSettings = response as RawProjectSettings;
+    const rawSettings = await projectsService.get({ projectId: projectId });
+
+    this.success(`Successfully pulled ${chalk.bold("all")} project settings.`);
 
     return {
-      projectName: response.name,
+      projectName: rawSettings.name,
       settings: createSettingsObject(rawSettings),
       rawSettings,
     };
@@ -284,6 +316,8 @@ export class Pull {
   public async pullFunctions(
     options: PullFunctionsOptions = {},
   ): Promise<FunctionConfig[]> {
+    this.log("Fetching functions ...");
+
     const originalCwd = process.cwd();
     process.chdir(this.configDirectoryPath);
 
@@ -305,6 +339,8 @@ export class Pull {
         });
 
         if (fetchResponse["functions"].length <= 0) {
+          this.log("No functions found.");
+          this.success(`Successfully pulled ${chalk.bold(0)} functions.`);
           return [];
         }
 
@@ -320,6 +356,8 @@ export class Pull {
       const result: FunctionConfig[] = [];
 
       for (const func of functions) {
+        this.log(`Pulling function ${chalk.bold(func.name)} ...`);
+
         const funcPath = `functions/${func.name}`;
         const holdingVars = func.vars || [];
 
@@ -366,6 +404,13 @@ export class Pull {
         }
       }
 
+      if (options.code === false) {
+        this.warn("Source code download skipped.");
+      }
+
+      this.success(
+        `Successfully pulled ${chalk.bold(result.length)} functions.`,
+      );
       return result;
     } finally {
       process.chdir(originalCwd);
@@ -378,6 +423,8 @@ export class Pull {
   public async pullSites(
     options: PullSitesOptions = {},
   ): Promise<SiteConfig[]> {
+    this.log("Fetching sites ...");
+
     const originalCwd = process.cwd();
     process.chdir(this.configDirectoryPath);
 
@@ -399,6 +446,8 @@ export class Pull {
         });
 
         if (fetchResponse["sites"].length <= 0) {
+          this.log("No sites found.");
+          this.success(`Successfully pulled ${chalk.bold(0)} sites.`);
           return [];
         }
 
@@ -414,6 +463,8 @@ export class Pull {
       const result: SiteConfig[] = [];
 
       for (const site of sites) {
+        this.log(`Pulling site ${chalk.bold(site.name)} ...`);
+
         const sitePath = `sites/${site.name}`;
         const holdingVars = site.vars || [];
 
@@ -460,6 +511,11 @@ export class Pull {
         }
       }
 
+      if (options.code === false) {
+        this.warn("Source code download skipped.");
+      }
+
+      this.success(`Successfully pulled ${chalk.bold(result.length)} sites.`);
       return result;
     } finally {
       process.chdir(originalCwd);
@@ -473,11 +529,20 @@ export class Pull {
     databases: any[];
     collections: any[];
   }> {
+    this.warn(
+      "appwrite pull collection has been deprecated. Please consider using 'appwrite pull tables' instead",
+    );
+    this.log("Fetching collections ...");
+
     const databasesService = new Databases(this.projectClient);
 
     const fetchResponse = await databasesService.list([Query.limit(1)]);
 
     if (fetchResponse["databases"].length <= 0) {
+      this.log("No collections found.");
+      this.success(
+        `Successfully pulled ${chalk.bold(0)} collections from ${chalk.bold(0)} databases.`,
+      );
       return { databases: [], collections: [] };
     }
 
@@ -492,6 +557,9 @@ export class Pull {
     const allCollections: any[] = [];
 
     for (const database of databases) {
+      this.log(
+        `Pulling all collections from ${chalk.bold(database.name)} database ...`,
+      );
       allDatabases.push(database);
 
       const { collections } = await paginate(
@@ -511,6 +579,10 @@ export class Pull {
       }
     }
 
+    this.success(
+      `Successfully pulled ${chalk.bold(allCollections.length)} collections from ${chalk.bold(allDatabases.length)} databases.`,
+    );
+
     return {
       databases: allDatabases,
       collections: allCollections,
@@ -524,6 +596,8 @@ export class Pull {
     databases: any[];
     tables: any[];
   }> {
+    this.log("Fetching tables ...");
+
     const tablesDBService = new TablesDB(this.projectClient);
 
     const fetchResponse = await tablesDBService.list({
@@ -531,6 +605,10 @@ export class Pull {
     });
 
     if (fetchResponse["databases"].length <= 0) {
+      this.log("No tables found.");
+      this.success(
+        `Successfully pulled ${chalk.bold(0)} tables from ${chalk.bold(0)} tableDBs.`,
+      );
       return { databases: [], tables: [] };
     }
 
@@ -545,6 +623,9 @@ export class Pull {
     const allTables: any[] = [];
 
     for (const database of databases) {
+      this.log(
+        `Pulling all tables from ${chalk.bold(database.name)} database ...`,
+      );
       allDatabases.push(database);
 
       const { tables } = await paginate(
@@ -563,6 +644,10 @@ export class Pull {
       }
     }
 
+    this.success(
+      `Successfully pulled ${chalk.bold(allTables.length)} tables from ${chalk.bold(allDatabases.length)} tableDBs.`,
+    );
+
     return {
       databases: allDatabases,
       tables: allTables,
@@ -573,6 +658,8 @@ export class Pull {
    * Pull storage buckets from the project
    */
   public async pullBuckets(): Promise<any[]> {
+    this.log("Fetching buckets ...");
+
     const storageService = new Storage(this.projectClient);
 
     const fetchResponse = await storageService.listBuckets({
@@ -580,6 +667,8 @@ export class Pull {
     });
 
     if (fetchResponse["buckets"].length <= 0) {
+      this.log("No buckets found.");
+      this.success(`Successfully pulled ${chalk.bold(0)} buckets.`);
       return [];
     }
 
@@ -590,6 +679,12 @@ export class Pull {
       "buckets",
     );
 
+    for (const bucket of buckets) {
+      this.log(`Pulling bucket ${chalk.bold(bucket.name)} ...`);
+    }
+
+    this.success(`Successfully pulled ${chalk.bold(buckets.length)} buckets.`);
+
     return buckets;
   }
 
@@ -597,6 +692,8 @@ export class Pull {
    * Pull teams from the project
    */
   public async pullTeams(): Promise<any[]> {
+    this.log("Fetching teams ...");
+
     const teamsService = new Teams(this.projectClient);
 
     const fetchResponse = await teamsService.list({
@@ -604,6 +701,8 @@ export class Pull {
     });
 
     if (fetchResponse["teams"].length <= 0) {
+      this.log("No teams found.");
+      this.success(`Successfully pulled ${chalk.bold(0)} teams.`);
       return [];
     }
 
@@ -614,6 +713,12 @@ export class Pull {
       "teams",
     );
 
+    for (const team of teams) {
+      this.log(`Pulling team ${chalk.bold(team.name)} ...`);
+    }
+
+    this.success(`Successfully pulled ${chalk.bold(teams.length)} teams.`);
+
     return teams;
   }
 
@@ -621,6 +726,8 @@ export class Pull {
    * Pull messaging topics from the project
    */
   public async pullMessagingTopics(): Promise<any[]> {
+    this.log("Fetching topics ...");
+
     const messagingService = new Messaging(this.projectClient);
 
     const fetchResponse = await messagingService.listTopics({
@@ -628,6 +735,8 @@ export class Pull {
     });
 
     if (fetchResponse["topics"].length <= 0) {
+      this.log("No topics found.");
+      this.success(`Successfully pulled ${chalk.bold(0)} topics.`);
       return [];
     }
 
@@ -637,6 +746,12 @@ export class Pull {
       100,
       "topics",
     );
+
+    for (const topic of topics) {
+      this.log(`Pulling topic ${chalk.bold(topic.name)} ...`);
+    }
+
+    this.success(`Successfully pulled ${chalk.bold(topics.length)} topics.`);
 
     return topics;
   }
@@ -686,31 +801,17 @@ export const pullResources = async ({
 };
 
 const pullSettings = async (): Promise<void> => {
-  log("Pulling project settings ...");
+  const pullInstance = await createPullInstance();
+  const projectId = localConfig.getProject().projectId;
+  const settings = await pullInstance.pullSettings(projectId);
 
-  try {
-    const pullInstance = await createPullInstance();
-    const projectId = localConfig.getProject().projectId;
-    const settings = await pullInstance.pullSettings(projectId);
-
-    localConfig.setProject(
-      projectId,
-      settings.projectName,
-      settings.rawSettings,
-    );
-
-    success(`Successfully pulled ${chalk.bold("all")} project settings.`);
-  } catch (e) {
-    throw e;
-  }
+  localConfig.setProject(projectId, settings.projectName, settings.rawSettings);
 };
 
 const pullFunctions = async ({
   code,
   withVariables,
 }: PullFunctionsOptions = {}): Promise<void> => {
-  log("Fetching functions ...");
-
   const functionsService = await getFunctionsService();
   const fetchResponse = await functionsService.list([Query.limit(1)]);
   if (fetchResponse["functions"].length <= 0) {
@@ -747,25 +848,16 @@ const pullFunctions = async ({
   });
 
   for (const func of functions) {
-    log(`Pulling function ${chalk.bold(func["name"])} ...`);
     const localFunction = localConfig.getFunction(func.$id);
     func["path"] = localFunction["path"] || func["path"];
     localConfig.addFunction(func);
   }
-
-  if (!shouldPullCode) {
-    warn("Source code download skipped.");
-  }
-
-  success(`Successfully pulled ${chalk.bold(functions.length)} functions.`);
 };
 
 const pullSites = async ({
   code,
   withVariables,
 }: PullSitesOptions = {}): Promise<void> => {
-  log("Fetching sites ...");
-
   const sitesService = await getSitesService();
   const fetchResponse = await sitesService.list({
     queries: [Query.limit(1)],
@@ -804,146 +896,63 @@ const pullSites = async ({
   });
 
   for (const site of sites) {
-    log(`Pulling site ${chalk.bold(site["name"])} ...`);
     const localSite = localConfig.getSite(site.$id);
     site["path"] = localSite["path"] || site["path"];
     localConfig.addSite(site);
   }
-
-  if (!shouldPullCode) {
-    warn("Source code download skipped.");
-  }
-
-  success(`Successfully pulled ${chalk.bold(sites.length)} sites.`);
 };
 
 const pullCollection = async (): Promise<void> => {
-  warn(
-    "appwrite pull collection has been deprecated. Please consider using 'appwrite pull tables' instead",
-  );
-  log("Fetching collections ...");
-
-  const databasesService = await getDatabasesService();
-  const fetchResponse = await databasesService.list({
-    queries: [Query.limit(1)],
-  });
-  if (fetchResponse["databases"].length <= 0) {
-    log("No collections found.");
-    success(
-      `Successfully pulled ${chalk.bold(0)} collections from ${chalk.bold(0)} databases.`,
-    );
-    return;
-  }
-
   const pullInstance = await createPullInstance();
   const { databases, collections } = await pullInstance.pullCollections();
 
   for (const database of databases) {
-    log(
-      `Pulling all collections from ${chalk.bold(database["name"])} database ...`,
-    );
     localConfig.addDatabase(database);
   }
 
   for (const collection of collections) {
     localConfig.addCollection(collection);
   }
-
-  success(
-    `Successfully pulled ${chalk.bold(collections.length)} collections from ${chalk.bold(databases.length)} databases.`,
-  );
 };
 
 const pullTable = async (): Promise<void> => {
-  log("Fetching tables ...");
-
-  const tablesDBService = await getTablesDBService();
-  const fetchResponse = await tablesDBService.list({
-    queries: [Query.limit(1)],
-  });
-  if (fetchResponse["databases"].length <= 0) {
-    log("No tables found.");
-    success(
-      `Successfully pulled ${chalk.bold(0)} tables from ${chalk.bold(0)} tableDBs.`,
-    );
-    return;
-  }
-
   const pullInstance = await createPullInstance();
   const { databases, tables } = await pullInstance.pullTables();
 
   for (const database of databases) {
-    log(`Pulling all tables from ${chalk.bold(database["name"])} database ...`);
     localConfig.addTablesDB(database);
   }
 
   for (const table of tables) {
     localConfig.addTable(table);
   }
-
-  success(
-    `Successfully pulled ${chalk.bold(tables.length)} tables from ${chalk.bold(databases.length)} tableDBs.`,
-  );
 };
 
 const pullBucket = async (): Promise<void> => {
-  log("Fetching buckets ...");
-
   const pullInstance = await createPullInstance();
   const buckets = await pullInstance.pullBuckets();
 
-  if (buckets.length === 0) {
-    log("No buckets found.");
-    success(`Successfully pulled ${chalk.bold(0)} buckets.`);
-    return;
-  }
-
   for (const bucket of buckets) {
-    log(`Pulling bucket ${chalk.bold(bucket["name"])} ...`);
     localConfig.addBucket(bucket);
   }
-
-  success(`Successfully pulled ${chalk.bold(buckets.length)} buckets.`);
 };
 
 const pullTeam = async (): Promise<void> => {
-  log("Fetching teams ...");
-
   const pullInstance = await createPullInstance();
   const teams = await pullInstance.pullTeams();
 
-  if (teams.length === 0) {
-    log("No teams found.");
-    success(`Successfully pulled ${chalk.bold(0)} teams.`);
-    return;
-  }
-
   for (const team of teams) {
-    log(`Pulling team ${chalk.bold(team["name"])} ...`);
     localConfig.addTeam(team);
   }
-
-  success(`Successfully pulled ${chalk.bold(teams.length)} teams.`);
 };
 
 const pullMessagingTopic = async (): Promise<void> => {
-  log("Fetching topics ...");
-
   const pullInstance = await createPullInstance();
   const topics = await pullInstance.pullMessagingTopics();
 
-  if (topics.length === 0) {
-    log("No topics found.");
-    success(`Successfully pulled ${chalk.bold(0)} topics.`);
-    return;
-  }
-
   for (const topic of topics) {
-    log(`Pulling topic ${chalk.bold(topic["name"])} ...`);
     localConfig.addMessagingTopic(topic);
   }
-
-  success(`Successfully pulled ${chalk.bold(topics.length)} topics.`);
 };
 
 /** Commander.js exports */
