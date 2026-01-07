@@ -62,6 +62,7 @@ import {
   AuthMethod,
   AppwriteException,
   Client,
+  Query,
 } from "@appwrite.io/console";
 import { checkDeployConditions } from "../utils.js";
 import { Pools } from "./utils/pools.js";
@@ -766,24 +767,14 @@ export class Push {
                 const proxyServiceUrl = await getProxyService(
                   this.projectClient,
                 );
-                const res = await proxyServiceUrl.listRules([
-                  JSON.stringify({ method: "limit", values: [1] }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceType",
-                    values: ["function"],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceId",
-                    values: [func["$id"]],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "trigger",
-                    values: ["manual"],
-                  }),
-                ]);
+                const res = await proxyServiceUrl.listRules({
+                  queries: [
+                    Query.limit(1),
+                    Query.equal("deploymentResourceType", "function"),
+                    Query.equal("deploymentResourceId", func["$id"]),
+                    Query.equal("trigger", "manual"),
+                  ],
+                });
 
                 if (Number(res.total) === 1) {
                   url = `https://${res.rules[0].domain}`;
@@ -1099,22 +1090,10 @@ export class Push {
                   this.projectClient,
                 );
                 const res = await proxyServiceUrl.listRules([
-                  JSON.stringify({ method: "limit", values: [1] }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceType",
-                    values: ["site"],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "deploymentResourceId",
-                    values: [site["$id"]],
-                  }),
-                  JSON.stringify({
-                    method: "equal",
-                    attribute: "trigger",
-                    values: ["manual"],
-                  }),
+                  Query.limit(1),
+                  Query.equal("deploymentResourceType", "site"),
+                  Query.equal("deploymentResourceId", site["$id"]),
+                  Query.equal("trigger", "manual"),
                 ]);
 
                 if (Number(res.total) === 1) {
@@ -1186,10 +1165,10 @@ export class Push {
       tables.map(async (table: any) => {
         try {
           const tablesDBService = await getTablesDBService(this.projectClient);
-          const remoteTable = await tablesDBService.getTable(
-            table["databaseId"],
-            table["$id"],
-          );
+          const remoteTable = await tablesDBService.getTable({
+            databaseId: table["databaseId"],
+            tableId: table["$id"],
+          });
 
           const changes: string[] = [];
           if (remoteTable.name !== table.name) changes.push("name");
