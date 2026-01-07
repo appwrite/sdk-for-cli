@@ -176,7 +176,7 @@ const FunctionSchema = z
     name: z.string(),
     enabled: z.boolean().optional(),
     logging: z.boolean().optional(),
-    runtime: z.string().optional(),
+    runtime: z.string(),
     specification: z.string().optional(),
     scopes: z.array(z.string()).optional(),
     events: z.array(z.string()).optional(),

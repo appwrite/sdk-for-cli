@@ -2,9 +2,10 @@
 
 ## 13.0.0-rc.3
 
+- Push, Pull and Schema classes are now exported as part of the package
 - Fixes a lot of typescript errors throughout the codebase
 
-## 13.0.0-rc.3
+## 13.0.0-rc.2
 
 - Migrates codebase from JavaScript to TypeScript
 
