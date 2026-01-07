@@ -171,3 +171,20 @@ if (process.argv.includes("-v") || process.argv.includes("--version")) {
 }
 
 export { Schema, Push, Pull };
+export type {
+  ConfigType,
+  SettingsType,
+  FunctionType,
+  SiteType,
+  DatabaseType,
+  CollectionType,
+  TableType,
+  TopicType,
+  TeamType,
+  MessageType,
+  BucketType,
+  AttributeType,
+  IndexType,
+  ColumnType,
+  TableIndexType,
+} from "./lib/commands/config.js";

@@ -73,21 +73,3 @@ export interface GlobalConfigData extends ConfigData {
   current: string;
   cookie?: string;
 }
-
-export type {
-  ConfigType,
-  SettingsType,
-  FunctionType,
-  SiteType,
-  DatabaseType,
-  CollectionType,
-  TableType,
-  TopicType,
-  TeamType,
-  MessageType,
-  BucketType,
-  AttributeType,
-  IndexType,
-  ColumnType,
-  TableIndexType,
-} from "./commands/config.js";
