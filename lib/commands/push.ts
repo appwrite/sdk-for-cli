@@ -1,6 +1,4 @@
 import fs from "fs";
-import path from "path";
-import tar from "tar";
 import { parse as parseDotenv } from "dotenv";
 import chalk from "chalk";
 import inquirer from "inquirer";
