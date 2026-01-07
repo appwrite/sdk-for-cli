@@ -38,7 +38,7 @@ import {
 import type { ConfigType } from "./config.js";
 import { createSettingsObject } from "../utils.js";
 import { ProjectNotInitializedError } from "./errors.js";
-import type { SettingsType, FunctionType, SiteType } from "../types.js";
+import type { SettingsType, FunctionType, SiteType } from "./config.js";
 import { downloadDeploymentCode } from "./utils/deployment.js";
 
 export interface PullOptions {

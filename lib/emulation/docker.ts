@@ -10,7 +10,7 @@ import fs from "fs";
 import { log, error, success } from "../parser.js";
 import { openRuntimesVersion, systemTools, Queue } from "./utils.js";
 import { getAllFiles } from "../utils.js";
-import type { FunctionType } from "../types.js";
+import type { FunctionType } from "../commands/config.js";
 
 export async function dockerStop(id: string): Promise<void> {
   const stopProcess = childProcess.spawn("docker", ["rm", "--force", id], {

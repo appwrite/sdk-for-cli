@@ -7,17 +7,19 @@ import type { Models } from "@appwrite.io/console";
 import type {
   BucketType,
   CollectionType,
-  ConfigData,
-  Entity,
   FunctionType,
-  GlobalConfigData,
   ConfigType,
   SettingsType,
-  SessionData,
   SiteType,
   TableType,
   TeamType,
   TopicType,
+} from "./commands/config.js";
+import type {
+  SessionData,
+  ConfigData,
+  Entity,
+  GlobalConfigData,
 } from "./types.js";
 import { createSettingsObject } from "./utils.js";
 
@@ -348,11 +350,11 @@ class Local extends Config<ConfigType> {
   }
 
   getEndpoint(): string {
-    return (this.get("endpoint" as keyof ConfigType) as string) || "";
+    return this.get("endpoint") || "";
   }
 
   setEndpoint(endpoint: string): void {
-    this.set("endpoint" as any, endpoint);
+    this.set("endpoint", endpoint);
   }
 
   getSites(): SiteType[] {
