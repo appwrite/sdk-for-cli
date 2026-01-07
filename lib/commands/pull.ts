@@ -1,6 +1,5 @@
 import fs from "fs";
 import chalk from "chalk";
-import tar from "tar";
 import { Command } from "commander";
 import inquirer from "inquirer";
 import {
