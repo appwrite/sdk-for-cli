@@ -59,6 +59,9 @@ export async function downloadDeploymentCode(params: {
     }
   } catch (e: unknown) {
     if (e instanceof AppwriteException) {
+      this.error(e.message);
+      return;
+    } else {
       throw e;
     }
   }
