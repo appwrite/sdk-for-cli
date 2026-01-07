@@ -13,16 +13,10 @@ import {
   TablesDB,
   Teams,
   Client,
-  AppwriteException,
   Query,
   Models,
 } from "@appwrite.io/console";
-import {
-  getFunctionsService,
-  getSitesService,
-  getDatabasesService,
-  getTablesDBService,
-} from "../services.js";
+import { getFunctionsService, getSitesService } from "../services.js";
 import { sdkForProject, sdkForConsole } from "../sdks.js";
 import { localConfig } from "../config.js";
 import { paginate } from "../paginate.js";
@@ -58,6 +52,7 @@ export interface PullOptions {
   buckets?: boolean;
   teams?: boolean;
   topics?: boolean;
+  skipDeprecated?: boolean;
   withVariables?: boolean;
   noCode?: boolean;
 }
@@ -72,10 +67,6 @@ interface PullSitesOptions {
   code?: boolean;
   withVariables?: boolean;
   siteIds?: string[];
-}
-
-interface PullResourcesOptions {
-  skipDeprecated?: boolean;
 }
 
 export interface PullSettingsResult {
@@ -149,8 +140,9 @@ export class Pull {
    */
   public async pullResources(
     config: ConfigType,
-    options: PullOptions = { all: true },
+    options: PullOptions = { all: true, skipDeprecated: true },
   ): Promise<ConfigType> {
+    const { skipDeprecated = true } = options;
     if (!config.projectId) {
       throw new ProjectNotInitializedError();
     }
@@ -186,7 +178,7 @@ export class Pull {
       updatedConfig.tables = tables;
     }
 
-    if (options.collections) {
+    if (!skipDeprecated && (shouldPullAll || options.collections)) {
       const { databases, collections } = await this.pullCollections();
       updatedConfig.databases = databases;
       updatedConfig.collections = collections;
@@ -678,8 +670,10 @@ export class Pull {
 /** Helper methods for CLI commands */
 
 export const pullResources = async ({
-  skipDeprecated = false,
-}: PullResourcesOptions = {}): Promise<void> => {
+  skipDeprecated = true,
+}: {
+  skipDeprecated?: boolean;
+} = {}): Promise<void> => {
   const project = localConfig.getProject();
   if (!project.projectId) {
     error(

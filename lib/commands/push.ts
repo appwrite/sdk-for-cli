@@ -76,6 +76,15 @@ const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
 
 export interface PushOptions {
+  all?: boolean;
+  settings?: boolean;
+  functions?: boolean;
+  sites?: boolean;
+  collections?: boolean;
+  tables?: boolean;
+  buckets?: boolean;
+  teams?: boolean;
+  topics?: boolean;
   skipDeprecated?: boolean;
   functionOptions?: {
     async?: boolean;
@@ -118,7 +127,7 @@ export class Push {
 
   public async pushResources(
     config: ConfigType,
-    options: PushOptions = { skipDeprecated: true },
+    options: PushOptions = { all: true, skipDeprecated: true },
   ): Promise<{
     results: Record<string, any>;
     errors: any[];
@@ -126,9 +135,13 @@ export class Push {
     const { skipDeprecated = true } = options;
     const results: Record<string, any> = {};
     const allErrors: any[] = [];
+    const shouldPushAll = options.all === true;
 
     // Push settings
-    if (config.projectName || config.settings) {
+    if (
+      (shouldPushAll || options.settings) &&
+      (config.projectName || config.settings)
+    ) {
       try {
         log("Pushing settings ...");
         await this.pushSettings({
@@ -144,7 +157,11 @@ export class Push {
     }
 
     // Push buckets
-    if (config.buckets && config.buckets.length > 0) {
+    if (
+      (shouldPushAll || options.buckets) &&
+      config.buckets &&
+      config.buckets.length > 0
+    ) {
       try {
         log("Pushing buckets ...");
         const result = await this.pushBuckets(config.buckets);
@@ -157,7 +174,11 @@ export class Push {
     }
 
     // Push teams
-    if (config.teams && config.teams.length > 0) {
+    if (
+      (shouldPushAll || options.teams) &&
+      config.teams &&
+      config.teams.length > 0
+    ) {
       try {
         log("Pushing teams ...");
         const result = await this.pushTeams(config.teams);
@@ -170,7 +191,11 @@ export class Push {
     }
 
     // Push messaging topics
-    if (config.topics && config.topics.length > 0) {
+    if (
+      (shouldPushAll || options.topics) &&
+      config.topics &&
+      config.topics.length > 0
+    ) {
       try {
         log("Pushing topics ...");
         const result = await this.pushMessagingTopics(config.topics);
@@ -183,7 +208,11 @@ export class Push {
     }
 
     // Push functions
-    if (config.functions && config.functions.length > 0) {
+    if (
+      (shouldPushAll || options.functions) &&
+      config.functions &&
+      config.functions.length > 0
+    ) {
       try {
         log("Pushing functions ...");
         const result = await this.pushFunctions(
@@ -204,7 +233,11 @@ export class Push {
     }
 
     // Push sites
-    if (config.sites && config.sites.length > 0) {
+    if (
+      (shouldPushAll || options.sites) &&
+      config.sites &&
+      config.sites.length > 0
+    ) {
       try {
         log("Pushing sites ...");
         const result = await this.pushSites(config.sites, options.siteOptions);
@@ -222,7 +255,11 @@ export class Push {
     }
 
     // Push tables
-    if (config.tables && config.tables.length > 0) {
+    if (
+      (shouldPushAll || options.tables) &&
+      config.tables &&
+      config.tables.length > 0
+    ) {
       try {
         log("Pushing tables ...");
         const result = await this.pushTables(config.tables);
@@ -237,6 +274,7 @@ export class Push {
     // Push collections (unless skipDeprecated is true)
     if (
       !skipDeprecated &&
+      (shouldPushAll || options.collections) &&
       config.collections &&
       config.collections.length > 0
     ) {
