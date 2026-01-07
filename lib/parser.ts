@@ -128,7 +128,7 @@ export const parseError = (err: Error): void => {
         // Silently fail
       }
 
-      const version = "13.0.0-rc.2";
+      const version = "13.0.0-rc.3";
       const stepsToReproduce = `Running \`appwrite ${(cliConfig.reportData as any).data.args.join(" ")}\``;
       const yourEnvironment = `CLI version: ${version}\nOperation System: ${os.type()}\nAppwrite version: ${appwriteVersion}\nIs Cloud: ${isCloud()}`;
 

@@ -20,8 +20,8 @@ export const sdkForConsole = async (
     "x-sdk-name": "Command Line",
     "x-sdk-platform": "console",
     "x-sdk-language": "cli",
-    "x-sdk-version": "13.0.0-rc.2",
-    "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
+    "x-sdk-version": "13.0.0-rc.3",
+    "user-agent": `AppwriteCLI/13.0.0-rc.3 (${os.type()} ${os.version()}; ${os.arch()})`,
   };
 
   client
@@ -60,8 +60,8 @@ export const sdkForProject = async (): Promise<Client> => {
     "x-sdk-name": "Command Line",
     "x-sdk-platform": "console",
     "x-sdk-language": "cli",
-    "x-sdk-version": "13.0.0-rc.2",
-    "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
+    "x-sdk-version": "13.0.0-rc.3",
+    "user-agent": `AppwriteCLI/13.0.0-rc.3 (${os.type()} ${os.version()}; ${os.arch()})`,
   };
 
   client

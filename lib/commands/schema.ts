@@ -6,12 +6,14 @@ import { Push, PushOptions } from "./push.js";
 import { parseWithBetterErrors } from "./utils/error-formatter.js";
 import JSONbig from "json-bigint";
 import * as fs from "fs";
+import { Db } from "./db.js";
 
 const JSONBig = JSONbig({ storeAsString: false });
 
 export class Schema {
   private pullCommand: Pull;
   private pushCommand: Push;
+  public db: Db;
 
   constructor({
     projectClient,
@@ -22,6 +24,7 @@ export class Schema {
   }) {
     this.pullCommand = new Pull(projectClient, consoleClient);
     this.pushCommand = new Push(projectClient, consoleClient);
+    this.db = new Db();
   }
 
   /**

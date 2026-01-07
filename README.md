@@ -30,7 +30,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-13.0.0-rc.2
+13.0.0-rc.3
 ```
 
 ### Install using prebuilt binaries
@@ -69,7 +69,7 @@ Once the installation completes, you can verify your install using
 
 ```
 $ appwrite -v
-13.0.0-rc.2
+13.0.0-rc.3
 ```
 
 ## Getting Started
