@@ -10,7 +10,7 @@ import fs from "fs";
 import { log, error, success } from "../parser.js";
 import { openRuntimesVersion, systemTools, Queue } from "./utils.js";
 import { getAllFiles } from "../utils.js";
-import type { FunctionConfig } from "../types.js";
+import type { FunctionType } from "../types.js";
 
 export async function dockerStop(id: string): Promise<void> {
   const stopProcess = childProcess.spawn("docker", ["rm", "--force", id], {
@@ -26,7 +26,7 @@ export async function dockerStop(id: string): Promise<void> {
   });
 }
 
-export async function dockerPull(func: FunctionConfig): Promise<void> {
+export async function dockerPull(func: FunctionType): Promise<void> {
   const runtimeChunks = func.runtime.split("-");
   const runtimeVersion = runtimeChunks.pop();
   const runtimeName = runtimeChunks.join("-");
@@ -48,7 +48,7 @@ export async function dockerPull(func: FunctionConfig): Promise<void> {
 }
 
 export async function dockerBuild(
-  func: FunctionConfig,
+  func: FunctionType,
   variables: Record<string, string>,
 ): Promise<void> {
   const runtimeChunks = func.runtime.split("-");
@@ -182,7 +182,7 @@ export async function dockerBuild(
 }
 
 export async function dockerStart(
-  func: FunctionConfig,
+  func: FunctionType,
   variables: Record<string, string>,
   port: number,
 ): Promise<void> {

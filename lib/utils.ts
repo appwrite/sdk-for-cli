@@ -4,7 +4,49 @@ import net from "net";
 import childProcess from "child_process";
 import chalk from "chalk";
 import { fetch } from "undici";
+import type { Models } from "@appwrite.io/console";
 import { localConfig, globalConfig } from "./config.js";
+import type { SettingsType } from "./commands/config.js";
+
+export const createSettingsObject = (project: Models.Project): SettingsType => {
+  return {
+    services: {
+      account: project.serviceStatusForAccount,
+      avatars: project.serviceStatusForAvatars,
+      databases: project.serviceStatusForDatabases,
+      locale: project.serviceStatusForLocale,
+      health: project.serviceStatusForHealth,
+      storage: project.serviceStatusForStorage,
+      teams: project.serviceStatusForTeams,
+      users: project.serviceStatusForUsers,
+      sites: project.serviceStatusForSites,
+      functions: project.serviceStatusForFunctions,
+      graphql: project.serviceStatusForGraphql,
+      messaging: project.serviceStatusForMessaging,
+    },
+    auth: {
+      methods: {
+        jwt: project.authJWT,
+        phone: project.authPhone,
+        invites: project.authInvites,
+        anonymous: project.authAnonymous,
+        "email-otp": project.authEmailOtp,
+        "magic-url": project.authUsersAuthMagicURL,
+        "email-password": project.authEmailPassword,
+      },
+      security: {
+        duration: project.authDuration,
+        limit: project.authLimit,
+        sessionsLimit: project.authSessionsLimit,
+        passwordHistory: project.authPasswordHistory,
+        passwordDictionary: project.authPasswordDictionary,
+        personalDataCheck: project.authPersonalDataCheck,
+        sessionAlerts: project.authSessionAlerts,
+        mockNumbers: project.authMockNumbers,
+      },
+    },
+  };
+};
 
 /**
  * Get the latest version from npm registry

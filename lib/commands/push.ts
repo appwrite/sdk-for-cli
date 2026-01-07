@@ -15,8 +15,8 @@ import {
   KeysCollection,
   KeysTable,
 } from "../config.js";
-import type { SettingsType } from "./config.js";
-import type { ConfigType } from "./config.js";
+import type { SettingsType, ConfigType } from "./config.js";
+import { createSettingsObject } from "../utils.js";
 import { Spinner, SPINNER_DOTS } from "../spinner.js";
 import { paginate } from "../paginate.js";
 import { pushDeployment } from "./utils/deployment.js";
@@ -225,10 +225,10 @@ export class Push {
     }
 
     // Push tables
-    if (config.tablesDB && config.tablesDB.length > 0) {
+    if (config.tables && config.tables.length > 0) {
       try {
         log("Pushing tables ...");
-        const result = await this.pushTables(config.tablesDB, options.attempts);
+        const result = await this.pushTables(config.tables, options.attempts);
         results.tables = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -1162,8 +1162,8 @@ export class Push {
     await Promise.all(
       tables.map(async (table: any) => {
         try {
-          const tablesDBService = await getTablesDBService(this.projectClient);
-          const remoteTable = await tablesDBService.getTable({
+          const tablesService = await getTablesDBService(this.projectClient);
+          const remoteTable = await tablesService.getTable({
             databaseId: table["databaseId"],
             tableId: table["$id"],
           });
@@ -1180,7 +1180,7 @@ export class Push {
             changes.push("permissions");
 
           if (changes.length > 0) {
-            await tablesDBService.updateTable(
+            await tablesService.updateTable(
               table["databaseId"],
               table["$id"],
               table.name,
@@ -1201,10 +1201,8 @@ export class Push {
             log(
               `Table ${table.name} does not exist in the project. Creating ... `,
             );
-            const tablesDBService = await getTablesDBService(
-              this.projectClient,
-            );
-            await tablesDBService.createTable(
+            const tablesService = await getTablesDBService(this.projectClient);
+            await tablesService.createTable(
               table["databaseId"],
               table["$id"],
               table.name,
@@ -1486,7 +1484,7 @@ const pushSettings = async (): Promise<void> => {
       localConfig.getProject().projectId,
     );
 
-    const remoteSettings = localConfig.createSettingsObject(response ?? {});
+    const remoteSettings = createSettingsObject(response);
     const localSettings = localConfig.getProject().projectSettings ?? {};
 
     log("Checking for changes ...");
@@ -1806,13 +1804,13 @@ const pushTable = async ({
 
   const { resyncNeeded } = await checkAndApplyTablesDBChanges();
   if (resyncNeeded) {
-    log("Resyncing configuration due to tablesDB deletions ...");
+    log("Resyncing configuration due to tables deletions ...");
 
     const remoteTablesDBs = (
       await paginate(
         async (args: any) => {
-          const tablesDBService = await getTablesDBService();
-          return await tablesDBService.list(args.queries || []);
+          const tablesService = await getTablesDBService();
+          return await tablesService.list(args.queries || []);
         },
         {},
         100,
@@ -1832,7 +1830,7 @@ const pushTable = async ({
     const validTablesDBs = localTablesDBs.filter((db: any) =>
       remoteDatabaseIds.has(db.$id),
     );
-    localConfig.set("tablesDB", validTablesDBs);
+    localConfig.set("tables", validTablesDBs);
 
     success("Configuration resynced successfully.");
     console.log();
@@ -1847,8 +1845,8 @@ const pushTable = async ({
     try {
       const { tables: remoteTables } = await paginate(
         async (args: any) => {
-          const tablesDBService = await getTablesDBService();
-          return await tablesDBService.listTables(
+          const tablesService = await getTablesDBService();
+          return await tablesService.listTables(
             args.databaseId,
             args.queries || [],
           );
@@ -1895,8 +1893,8 @@ const pushTable = async ({
           log(
             `Deleting table ${table.name} ( ${table.$id} ) from database ${table.databaseName} ...`,
           );
-          const tablesDBService = await getTablesDBService();
-          await tablesDBService.deleteTable(table.databaseId, table.$id);
+          const tablesService = await getTablesDBService();
+          await tablesService.deleteTable(table.databaseId, table.$id);
           success(`Deleted ${table.name} ( ${table.$id} )`);
         } catch (e: any) {
           error(
@@ -1936,8 +1934,8 @@ const pushTable = async ({
     !(await approveChanges(
       tables,
       async (args: any) => {
-        const tablesDBService = await getTablesDBService();
-        return await tablesDBService.getTable(args.databaseId, args.tableId);
+        const tablesService = await getTablesDBService();
+        return await tablesService.getTable(args.databaseId, args.tableId);
       },
       KeysTable,
       "tableId",

@@ -3,22 +3,23 @@ import fs from "fs";
 import _path from "path";
 import process from "process";
 import JSONbig from "json-bigint";
+import type { Models } from "@appwrite.io/console";
 import type {
-  BucketConfig,
-  CollectionConfig,
+  BucketType,
+  CollectionType,
   ConfigData,
   Entity,
-  FunctionConfig,
+  FunctionType,
   GlobalConfigData,
-  ProjectConfigData,
-  ProjectSettings,
-  RawProjectSettings,
+  ConfigType,
+  SettingsType,
   SessionData,
-  SiteConfig,
-  TableConfig,
-  TeamConfig,
-  TopicConfig,
+  SiteType,
+  TableType,
+  TeamType,
+  TopicType,
 } from "./types.js";
+import { createSettingsObject } from "./utils.js";
 
 const JSONBigInt = JSONbig({ storeAsString: false });
 
@@ -302,7 +303,7 @@ class Config<T extends ConfigData = ConfigData> {
   }
 }
 
-class Local extends Config<ProjectConfigData> {
+class Local extends Config<ConfigType> {
   static CONFIG_FILE_PATH = "appwrite.config.json";
   static CONFIG_FILE_PATH_LEGACY = "appwrite.json";
   configDirectoryPath = "";
@@ -347,21 +348,21 @@ class Local extends Config<ProjectConfigData> {
   }
 
   getEndpoint(): string {
-    return (this.get("endpoint" as keyof ProjectConfigData) as string) || "";
+    return (this.get("endpoint" as keyof ConfigType) as string) || "";
   }
 
   setEndpoint(endpoint: string): void {
     this.set("endpoint" as any, endpoint);
   }
 
-  getSites(): SiteConfig[] {
+  getSites(): SiteType[] {
     if (!this.has("sites")) {
       return [];
     }
     return this.get("sites") ?? [];
   }
 
-  getSite($id: string): SiteConfig | Record<string, never> {
+  getSite($id: string): SiteType | Record<string, never> {
     if (!this.has("sites")) {
       return {};
     }
@@ -376,7 +377,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addSite(props: SiteConfig): void {
+  addSite(props: SiteType): void {
     props = whitelistKeys(props, KeysSite, {
       vars: KeysVars,
     });
@@ -401,14 +402,14 @@ class Local extends Config<ProjectConfigData> {
     this.set("sites", sites);
   }
 
-  getFunctions(): FunctionConfig[] {
+  getFunctions(): FunctionType[] {
     if (!this.has("functions")) {
       return [];
     }
     return this.get("functions") ?? [];
   }
 
-  getFunction($id: string): FunctionConfig | Record<string, never> {
+  getFunction($id: string): FunctionType | Record<string, never> {
     if (!this.has("functions")) {
       return {};
     }
@@ -423,7 +424,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addFunction(props: FunctionConfig): void {
+  addFunction(props: FunctionType): void {
     props = whitelistKeys(props, KeysFunction, {
       vars: KeysVars,
     });
@@ -448,14 +449,14 @@ class Local extends Config<ProjectConfigData> {
     this.set("functions", functions);
   }
 
-  getCollections(): CollectionConfig[] {
+  getCollections(): CollectionType[] {
     if (!this.has("collections")) {
       return [];
     }
     return this.get("collections") ?? [];
   }
 
-  getCollection($id: string): CollectionConfig | Record<string, never> {
+  getCollection($id: string): CollectionType | Record<string, never> {
     if (!this.has("collections")) {
       return {};
     }
@@ -470,7 +471,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addCollection(props: CollectionConfig): void {
+  addCollection(props: CollectionType): void {
     props = whitelistKeys(props, KeysCollection, {
       attributes: KeysAttributes,
       indexes: KeyIndexes,
@@ -495,14 +496,14 @@ class Local extends Config<ProjectConfigData> {
     this.set("collections", collections);
   }
 
-  getTables(): TableConfig[] {
+  getTables(): TableType[] {
     if (!this.has("tables")) {
       return [];
     }
     return this.get("tables") ?? [];
   }
 
-  getTable($id: string): TableConfig | Record<string, never> {
+  getTable($id: string): TableType | Record<string, never> {
     if (!this.has("tables")) {
       return {};
     }
@@ -517,7 +518,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addTable(props: TableConfig): void {
+  addTable(props: TableType): void {
     props = whitelistKeys(props, KeysTable, {
       columns: KeysColumns,
       indexes: KeyIndexesColumns,
@@ -542,14 +543,14 @@ class Local extends Config<ProjectConfigData> {
     this.set("tables", tables);
   }
 
-  getBuckets(): BucketConfig[] {
+  getBuckets(): BucketType[] {
     if (!this.has("buckets")) {
       return [];
     }
     return this.get("buckets") ?? [];
   }
 
-  getBucket($id: string): BucketConfig | Record<string, never> {
+  getBucket($id: string): BucketType | Record<string, never> {
     if (!this.has("buckets")) {
       return {};
     }
@@ -564,7 +565,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addBucket(props: BucketConfig): void {
+  addBucket(props: BucketType): void {
     props = whitelistKeys(props, KeysStorage);
 
     if (!this.has("buckets")) {
@@ -583,14 +584,14 @@ class Local extends Config<ProjectConfigData> {
     this.set("buckets", buckets);
   }
 
-  getMessagingTopics(): TopicConfig[] {
+  getMessagingTopics(): TopicType[] {
     if (!this.has("topics")) {
       return [];
     }
     return this.get("topics") ?? [];
   }
 
-  getMessagingTopic($id: string): TopicConfig | Record<string, never> {
+  getMessagingTopic($id: string): TopicType | Record<string, never> {
     if (!this.has("topics")) {
       return {};
     }
@@ -605,7 +606,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addMessagingTopic(props: TopicConfig): void {
+  addMessagingTopic(props: TopicType): void {
     props = whitelistKeys(props, KeysTopics);
 
     if (!this.has("topics")) {
@@ -648,14 +649,14 @@ class Local extends Config<ProjectConfigData> {
     this._addDBEntity("databases", props, KeysDatabase);
   }
 
-  getTeams(): TeamConfig[] {
+  getTeams(): TeamType[] {
     if (!this.has("teams")) {
       return [];
     }
     return this.get("teams") ?? [];
   }
 
-  getTeam($id: string): TeamConfig | Record<string, never> {
+  getTeam($id: string): TeamType | Record<string, never> {
     if (!this.has("teams")) {
       return {};
     }
@@ -670,7 +671,7 @@ class Local extends Config<ProjectConfigData> {
     return {};
   }
 
-  addTeam(props: TeamConfig): void {
+  addTeam(props: TeamType): void {
     props = whitelistKeys(props, KeysTeams);
     if (!this.has("teams")) {
       this.set("teams", []);
@@ -691,7 +692,7 @@ class Local extends Config<ProjectConfigData> {
   getProject(): {
     projectId?: string;
     projectName?: string;
-    projectSettings?: ProjectSettings;
+    projectSettings?: SettingsType;
   } {
     if (!this.has("projectId")) {
       return {};
@@ -707,7 +708,7 @@ class Local extends Config<ProjectConfigData> {
   setProject(
     projectId: string,
     projectName: string = "",
-    projectSettings?: RawProjectSettings,
+    project?: Models.Project,
   ): void {
     this.set("projectId", projectId);
 
@@ -715,51 +716,11 @@ class Local extends Config<ProjectConfigData> {
       this.set("projectName", projectName);
     }
 
-    if (projectSettings === undefined) {
+    if (project === undefined) {
       return;
     }
 
-    this.set("settings", this.createSettingsObject(projectSettings));
-  }
-
-  createSettingsObject(projectSettings: RawProjectSettings): ProjectSettings {
-    return {
-      services: {
-        account: projectSettings.serviceStatusForAccount,
-        avatars: projectSettings.serviceStatusForAvatars,
-        databases: projectSettings.serviceStatusForDatabases,
-        locale: projectSettings.serviceStatusForLocale,
-        health: projectSettings.serviceStatusForHealth,
-        storage: projectSettings.serviceStatusForStorage,
-        teams: projectSettings.serviceStatusForTeams,
-        users: projectSettings.serviceStatusForUsers,
-        sites: projectSettings.serviceStatusForSites,
-        functions: projectSettings.serviceStatusForFunctions,
-        graphql: projectSettings.serviceStatusForGraphql,
-        messaging: projectSettings.serviceStatusForMessaging,
-      },
-      auth: {
-        methods: {
-          jwt: projectSettings.authJWT,
-          phone: projectSettings.authPhone,
-          invites: projectSettings.authInvites,
-          anonymous: projectSettings.authAnonymous,
-          "email-otp": projectSettings.authEmailOtp,
-          "magic-url": projectSettings.authUsersAuthMagicURL,
-          "email-password": projectSettings.authEmailPassword,
-        },
-        security: {
-          duration: projectSettings.authDuration,
-          limit: projectSettings.authLimit,
-          sessionsLimit: projectSettings.authSessionsLimit,
-          passwordHistory: projectSettings.authPasswordHistory,
-          passwordDictionary: projectSettings.authPasswordDictionary,
-          personalDataCheck: projectSettings.authPersonalDataCheck,
-          sessionAlerts: projectSettings.authSessionAlerts,
-          mockNumbers: projectSettings.authMockNumbers,
-        },
-      },
-    };
+    this.set("settings", createSettingsObject(project));
   }
 }
 

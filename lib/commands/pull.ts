@@ -43,14 +43,9 @@ import {
   commandDescriptions,
 } from "../parser.js";
 import type { ConfigType } from "./config.js";
-import { createSettingsObject } from "./config.js";
+import { createSettingsObject } from "../utils.js";
 import { ProjectNotInitializedError } from "./errors.js";
-import type {
-  ProjectSettings,
-  RawProjectSettings,
-  FunctionConfig,
-  SiteConfig,
-} from "../types.js";
+import type { SettingsType, FunctionType, SiteType } from "../types.js";
 import { downloadDeploymentCode } from "./utils/deployment.js";
 
 export interface PullOptions {
@@ -85,8 +80,8 @@ interface PullResourcesOptions {
 
 export interface PullSettingsResult {
   projectName: string;
-  settings: ProjectSettings;
-  rawSettings: RawProjectSettings;
+  settings: SettingsType;
+  project: Models.Project;
 }
 
 async function createPullInstance(): Promise<Pull> {
@@ -188,7 +183,7 @@ export class Pull {
     if (shouldPullAll || options.tables) {
       const { databases, tables } = await this.pullTables();
       updatedConfig.databases = databases;
-      updatedConfig.tablesDB = tables;
+      updatedConfig.tables = tables;
     }
 
     if (options.collections) {
@@ -222,14 +217,14 @@ export class Pull {
     this.log("Pulling project settings ...");
 
     const projectsService = new Projects(this.consoleClient);
-    const rawSettings = await projectsService.get({ projectId: projectId });
+    const project = await projectsService.get({ projectId: projectId });
 
     this.success(`Successfully pulled ${chalk.bold("all")} project settings.`);
 
     return {
-      projectName: rawSettings.name,
-      settings: createSettingsObject(rawSettings),
-      rawSettings,
+      projectName: project.name,
+      settings: createSettingsObject(project),
+      project,
     };
   }
 
@@ -238,7 +233,7 @@ export class Pull {
    */
   public async pullFunctions(
     options: PullFunctionsOptions = {},
-  ): Promise<FunctionConfig[]> {
+  ): Promise<FunctionType[]> {
     this.log("Fetching functions ...");
 
     const originalCwd = process.cwd();
@@ -276,7 +271,7 @@ export class Pull {
         functions = allFunctions;
       }
 
-      const result: FunctionConfig[] = [];
+      const result: FunctionType[] = [];
 
       for (const func of functions) {
         this.log(`Pulling function ${chalk.bold(func.name)} ...`);
@@ -284,7 +279,7 @@ export class Pull {
         const funcPath = `functions/${func.name}`;
         const holdingVars = func.vars || [];
 
-        const functionConfig: FunctionConfig = {
+        const functionConfig: FunctionType = {
           $id: func.$id,
           name: func.name,
           runtime: func.runtime,
@@ -344,9 +339,7 @@ export class Pull {
   /**
    * Pull sites from the project
    */
-  public async pullSites(
-    options: PullSitesOptions = {},
-  ): Promise<SiteConfig[]> {
+  public async pullSites(options: PullSitesOptions = {}): Promise<SiteType[]> {
     this.log("Fetching sites ...");
 
     const originalCwd = process.cwd();
@@ -384,7 +377,7 @@ export class Pull {
         sites = fetchedSites;
       }
 
-      const result: SiteConfig[] = [];
+      const result: SiteType[] = [];
 
       for (const site of sites) {
         this.log(`Pulling site ${chalk.bold(site.name)} ...`);
@@ -392,7 +385,7 @@ export class Pull {
         const sitePath = `sites/${site.name}`;
         const holdingVars = site.vars || [];
 
-        const siteConfig: SiteConfig = {
+        const siteConfig: SiteType = {
           $id: site.$id,
           name: site.name,
           path: sitePath,
@@ -730,7 +723,7 @@ const pullSettings = async (): Promise<void> => {
   const projectId = localConfig.getProject().projectId;
   const settings = await pullInstance.pullSettings(projectId);
 
-  localConfig.setProject(projectId, settings.projectName, settings.rawSettings);
+  localConfig.setProject(projectId, settings.projectName, settings.project);
 };
 
 const pullFunctions = async ({

@@ -1,96 +1,11 @@
 import { z } from "zod";
-import type { ProjectSettings, RawProjectSettings } from "../types.js";
+
+// ============================================================================
+// Internal Helpers (not exported)
+// ============================================================================
 
 const INT64_MIN = BigInt("-9223372036854775808");
 const INT64_MAX = BigInt("9223372036854775807");
-
-const createSettingsObject = (
-  settings: RawProjectSettings,
-): ProjectSettings => {
-  return {
-    services: {
-      account: settings.serviceStatusForAccount,
-      avatars: settings.serviceStatusForAvatars,
-      databases: settings.serviceStatusForDatabases,
-      locale: settings.serviceStatusForLocale,
-      health: settings.serviceStatusForHealth,
-      storage: settings.serviceStatusForStorage,
-      teams: settings.serviceStatusForTeams,
-      users: settings.serviceStatusForUsers,
-      sites: settings.serviceStatusForSites,
-      functions: settings.serviceStatusForFunctions,
-      graphql: settings.serviceStatusForGraphql,
-      messaging: settings.serviceStatusForMessaging,
-    },
-    auth: {
-      methods: {
-        jwt: settings.authJWT,
-        phone: settings.authPhone,
-        invites: settings.authInvites,
-        anonymous: settings.authAnonymous,
-        "email-otp": settings.authEmailOtp,
-        "magic-url": settings.authUsersAuthMagicURL,
-        "email-password": settings.authEmailPassword,
-      },
-      security: {
-        duration: settings.authDuration,
-        limit: settings.authLimit,
-        sessionsLimit: settings.authSessionsLimit,
-        passwordHistory: settings.authPasswordHistory,
-        passwordDictionary: settings.authPasswordDictionary,
-        personalDataCheck: settings.authPersonalDataCheck,
-        sessionAlerts: settings.authSessionAlerts,
-        mockNumbers: settings.authMockNumbers,
-      },
-    },
-  };
-};
-
-const SiteSchema = z
-  .object({
-    path: z.string().optional(),
-    $id: z.string(),
-    name: z.string(),
-    enabled: z.boolean().optional(),
-    logging: z.boolean().optional(),
-    timeout: z.number().optional(),
-    framework: z.string().optional(),
-    buildRuntime: z.string().optional(),
-    adapter: z.string().optional(),
-    installCommand: z.string().optional(),
-    buildCommand: z.string().optional(),
-    outputDirectory: z.string().optional(),
-    fallbackFile: z.string().optional(),
-    specification: z.string().optional(),
-  })
-  .strict();
-
-const FunctionSchema = z
-  .object({
-    path: z.string().optional(),
-    $id: z.string(),
-    execute: z.array(z.string()).optional(),
-    name: z.string(),
-    enabled: z.boolean().optional(),
-    logging: z.boolean().optional(),
-    runtime: z.string().optional(),
-    specification: z.string().optional(),
-    scopes: z.array(z.string()).optional(),
-    events: z.array(z.string()).optional(),
-    schedule: z.string().optional(),
-    timeout: z.number().optional(),
-    entrypoint: z.string().optional(),
-    commands: z.string().optional(),
-  })
-  .strict();
-
-const DatabaseSchema = z
-  .object({
-    $id: z.string(),
-    name: z.string(),
-    enabled: z.boolean().optional(),
-  })
-  .strict();
 
 const int64Schema = z.preprocess(
   (val) => {
@@ -143,6 +58,153 @@ const int64Schema = z.preprocess(
     }),
 );
 
+const MockNumberSchema = z
+  .object({
+    phone: z.string(),
+    otp: z.string(),
+  })
+  .strict();
+
+// ============================================================================
+// Config Schema
+// ============================================================================
+
+const ConfigSchema = z
+  .object({
+    projectId: z.string(),
+    projectName: z.string().optional(),
+    endpoint: z.string().optional(),
+    settings: z.lazy(() => SettingsSchema).optional(),
+    functions: z.array(z.lazy(() => FunctionSchema)).optional(),
+    sites: z.array(z.lazy(() => SiteSchema)).optional(),
+    databases: z.array(z.lazy(() => DatabaseSchema)).optional(),
+    collections: z.array(z.lazy(() => CollectionSchema)).optional(),
+    tables: z.array(z.lazy(() => TablesDBSchema)).optional(),
+    topics: z.array(z.lazy(() => TopicSchema)).optional(),
+    teams: z.array(z.lazy(() => TeamSchema)).optional(),
+    buckets: z.array(z.lazy(() => BucketSchema)).optional(),
+    messages: z.array(z.lazy(() => MessageSchema)).optional(),
+  })
+  .strict();
+
+// ============================================================================
+// Project Settings
+// ============================================================================
+
+const SettingsSchema = z
+  .object({
+    services: z
+      .object({
+        account: z.boolean().optional(),
+        avatars: z.boolean().optional(),
+        databases: z.boolean().optional(),
+        locale: z.boolean().optional(),
+        health: z.boolean().optional(),
+        storage: z.boolean().optional(),
+        teams: z.boolean().optional(),
+        users: z.boolean().optional(),
+        sites: z.boolean().optional(),
+        functions: z.boolean().optional(),
+        graphql: z.boolean().optional(),
+        messaging: z.boolean().optional(),
+      })
+      .strict()
+      .optional(),
+    auth: z
+      .object({
+        methods: z
+          .object({
+            jwt: z.boolean().optional(),
+            phone: z.boolean().optional(),
+            invites: z.boolean().optional(),
+            anonymous: z.boolean().optional(),
+            "email-otp": z.boolean().optional(),
+            "magic-url": z.boolean().optional(),
+            "email-password": z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+        security: z
+          .object({
+            duration: z.number().optional(),
+            limit: z.number().optional(),
+            sessionsLimit: z.number().optional(),
+            passwordHistory: z.number().optional(),
+            passwordDictionary: z.boolean().optional(),
+            personalDataCheck: z.boolean().optional(),
+            sessionAlerts: z.boolean().optional(),
+            mockNumbers: z.array(MockNumberSchema).optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict();
+
+// ============================================================================
+// Functions and Sites
+// ============================================================================
+
+const SiteSchema = z
+  .object({
+    path: z.string().optional(),
+    $id: z.string(),
+    name: z.string(),
+    enabled: z.boolean().optional(),
+    logging: z.boolean().optional(),
+    timeout: z.number().optional(),
+    framework: z.string().optional(),
+    buildRuntime: z.string().optional(),
+    adapter: z.string().optional(),
+    installCommand: z.string().optional(),
+    buildCommand: z.string().optional(),
+    outputDirectory: z.string().optional(),
+    fallbackFile: z.string().optional(),
+    specification: z.string().optional(),
+    vars: z.record(z.string(), z.string()).optional(),
+    ignore: z.string().optional(),
+  })
+  .strict();
+
+const FunctionSchema = z
+  .object({
+    path: z.string().optional(),
+    $id: z.string(),
+    execute: z.array(z.string()).optional(),
+    name: z.string(),
+    enabled: z.boolean().optional(),
+    logging: z.boolean().optional(),
+    runtime: z.string().optional(),
+    specification: z.string().optional(),
+    scopes: z.array(z.string()).optional(),
+    events: z.array(z.string()).optional(),
+    schedule: z.string().optional(),
+    timeout: z.number().optional(),
+    entrypoint: z.string().optional(),
+    commands: z.string().optional(),
+    vars: z.record(z.string(), z.string()).optional(),
+    ignore: z.string().optional(),
+  })
+  .strict();
+
+// ============================================================================
+// Databases
+// ============================================================================
+
+const DatabaseSchema = z
+  .object({
+    $id: z.string(),
+    name: z.string(),
+    enabled: z.boolean().optional(),
+  })
+  .strict();
+
+// ============================================================================
+// Collections (legacy)
+// ============================================================================
+
 const AttributeSchemaBase = z
   .object({
     key: z.string(),
@@ -194,7 +256,6 @@ const AttributeSchema = AttributeSchemaBase.refine(
     path: ["default"],
   },
 );
-const ColumnSchema = AttributeSchema;
 
 const IndexSchema = z
   .object({
@@ -202,16 +263,6 @@ const IndexSchema = z
     type: z.string(),
     status: z.string().optional(),
     attributes: z.array(z.string()),
-    orders: z.array(z.string()).optional(),
-  })
-  .strict();
-
-const IndexTableSchema = z
-  .object({
-    key: z.string(),
-    type: z.string(),
-    status: z.string().optional(),
-    columns: z.array(z.string()),
     orders: z.array(z.string()).optional(),
   })
   .strict();
@@ -231,11 +282,9 @@ const CollectionSchema = z
   .superRefine((data, ctx) => {
     if (data.attributes && data.attributes.length > 0) {
       const seenKeys = new Set<string>();
-      const duplicateKeys = new Set<string>();
 
       data.attributes.forEach((attr, index) => {
         if (seenKeys.has(attr.key)) {
-          duplicateKeys.add(attr.key);
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `Attribute with the key '${attr.key}' already exists. Attribute keys must be unique, try again with a different key.`,
@@ -249,11 +298,9 @@ const CollectionSchema = z
 
     if (data.indexes && data.indexes.length > 0) {
       const seenKeys = new Set<string>();
-      const duplicateKeys = new Set<string>();
 
       data.indexes.forEach((index, indexPos) => {
         if (seenKeys.has(index.key)) {
-          duplicateKeys.add(index.key);
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `Index with the key '${index.key}' already exists. Index keys must be unique, try again with a different key.`,
@@ -265,6 +312,22 @@ const CollectionSchema = z
       });
     }
   });
+
+// ============================================================================
+// Tables
+// ============================================================================
+
+const ColumnSchema = AttributeSchema;
+
+const IndexTableSchema = z
+  .object({
+    key: z.string(),
+    type: z.string(),
+    status: z.string().optional(),
+    columns: z.array(z.string()),
+    orders: z.array(z.string()).optional(),
+  })
+  .strict();
 
 const TablesDBSchema = z
   .object({
@@ -281,11 +344,9 @@ const TablesDBSchema = z
   .superRefine((data, ctx) => {
     if (data.columns && data.columns.length > 0) {
       const seenKeys = new Set<string>();
-      const duplicateKeys = new Set<string>();
 
       data.columns.forEach((col, index) => {
         if (seenKeys.has(col.key)) {
-          duplicateKeys.add(col.key);
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `Column with the key '${col.key}' already exists. Column keys must be unique, try again with a different key.`,
@@ -299,11 +360,9 @@ const TablesDBSchema = z
 
     if (data.indexes && data.indexes.length > 0) {
       const seenKeys = new Set<string>();
-      const duplicateKeys = new Set<string>();
 
       data.indexes.forEach((index, indexPos) => {
         if (seenKeys.has(index.key)) {
-          duplicateKeys.add(index.key);
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `Index with the key '${index.key}' already exists. Index keys must be unique, try again with a different key.`,
@@ -315,6 +374,48 @@ const TablesDBSchema = z
       });
     }
   });
+
+// ============================================================================
+// Topics
+// ============================================================================
+
+const TopicSchema = z
+  .object({
+    $id: z.string(),
+    name: z.string(),
+    subscribe: z.array(z.string()).optional(),
+  })
+  .strict();
+
+// ============================================================================
+// Teams
+// ============================================================================
+
+const TeamSchema = z
+  .object({
+    $id: z.string(),
+    name: z.string(),
+  })
+  .strict();
+
+// ============================================================================
+// Messages
+// ============================================================================
+
+const MessageSchema = z
+  .object({
+    $id: z.string(),
+    name: z.string(),
+    emailTotal: z.number().optional(),
+    smsTotal: z.number().optional(),
+    pushTotal: z.number().optional(),
+    subscribe: z.array(z.string()).optional(),
+  })
+  .strict();
+
+// ============================================================================
+// Buckets
+// ============================================================================
 
 const BucketSchema = z
   .object({
@@ -331,125 +432,32 @@ const BucketSchema = z
   })
   .strict();
 
-const TopicSchema = z
-  .object({
-    $id: z.string(),
-    name: z.string(),
-    subscribe: z.array(z.string()).optional(),
-  })
-  .strict();
+// ============================================================================
+// Type Exports (inferred from Zod schemas - single source of truth)
+// ============================================================================
 
-const TeamSchema = z
-  .object({
-    $id: z.string(),
-    name: z.string(),
-  })
-  .strict();
-
-const MessageSchema = z
-  .object({
-    $id: z.string(),
-    name: z.string(),
-    emailTotal: z.number().optional(),
-    smsTotal: z.number().optional(),
-    pushTotal: z.number().optional(),
-    subscribe: z.array(z.string()).optional(),
-  })
-  .strict();
-
-const SettingsSchema = z
-  .object({
-    services: z
-      .object({
-        account: z.boolean().optional(),
-        avatars: z.boolean().optional(),
-        databases: z.boolean().optional(),
-        locale: z.boolean().optional(),
-        health: z.boolean().optional(),
-        storage: z.boolean().optional(),
-        teams: z.boolean().optional(),
-        users: z.boolean().optional(),
-        sites: z.boolean().optional(),
-        functions: z.boolean().optional(),
-        graphql: z.boolean().optional(),
-        messaging: z.boolean().optional(),
-      })
-      .strict()
-      .optional(),
-    auth: z
-      .object({
-        methods: z
-          .object({
-            jwt: z.boolean().optional(),
-            phone: z.boolean().optional(),
-            invites: z.boolean().optional(),
-            anonymous: z.boolean().optional(),
-            "email-otp": z.boolean().optional(),
-            "magic-url": z.boolean().optional(),
-            "email-password": z.boolean().optional(),
-          })
-          .strict()
-          .optional(),
-        security: z
-          .object({
-            duration: z.number().optional(),
-            limit: z.number().optional(),
-            sessionsLimit: z.number().optional(),
-            passwordHistory: z.number().optional(),
-            passwordDictionary: z.boolean().optional(),
-            personalDataCheck: z.boolean().optional(),
-            sessionAlerts: z.boolean().optional(),
-            mockNumbers: z
-              .array(
-                z
-                  .object({
-                    phone: z.string(),
-                    otp: z.string(),
-                  })
-                  .strict(),
-              )
-              .optional(),
-          })
-          .strict()
-          .optional(),
-      })
-      .strict()
-      .optional(),
-  })
-  .strict();
-
-const configSchema = z
-  .object({
-    projectId: z.string(),
-    projectName: z.string().optional(),
-    endpoint: z.string().optional(),
-    settings: SettingsSchema.optional(),
-    functions: z.array(FunctionSchema).optional(),
-    sites: z.array(SiteSchema).optional(),
-    databases: z.array(DatabaseSchema).optional(),
-    collections: z.array(CollectionSchema).optional(),
-    tablesDB: z.array(TablesDBSchema).optional(),
-    topics: z.array(TopicSchema).optional(),
-    teams: z.array(TeamSchema).optional(),
-    buckets: z.array(BucketSchema).optional(),
-    messages: z.array(MessageSchema).optional(),
-  })
-  .strict();
-
-export type ConfigType = z.infer<typeof configSchema>;
+export type ConfigType = z.infer<typeof ConfigSchema>;
 export type SettingsType = z.infer<typeof SettingsSchema>;
-export type FunctionType = z.infer<typeof FunctionSchema>;
 export type SiteType = z.infer<typeof SiteSchema>;
+export type FunctionType = z.infer<typeof FunctionSchema>;
 export type DatabaseType = z.infer<typeof DatabaseSchema>;
 export type CollectionType = z.infer<typeof CollectionSchema>;
-export type TablesDBType = z.infer<typeof TablesDBSchema>;
+export type AttributeType = z.infer<typeof AttributeSchemaBase>;
+export type IndexType = z.infer<typeof IndexSchema>;
+export type TableType = z.infer<typeof TablesDBSchema>;
+export type ColumnType = z.infer<typeof AttributeSchemaBase>;
+export type TableIndexType = z.infer<typeof IndexTableSchema>;
 export type TopicType = z.infer<typeof TopicSchema>;
 export type TeamType = z.infer<typeof TeamSchema>;
 export type MessageType = z.infer<typeof MessageSchema>;
 export type BucketType = z.infer<typeof BucketSchema>;
 
+// ============================================================================
+// Schema Exports
+// ============================================================================
+
 export {
-  configSchema,
+  ConfigSchema,
 
   /** Project Settings */
   SettingsSchema,
@@ -482,7 +490,4 @@ export {
 
   /** Buckets */
   BucketSchema,
-
-  /** Helper functions */
-  createSettingsObject,
 };
