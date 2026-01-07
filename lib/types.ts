@@ -1,25 +1,6 @@
 import type { File } from "undici";
 import type { ReadableStream } from "node:stream/web";
 
-// Re-export config types from the Zod schema source of truth
-export type {
-  ConfigType,
-  SettingsType,
-  FunctionType,
-  SiteType,
-  DatabaseType,
-  CollectionType,
-  TableType,
-  TopicType,
-  TeamType,
-  MessageType,
-  BucketType,
-  AttributeType,
-  IndexType,
-  ColumnType,
-  TableIndexType,
-} from "./commands/config.js";
-
 export type ResponseType = "json" | "arraybuffer";
 
 export interface Headers {
@@ -92,3 +73,21 @@ export interface GlobalConfigData extends ConfigData {
   current: string;
   cookie?: string;
 }
+
+export type {
+  ConfigType,
+  SettingsType,
+  FunctionType,
+  SiteType,
+  DatabaseType,
+  CollectionType,
+  TableType,
+  TopicType,
+  TeamType,
+  MessageType,
+  BucketType,
+  AttributeType,
+  IndexType,
+  ColumnType,
+  TableIndexType,
+} from "./commands/config.js";
