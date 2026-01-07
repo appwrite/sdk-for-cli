@@ -15,6 +15,8 @@ import {
   KeysCollection,
   KeysTable,
 } from "../config.js";
+import type { SettingsType } from "./config.js";
+import type { ConfigType } from "./config.js";
 import { Spinner, SPINNER_DOTS } from "../spinner.js";
 import { paginate } from "../paginate.js";
 import {
@@ -67,7 +69,6 @@ import {
   getObjectChanges,
 } from "./utils/change-approval.js";
 import { checkAndApplyTablesDBChanges } from "./utils/database-sync.js";
-import type { ConfigType } from "./config.js";
 
 const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
@@ -103,7 +104,180 @@ export class Push {
     this.consoleClient = consoleClient;
   }
 
-  public async pushSettings(config: ConfigType): Promise<void> {
+  public async pushResources(
+    config: ConfigType,
+    options: {
+      skipDeprecated?: boolean;
+      functionOptions?: {
+        async?: boolean;
+        code?: boolean;
+        withVariables?: boolean;
+      };
+      siteOptions?: {
+        async?: boolean;
+        code?: boolean;
+        withVariables?: boolean;
+      };
+      attempts?: number;
+    } = { skipDeprecated: true },
+  ): Promise<{
+    results: Record<string, any>;
+    errors: any[];
+  }> {
+    const { skipDeprecated = true } = options;
+    const results: Record<string, any> = {};
+    const allErrors: any[] = [];
+
+    // Push settings
+    if (config.projectName || config.settings) {
+      try {
+        log("Pushing settings ...");
+        await this.pushSettings({
+          projectId: config.projectId,
+          projectName: config.projectName,
+          settings: config.settings,
+        });
+        results.settings = { success: true };
+      } catch (e: any) {
+        allErrors.push(e);
+        results.settings = { success: false, error: e.message };
+      }
+    }
+
+    // Push buckets
+    if (config.buckets && config.buckets.length > 0) {
+      try {
+        log("Pushing buckets ...");
+        const result = await this.pushBuckets(config.buckets);
+        results.buckets = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.buckets = { successfullyPushed: 0, errors: [e] };
+      }
+    }
+
+    // Push teams
+    if (config.teams && config.teams.length > 0) {
+      try {
+        log("Pushing teams ...");
+        const result = await this.pushTeams(config.teams);
+        results.teams = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.teams = { successfullyPushed: 0, errors: [e] };
+      }
+    }
+
+    // Push messaging topics
+    if (config.topics && config.topics.length > 0) {
+      try {
+        log("Pushing topics ...");
+        const result = await this.pushMessagingTopics(config.topics);
+        results.topics = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.topics = { successfullyPushed: 0, errors: [e] };
+      }
+    }
+
+    // Push functions
+    if (config.functions && config.functions.length > 0) {
+      try {
+        log("Pushing functions ...");
+        const result = await this.pushFunctions(
+          config.functions,
+          options.functionOptions,
+        );
+        results.functions = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.functions = {
+          successfullyPushed: 0,
+          successfullyDeployed: 0,
+          failedDeployments: [],
+          errors: [e],
+        };
+      }
+    }
+
+    // Push sites
+    if (config.sites && config.sites.length > 0) {
+      try {
+        log("Pushing sites ...");
+        const result = await this.pushSites(config.sites, options.siteOptions);
+        results.sites = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.sites = {
+          successfullyPushed: 0,
+          successfullyDeployed: 0,
+          failedDeployments: [],
+          errors: [e],
+        };
+      }
+    }
+
+    // Push tables
+    if (config.tablesDB && config.tablesDB.length > 0) {
+      try {
+        log("Pushing tables ...");
+        const result = await this.pushTables(config.tablesDB, options.attempts);
+        results.tables = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.tables = { successfullyPushed: 0, errors: [e] };
+      }
+    }
+
+    // Push collections (unless skipDeprecated is true)
+    if (
+      !skipDeprecated &&
+      config.collections &&
+      config.collections.length > 0
+    ) {
+      try {
+        log("Pushing collections ...");
+        // Add database names to collections
+        const collectionsWithDbNames = config.collections.map(
+          (collection: any) => {
+            const database = config.databases?.find(
+              (db: any) => db.$id === collection.databaseId,
+            );
+            return {
+              ...collection,
+              databaseName: database?.name ?? collection.databaseId,
+            };
+          },
+        );
+        const result = await this.pushCollections(
+          collectionsWithDbNames,
+          options.attempts,
+        );
+        results.collections = result;
+        allErrors.push(...result.errors);
+      } catch (e: any) {
+        allErrors.push(e);
+        results.collections = { successfullyPushed: 0, errors: [e] };
+      }
+    }
+
+    return {
+      results,
+      errors: allErrors,
+    };
+  }
+
+  public async pushSettings(config: {
+    projectId: string;
+    projectName?: string;
+    settings?: SettingsType;
+  }): Promise<void> {
     const projectsService = await getProjectsService(this.consoleClient);
     const projectId = config.projectId;
     const projectName = config.projectName;
@@ -174,87 +348,6 @@ export class Push {
     }
   }
 
-  public async pushBucket(bucket: any): Promise<void> {
-    const storageService = await getStorageService(this.projectClient);
-
-    try {
-      await storageService.getBucket(bucket["$id"]);
-      await storageService.updateBucket({
-        bucketId: bucket["$id"],
-        name: bucket.name,
-        permissions: bucket["$permissions"],
-        fileSecurity: bucket.fileSecurity,
-        enabled: bucket.enabled,
-        maximumFileSize: bucket.maximumFileSize,
-        allowedFileExtensions: bucket.allowedFileExtensions,
-        encryption: bucket.encryption,
-        antivirus: bucket.antivirus,
-        compression: bucket.compression,
-      });
-    } catch (e: unknown) {
-      if (e instanceof AppwriteException && Number(e.code) === 404) {
-        await storageService.createBucket({
-          bucketId: bucket["$id"],
-          name: bucket.name,
-          permissions: bucket["$permissions"],
-          fileSecurity: bucket.fileSecurity,
-          enabled: bucket.enabled,
-          maximumFileSize: bucket.maximumFileSize,
-          allowedFileExtensions: bucket.allowedFileExtensions,
-          compression: bucket.compression,
-          encryption: bucket.encryption,
-          antivirus: bucket.antivirus,
-        });
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  public async pushTeam(team: any): Promise<void> {
-    const teamsService = await getTeamsService(this.projectClient);
-
-    try {
-      await teamsService.get(team["$id"]);
-      await teamsService.updateName({
-        teamId: team["$id"],
-        name: team.name,
-      });
-    } catch (e: unknown) {
-      if (e instanceof AppwriteException && Number(e.code) === 404) {
-        await teamsService.create({
-          teamId: team["$id"],
-          name: team.name,
-        });
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  public async pushMessagingTopic(topic: any): Promise<void> {
-    const messagingService = await getMessagingService(this.projectClient);
-
-    try {
-      await messagingService.getTopic(topic["$id"]);
-      await messagingService.updateTopic({
-        topicId: topic["$id"],
-        name: topic.name,
-        subscribe: topic.subscribe,
-      });
-    } catch (e: unknown) {
-      if (e instanceof AppwriteException && Number(e.code) === 404) {
-        await messagingService.createTopic({
-          topicId: topic["$id"],
-          name: topic.name,
-          subscribe: topic.subscribe,
-        });
-      } else {
-        throw e;
-      }
-    }
-  }
-
   public async pushBuckets(buckets: any[]): Promise<{
     successfullyPushed: number;
     errors: any[];
@@ -265,7 +358,41 @@ export class Push {
     for (const bucket of buckets) {
       try {
         log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
-        await this.pushBucket(bucket);
+        const storageService = await getStorageService(this.projectClient);
+
+        try {
+          await storageService.getBucket(bucket["$id"]);
+          await storageService.updateBucket({
+            bucketId: bucket["$id"],
+            name: bucket.name,
+            permissions: bucket["$permissions"],
+            fileSecurity: bucket.fileSecurity,
+            enabled: bucket.enabled,
+            maximumFileSize: bucket.maximumFileSize,
+            allowedFileExtensions: bucket.allowedFileExtensions,
+            encryption: bucket.encryption,
+            antivirus: bucket.antivirus,
+            compression: bucket.compression,
+          });
+        } catch (e: unknown) {
+          if (e instanceof AppwriteException && Number(e.code) === 404) {
+            await storageService.createBucket({
+              bucketId: bucket["$id"],
+              name: bucket.name,
+              permissions: bucket["$permissions"],
+              fileSecurity: bucket.fileSecurity,
+              enabled: bucket.enabled,
+              maximumFileSize: bucket.maximumFileSize,
+              allowedFileExtensions: bucket.allowedFileExtensions,
+              compression: bucket.compression,
+              encryption: bucket.encryption,
+              antivirus: bucket.antivirus,
+            });
+          } else {
+            throw e;
+          }
+        }
+
         successfullyPushed++;
       } catch (e: any) {
         errors.push(e);
@@ -289,7 +416,25 @@ export class Push {
     for (const team of teams) {
       try {
         log(`Pushing team ${chalk.bold(team["name"])} ...`);
-        await this.pushTeam(team);
+        const teamsService = await getTeamsService(this.projectClient);
+
+        try {
+          await teamsService.get(team["$id"]);
+          await teamsService.updateName({
+            teamId: team["$id"],
+            name: team.name,
+          });
+        } catch (e: unknown) {
+          if (e instanceof AppwriteException && Number(e.code) === 404) {
+            await teamsService.create({
+              teamId: team["$id"],
+              name: team.name,
+            });
+          } else {
+            throw e;
+          }
+        }
+
         successfullyPushed++;
       } catch (e: any) {
         errors.push(e);
@@ -313,7 +458,27 @@ export class Push {
     for (const topic of topics) {
       try {
         log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
-        await this.pushMessagingTopic(topic);
+        const messagingService = await getMessagingService(this.projectClient);
+
+        try {
+          await messagingService.getTopic(topic["$id"]);
+          await messagingService.updateTopic({
+            topicId: topic["$id"],
+            name: topic.name,
+            subscribe: topic.subscribe,
+          });
+        } catch (e: unknown) {
+          if (e instanceof AppwriteException && Number(e.code) === 404) {
+            await messagingService.createTopic({
+              topicId: topic["$id"],
+              name: topic.name,
+              subscribe: topic.subscribe,
+            });
+          } else {
+            throw e;
+          }
+        }
+
         success(`Created ${topic.name} ( ${topic["$id"]} )`);
         successfullyPushed++;
       } catch (e: any) {
@@ -328,7 +493,7 @@ export class Push {
     };
   }
 
-  public async pushFunction(
+  public async pushFunctions(
     functions: any[],
     options: {
       async?: boolean;
@@ -658,7 +823,7 @@ export class Push {
     };
   }
 
-  public async pushSite(
+  public async pushSites(
     sites: any[],
     options: {
       async?: boolean;
@@ -982,89 +1147,291 @@ export class Push {
     };
   }
 
-  public async getDeploymentStatus(
-    resourceId: string,
-    deploymentId: string,
-    resourceType: "function" | "site",
+  public async pushTables(
+    tables: any[],
+    attempts?: number,
   ): Promise<{
-    status: string;
-    url?: string;
+    successfullyPushed: number;
+    errors: any[];
   }> {
-    if (resourceType === "function") {
-      const functionsService = await getFunctionsService(this.projectClient);
-      const response = await functionsService.getDeployment({
-        functionId: resourceId,
-        deploymentId: deploymentId,
-      });
+    const pollMaxDebounces = attempts ?? POLL_DEFAULT_VALUE;
+    const pools = new Pools(pollMaxDebounces);
+    const attributes = new Attributes(pools);
 
-      const status = response["status"];
-      let url = "";
+    let tablesChanged = new Set();
+    const errors: any[] = [];
 
-      if (status === "ready") {
-        const proxyService = await getProxyService(this.projectClient);
-        const res = await proxyService.listRules([
-          JSON.stringify({ method: "limit", values: [1] }),
-          JSON.stringify({
-            method: "equal",
-            attribute: "deploymentResourceType",
-            values: ["function"],
-          }),
-          JSON.stringify({
-            method: "equal",
-            attribute: "deploymentResourceId",
-            values: [resourceId],
-          }),
-          JSON.stringify({
-            method: "equal",
-            attribute: "trigger",
-            values: ["manual"],
-          }),
-        ]);
+    // Parallel tables actions
+    await Promise.all(
+      tables.map(async (table: any) => {
+        try {
+          const tablesDBService = await getTablesDBService(this.projectClient);
+          const remoteTable = await tablesDBService.getTable(
+            table["databaseId"],
+            table["$id"],
+          );
 
-        if (Number(res.total) === 1) {
-          url = res.rules[0].domain;
+          const changes: string[] = [];
+          if (remoteTable.name !== table.name) changes.push("name");
+          if (remoteTable.rowSecurity !== table.rowSecurity)
+            changes.push("rowSecurity");
+          if (remoteTable.enabled !== table.enabled) changes.push("enabled");
+          if (
+            JSON.stringify(remoteTable["$permissions"]) !==
+            JSON.stringify(table["$permissions"])
+          )
+            changes.push("permissions");
+
+          if (changes.length > 0) {
+            await tablesDBService.updateTable(
+              table["databaseId"],
+              table["$id"],
+              table.name,
+              table.rowSecurity,
+              table["$permissions"],
+            );
+
+            success(
+              `Updated ${table.name} ( ${table["$id"]} ) - ${changes.join(", ")}`,
+            );
+            tablesChanged.add(table["$id"]);
+          }
+          table.remoteVersion = remoteTable;
+
+          table.isExisted = true;
+        } catch (e: any) {
+          if (Number(e.code) === 404) {
+            log(
+              `Table ${table.name} does not exist in the project. Creating ... `,
+            );
+            const tablesDBService = await getTablesDBService(
+              this.projectClient,
+            );
+            await tablesDBService.createTable(
+              table["databaseId"],
+              table["$id"],
+              table.name,
+              table.rowSecurity,
+              table["$permissions"],
+            );
+
+            success(`Created ${table.name} ( ${table["$id"]} )`);
+            tablesChanged.add(table["$id"]);
+          } else {
+            errors.push(e);
+            throw e;
+          }
+        }
+      }),
+    );
+
+    // Serialize attribute actions
+    for (let table of tables) {
+      let columns = table.columns;
+      let indexes = table.indexes;
+
+      if (table.isExisted) {
+        columns = await attributes.attributesToCreate(
+          table.remoteVersion.columns,
+          table.columns,
+          table as Collection,
+        );
+        indexes = await attributes.attributesToCreate(
+          table.remoteVersion.indexes,
+          table.indexes,
+          table as Collection,
+          true,
+        );
+
+        if (
+          Array.isArray(columns) &&
+          columns.length <= 0 &&
+          Array.isArray(indexes) &&
+          indexes.length <= 0
+        ) {
+          continue;
         }
       }
 
-      return { status, url };
-    } else {
-      const sitesService = await getSitesService(this.projectClient);
-      const response = await sitesService.getDeployment({
-        siteId: resourceId,
-        deploymentId: deploymentId,
-      });
+      log(
+        `Pushing table ${table.name} ( ${table["databaseId"]} - ${table["$id"]} ) attributes`,
+      );
 
-      const status = response["status"];
-      let url = "";
-
-      if (status === "ready") {
-        const proxyService = await getProxyService(this.projectClient);
-        const res = await proxyService.listRules([
-          JSON.stringify({ method: "limit", values: [1] }),
-          JSON.stringify({
-            method: "equal",
-            attribute: "deploymentResourceType",
-            values: ["site"],
-          }),
-          JSON.stringify({
-            method: "equal",
-            attribute: "deploymentResourceId",
-            values: [resourceId],
-          }),
-          JSON.stringify({
-            method: "equal",
-            attribute: "trigger",
-            values: ["manual"],
-          }),
-        ]);
-
-        if (Number(res.total) === 1) {
-          url = res.rules[0].domain;
-        }
+      try {
+        await attributes.createColumns(columns, table as Collection);
+      } catch (e) {
+        errors.push(e);
+        throw e;
       }
 
-      return { status, url };
+      try {
+        await attributes.createIndexes(indexes, table as Collection);
+      } catch (e) {
+        errors.push(e);
+        throw e;
+      }
+      tablesChanged.add(table["$id"]);
+      success(`Successfully pushed ${table.name} ( ${table["$id"]} )`);
     }
+
+    return {
+      successfullyPushed: tablesChanged.size,
+      errors,
+    };
+  }
+
+  public async pushCollections(
+    collections: any[],
+    attempts?: number,
+  ): Promise<{
+    successfullyPushed: number;
+    errors: any[];
+  }> {
+    const pools = new Pools(attempts ?? POLL_DEFAULT_VALUE);
+    const attributes = new Attributes(pools);
+
+    const errors: any[] = [];
+
+    const databases = Array.from(
+      new Set(collections.map((collection: any) => collection["databaseId"])),
+    );
+
+    // Parallel db actions
+    await Promise.all(
+      databases.map(async (databaseId: any) => {
+        const databasesService = await getDatabasesService(this.projectClient);
+        try {
+          const database = await databasesService.get(databaseId);
+
+          // Note: We can't get the local database name here since we don't have access to localConfig
+          // This will need to be handled by the caller if needed
+          const localDatabaseName =
+            collections.find((c: any) => c.databaseId === databaseId)
+              ?.databaseName ?? databaseId;
+
+          if (database.name !== localDatabaseName) {
+            await databasesService.update(databaseId, localDatabaseName);
+
+            success(`Updated ${localDatabaseName} ( ${databaseId} ) name`);
+          }
+        } catch (err) {
+          log(`Database ${databaseId} not found. Creating it now ...`);
+
+          const localDatabaseName =
+            collections.find((c: any) => c.databaseId === databaseId)
+              ?.databaseName ?? databaseId;
+
+          await databasesService.create(databaseId, localDatabaseName);
+        }
+      }),
+    );
+
+    // Parallel collection actions
+    await Promise.all(
+      collections.map(async (collection: any) => {
+        try {
+          const databasesService = await getDatabasesService(
+            this.projectClient,
+          );
+          const remoteCollection = await databasesService.getCollection(
+            collection["databaseId"],
+            collection["$id"],
+          );
+
+          if (remoteCollection.name !== collection.name) {
+            await databasesService.updateCollection(
+              collection["databaseId"],
+              collection["$id"],
+              collection.name,
+            );
+
+            success(`Updated ${collection.name} ( ${collection["$id"]} ) name`);
+          }
+          collection.remoteVersion = remoteCollection;
+
+          collection.isExisted = true;
+        } catch (e: any) {
+          if (Number(e.code) === 404) {
+            log(
+              `Collection ${collection.name} does not exist in the project. Creating ... `,
+            );
+            const databasesService = await getDatabasesService(
+              this.projectClient,
+            );
+            await databasesService.createCollection(
+              collection["databaseId"],
+              collection["$id"],
+              collection.name,
+              collection.documentSecurity,
+              collection["$permissions"],
+            );
+          } else {
+            errors.push(e);
+            throw e;
+          }
+        }
+      }),
+    );
+
+    let numberOfCollections = 0;
+    // Serialize attribute actions
+    for (let collection of collections) {
+      let collectionAttributes = collection.attributes;
+      let indexes = collection.indexes;
+
+      if (collection.isExisted) {
+        collectionAttributes = await attributes.attributesToCreate(
+          collection.remoteVersion.attributes,
+          collection.attributes,
+          collection as Collection,
+        );
+        indexes = await attributes.attributesToCreate(
+          collection.remoteVersion.indexes,
+          collection.indexes,
+          collection as Collection,
+          true,
+        );
+
+        if (
+          Array.isArray(collectionAttributes) &&
+          collectionAttributes.length <= 0 &&
+          Array.isArray(indexes) &&
+          indexes.length <= 0
+        ) {
+          continue;
+        }
+      }
+
+      log(
+        `Pushing collection ${collection.name} ( ${collection["databaseId"]} - ${collection["$id"]} ) attributes`,
+      );
+
+      try {
+        await attributes.createAttributes(
+          collectionAttributes,
+          collection as Collection,
+        );
+      } catch (e) {
+        errors.push(e);
+        throw e;
+      }
+
+      try {
+        await attributes.createIndexes(indexes, collection as Collection);
+      } catch (e) {
+        errors.push(e);
+        throw e;
+      }
+      numberOfCollections++;
+      success(
+        `Successfully pushed ${collection.name} ( ${collection["$id"]} )`,
+      );
+    }
+
+    return {
+      successfullyPushed: numberOfCollections,
+      errors,
+    };
   }
 }
 
@@ -1077,26 +1444,33 @@ async function createPushInstance(): Promise<Push> {
 const pushResources = async ({
   skipDeprecated = false,
 }: PushResourcesOptions = {}): Promise<void> => {
-  const actions: Record<string, (options?: any) => Promise<void>> = {
-    settings: pushSettings,
-    functions: pushFunction,
-    sites: pushSite,
-    collections: pushCollection,
-    tables: pushTable,
-    buckets: pushBucket,
-    teams: pushTeam,
-    messages: pushMessagingTopic,
-  };
-
-  if (skipDeprecated) {
-    delete actions.collections;
-  }
-
   if (cliConfig.all) {
-    for (let action of Object.values(actions)) {
-      await action();
-    }
+    checkDeployConditions(localConfig);
+
+    const pushInstance = await createPushInstance();
+    const config = localConfig.getProject() as ConfigType;
+
+    await pushInstance.pushResources(config, {
+      skipDeprecated,
+      functionOptions: { code: true, withVariables: false },
+      siteOptions: { code: true, withVariables: false },
+    });
   } else {
+    const actions: Record<string, (options?: any) => Promise<void>> = {
+      settings: pushSettings,
+      functions: pushFunction,
+      sites: pushSite,
+      collections: pushCollection,
+      tables: pushTable,
+      buckets: pushBucket,
+      teams: pushTeam,
+      messages: pushMessagingTopic,
+    };
+
+    if (skipDeprecated) {
+      delete actions.collections;
+    }
+
     const answers = await inquirer.prompt(questionsPushResources);
 
     const action = actions[answers.resource];
@@ -1265,7 +1639,7 @@ const pushSite = async ({
   log("Pushing sites ...");
 
   const pushInstance = await createPushInstance();
-  const result = await pushInstance.pushSite(sites, {
+  const result = await pushInstance.pushSites(sites, {
     async: asyncDeploy,
     code,
     withVariables,
@@ -1385,7 +1759,7 @@ const pushFunction = async ({
   log("Pushing functions ...");
 
   const pushInstance = await createPushInstance();
-  const result = await pushInstance.pushFunction(functions, {
+  const result = await pushInstance.pushFunctions(functions, {
     async: asyncDeploy,
     code,
     withVariables,
@@ -1432,10 +1806,6 @@ const pushTable = async ({
   attempts,
 }: PushTableOptions = {}): Promise<void> => {
   const tables: any[] = [];
-
-  const pollMaxDebounces = attempts ?? POLL_DEFAULT_VALUE;
-  const pools = new Pools(pollMaxDebounces);
-  const attributes = new Attributes(pools);
 
   const { resyncNeeded } = await checkAndApplyTablesDBChanges();
   if (resyncNeeded) {
@@ -1582,117 +1952,23 @@ const pushTable = async ({
   ) {
     return;
   }
-  let tablesChanged = new Set();
 
-  // Parallel tables actions
-  await Promise.all(
-    tables.map(async (table: any) => {
-      try {
-        const tablesDBService = await getTablesDBService();
-        const remoteTable = await tablesDBService.getTable(
-          table["databaseId"],
-          table["$id"],
-        );
+  log("Pushing tables ...");
 
-        const changes: string[] = [];
-        if (remoteTable.name !== table.name) changes.push("name");
-        if (remoteTable.rowSecurity !== table.rowSecurity)
-          changes.push("rowSecurity");
-        if (remoteTable.enabled !== table.enabled) changes.push("enabled");
-        if (
-          JSON.stringify(remoteTable["$permissions"]) !==
-          JSON.stringify(table["$permissions"])
-        )
-          changes.push("permissions");
+  const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushTables(tables, attempts);
 
-        if (changes.length > 0) {
-          await tablesDBService.updateTable(
-            table["databaseId"],
-            table["$id"],
-            table.name,
-            table.rowSecurity,
-            table["$permissions"],
-          );
+  const { successfullyPushed, errors } = result;
 
-          success(
-            `Updated ${table.name} ( ${table["$id"]} ) - ${changes.join(", ")}`,
-          );
-          tablesChanged.add(table["$id"]);
-        }
-        table.remoteVersion = remoteTable;
-
-        table.isExisted = true;
-      } catch (e: any) {
-        if (Number(e.code) === 404) {
-          log(
-            `Table ${table.name} does not exist in the project. Creating ... `,
-          );
-          const tablesDBService = await getTablesDBService();
-          await tablesDBService.createTable(
-            table["databaseId"],
-            table["$id"],
-            table.name,
-            table.rowSecurity,
-            table["$permissions"],
-          );
-
-          success(`Created ${table.name} ( ${table["$id"]} )`);
-          tablesChanged.add(table["$id"]);
-        } else {
-          throw e;
-        }
-      }
-    }),
-  );
-
-  // Serialize attribute actions
-  for (let table of tables) {
-    let columns = table.columns;
-    let indexes = table.indexes;
-
-    if (table.isExisted) {
-      columns = await attributes.attributesToCreate(
-        table.remoteVersion.columns,
-        table.columns,
-        table as Collection,
-      );
-      indexes = await attributes.attributesToCreate(
-        table.remoteVersion.indexes,
-        table.indexes,
-        table as Collection,
-        true,
-      );
-
-      if (
-        Array.isArray(columns) &&
-        columns.length <= 0 &&
-        Array.isArray(indexes) &&
-        indexes.length <= 0
-      ) {
-        continue;
-      }
-    }
-
-    log(
-      `Pushing table ${table.name} ( ${table["databaseId"]} - ${table["$id"]} ) attributes`,
-    );
-
-    try {
-      await attributes.createColumns(columns, table as Collection);
-    } catch (e) {
-      throw e;
-    }
-
-    try {
-      await attributes.createIndexes(indexes, table as Collection);
-    } catch (e) {
-      throw e;
-    }
-    tablesChanged.add(table["$id"]);
-    success(`Successfully pushed ${table.name} ( ${table["$id"]} )`);
+  if (successfullyPushed === 0) {
+    error("No tables were pushed.");
+  } else {
+    success(`Successfully pushed ${successfullyPushed} tables.`);
   }
 
-  success(`Successfully pushed ${tablesChanged.size} tables`);
+  if (cliConfig.verbose) {
+    errors.forEach((e) => console.error(e));
+  }
 };
 
 const pushCollection = async ({
@@ -1702,10 +1978,6 @@ const pushCollection = async ({
     "appwrite push collection has been deprecated. Please consider using 'appwrite push tables' instead",
   );
   const collections: any[] = [];
-
-  // Create fresh instances per operation to avoid shared state issues
-  const pools = new Pools(attempts ?? POLL_DEFAULT_VALUE);
-  const attributes = new Attributes(pools);
 
   if (cliConfig.all) {
     checkDeployConditions(localConfig);
@@ -1732,37 +2004,11 @@ const pushCollection = async ({
     return;
   }
 
-  const databases = Array.from(
-    new Set(collections.map((collection: any) => collection["databaseId"])),
-  );
-
-  // Parallel db actions
-  await Promise.all(
-    databases.map(async (databaseId: any) => {
-      const localDatabase = localConfig.getDatabase(databaseId);
-
-      const databasesService = await getDatabasesService();
-      try {
-        const database = await databasesService.get(databaseId);
-
-        if (database.name !== (localDatabase.name ?? databaseId)) {
-          await databasesService.update(
-            databaseId,
-            localDatabase.name ?? databaseId,
-          );
-
-          success(`Updated ${localDatabase.name} ( ${databaseId} ) name`);
-        }
-      } catch (err) {
-        log(`Database ${databaseId} not found. Creating it now ...`);
-
-        await databasesService.create(
-          databaseId,
-          localDatabase.name ?? databaseId,
-        );
-      }
-    }),
-  );
+  // Add database names to collections for the class method
+  collections.forEach((collection: any) => {
+    const localDatabase = localConfig.getDatabase(collection.databaseId);
+    collection.databaseName = localDatabase.name ?? collection.databaseId;
+  });
 
   if (
     !(await approveChanges(
@@ -1784,99 +2030,23 @@ const pushCollection = async ({
   ) {
     return;
   }
-  // Parallel collection actions
-  await Promise.all(
-    collections.map(async (collection: any) => {
-      try {
-        const databasesService = await getDatabasesService();
-        const remoteCollection = await databasesService.getCollection(
-          collection["databaseId"],
-          collection["$id"],
-        );
 
-        if (remoteCollection.name !== collection.name) {
-          await databasesService.updateCollection(
-            collection["databaseId"],
-            collection["$id"],
-            collection.name,
-          );
+  log("Pushing collections ...");
 
-          success(`Updated ${collection.name} ( ${collection["$id"]} ) name`);
-        }
-        collection.remoteVersion = remoteCollection;
+  const pushInstance = await createPushInstance();
+  const result = await pushInstance.pushCollections(collections, attempts);
 
-        collection.isExisted = true;
-      } catch (e: any) {
-        if (Number(e.code) === 404) {
-          log(
-            `Collection ${collection.name} does not exist in the project. Creating ... `,
-          );
-          const databasesService = await getDatabasesService();
-          await databasesService.createCollection(
-            collection["databaseId"],
-            collection["$id"],
-            collection.name,
-            collection.documentSecurity,
-            collection["$permissions"],
-          );
-        } else {
-          throw e;
-        }
-      }
-    }),
-  );
-  let numberOfCollections = 0;
-  // Serialize attribute actions
-  for (let collection of collections) {
-    let collectionAttributes = collection.attributes;
-    let indexes = collection.indexes;
+  const { successfullyPushed, errors } = result;
 
-    if (collection.isExisted) {
-      collectionAttributes = await attributes.attributesToCreate(
-        collection.remoteVersion.attributes,
-        collection.attributes,
-        collection as Collection,
-      );
-      indexes = await attributes.attributesToCreate(
-        collection.remoteVersion.indexes,
-        collection.indexes,
-        collection as Collection,
-        true,
-      );
-
-      if (
-        Array.isArray(collectionAttributes) &&
-        collectionAttributes.length <= 0 &&
-        Array.isArray(indexes) &&
-        indexes.length <= 0
-      ) {
-        continue;
-      }
-    }
-
-    log(
-      `Pushing collection ${collection.name} ( ${collection["databaseId"]} - ${collection["$id"]} ) attributes`,
-    );
-
-    try {
-      await attributes.createAttributes(
-        collectionAttributes,
-        collection as Collection,
-      );
-    } catch (e) {
-      throw e;
-    }
-
-    try {
-      await attributes.createIndexes(indexes, collection as Collection);
-    } catch (e) {
-      throw e;
-    }
-    numberOfCollections++;
-    success(`Successfully pushed ${collection.name} ( ${collection["$id"]} )`);
+  if (successfullyPushed === 0) {
+    error("No collections were pushed.");
+  } else {
+    success(`Successfully pushed ${successfullyPushed} collections.`);
   }
 
-  success(`Successfully pushed ${numberOfCollections} collections`);
+  if (cliConfig.verbose) {
+    errors.forEach((e) => console.error(e));
+  }
 };
 
 const pushBucket = async (): Promise<void> => {
