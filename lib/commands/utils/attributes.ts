@@ -52,13 +52,15 @@ const questionPushChangesConfirmation = [
 
 export class Attributes {
   private pools: Pools;
+  private skipConfirmation: boolean;
 
-  constructor(pools?: Pools) {
+  constructor(pools?: Pools, skipConfirmation = false) {
     this.pools = pools || new Pools();
+    this.skipConfirmation = skipConfirmation;
   }
 
   private getConfirmation = async (): Promise<boolean> => {
-    if (cliConfig.force) {
+    if (cliConfig.force || this.skipConfirmation) {
       return true;
     }
 
@@ -92,33 +94,15 @@ export class Attributes {
 
   private isEqual = (a: any, b: any): boolean => {
     if (a === b) return true;
-
-    if (a && b && typeof a === "object" && typeof b === "object") {
-      if (
-        a.constructor &&
-        a.constructor.name === "BigNumber" &&
-        b.constructor &&
-        b.constructor.name === "BigNumber"
-      ) {
-        return a.eq(b);
-      }
-
-      if (typeof a.equals === "function") {
-        return a.equals(b);
-      }
-
-      if (typeof a.eq === "function") {
-        return a.eq(b);
-      }
+    if (
+      typeof a === "object" &&
+      typeof b === "object" &&
+      a !== null &&
+      b !== null
+    ) {
+      return JSON.stringify(a) === JSON.stringify(b);
     }
-
-    if (typeof a === "number" && typeof b === "number") {
-      if (isNaN(a) && isNaN(b)) return true;
-      if (!isFinite(a) && !isFinite(b)) return a === b;
-      return Math.abs(a - b) < Number.EPSILON;
-    }
-
-    return false;
+    return String(a) === String(b);
   };
 
   private compareAttribute = (
@@ -624,10 +608,9 @@ export class Attributes {
         this.deleteAttribute(collection, attribute, isIndex),
       ),
     );
-    const attributeKeys = [
-      ...remoteAttributes.map((attribute: any) => attribute.key),
-      ...deletingAttributes.map((attribute: any) => attribute.key),
-    ];
+    const attributeKeys = deletingAttributes.map(
+      (attribute: any) => attribute.key,
+    );
 
     if (attributeKeys.length) {
       const deleteAttributesPoolStatus =
@@ -655,14 +638,14 @@ export class Attributes {
 
     const databasesService = await getDatabasesService();
     for (let index of indexes) {
-      await databasesService.createIndex(
-        collection["databaseId"],
-        collection["$id"],
-        index.key,
-        index.type,
-        index.columns ?? index.attributes,
-        index.orders,
-      );
+      await databasesService.createIndex({
+        databaseId: collection["databaseId"],
+        collectionId: collection["$id"],
+        key: index.key,
+        type: index.type,
+        attributes: index.columns ?? index.attributes,
+        orders: index.orders,
+      });
     }
 
     const result = await this.pools.expectIndexes(
@@ -695,7 +678,7 @@ export class Attributes {
     const result = await this.pools.expectAttributes(
       collection["databaseId"],
       collection["$id"],
-      (collection.attributes || [])
+      attributes
         .filter((attribute: any) => attribute.side !== "child")
         .map((attribute: any) => attribute.key),
     );
@@ -704,7 +687,8 @@ export class Attributes {
       throw new Error(`Attribute creation timed out.`);
     }
 
-    success(`Created ${attributes.length} attributes`);
+    const createdCount = attributes.filter((a) => a.side !== "child").length;
+    success(`Created ${createdCount} attributes`);
   };
 
   public createColumns = async (
@@ -720,7 +704,7 @@ export class Attributes {
     const result = await this.pools.expectAttributes(
       table["databaseId"],
       table["$id"],
-      (table.columns || [])
+      columns
         .filter((column: any) => column.side !== "child")
         .map((column: any) => column.key),
     );
@@ -729,6 +713,7 @@ export class Attributes {
       throw new Error(`Column creation timed out.`);
     }
 
-    success(`Created ${columns.length} columns`);
+    const createdCount = columns.filter((c) => c.side !== "child").length;
+    success(`Created ${createdCount} columns`);
   };
 }

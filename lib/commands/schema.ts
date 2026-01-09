@@ -6,6 +6,7 @@ import { Push, PushOptions } from "./push.js";
 import { parseWithBetterErrors } from "./utils/error-formatter.js";
 import JSONbig from "json-bigint";
 import * as fs from "fs";
+import * as path from "path";
 import { Db } from "./db.js";
 
 const JSONBig = JSONbig({ storeAsString: false });
@@ -13,6 +14,9 @@ const JSONBig = JSONbig({ storeAsString: false });
 export class Schema {
   private pullCommand: Pull;
   private pushCommand: Push;
+
+  private pullCommandSilent: Pull;
+
   public db: Db;
 
   constructor({
@@ -24,6 +28,9 @@ export class Schema {
   }) {
     this.pullCommand = new Pull(projectClient, consoleClient);
     this.pushCommand = new Push(projectClient, consoleClient);
+
+    this.pullCommandSilent = new Pull(projectClient, consoleClient, true);
+
     this.db = new Db();
   }
 
@@ -49,12 +56,18 @@ export class Schema {
    * @param config - The local configuration object.
    * @param options - Optional settings for the pull operation.
    * @returns A Promise that resolves to the updated configuration object reflecting the remote state.
+   * @param configPath - Optional path to the config file. If provided, the config will be synced after pull.
    */
   public async pull(
     config: ConfigType,
-    options: PullOptions = { all: true },
+    options: PullOptions,
+    configPath?: string,
   ): Promise<ConfigType> {
-    return await this.pullCommand.pullResources(config, options);
+    const updatedConfig = await this.pullCommand.pullResources(config, options);
+    if (configPath) {
+      this.write(updatedConfig, configPath);
+    }
+    return updatedConfig;
   }
 
   /**
@@ -71,13 +84,17 @@ export class Schema {
     config: ConfigType,
     options: PushOptions,
     configPath?: string,
-  ): Promise<void> {
+  ): Promise<ConfigType> {
     await this.pushCommand.pushResources(config, options);
+    const updatedConfig = await this.pullCommandSilent.pullResources(
+      config,
+      options,
+    );
 
     if (configPath) {
-      const updatedConfig = await this.pullCommand.pullResources(config);
       this.write(updatedConfig, configPath);
     }
+    return updatedConfig;
   }
 
   /**
@@ -94,10 +111,12 @@ export class Schema {
    * Writes the configuration object to a file.
    *
    * @param config - The configuration object to write.
-   * @param path - The path to the file to write.
+   * @param filePath - The path to the file to write.
    * @returns void
    */
-  public write(config: ConfigType, path: string): void {
-    fs.writeFileSync(path, JSONBig.stringify(config, null, 4));
+  public write(config: ConfigType, filePath: string): void {
+    const resolvedPath = path.resolve(filePath);
+    const content = JSONBig.stringify(config, null, 4);
+    fs.writeFileSync(resolvedPath, content);
   }
 }

@@ -4,6 +4,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import { Command } from "commander";
 import ID from "../id.js";
+import { EXECUTABLE_NAME } from "../constants.js";
 import {
   localConfig,
   globalConfig,
@@ -74,6 +75,7 @@ import { checkAndApplyTablesDBChanges } from "./utils/database-sync.js";
 
 const POLL_DEBOUNCE = 2000; // Milliseconds
 const POLL_DEFAULT_VALUE = 30;
+const DEPLOYMENT_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
 export interface PushOptions {
   all?: boolean;
@@ -86,6 +88,7 @@ export interface PushOptions {
   teams?: boolean;
   topics?: boolean;
   skipDeprecated?: boolean;
+  skipConfirmation?: boolean;
   functionOptions?: {
     async?: boolean;
     code?: boolean;
@@ -95,6 +98,9 @@ export interface PushOptions {
     async?: boolean;
     code?: boolean;
     withVariables?: boolean;
+  };
+  tableOptions?: {
+    attempts?: number;
   };
 }
 
@@ -114,15 +120,54 @@ interface PushFunctionOptions {
 
 interface PushTableOptions {
   attempts?: number;
+  skipConfirmation?: boolean;
 }
 
 export class Push {
   private projectClient: Client;
   private consoleClient: Client;
+  private silent: boolean;
 
-  constructor(projectClient: Client, consoleClient: Client) {
+  constructor(projectClient: Client, consoleClient: Client, silent = false) {
     this.projectClient = projectClient;
     this.consoleClient = consoleClient;
+    this.silent = silent;
+  }
+
+  /**
+   * Log a message (respects silent mode)
+   */
+  private log(message: string): void {
+    if (!this.silent) {
+      log(message);
+    }
+  }
+
+  /**
+   * Log a success message (respects silent mode)
+   */
+  private success(message: string): void {
+    if (!this.silent) {
+      success(message);
+    }
+  }
+
+  /**
+   * Log a warning message (respects silent mode)
+   */
+  private warn(message: string): void {
+    if (!this.silent) {
+      warn(message);
+    }
+  }
+
+  /**
+   * Log an error message (respects silent mode)
+   */
+  private error(message: string): void {
+    if (!this.silent) {
+      error(message);
+    }
   }
 
   public async pushResources(
@@ -143,12 +188,15 @@ export class Push {
       (config.projectName || config.settings)
     ) {
       try {
-        log("Pushing settings ...");
+        this.log("Pushing settings ...");
         await this.pushSettings({
           projectId: config.projectId,
           projectName: config.projectName,
           settings: config.settings,
         });
+        this.success(
+          `Successfully pushed ${chalk.bold("all")} project settings.`,
+        );
         results.settings = { success: true };
       } catch (e: any) {
         allErrors.push(e);
@@ -163,8 +211,11 @@ export class Push {
       config.buckets.length > 0
     ) {
       try {
-        log("Pushing buckets ...");
+        this.log("Pushing buckets ...");
         const result = await this.pushBuckets(config.buckets);
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} buckets.`,
+        );
         results.buckets = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -180,8 +231,11 @@ export class Push {
       config.teams.length > 0
     ) {
       try {
-        log("Pushing teams ...");
+        this.log("Pushing teams ...");
         const result = await this.pushTeams(config.teams);
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} teams.`,
+        );
         results.teams = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -197,8 +251,11 @@ export class Push {
       config.topics.length > 0
     ) {
       try {
-        log("Pushing topics ...");
+        this.log("Pushing topics ...");
         const result = await this.pushMessagingTopics(config.topics);
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} topics.`,
+        );
         results.topics = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -214,10 +271,13 @@ export class Push {
       config.functions.length > 0
     ) {
       try {
-        log("Pushing functions ...");
+        this.log("Pushing functions ...");
         const result = await this.pushFunctions(
           config.functions,
           options.functionOptions,
+        );
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} functions.`,
         );
         results.functions = result;
         allErrors.push(...result.errors);
@@ -239,8 +299,11 @@ export class Push {
       config.sites.length > 0
     ) {
       try {
-        log("Pushing sites ...");
+        this.log("Pushing sites ...");
         const result = await this.pushSites(config.sites, options.siteOptions);
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} sites.`,
+        );
         results.sites = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -261,8 +324,14 @@ export class Push {
       config.tables.length > 0
     ) {
       try {
-        log("Pushing tables ...");
-        const result = await this.pushTables(config.tables);
+        this.log("Pushing tables ...");
+        const result = await this.pushTables(config.tables, {
+          attempts: options.tableOptions?.attempts,
+          skipConfirmation: options.skipConfirmation,
+        });
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} tables.`,
+        );
         results.tables = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -271,15 +340,14 @@ export class Push {
       }
     }
 
-    // Push collections (unless skipDeprecated is true)
+    // Push collections (skipDeprecated only applies when pushing all, explicit collections option takes precedence)
     if (
-      !skipDeprecated &&
-      (shouldPushAll || options.collections) &&
+      (options.collections || (shouldPushAll && !skipDeprecated)) &&
       config.collections &&
       config.collections.length > 0
     ) {
       try {
-        log("Pushing collections ...");
+        this.log("Pushing collections ...");
         // Add database names to collections
         const collectionsWithDbNames = config.collections.map(
           (collection: any) => {
@@ -292,7 +360,12 @@ export class Push {
             };
           },
         );
-        const result = await this.pushCollections(collectionsWithDbNames);
+        const result = await this.pushCollections(collectionsWithDbNames, {
+          skipConfirmation: options.skipConfirmation,
+        });
+        this.success(
+          `Successfully pushed ${chalk.bold(result.successfullyPushed)} collections.`,
+        );
         results.collections = result;
         allErrors.push(...result.errors);
       } catch (e: any) {
@@ -318,6 +391,7 @@ export class Push {
     const settings = config.settings ?? {};
 
     if (projectName) {
+      this.log("Applying project name ...");
       await projectsService.update({
         projectId: projectId,
         name: projectName,
@@ -325,6 +399,7 @@ export class Push {
     }
 
     if (settings.services) {
+      this.log("Applying service statuses ...");
       for (let [service, status] of Object.entries(settings.services)) {
         await projectsService.updateServiceStatus({
           projectId: projectId,
@@ -336,6 +411,7 @@ export class Push {
 
     if (settings.auth) {
       if (settings.auth.security) {
+        this.log("Applying auth security settings ...");
         await projectsService.updateAuthDuration({
           projectId,
           duration: settings.auth.security.duration,
@@ -371,6 +447,7 @@ export class Push {
       }
 
       if (settings.auth.methods) {
+        this.log("Applying auth methods statuses ...");
         for (let [method, status] of Object.entries(settings.auth.methods)) {
           await projectsService.updateAuthStatus({
             projectId,
@@ -391,7 +468,7 @@ export class Push {
 
     for (const bucket of buckets) {
       try {
-        log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
+        this.log(`Pushing bucket ${chalk.bold(bucket["name"])} ...`);
         const storageService = await getStorageService(this.projectClient);
 
         try {
@@ -430,7 +507,7 @@ export class Push {
         successfullyPushed++;
       } catch (e: any) {
         errors.push(e);
-        error(`Failed to push bucket ${bucket["name"]}: ${e.message}`);
+        this.error(`Failed to push bucket ${bucket["name"]}: ${e.message}`);
       }
     }
 
@@ -449,7 +526,7 @@ export class Push {
 
     for (const team of teams) {
       try {
-        log(`Pushing team ${chalk.bold(team["name"])} ...`);
+        this.log(`Pushing team ${chalk.bold(team["name"])} ...`);
         const teamsService = await getTeamsService(this.projectClient);
 
         try {
@@ -472,7 +549,7 @@ export class Push {
         successfullyPushed++;
       } catch (e: any) {
         errors.push(e);
-        error(`Failed to push team ${team["name"]}: ${e.message}`);
+        this.error(`Failed to push team ${team["name"]}: ${e.message}`);
       }
     }
 
@@ -491,7 +568,7 @@ export class Push {
 
     for (const topic of topics) {
       try {
-        log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
+        this.log(`Pushing topic ${chalk.bold(topic["name"])} ...`);
         const messagingService = await getMessagingService(this.projectClient);
 
         try {
@@ -513,11 +590,11 @@ export class Push {
           }
         }
 
-        success(`Created ${topic.name} ( ${topic["$id"]} )`);
+        this.success(`Pushed ${topic.name} ( ${topic["$id"]} )`);
         successfullyPushed++;
       } catch (e: any) {
         errors.push(e);
-        error(`Failed to push topic ${topic["name"]}: ${e.message}`);
+        this.error(`Failed to push topic ${topic["name"]}: ${e.message}`);
       }
     }
 
@@ -632,21 +709,21 @@ export class Push {
             let domain = "";
             try {
               const consoleService = await getConsoleService(
-                this.projectClient,
+                this.consoleClient,
               );
               const variables = await consoleService.variables();
               domain = ID.unique() + "." + variables["_APP_DOMAIN_FUNCTIONS"];
-            } catch (error) {
-              console.error("Error fetching console variables.");
-              throw error;
+            } catch (err) {
+              this.error("Error fetching console variables.");
+              throw err;
             }
 
             try {
               const proxyService = await getProxyService(this.projectClient);
               await proxyService.createFunctionRule(domain, func.$id);
-            } catch (error) {
-              console.error("Error creating function rule.");
-              throw error;
+            } catch (err) {
+              this.error("Error creating function rule.");
+              throw err;
             }
 
             updaterRow.update({ status: "Created" });
@@ -780,7 +857,21 @@ export class Push {
               end: "Checking deployment status...",
             });
 
+            const timeoutDeadline = Date.now() + DEPLOYMENT_TIMEOUT_MS;
+
             while (true) {
+              if (Date.now() > timeoutDeadline) {
+                failedDeployments.push({
+                  name: func["name"],
+                  $id: func["$id"],
+                  deployment: deploymentId,
+                });
+                updaterRow.fail({
+                  errorMessage: "Deployment timed out after 10 minutes",
+                });
+                break;
+              }
+
               const functionsServicePoll = await getFunctionsService(
                 this.projectClient,
               );
@@ -830,7 +921,7 @@ export class Push {
               }
 
               await new Promise((resolve) =>
-                setTimeout(resolve, POLL_DEBOUNCE * 1.5),
+                setTimeout(resolve, POLL_DEBOUNCE),
               );
             }
           } catch (e: any) {
@@ -960,21 +1051,21 @@ export class Push {
             let domain = "";
             try {
               const consoleService = await getConsoleService(
-                this.projectClient,
+                this.consoleClient,
               );
               const variables = await consoleService.variables();
               domain = ID.unique() + "." + variables["_APP_DOMAIN_SITES"];
-            } catch (error) {
-              console.error("Error fetching console variables.");
-              throw error;
+            } catch (err) {
+              this.error("Error fetching console variables.");
+              throw err;
             }
 
             try {
               const proxyService = await getProxyService(this.projectClient);
               await proxyService.createSiteRule(domain, site.$id);
-            } catch (error) {
-              console.error("Error creating site rule.");
-              throw error;
+            } catch (err) {
+              this.error("Error creating site rule.");
+              throw err;
             }
 
             updaterRow.update({ status: "Created" });
@@ -1102,7 +1193,21 @@ export class Push {
               end: "Checking deployment status...",
             });
 
+            const timeoutDeadline = Date.now() + DEPLOYMENT_TIMEOUT_MS;
+
             while (true) {
+              if (Date.now() > timeoutDeadline) {
+                failedDeployments.push({
+                  name: site["name"],
+                  $id: site["$id"],
+                  deployment: deploymentId,
+                });
+                updaterRow.fail({
+                  errorMessage: "Deployment timed out after 10 minutes",
+                });
+                break;
+              }
+
               const sitesServicePoll = await getSitesService(
                 this.projectClient,
               );
@@ -1152,7 +1257,7 @@ export class Push {
               }
 
               await new Promise((resolve) =>
-                setTimeout(resolve, POLL_DEBOUNCE * 1.5),
+                setTimeout(resolve, POLL_DEBOUNCE),
               );
             }
           } catch (e: any) {
@@ -1180,14 +1285,15 @@ export class Push {
 
   public async pushTables(
     tables: any[],
-    attempts?: number,
+    options: PushTableOptions = {},
   ): Promise<{
     successfullyPushed: number;
     errors: any[];
   }> {
+    const { attempts, skipConfirmation = false } = options;
     const pollMaxDebounces = attempts ?? POLL_DEFAULT_VALUE;
     const pools = new Pools(pollMaxDebounces);
-    const attributes = new Attributes(pools);
+    const attributes = new Attributes(pools, skipConfirmation);
 
     let tablesChanged = new Set();
     const errors: any[] = [];
@@ -1214,15 +1320,15 @@ export class Push {
             changes.push("permissions");
 
           if (changes.length > 0) {
-            await tablesService.updateTable(
-              table["databaseId"],
-              table["$id"],
-              table.name,
-              table.rowSecurity,
-              table["$permissions"],
-            );
+            await tablesService.updateTable({
+              databaseId: table["databaseId"],
+              tableId: table["$id"],
+              name: table.name,
+              rowSecurity: table.rowSecurity,
+              permissions: table["$permissions"],
+            });
 
-            success(
+            this.success(
               `Updated ${table.name} ( ${table["$id"]} ) - ${changes.join(", ")}`,
             );
             tablesChanged.add(table["$id"]);
@@ -1232,19 +1338,21 @@ export class Push {
           table.isExisted = true;
         } catch (e: any) {
           if (Number(e.code) === 404) {
-            log(
+            this.log(
               `Table ${table.name} does not exist in the project. Creating ... `,
             );
             const tablesService = await getTablesDBService(this.projectClient);
-            await tablesService.createTable(
-              table["databaseId"],
-              table["$id"],
-              table.name,
-              table.rowSecurity,
-              table["$permissions"],
-            );
+            await tablesService.createTable({
+              databaseId: table["databaseId"],
+              tableId: table["$id"],
+              name: table.name,
+              rowSecurity: table.rowSecurity,
+              permissions: table["$permissions"]
+                ? [...table["$permissions"]]
+                : undefined,
+            });
 
-            success(`Created ${table.name} ( ${table["$id"]} )`);
+            this.success(`Created ${table.name} ( ${table["$id"]} )`);
             tablesChanged.add(table["$id"]);
           } else {
             errors.push(e);
@@ -1282,7 +1390,7 @@ export class Push {
         }
       }
 
-      log(
+      this.log(
         `Pushing table ${table.name} ( ${table["databaseId"]} - ${table["$id"]} ) attributes`,
       );
 
@@ -1300,7 +1408,7 @@ export class Push {
         throw e;
       }
       tablesChanged.add(table["$id"]);
-      success(`Successfully pushed ${table.name} ( ${table["$id"]} )`);
+      this.success(`Successfully pushed ${table.name} ( ${table["$id"]} )`);
     }
 
     return {
@@ -1309,12 +1417,16 @@ export class Push {
     };
   }
 
-  public async pushCollections(collections: any[]): Promise<{
+  public async pushCollections(
+    collections: any[],
+    options: { skipConfirmation?: boolean } = {},
+  ): Promise<{
     successfullyPushed: number;
     errors: any[];
   }> {
+    const { skipConfirmation = false } = options;
     const pools = new Pools(POLL_DEFAULT_VALUE);
-    const attributes = new Attributes(pools);
+    const attributes = new Attributes(pools, skipConfirmation);
 
     const errors: any[] = [];
 
@@ -1338,16 +1450,20 @@ export class Push {
           if (database.name !== localDatabaseName) {
             await databasesService.update(databaseId, localDatabaseName);
 
-            success(`Updated ${localDatabaseName} ( ${databaseId} ) name`);
+            this.success(`Updated ${localDatabaseName} ( ${databaseId} ) name`);
           }
-        } catch (err) {
-          log(`Database ${databaseId} not found. Creating it now ...`);
+        } catch (err: any) {
+          if (Number(err.code) === 404) {
+            this.log(`Database ${databaseId} not found. Creating it now ...`);
 
-          const localDatabaseName =
-            collections.find((c: any) => c.databaseId === databaseId)
-              ?.databaseName ?? databaseId;
+            const localDatabaseName =
+              collections.find((c: any) => c.databaseId === databaseId)
+                ?.databaseName ?? databaseId;
 
-          await databasesService.create(databaseId, localDatabaseName);
+            await databasesService.create(databaseId, localDatabaseName);
+          } else {
+            throw err;
+          }
         }
       }),
     );
@@ -1371,26 +1487,28 @@ export class Push {
               collection.name,
             );
 
-            success(`Updated ${collection.name} ( ${collection["$id"]} ) name`);
+            this.success(
+              `Updated ${collection.name} ( ${collection["$id"]} ) name`,
+            );
           }
           collection.remoteVersion = remoteCollection;
 
           collection.isExisted = true;
         } catch (e: any) {
           if (Number(e.code) === 404) {
-            log(
+            this.log(
               `Collection ${collection.name} does not exist in the project. Creating ... `,
             );
             const databasesService = await getDatabasesService(
               this.projectClient,
             );
-            await databasesService.createCollection(
-              collection["databaseId"],
-              collection["$id"],
-              collection.name,
-              collection.documentSecurity,
-              collection["$permissions"],
-            );
+            await databasesService.createCollection({
+              databaseId: collection["databaseId"],
+              collectionId: collection["$id"],
+              name: collection.name,
+              documentSecurity: collection.documentSecurity,
+              permissions: collection["$permissions"],
+            });
           } else {
             errors.push(e);
             throw e;
@@ -1428,7 +1546,7 @@ export class Push {
         }
       }
 
-      log(
+      this.log(
         `Pushing collection ${collection.name} ( ${collection["databaseId"]} - ${collection["$id"]} ) attributes`,
       );
 
@@ -1449,7 +1567,7 @@ export class Push {
         throw e;
       }
       numberOfCollections++;
-      success(
+      this.success(
         `Successfully pushed ${collection.name} ( ${collection["$id"]} )`,
       );
     }
@@ -1461,10 +1579,10 @@ export class Push {
   }
 }
 
-async function createPushInstance(): Promise<Push> {
+async function createPushInstance(silent = false): Promise<Push> {
   const projectClient = await sdkForProject();
   const consoleClient = await sdkForConsole();
-  return new Push(projectClient, consoleClient);
+  return new Push(projectClient, consoleClient, silent);
 }
 
 const pushResources = async ({
@@ -1557,25 +1675,6 @@ const pushSettings = async (): Promise<void> => {
 
     const pushInstance = await createPushInstance();
     const config = localConfig.getProject();
-    const settings = config.projectSettings ?? {};
-
-    if (config.projectName) {
-      log("Applying project name ...");
-    }
-
-    if (settings.services) {
-      log("Applying service statuses ...");
-    }
-
-    if (settings.auth) {
-      if (settings.auth.security) {
-        log("Applying auth security settings ...");
-      }
-
-      if (settings.auth.methods) {
-        log("Applying auth methods statuses ...");
-      }
-    }
 
     await pushInstance.pushSettings({
       projectId: config.projectId,
@@ -1621,7 +1720,7 @@ const pushSite = async ({
   if (siteIds.length === 0) {
     log("No sites found.");
     hint(
-      "Use 'appwrite pull sites' to synchronize existing one, or use 'appwrite init site' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull sites' to synchronize existing one, or use '${EXECUTABLE_NAME} init site' to create a new one.`,
     );
     return;
   }
@@ -1742,7 +1841,7 @@ const pushFunction = async ({
   if (functionIds.length === 0) {
     log("No functions found.");
     hint(
-      "Use 'appwrite pull functions' to synchronize existing one, or use 'appwrite init function' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull functions' to synchronize existing one, or use '${EXECUTABLE_NAME} init function' to create a new one.`,
     );
     return;
   }
@@ -1863,7 +1962,7 @@ const pushTable = async ({
     const validTablesDBs = localTablesDBs.filter((db: any) =>
       remoteDatabaseIds.has(db.$id),
     );
-    localConfig.set("tables", validTablesDBs);
+    localConfig.set("tablesDB", validTablesDBs);
 
     success("Configuration resynced successfully.");
     console.log();
@@ -1958,7 +2057,7 @@ const pushTable = async ({
   if (tables.length === 0) {
     log("No tables found.");
     hint(
-      "Use 'appwrite pull tables' to synchronize existing one, or use 'appwrite init table' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull tables' to synchronize existing one, or use '${EXECUTABLE_NAME} init table' to create a new one.`,
     );
     return;
   }
@@ -1984,7 +2083,7 @@ const pushTable = async ({
   log("Pushing tables ...");
 
   const pushInstance = await createPushInstance();
-  const result = await pushInstance.pushTables(tables, attempts);
+  const result = await pushInstance.pushTables(tables, { attempts });
 
   const { successfullyPushed, errors } = result;
 
@@ -1999,9 +2098,9 @@ const pushTable = async ({
   }
 };
 
-const pushCollection = async ({}: PushTableOptions = {}): Promise<void> => {
+const pushCollection = async (): Promise<void> => {
   warn(
-    "appwrite push collection has been deprecated. Please consider using 'appwrite push tables' instead",
+    `${EXECUTABLE_NAME} push collection has been deprecated. Please consider using '${EXECUTABLE_NAME} push tables' instead`,
   );
   const collections: any[] = [];
 
@@ -2025,7 +2124,7 @@ const pushCollection = async ({}: PushTableOptions = {}): Promise<void> => {
   if (collections.length === 0) {
     log("No collections found.");
     hint(
-      "Use 'appwrite pull collections' to synchronize existing one, or use 'appwrite init collection' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull collections' to synchronize existing one, or use '${EXECUTABLE_NAME} init collection' to create a new one.`,
     );
     return;
   }
@@ -2094,7 +2193,7 @@ const pushBucket = async (): Promise<void> => {
   if (bucketIds.length === 0) {
     log("No buckets found.");
     hint(
-      "Use 'appwrite pull buckets' to synchronize existing one, or use 'appwrite init bucket' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull buckets' to synchronize existing one, or use '${EXECUTABLE_NAME} init bucket' to create a new one.`,
     );
     return;
   }
@@ -2158,7 +2257,7 @@ const pushTeam = async (): Promise<void> => {
   if (teamIds.length === 0) {
     log("No teams found.");
     hint(
-      "Use 'appwrite pull teams' to synchronize existing one, or use 'appwrite init team' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull teams' to synchronize existing one, or use '${EXECUTABLE_NAME} init team' to create a new one.`,
     );
     return;
   }
@@ -2222,7 +2321,7 @@ const pushMessagingTopic = async (): Promise<void> => {
   if (topicsIds.length === 0) {
     log("No topics found.");
     hint(
-      "Use 'appwrite pull topics' to synchronize existing one, or use 'appwrite init topic' to create a new one.",
+      `Use '${EXECUTABLE_NAME} pull topics' to synchronize existing one, or use '${EXECUTABLE_NAME} init topic' to create a new one.`,
     );
     return;
   }
@@ -2347,11 +2446,11 @@ push
   .action(actionRunner(pushMessagingTopic));
 
 export const deploy = new Command("deploy")
-  .description("Removed. Use appwrite push instead")
+  .description(`Removed. Use ${EXECUTABLE_NAME} push instead`)
   .action(
     actionRunner(async () => {
       warn(
-        "appwrite deploy has been removed. Please use 'appwrite push' instead",
+        `${EXECUTABLE_NAME} deploy has been removed. Please use '${EXECUTABLE_NAME} push' instead`,
       );
     }),
   );
