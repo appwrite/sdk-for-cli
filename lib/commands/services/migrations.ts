@@ -8,69 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-
-// Mock Migrations class
-class Migrations {
-  constructor(sdkClient: any) {}
-
-  async list(queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/migrations:passed' };
-  }
-
-  async createAppwriteMigration(resources: any[], endpoint: string, projectId: string, apiKey: string): Promise<any> {
-    return { result: 'POST:/v1/migrations/appwrite:passed' };
-  }
-
-  async getAppwriteReport(resources: any[], endpoint: string, projectID: string, key: string): Promise<any> {
-    return { result: 'GET:/v1/migrations/appwrite/report:passed' };
-  }
-
-  async createCSVExport(resourceId: string, filename: string, columns?: any[], queries?: any[], delimiter?: string, enclosure?: string, escape?: string, header?: boolean, notify?: boolean): Promise<any> {
-    return { result: 'POST:/v1/migrations/csv/exports:passed' };
-  }
-
-  async createCSVImport(bucketId: string, fileId: string, resourceId: string, internalFile?: boolean): Promise<any> {
-    return { result: 'POST:/v1/migrations/csv/imports:passed' };
-  }
-
-  async createFirebaseMigration(resources: any[], serviceAccount: string): Promise<any> {
-    return { result: 'POST:/v1/migrations/firebase:passed' };
-  }
-
-  async getFirebaseReport(resources: any[], serviceAccount: string): Promise<any> {
-    return { result: 'GET:/v1/migrations/firebase/report:passed' };
-  }
-
-  async createNHostMigration(resources: any[], subdomain: string, region: string, adminSecret: string, database: string, username: string, password: string, port?: number): Promise<any> {
-    return { result: 'POST:/v1/migrations/nhost:passed' };
-  }
-
-  async getNHostReport(resources: any[], subdomain: string, region: string, adminSecret: string, database: string, username: string, password: string, port?: number): Promise<any> {
-    return { result: 'GET:/v1/migrations/nhost/report:passed' };
-  }
-
-  async createSupabaseMigration(resources: any[], endpoint: string, apiKey: string, databaseHost: string, username: string, password: string, port?: number): Promise<any> {
-    return { result: 'POST:/v1/migrations/supabase:passed' };
-  }
-
-  async getSupabaseReport(resources: any[], endpoint: string, apiKey: string, databaseHost: string, username: string, password: string, port?: number): Promise<any> {
-    return { result: 'GET:/v1/migrations/supabase/report:passed' };
-  }
-
-  async get(migrationId: string): Promise<any> {
-    return { result: 'GET:/v1/migrations/{migrationId}:passed' };
-  }
-
-  async retry(migrationId: string): Promise<any> {
-    return { result: 'PATCH:/v1/migrations/{migrationId}:passed' };
-  }
-
-  async delete(migrationId: string): Promise<any> {
-    return { result: 'DELETE:/v1/migrations/{migrationId}:passed' };
-  }
-}
-
+import { Migrations } from "@appwrite.io/console";
 
 let migrationsClient: Migrations | null = null;
 

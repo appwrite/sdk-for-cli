@@ -8,104 +8,10 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum Name {
-  // Mock enum values
-}
-
-// Mock Health class
-class Health {
-  constructor(sdkClient: any) {}
-
-  async get(): Promise<any> {
-    return { result: 'GET:/v1/health:passed' };
-  }
-
-  async getAntivirus(): Promise<any> {
-    return { result: 'GET:/v1/health/anti-virus:passed' };
-  }
-
-  async getCache(): Promise<any> {
-    return { result: 'GET:/v1/health/cache:passed' };
-  }
-
-  async getCertificate(domain?: string): Promise<any> {
-    return { result: 'GET:/v1/health/certificate:passed' };
-  }
-
-  async getDB(): Promise<any> {
-    return { result: 'GET:/v1/health/db:passed' };
-  }
-
-  async getPubSub(): Promise<any> {
-    return { result: 'GET:/v1/health/pubsub:passed' };
-  }
-
-  async getQueueBuilds(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/builds:passed' };
-  }
-
-  async getQueueCertificates(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/certificates:passed' };
-  }
-
-  async getQueueDatabases(name?: string, threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/databases:passed' };
-  }
-
-  async getQueueDeletes(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/deletes:passed' };
-  }
-
-  async getFailedJobs(name: string, threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/failed/{name}:passed' };
-  }
-
-  async getQueueFunctions(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/functions:passed' };
-  }
-
-  async getQueueLogs(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/logs:passed' };
-  }
-
-  async getQueueMails(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/mails:passed' };
-  }
-
-  async getQueueMessaging(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/messaging:passed' };
-  }
-
-  async getQueueMigrations(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/migrations:passed' };
-  }
-
-  async getQueueStatsResources(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/stats-resources:passed' };
-  }
-
-  async getQueueUsage(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/stats-usage:passed' };
-  }
-
-  async getQueueWebhooks(threshold?: number): Promise<any> {
-    return { result: 'GET:/v1/health/queue/webhooks:passed' };
-  }
-
-  async getStorage(): Promise<any> {
-    return { result: 'GET:/v1/health/storage:passed' };
-  }
-
-  async getStorageLocal(): Promise<any> {
-    return { result: 'GET:/v1/health/storage/local:passed' };
-  }
-
-  async getTime(): Promise<any> {
-    return { result: 'GET:/v1/health/time:passed' };
-  }
-}
-
+import {
+  Health,
+  Name,
+} from "@appwrite.io/console";
 
 let healthClient: Health | null = null;
 

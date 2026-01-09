@@ -8,69 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-
-// Mock Teams class
-class Teams {
-  constructor(sdkClient: any) {}
-
-  async list(queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/teams:passed' };
-  }
-
-  async create(teamId: string, name: string, roles?: any[]): Promise<any> {
-    return { result: 'POST:/v1/teams:passed' };
-  }
-
-  async get(teamId: string): Promise<any> {
-    return { result: 'GET:/v1/teams/{teamId}:passed' };
-  }
-
-  async updateName(teamId: string, name: string): Promise<any> {
-    return { result: 'PUT:/v1/teams/{teamId}:passed' };
-  }
-
-  async delete(teamId: string): Promise<any> {
-    return { result: 'DELETE:/v1/teams/{teamId}:passed' };
-  }
-
-  async listLogs(teamId: string, queries?: any[], total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/teams/{teamId}/logs:passed' };
-  }
-
-  async listMemberships(teamId: string, queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/teams/{teamId}/memberships:passed' };
-  }
-
-  async createMembership(teamId: string, roles: any[], email?: string, userId?: string, phone?: string, url?: string, name?: string): Promise<any> {
-    return { result: 'POST:/v1/teams/{teamId}/memberships:passed' };
-  }
-
-  async getMembership(teamId: string, membershipId: string): Promise<any> {
-    return { result: 'GET:/v1/teams/{teamId}/memberships/{membershipId}:passed' };
-  }
-
-  async updateMembership(teamId: string, membershipId: string, roles: any[]): Promise<any> {
-    return { result: 'PATCH:/v1/teams/{teamId}/memberships/{membershipId}:passed' };
-  }
-
-  async deleteMembership(teamId: string, membershipId: string): Promise<any> {
-    return { result: 'DELETE:/v1/teams/{teamId}/memberships/{membershipId}:passed' };
-  }
-
-  async updateMembershipStatus(teamId: string, membershipId: string, userId: string, secret: string): Promise<any> {
-    return { result: 'PATCH:/v1/teams/{teamId}/memberships/{membershipId}/status:passed' };
-  }
-
-  async getPrefs(teamId: string): Promise<any> {
-    return { result: 'GET:/v1/teams/{teamId}/prefs:passed' };
-  }
-
-  async updatePrefs(teamId: string, prefs: any): Promise<any> {
-    return { result: 'PUT:/v1/teams/{teamId}/prefs:passed' };
-  }
-}
-
+import { Teams } from "@appwrite.io/console";
 
 let teamsClient: Teams | null = null;
 

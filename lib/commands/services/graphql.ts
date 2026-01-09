@@ -8,21 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-
-// Mock Graphql class
-class Graphql {
-  constructor(sdkClient: any) {}
-
-  async query(query: any): Promise<any> {
-    return { result: 'POST:/v1/graphql:passed' };
-  }
-
-  async mutation(query: any): Promise<any> {
-    return { result: 'POST:/v1/graphql/mutation:passed' };
-  }
-}
-
+import { Graphql } from "@appwrite.io/console";
 
 let graphqlClient: Graphql | null = null;
 

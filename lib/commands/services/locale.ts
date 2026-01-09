@@ -8,45 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-
-// Mock Locale class
-class Locale {
-  constructor(sdkClient: any) {}
-
-  async get(): Promise<any> {
-    return { result: 'GET:/v1/locale:passed' };
-  }
-
-  async listCodes(): Promise<any> {
-    return { result: 'GET:/v1/locale/codes:passed' };
-  }
-
-  async listContinents(): Promise<any> {
-    return { result: 'GET:/v1/locale/continents:passed' };
-  }
-
-  async listCountries(): Promise<any> {
-    return { result: 'GET:/v1/locale/countries:passed' };
-  }
-
-  async listCountriesEU(): Promise<any> {
-    return { result: 'GET:/v1/locale/countries/eu:passed' };
-  }
-
-  async listCountriesPhones(): Promise<any> {
-    return { result: 'GET:/v1/locale/countries/phones:passed' };
-  }
-
-  async listCurrencies(): Promise<any> {
-    return { result: 'GET:/v1/locale/currencies:passed' };
-  }
-
-  async listLanguages(): Promise<any> {
-    return { result: 'GET:/v1/locale/languages:passed' };
-  }
-}
-
+import { Locale } from "@appwrite.io/console";
 
 let localeClient: Locale | null = null;
 

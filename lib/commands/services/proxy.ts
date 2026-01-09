@@ -8,51 +8,11 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum StatusCode {
-  // Mock enum values
-}
-export enum ProxyResourceType {
-  // Mock enum values
-}
-
-// Mock Proxy class
-class Proxy {
-  constructor(sdkClient: any) {}
-
-  async listRules(queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/proxy/rules:passed' };
-  }
-
-  async createAPIRule(domain: string): Promise<any> {
-    return { result: 'POST:/v1/proxy/rules/api:passed' };
-  }
-
-  async createFunctionRule(domain: string, functionId: string, branch?: string): Promise<any> {
-    return { result: 'POST:/v1/proxy/rules/function:passed' };
-  }
-
-  async createRedirectRule(domain: string, url: string, statusCode: string, resourceId: string, resourceType: string): Promise<any> {
-    return { result: 'POST:/v1/proxy/rules/redirect:passed' };
-  }
-
-  async createSiteRule(domain: string, siteId: string, branch?: string): Promise<any> {
-    return { result: 'POST:/v1/proxy/rules/site:passed' };
-  }
-
-  async getRule(ruleId: string): Promise<any> {
-    return { result: 'GET:/v1/proxy/rules/{ruleId}:passed' };
-  }
-
-  async deleteRule(ruleId: string): Promise<any> {
-    return { result: 'DELETE:/v1/proxy/rules/{ruleId}:passed' };
-  }
-
-  async updateRuleVerification(ruleId: string): Promise<any> {
-    return { result: 'PATCH:/v1/proxy/rules/{ruleId}/verification:passed' };
-  }
-}
-
+import {
+  Proxy,
+  StatusCode,
+  ProxyResourceType,
+} from "@appwrite.io/console";
 
 let proxyClient: Proxy | null = null;
 

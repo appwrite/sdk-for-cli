@@ -8,33 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-
-// Mock Tokens class
-class Tokens {
-  constructor(sdkClient: any) {}
-
-  async list(bucketId: string, fileId: string, queries?: any[], total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/tokens/buckets/{bucketId}/files/{fileId}:passed' };
-  }
-
-  async createFileToken(bucketId: string, fileId: string, expire?: string): Promise<any> {
-    return { result: 'POST:/v1/tokens/buckets/{bucketId}/files/{fileId}:passed' };
-  }
-
-  async get(tokenId: string): Promise<any> {
-    return { result: 'GET:/v1/tokens/{tokenId}:passed' };
-  }
-
-  async update(tokenId: string, expire?: string): Promise<any> {
-    return { result: 'PATCH:/v1/tokens/{tokenId}:passed' };
-  }
-
-  async delete(tokenId: string): Promise<any> {
-    return { result: 'DELETE:/v1/tokens/{tokenId}:passed' };
-  }
-}
-
+import { Tokens } from "@appwrite.io/console";
 
 let tokensClient: Tokens | null = null;
 

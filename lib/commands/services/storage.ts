@@ -9,85 +9,13 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum Compression {
-  // Mock enum values
-}
-export enum ImageGravity {
-  // Mock enum values
-}
-export enum ImageFormat {
-  // Mock enum values
-}
-export enum UsageRange {
-  // Mock enum values
-}
-
-// Mock Storage class
-class Storage {
-  constructor(sdkClient: any) {}
-
-  async listBuckets(queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets:passed' };
-  }
-
-  async createBucket(bucketId: string, name: string, permissions?: any[], fileSecurity?: boolean, enabled?: boolean, maximumFileSize?: number, allowedFileExtensions?: any[], compression?: string, encryption?: boolean, antivirus?: boolean, transformations?: boolean): Promise<any> {
-    return { result: 'POST:/v1/storage/buckets:passed' };
-  }
-
-  async getBucket(bucketId: string): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets/{bucketId}:passed' };
-  }
-
-  async updateBucket(bucketId: string, name: string, permissions?: any[], fileSecurity?: boolean, enabled?: boolean, maximumFileSize?: number, allowedFileExtensions?: any[], compression?: string, encryption?: boolean, antivirus?: boolean, transformations?: boolean): Promise<any> {
-    return { result: 'PUT:/v1/storage/buckets/{bucketId}:passed' };
-  }
-
-  async deleteBucket(bucketId: string): Promise<any> {
-    return { result: 'DELETE:/v1/storage/buckets/{bucketId}:passed' };
-  }
-
-  async listFiles(bucketId: string, queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets/{bucketId}/files:passed' };
-  }
-
-  async createFile(bucketId: string, fileId: string, file: any, permissions?: any[]): Promise<any> {
-    return { result: 'POST:/v1/storage/buckets/{bucketId}/files:passed' };
-  }
-
-  async getFile(bucketId: string, fileId: string): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets/{bucketId}/files/{fileId}:passed' };
-  }
-
-  async updateFile(bucketId: string, fileId: string, name?: string, permissions?: any[]): Promise<any> {
-    return { result: 'PUT:/v1/storage/buckets/{bucketId}/files/{fileId}:passed' };
-  }
-
-  async deleteFile(bucketId: string, fileId: string): Promise<any> {
-    return { result: 'DELETE:/v1/storage/buckets/{bucketId}/files/{fileId}:passed' };
-  }
-
-  async getFileDownload(bucketId: string, fileId: string, token?: string): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets/{bucketId}/files/{fileId}/download:passed' };
-  }
-
-  async getFilePreview(bucketId: string, fileId: string, width?: number, height?: number, gravity?: string, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: string, token?: string): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets/{bucketId}/files/{fileId}/preview:passed' };
-  }
-
-  async getFileView(bucketId: string, fileId: string, token?: string): Promise<any> {
-    return { result: 'GET:/v1/storage/buckets/{bucketId}/files/{fileId}/view:passed' };
-  }
-
-  async getUsage(range?: string): Promise<any> {
-    return { result: 'GET:/v1/storage/usage:passed' };
-  }
-
-  async getBucketUsage(bucketId: string, range?: string): Promise<any> {
-    return { result: 'GET:/v1/storage/{bucketId}/usage:passed' };
-  }
-}
-
+import {
+  Storage,
+  Compression,
+  ImageGravity,
+  ImageFormat,
+  UsageRange,
+} from "@appwrite.io/console";
 
 let storageClient: Storage | null = null;
 

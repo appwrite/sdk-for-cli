@@ -8,56 +8,10 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum VCSDetectionType {
-  // Mock enum values
-}
-
-// Mock Vcs class
-class Vcs {
-  constructor(sdkClient: any) {}
-
-  async createRepositoryDetection(installationId: string, providerRepositoryId: string, type: string, providerRootDirectory?: string): Promise<any> {
-    return { result: 'POST:/v1/vcs/github/installations/{installationId}/detections:passed' };
-  }
-
-  async listRepositories(installationId: string, type: string, search?: string, queries?: any[]): Promise<any> {
-    return { result: 'GET:/v1/vcs/github/installations/{installationId}/providerRepositories:passed' };
-  }
-
-  async createRepository(installationId: string, name: string, xPrivate: boolean): Promise<any> {
-    return { result: 'POST:/v1/vcs/github/installations/{installationId}/providerRepositories:passed' };
-  }
-
-  async getRepository(installationId: string, providerRepositoryId: string): Promise<any> {
-    return { result: 'GET:/v1/vcs/github/installations/{installationId}/providerRepositories/{providerRepositoryId}:passed' };
-  }
-
-  async listRepositoryBranches(installationId: string, providerRepositoryId: string): Promise<any> {
-    return { result: 'GET:/v1/vcs/github/installations/{installationId}/providerRepositories/{providerRepositoryId}/branches:passed' };
-  }
-
-  async getRepositoryContents(installationId: string, providerRepositoryId: string, providerRootDirectory?: string, providerReference?: string): Promise<any> {
-    return { result: 'GET:/v1/vcs/github/installations/{installationId}/providerRepositories/{providerRepositoryId}/contents:passed' };
-  }
-
-  async updateExternalDeployments(installationId: string, repositoryId: string, providerPullRequestId: string): Promise<any> {
-    return { result: 'PATCH:/v1/vcs/github/installations/{installationId}/repositories/{repositoryId}:passed' };
-  }
-
-  async listInstallations(queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/vcs/installations:passed' };
-  }
-
-  async getInstallation(installationId: string): Promise<any> {
-    return { result: 'GET:/v1/vcs/installations/{installationId}:passed' };
-  }
-
-  async deleteInstallation(installationId: string): Promise<any> {
-    return { result: 'DELETE:/v1/vcs/installations/{installationId}:passed' };
-  }
-}
-
+import {
+  Vcs,
+  VCSDetectionType,
+} from "@appwrite.io/console";
 
 let vcsClient: Vcs | null = null;
 

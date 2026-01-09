@@ -8,40 +8,10 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum ProjectUsageRange {
-  // Mock enum values
-}
-
-// Mock Project class
-class Project {
-  constructor(sdkClient: any) {}
-
-  async getUsage(startDate: string, endDate: string, period?: string): Promise<any> {
-    return { result: 'GET:/v1/project/usage:passed' };
-  }
-
-  async listVariables(): Promise<any> {
-    return { result: 'GET:/v1/project/variables:passed' };
-  }
-
-  async createVariable(key: string, value: string, secret?: boolean): Promise<any> {
-    return { result: 'POST:/v1/project/variables:passed' };
-  }
-
-  async getVariable(variableId: string): Promise<any> {
-    return { result: 'GET:/v1/project/variables/{variableId}:passed' };
-  }
-
-  async updateVariable(variableId: string, key: string, value?: string, secret?: boolean): Promise<any> {
-    return { result: 'PUT:/v1/project/variables/{variableId}:passed' };
-  }
-
-  async deleteVariable(variableId: string): Promise<any> {
-    return { result: 'DELETE:/v1/project/variables/{variableId}:passed' };
-  }
-}
-
+import {
+  Project,
+  ProjectUsageRange,
+} from "@appwrite.io/console";
 
 let projectClient: Project | null = null;
 

@@ -9,150 +9,16 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum Framework {
-  // Mock enum values
-}
-export enum BuildRuntime {
-  // Mock enum values
-}
-export enum Adapter {
-  // Mock enum values
-}
-export enum UsageRange {
-  // Mock enum values
-}
-export enum TemplateReferenceType {
-  // Mock enum values
-}
-export enum VCSReferenceType {
-  // Mock enum values
-}
-export enum DeploymentDownloadType {
-  // Mock enum values
-}
-
-// Mock Sites class
-class Sites {
-  constructor(sdkClient: any) {}
-
-  async list(queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/sites:passed' };
-  }
-
-  async create(siteId: string, name: string, framework: string, buildRuntime: string, enabled?: boolean, logging?: boolean, timeout?: number, installCommand?: string, buildCommand?: string, outputDirectory?: string, adapter?: string, installationId?: string, fallbackFile?: string, providerRepositoryId?: string, providerBranch?: string, providerSilentMode?: boolean, providerRootDirectory?: string, specification?: string): Promise<any> {
-    return { result: 'POST:/v1/sites:passed' };
-  }
-
-  async listFrameworks(): Promise<any> {
-    return { result: 'GET:/v1/sites/frameworks:passed' };
-  }
-
-  async listSpecifications(): Promise<any> {
-    return { result: 'GET:/v1/sites/specifications:passed' };
-  }
-
-  async listTemplates(frameworks?: any[], useCases?: any[], limit?: number, offset?: number): Promise<any> {
-    return { result: 'GET:/v1/sites/templates:passed' };
-  }
-
-  async getTemplate(templateId: string): Promise<any> {
-    return { result: 'GET:/v1/sites/templates/{templateId}:passed' };
-  }
-
-  async listUsage(range?: string): Promise<any> {
-    return { result: 'GET:/v1/sites/usage:passed' };
-  }
-
-  async get(siteId: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}:passed' };
-  }
-
-  async update(siteId: string, name: string, framework: string, enabled?: boolean, logging?: boolean, timeout?: number, installCommand?: string, buildCommand?: string, outputDirectory?: string, buildRuntime?: string, adapter?: string, fallbackFile?: string, installationId?: string, providerRepositoryId?: string, providerBranch?: string, providerSilentMode?: boolean, providerRootDirectory?: string, specification?: string): Promise<any> {
-    return { result: 'PUT:/v1/sites/{siteId}:passed' };
-  }
-
-  async delete(siteId: string): Promise<any> {
-    return { result: 'DELETE:/v1/sites/{siteId}:passed' };
-  }
-
-  async updateSiteDeployment(siteId: string, deploymentId: string): Promise<any> {
-    return { result: 'PATCH:/v1/sites/{siteId}/deployment:passed' };
-  }
-
-  async listDeployments(siteId: string, queries?: any[], search?: string, total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/deployments:passed' };
-  }
-
-  async createDeployment(siteId: string, code: any, activate: boolean, installCommand?: string, buildCommand?: string, outputDirectory?: string): Promise<any> {
-    return { result: 'POST:/v1/sites/{siteId}/deployments:passed' };
-  }
-
-  async createDuplicateDeployment(siteId: string, deploymentId: string): Promise<any> {
-    return { result: 'POST:/v1/sites/{siteId}/deployments/duplicate:passed' };
-  }
-
-  async createTemplateDeployment(siteId: string, repository: string, owner: string, rootDirectory: string, type: string, reference: string, activate?: boolean): Promise<any> {
-    return { result: 'POST:/v1/sites/{siteId}/deployments/template:passed' };
-  }
-
-  async createVcsDeployment(siteId: string, type: string, reference: string, activate?: boolean): Promise<any> {
-    return { result: 'POST:/v1/sites/{siteId}/deployments/vcs:passed' };
-  }
-
-  async getDeployment(siteId: string, deploymentId: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/deployments/{deploymentId}:passed' };
-  }
-
-  async deleteDeployment(siteId: string, deploymentId: string): Promise<any> {
-    return { result: 'DELETE:/v1/sites/{siteId}/deployments/{deploymentId}:passed' };
-  }
-
-  async getDeploymentDownload(siteId: string, deploymentId: string, type?: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/deployments/{deploymentId}/download:passed' };
-  }
-
-  async updateDeploymentStatus(siteId: string, deploymentId: string): Promise<any> {
-    return { result: 'PATCH:/v1/sites/{siteId}/deployments/{deploymentId}/status:passed' };
-  }
-
-  async listLogs(siteId: string, queries?: any[], total?: boolean): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/logs:passed' };
-  }
-
-  async getLog(siteId: string, logId: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/logs/{logId}:passed' };
-  }
-
-  async deleteLog(siteId: string, logId: string): Promise<any> {
-    return { result: 'DELETE:/v1/sites/{siteId}/logs/{logId}:passed' };
-  }
-
-  async getUsage(siteId: string, range?: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/usage:passed' };
-  }
-
-  async listVariables(siteId: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/variables:passed' };
-  }
-
-  async createVariable(siteId: string, key: string, value: string, secret?: boolean): Promise<any> {
-    return { result: 'POST:/v1/sites/{siteId}/variables:passed' };
-  }
-
-  async getVariable(siteId: string, variableId: string): Promise<any> {
-    return { result: 'GET:/v1/sites/{siteId}/variables/{variableId}:passed' };
-  }
-
-  async updateVariable(siteId: string, variableId: string, key: string, value?: string, secret?: boolean): Promise<any> {
-    return { result: 'PUT:/v1/sites/{siteId}/variables/{variableId}:passed' };
-  }
-
-  async deleteVariable(siteId: string, variableId: string): Promise<any> {
-    return { result: 'DELETE:/v1/sites/{siteId}/variables/{variableId}:passed' };
-  }
-}
-
+import {
+  Sites,
+  Framework,
+  BuildRuntime,
+  Adapter,
+  UsageRange,
+  TemplateReferenceType,
+  VCSReferenceType,
+  DeploymentDownloadType,
+} from "@appwrite.io/console";
 
 let sitesClient: Sites | null = null;
 

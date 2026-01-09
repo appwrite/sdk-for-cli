@@ -8,24 +8,10 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-// Mock enums
-export enum ConsoleResourceType {
-  // Mock enum values
-}
-
-// Mock Console class
-class Console {
-  constructor(sdkClient: any) {}
-
-  async getResource(value: string, type: string): Promise<any> {
-    return { result: 'GET:/v1/console/resources:passed' };
-  }
-
-  async variables(): Promise<any> {
-    return { result: 'GET:/v1/console/variables:passed' };
-  }
-}
-
+import {
+  Console,
+  ConsoleResourceType,
+} from "@appwrite.io/console";
 
 let consoleClient: Console | null = null;
 
