@@ -54,7 +54,7 @@ tablesDB
   .command(`create`)
   .description(`Create a new Database.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--database-id <database-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Database name. Max length: 128 chars.`)
   .option(
     `--enabled [value]`,
@@ -94,7 +94,7 @@ tablesDB
 tablesDB
   .command(`get-transaction`)
   .description(`Get a transaction by its unique ID.`)
-  .requiredOption(`--transactionid <transactionid>`, `Transaction ID.`)
+  .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
   .action(
     actionRunner(
       async ({ transactionId }) =>
@@ -105,7 +105,7 @@ tablesDB
 tablesDB
   .command(`update-transaction`)
   .description(`Update a transaction, to either commit or roll back its operations.`)
-  .requiredOption(`--transactionid <transactionid>`, `Transaction ID.`)
+  .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
   .option(
     `--commit [value]`,
     `Commit transaction?`,
@@ -128,7 +128,7 @@ tablesDB
 tablesDB
   .command(`delete-transaction`)
   .description(`Delete a transaction by its unique ID.`)
-  .requiredOption(`--transactionid <transactionid>`, `Transaction ID.`)
+  .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
   .action(
     actionRunner(
       async ({ transactionId }) =>
@@ -139,7 +139,7 @@ tablesDB
 tablesDB
   .command(`create-operations`)
   .description(`Create multiple operations in a single transaction.`)
-  .requiredOption(`--transactionid <transactionid>`, `Transaction ID.`)
+  .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
   .option(`--operations [operations...]`, `Array of staged operations.`)
   .action(
     actionRunner(
@@ -162,7 +162,7 @@ tablesDB
 tablesDB
   .command(`get`)
   .description(`Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .action(
     actionRunner(
       async ({ databaseId }) =>
@@ -173,7 +173,7 @@ tablesDB
 tablesDB
   .command(`update`)
   .description(`Update a database by its unique ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--name <name>`, `Database name. Max length: 128 chars.`)
   .option(
     `--enabled [value]`,
@@ -191,7 +191,7 @@ tablesDB
 tablesDB
   .command(`delete`)
   .description(`Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .action(
     actionRunner(
       async ({ databaseId }) =>
@@ -202,7 +202,7 @@ tablesDB
 tablesDB
   .command(`list-tables`)
   .description(`Get a list of all tables that belong to the provided databaseId. You can use the search parameter to filter your results.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
@@ -221,12 +221,12 @@ tablesDB
 tablesDB
   .command(`create-table`)
   .description(`Create a new Table. Before using this route, you should create a new database resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Table name. Max length: 128 chars.`)
   .option(`--permissions [permissions...]`, `An array of permissions strings. By default, no user is granted with any permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
   .option(
-    `--rowsecurity [value]`,
+    `--row-security [value]`,
     `Enables configuring permissions for individual rows. A user needs one of row or table level permissions to access a row. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
@@ -249,8 +249,8 @@ tablesDB
 tablesDB
   .command(`get-table`)
   .description(`Get a table by its unique ID. This endpoint response returns a JSON object with the table metadata.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId }) =>
@@ -261,12 +261,12 @@ tablesDB
 tablesDB
   .command(`update-table`)
   .description(`Update a table by its unique ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--name <name>`, `Table name. Max length: 128 chars.`)
   .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
   .option(
-    `--rowsecurity [value]`,
+    `--row-security [value]`,
     `Enables configuring permissions for individual rows. A user needs one of row or table-level permissions to access a row. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
@@ -287,8 +287,8 @@ tablesDB
 tablesDB
   .command(`delete-table`)
   .description(`Delete a table by its unique ID. Only users with write permissions have access to delete this resource.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId }) =>
@@ -299,8 +299,8 @@ tablesDB
 tablesDB
   .command(`list-columns`)
   .description(`List columns in the table.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error`)
   .option(
     `--total [value]`,
@@ -319,8 +319,8 @@ tablesDB
   .command(`create-boolean-column`)
   .description(`Create a boolean column.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(
@@ -337,32 +337,32 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createBooleanColumn(databaseId, tableId, key, required, xDefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createBooleanColumn(databaseId, tableId, key, required, xdefault, array)),
     ),
   );
 
 tablesDB
   .command(`update-boolean-column`)
   .description(`Update a boolean column. Changing the \`default\` value will not update already existing rows.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`, parseBool)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateBooleanColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateBooleanColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
 tablesDB
   .command(`create-datetime-column`)
   .description(`Create a date time column according to the ISO 8601 standard.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for the column in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when column is required.`)
@@ -374,24 +374,24 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createDatetimeColumn(databaseId, tableId, key, required, xDefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createDatetimeColumn(databaseId, tableId, key, required, xdefault, array)),
     ),
   );
 
 tablesDB
   .command(`update-datetime-column`)
   .description(`Update a date time column. Changing the \`default\` value will not update already existing rows.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateDatetimeColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateDatetimeColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
@@ -399,8 +399,8 @@ tablesDB
   .command(`create-email-column`)
   .description(`Create an email column.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -412,8 +412,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createEmailColumn(databaseId, tableId, key, required, xDefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createEmailColumn(databaseId, tableId, key, required, xdefault, array)),
     ),
   );
 
@@ -421,24 +421,24 @@ tablesDB
   .command(`update-email-column`)
   .description(`Update an email column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateEmailColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateEmailColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
 tablesDB
   .command(`create-enum-column`)
   .description(`Create an enumeration column. The \`elements\` param acts as a white-list of accepted values for this column.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--elements [elements...]`, `Array of enum values.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
@@ -451,8 +451,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, elements, required, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createEnumColumn(databaseId, tableId, key, elements, required, xDefault, array)),
+      async ({ databaseId, tableId, key, elements, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createEnumColumn(databaseId, tableId, key, elements, required, xdefault, array)),
     ),
   );
 
@@ -460,17 +460,17 @@ tablesDB
   .command(`update-enum-column`)
   .description(`Update an enum column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--elements [elements...]`, `Updated list of enum values.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, elements, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateEnumColumn(databaseId, tableId, key, elements, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, elements, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateEnumColumn(databaseId, tableId, key, elements, required, xdefault, newKey)),
     ),
   );
 
@@ -478,8 +478,8 @@ tablesDB
   .command(`create-float-column`)
   .description(`Create a float column. Optionally, minimum and maximum values can be provided.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--min <min>`, `Minimum value`, parseInteger)
@@ -493,8 +493,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, min, max, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createFloatColumn(databaseId, tableId, key, required, min, max, xDefault, array)),
+      async ({ databaseId, tableId, key, required, min, max, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createFloatColumn(databaseId, tableId, key, required, min, max, xdefault, array)),
     ),
   );
 
@@ -502,18 +502,18 @@ tablesDB
   .command(`update-float-column`)
   .description(`Update a float column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value. Cannot be set when required.`, parseInteger)
   .option(`--min <min>`, `Minimum value`, parseInteger)
   .option(`--max <max>`, `Maximum value`, parseInteger)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, min, max, newKey }) =>
-        parse(await (await getTablesDBClient()).updateFloatColumn(databaseId, tableId, key, required, xDefault, min, max, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, min, max, newKey }) =>
+        parse(await (await getTablesDBClient()).updateFloatColumn(databaseId, tableId, key, required, xdefault, min, max, newKey)),
     ),
   );
 
@@ -521,8 +521,8 @@ tablesDB
   .command(`create-integer-column`)
   .description(`Create an integer column. Optionally, minimum and maximum values can be provided.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--min <min>`, `Minimum value`, parseInteger)
@@ -536,8 +536,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, min, max, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createIntegerColumn(databaseId, tableId, key, required, min, max, xDefault, array)),
+      async ({ databaseId, tableId, key, required, min, max, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createIntegerColumn(databaseId, tableId, key, required, min, max, xdefault, array)),
     ),
   );
 
@@ -545,18 +545,18 @@ tablesDB
   .command(`update-integer-column`)
   .description(`Update an integer column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value. Cannot be set when column is required.`, parseInteger)
   .option(`--min <min>`, `Minimum value`, parseInteger)
   .option(`--max <max>`, `Maximum value`, parseInteger)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, min, max, newKey }) =>
-        parse(await (await getTablesDBClient()).updateIntegerColumn(databaseId, tableId, key, required, xDefault, min, max, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, min, max, newKey }) =>
+        parse(await (await getTablesDBClient()).updateIntegerColumn(databaseId, tableId, key, required, xdefault, min, max, newKey)),
     ),
   );
 
@@ -564,8 +564,8 @@ tablesDB
   .command(`create-ip-column`)
   .description(`Create IP address column.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value. Cannot be set when column is required.`)
@@ -577,8 +577,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createIpColumn(databaseId, tableId, key, required, xDefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createIpColumn(databaseId, tableId, key, required, xdefault, array)),
     ),
   );
 
@@ -586,109 +586,109 @@ tablesDB
   .command(`update-ip-column`)
   .description(`Update an ip column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateIpColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateIpColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
 tablesDB
   .command(`create-line-column`)
   .description(`Create a geometric line column.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault }) =>
-        parse(await (await getTablesDBClient()).createLineColumn(databaseId, tableId, key, required, xDefault)),
+      async ({ databaseId, tableId, key, required, xdefault }) =>
+        parse(await (await getTablesDBClient()).createLineColumn(databaseId, tableId, key, required, xdefault)),
     ),
   );
 
 tablesDB
   .command(`update-line-column`)
   .description(`Update a line column. Changing the \`default\` value will not update already existing rows.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateLineColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateLineColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
 tablesDB
   .command(`create-point-column`)
   .description(`Create a geometric point column.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault }) =>
-        parse(await (await getTablesDBClient()).createPointColumn(databaseId, tableId, key, required, xDefault)),
+      async ({ databaseId, tableId, key, required, xdefault }) =>
+        parse(await (await getTablesDBClient()).createPointColumn(databaseId, tableId, key, required, xdefault)),
     ),
   );
 
 tablesDB
   .command(`update-point-column`)
   .description(`Update a point column. Changing the \`default\` value will not update already existing rows.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updatePointColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updatePointColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
 tablesDB
   .command(`create-polygon-column`)
   .description(`Create a geometric polygon column.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault }) =>
-        parse(await (await getTablesDBClient()).createPolygonColumn(databaseId, tableId, key, required, xDefault)),
+      async ({ databaseId, tableId, key, required, xdefault }) =>
+        parse(await (await getTablesDBClient()).createPolygonColumn(databaseId, tableId, key, required, xdefault)),
     ),
   );
 
 tablesDB
   .command(`update-polygon-column`)
   .description(`Update a polygon column. Changing the \`default\` value will not update already existing rows.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updatePolygonColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updatePolygonColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
@@ -696,19 +696,19 @@ tablesDB
   .command(`create-relationship-column`)
   .description(`Create relationship column. [Learn more about relationship columns](https://appwrite.io/docs/databases-relationships#relationship-columns).
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
-  .requiredOption(`--relatedtableid <relatedtableid>`, `Related Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--related-table-id <related-table-id>`, `Related Table ID.`)
   .requiredOption(`--type <type>`, `Relation type`)
   .option(
-    `--twoway [value]`,
+    `--two-way [value]`,
     `Is Two Way?`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
   .option(`--key <key>`, `Column Key.`)
-  .option(`--twowaykey <twowaykey>`, `Two Way Column Key.`)
-  .option(`--ondelete <ondelete>`, `Constraints option`)
+  .option(`--two-way-key <two-way-key>`, `Two Way Column Key.`)
+  .option(`--on-delete <on-delete>`, `Constraints option`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, relatedTableId, type, twoWay, key, twoWayKey, onDelete }) =>
@@ -720,8 +720,8 @@ tablesDB
   .command(`create-string-column`)
   .description(`Create a string column.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--size <size>`, `Column size for text columns, in number of characters.`, parseInteger)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
@@ -740,8 +740,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, size, required, xDefault, array, encrypt }) =>
-        parse(await (await getTablesDBClient()).createStringColumn(databaseId, tableId, key, size, required, xDefault, array, encrypt)),
+      async ({ databaseId, tableId, key, size, required, xdefault, array, encrypt }) =>
+        parse(await (await getTablesDBClient()).createStringColumn(databaseId, tableId, key, size, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -749,17 +749,17 @@ tablesDB
   .command(`update-string-column`)
   .description(`Update a string column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
   .option(`--size <size>`, `Maximum size of the string column.`, parseInteger)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, size, newKey }) =>
-        parse(await (await getTablesDBClient()).updateStringColumn(databaseId, tableId, key, required, xDefault, size, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, size, newKey }) =>
+        parse(await (await getTablesDBClient()).updateStringColumn(databaseId, tableId, key, required, xdefault, size, newKey)),
     ),
   );
 
@@ -767,8 +767,8 @@ tablesDB
   .command(`create-url-column`)
   .description(`Create a URL column.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -780,8 +780,8 @@ tablesDB
   )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, array }) =>
-        parse(await (await getTablesDBClient()).createUrlColumn(databaseId, tableId, key, required, xDefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createUrlColumn(databaseId, tableId, key, required, xdefault, array)),
     ),
   );
 
@@ -789,24 +789,24 @@ tablesDB
   .command(`update-url-column`)
   .description(`Update an url column. Changing the \`default\` value will not update already existing rows.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xDefault, newKey }) =>
-        parse(await (await getTablesDBClient()).updateUrlColumn(databaseId, tableId, key, required, xDefault, newKey)),
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateUrlColumn(databaseId, tableId, key, required, xdefault, newKey)),
     ),
   );
 
 tablesDB
   .command(`get-column`)
   .description(`Get column by ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .action(
     actionRunner(
@@ -818,8 +818,8 @@ tablesDB
 tablesDB
   .command(`delete-column`)
   .description(`Deletes a column.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .action(
     actionRunner(
@@ -832,11 +832,11 @@ tablesDB
   .command(`update-relationship-column`)
   .description(`Update relationship column. [Learn more about relationship columns](https://appwrite.io/docs/databases-relationships#relationship-columns).
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
-  .option(`--ondelete <ondelete>`, `Constraints option`)
-  .option(`--newkey <newkey>`, `New Column Key.`)
+  .option(`--on-delete <on-delete>`, `Constraints option`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, key, onDelete, newKey }) =>
@@ -847,8 +847,8 @@ tablesDB
 tablesDB
   .command(`list-indexes`)
   .description(`List indexes on the table.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error`)
   .option(
     `--total [value]`,
@@ -867,8 +867,8 @@ tablesDB
   .command(`create-index`)
   .description(`Creates an index on the columns listed. Your index should include all the columns you will query in a single request.
 Type can be \`key\`, \`fulltext\`, or \`unique\`.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .requiredOption(`--type <type>`, `Index type.`)
   .requiredOption(`--columns [columns...]`, `Array of columns to index. Maximum of 100 columns are allowed, each 32 characters long.`)
@@ -884,8 +884,8 @@ Type can be \`key\`, \`fulltext\`, or \`unique\`.`)
 tablesDB
   .command(`get-index`)
   .description(`Get index by ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .action(
     actionRunner(
@@ -897,8 +897,8 @@ tablesDB
 tablesDB
   .command(`delete-index`)
   .description(`Delete an index.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .action(
     actionRunner(
@@ -910,8 +910,8 @@ tablesDB
 tablesDB
   .command(`list-table-logs`)
   .description(`Get the table activity logs list by its unique ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
@@ -923,10 +923,10 @@ tablesDB
 tablesDB
   .command(`list-rows`)
   .description(`Get a list of all the user's rows in a given table. You can use the query params to filter your results.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/products/databases/tables#create-table).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/products/databases/tables#create-table).`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID to read uncommitted changes within the transaction.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -943,12 +943,12 @@ tablesDB
 tablesDB
   .command(`create-row`)
   .description(`Create a new Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
-  .requiredOption(`--rowid <rowid>`, `Row ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
+  .requiredOption(`--row-id <row-id>`, `Row ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--data <data>`, `Row data as JSON object.`)
   .option(`--permissions [permissions...]`, `An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, data, permissions, transactionId }) =>
@@ -959,10 +959,10 @@ tablesDB
 tablesDB
   .command(`create-rows`)
   .description(`Create new Rows. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
   .requiredOption(`--rows [rows...]`, `Array of rows data as JSON objects.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rows, transactionId }) =>
@@ -974,10 +974,10 @@ tablesDB
   .command(`upsert-rows`)
   .description(`Create or update Rows. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
 `)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--rows [rows...]`, `Array of row data as JSON objects. May contain partial rows.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rows, transactionId }) =>
@@ -988,11 +988,11 @@ tablesDB
 tablesDB
   .command(`update-rows`)
   .description(`Update all rows that match your queries, if no queries are submitted then all rows are updated. You can pass only specific fields to be updated.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include only column and value pairs to be updated.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, data, queries, transactionId }) =>
@@ -1003,10 +1003,10 @@ tablesDB
 tablesDB
   .command(`delete-rows`)
   .description(`Bulk delete rows using queries, if no queries are passed then all rows are deleted.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, queries, transactionId }) =>
@@ -1017,11 +1017,11 @@ tablesDB
 tablesDB
   .command(`get-row`)
   .description(`Get a row by its unique ID. This endpoint response returns a JSON object with the row data.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID to read uncommitted changes within the transaction.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, queries, transactionId }) =>
@@ -1032,12 +1032,12 @@ tablesDB
 tablesDB
   .command(`upsert-row`)
   .description(`Create or update a Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include all required columns of the row to be created or updated.`)
   .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, data, permissions, transactionId }) =>
@@ -1048,12 +1048,12 @@ tablesDB
 tablesDB
   .command(`update-row`)
   .description(`Update a row by its unique ID. Using the patch method you can pass only specific fields that will get updated.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include only columns and value pairs to be updated.`)
   .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, data, permissions, transactionId }) =>
@@ -1064,10 +1064,10 @@ tablesDB
 tablesDB
   .command(`delete-row`)
   .description(`Delete a row by its unique ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, transactionId }) =>
@@ -1078,9 +1078,9 @@ tablesDB
 tablesDB
   .command(`list-row-logs`)
   .description(`Get the row activity logs list by its unique ID.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
@@ -1092,13 +1092,13 @@ tablesDB
 tablesDB
   .command(`decrement-row-column`)
   .description(`Decrement a specific column of a row by a given value.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .requiredOption(`--column <column>`, `Column key.`)
   .option(`--value <value>`, `Value to increment the column by. The value must be a number.`, parseInteger)
   .option(`--min <min>`, `Minimum value for the column. If the current value is lesser than this value, an exception will be thrown.`, parseInteger)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, column, value, min, transactionId }) =>
@@ -1109,13 +1109,13 @@ tablesDB
 tablesDB
   .command(`increment-row-column`)
   .description(`Increment a specific column of a row by a given value.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
-  .requiredOption(`--rowid <rowid>`, `Row ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .requiredOption(`--column <column>`, `Column key.`)
   .option(`--value <value>`, `Value to increment the column by. The value must be a number.`, parseInteger)
   .option(`--max <max>`, `Maximum value for the column. If the current value is greater than this value, an error will be thrown.`, parseInteger)
-  .option(`--transactionid <transactionid>`, `Transaction ID for staging the operation.`)
+  .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, column, value, max, transactionId }) =>
@@ -1126,8 +1126,8 @@ tablesDB
 tablesDB
   .command(`get-table-usage`)
   .description(`Get usage metrics and statistics for a table. Returning the total number of rows. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
-  .requiredOption(`--tableid <tableid>`, `Table ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--range <range>`, `Date range.`)
   .action(
     actionRunner(
@@ -1139,7 +1139,7 @@ tablesDB
 tablesDB
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for a database. You can view the total number of tables, rows, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .requiredOption(`--databaseid <databaseid>`, `Database ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .option(`--range <range>`, `Date range.`)
   .action(
     actionRunner(

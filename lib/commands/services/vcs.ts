@@ -32,10 +32,10 @@ export const vcs = new Command("vcs")
 vcs
   .command(`create-repository-detection`)
   .description(`Analyze a GitHub repository to automatically detect the programming language and runtime environment. This endpoint scans the repository's files and language statistics to determine the appropriate runtime settings for your function. The GitHub installation must be properly configured and the repository must be accessible through your installation for this endpoint to work.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
-  .requiredOption(`--providerrepositoryid <providerrepositoryid>`, `Repository Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
+  .requiredOption(`--provider-repository-id <provider-repository-id>`, `Repository Id`)
   .requiredOption(`--type <type>`, `Detector type. Must be one of the following: runtime, framework`)
-  .option(`--providerrootdirectory <providerrootdirectory>`, `Path to Root Directory`)
+  .option(`--provider-root-directory <provider-root-directory>`, `Path to Root Directory`)
   .action(
     actionRunner(
       async ({ installationId, providerRepositoryId, type, providerRootDirectory }) =>
@@ -46,7 +46,7 @@ vcs
 vcs
   .command(`list-repositories`)
   .description(`Get a list of GitHub repositories available through your installation. This endpoint returns repositories with their basic information, detected runtime environments, and latest push dates. You can optionally filter repositories using a search term. Each repository's runtime is automatically detected based on its contents and language statistics. The GitHub installation must be properly configured for this endpoint to work.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--type <type>`, `Detector type. Must be one of the following: runtime, framework`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
@@ -60,21 +60,21 @@ vcs
 vcs
   .command(`create-repository`)
   .description(`Create a new GitHub repository through your installation. This endpoint allows you to create either a public or private repository by specifying a name and visibility setting. The repository will be created under your GitHub user account or organization, depending on your installation type. The GitHub installation must be properly configured and have the necessary permissions for repository creation.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--name <name>`, `Repository name (slug)`)
   .requiredOption(`--xprivate <xprivate>`, `Mark repository public or private`, parseBool)
   .action(
     actionRunner(
-      async ({ installationId, name, xPrivate }) =>
-        parse(await (await getVcsClient()).createRepository(installationId, name, xPrivate)),
+      async ({ installationId, name, xprivate }) =>
+        parse(await (await getVcsClient()).createRepository(installationId, name, xprivate)),
     ),
   );
 
 vcs
   .command(`get-repository`)
   .description(`Get detailed information about a specific GitHub repository from your installation. This endpoint returns repository details including its ID, name, visibility status, organization, and latest push date. The GitHub installation must be properly configured and have access to the requested repository for this endpoint to work.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
-  .requiredOption(`--providerrepositoryid <providerrepositoryid>`, `Repository Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
+  .requiredOption(`--provider-repository-id <provider-repository-id>`, `Repository Id`)
   .action(
     actionRunner(
       async ({ installationId, providerRepositoryId }) =>
@@ -86,8 +86,8 @@ vcs
   .command(`list-repository-branches`)
   .description(`Get a list of all branches from a GitHub repository in your installation. This endpoint returns the names of all branches in the repository and their total count. The GitHub installation must be properly configured and have access to the requested repository for this endpoint to work.
 `)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
-  .requiredOption(`--providerrepositoryid <providerrepositoryid>`, `Repository Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
+  .requiredOption(`--provider-repository-id <provider-repository-id>`, `Repository Id`)
   .action(
     actionRunner(
       async ({ installationId, providerRepositoryId }) =>
@@ -98,10 +98,10 @@ vcs
 vcs
   .command(`get-repository-contents`)
   .description(`Get a list of files and directories from a GitHub repository connected to your project. This endpoint returns the contents of a specified repository path, including file names, sizes, and whether each item is a file or directory. The GitHub installation must be properly configured and the repository must be accessible through your installation for this endpoint to work.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
-  .requiredOption(`--providerrepositoryid <providerrepositoryid>`, `Repository Id`)
-  .option(`--providerrootdirectory <providerrootdirectory>`, `Path to get contents of nested directory`)
-  .option(`--providerreference <providerreference>`, `Git reference (branch, tag, commit) to get contents from`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
+  .requiredOption(`--provider-repository-id <provider-repository-id>`, `Repository Id`)
+  .option(`--provider-root-directory <provider-root-directory>`, `Path to get contents of nested directory`)
+  .option(`--provider-reference <provider-reference>`, `Git reference (branch, tag, commit) to get contents from`)
   .action(
     actionRunner(
       async ({ installationId, providerRepositoryId, providerRootDirectory, providerReference }) =>
@@ -112,9 +112,9 @@ vcs
 vcs
   .command(`update-external-deployments`)
   .description(`Authorize and create deployments for a GitHub pull request in your project. This endpoint allows external contributions by creating deployments from pull requests, enabling preview environments for code review. The pull request must be open and not previously authorized. The GitHub installation must be properly configured and have access to both the repository and pull request for this endpoint to work.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
-  .requiredOption(`--repositoryid <repositoryid>`, `VCS Repository Id`)
-  .requiredOption(`--providerpullrequestid <providerpullrequestid>`, `GitHub Pull Request Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
+  .requiredOption(`--repository-id <repository-id>`, `VCS Repository Id`)
+  .requiredOption(`--provider-pull-request-id <provider-pull-request-id>`, `GitHub Pull Request Id`)
   .action(
     actionRunner(
       async ({ installationId, repositoryId, providerPullRequestId }) =>
@@ -144,7 +144,7 @@ vcs
 vcs
   .command(`get-installation`)
   .description(`Get a VCS installation by its unique ID. This endpoint returns the installation's details including its provider, organization, and configuration. `)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .action(
     actionRunner(
       async ({ installationId }) =>
@@ -155,7 +155,7 @@ vcs
 vcs
   .command(`delete-installation`)
   .description(`Delete a VCS installation by its unique ID. This endpoint removes the installation and all its associated repositories from the project.`)
-  .requiredOption(`--installationid <installationid>`, `Installation Id`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .action(
     actionRunner(
       async ({ installationId }) =>

@@ -63,7 +63,7 @@ proxy
   .command(`create-function-rule`)
   .description(`Create a new proxy rule for executing Appwrite Function on custom domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
-  .requiredOption(`--functionid <functionid>`, `ID of function to be executed.`)
+  .requiredOption(`--function-id <function-id>`, `ID of function to be executed.`)
   .option(`--branch <branch>`, `Name of VCS branch to deploy changes automatically`)
   .action(
     actionRunner(
@@ -77,9 +77,9 @@ proxy
   .description(`Create a new proxy rule for to redirect from custom domain to another domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
   .requiredOption(`--url <url>`, `Target URL of redirection`)
-  .requiredOption(`--statuscode <statuscode>`, `Status code of redirection`)
-  .requiredOption(`--resourceid <resourceid>`, `ID of parent resource.`)
-  .requiredOption(`--resourcetype <resourcetype>`, `Type of parent resource.`)
+  .requiredOption(`--status-code <status-code>`, `Status code of redirection`)
+  .requiredOption(`--resource-id <resource-id>`, `ID of parent resource.`)
+  .requiredOption(`--resource-type <resource-type>`, `Type of parent resource.`)
   .action(
     actionRunner(
       async ({ domain, url, statusCode, resourceId, resourceType }) =>
@@ -91,7 +91,7 @@ proxy
   .command(`create-site-rule`)
   .description(`Create a new proxy rule for serving Appwrite Site on custom domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
-  .requiredOption(`--siteid <siteid>`, `ID of site to be executed.`)
+  .requiredOption(`--site-id <site-id>`, `ID of site to be executed.`)
   .option(`--branch <branch>`, `Name of VCS branch to deploy changes automatically`)
   .action(
     actionRunner(
@@ -103,7 +103,7 @@ proxy
 proxy
   .command(`get-rule`)
   .description(`Get a proxy rule by its unique ID.`)
-  .requiredOption(`--ruleid <ruleid>`, `Rule ID.`)
+  .requiredOption(`--rule-id <rule-id>`, `Rule ID.`)
   .action(
     actionRunner(
       async ({ ruleId }) =>
@@ -114,7 +114,7 @@ proxy
 proxy
   .command(`delete-rule`)
   .description(`Delete a proxy rule by its unique ID.`)
-  .requiredOption(`--ruleid <ruleid>`, `Rule ID.`)
+  .requiredOption(`--rule-id <rule-id>`, `Rule ID.`)
   .action(
     actionRunner(
       async ({ ruleId }) =>
@@ -125,7 +125,7 @@ proxy
 proxy
   .command(`update-rule-verification`)
   .description(`Retry getting verification process of a proxy rule. This endpoint triggers domain verification by checking DNS records (CNAME) against the configured target domain. If verification is successful, a TLS certificate will be automatically provisioned for the domain.`)
-  .requiredOption(`--ruleid <ruleid>`, `Rule ID.`)
+  .requiredOption(`--rule-id <rule-id>`, `Rule ID.`)
   .action(
     actionRunner(
       async ({ ruleId }) =>

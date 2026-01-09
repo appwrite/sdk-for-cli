@@ -43,7 +43,7 @@ account
 account
   .command(`create`)
   .description(`Use this endpoint to allow a new user to register a new account in your project. After the user registration completes successfully, you can use the [/account/verfication](https://appwrite.io/docs/references/cloud/client-web/account#createVerification) route to start verifying the user email address. To allow the new user to login to their new account, you need to create a new [account session](https://appwrite.io/docs/references/cloud/client-web/account#createEmailSession).`)
-  .requiredOption(`--userid <userid>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `New user password. Must be between 8 and 256 chars.`)
   .option(`--name <name>`, `User name. Max length: 128 chars.`)
@@ -97,7 +97,7 @@ account
 account
   .command(`delete-identity`)
   .description(`Delete an identity by its unique ID.`)
-  .requiredOption(`--identityid <identityid>`, `Identity ID.`)
+  .requiredOption(`--identity-id <identity-id>`, `Identity ID.`)
   .action(
     actionRunner(
       async ({ identityId }) =>
@@ -192,7 +192,7 @@ account
 account
   .command(`update-mfa-challenge`)
   .description(`Complete the MFA challenge by providing the one-time password. Finish the process of MFA verification by providing the one-time password. To begin the flow, use [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge) method.`)
-  .requiredOption(`--challengeid <challengeid>`, `ID of the challenge.`)
+  .requiredOption(`--challenge-id <challenge-id>`, `ID of the challenge.`)
   .requiredOption(`--otp <otp>`, `Valid verification token.`)
   .action(
     actionRunner(
@@ -252,7 +252,7 @@ account
   .command(`update-password`)
   .description(`Update currently logged in user password. For validation, user is required to pass in the new password, and the old password. For users created with OAuth, Team Invites and Magic URL, oldPassword is optional.`)
   .requiredOption(`--password <password>`, `New user password. Must be at least 8 chars.`)
-  .option(`--oldpassword <oldpassword>`, `Current user password. Must be at least 8 chars.`)
+  .option(`--old-password <old-password>`, `Current user password. Must be at least 8 chars.`)
   .action(
     actionRunner(
       async ({ password, oldPassword }) =>
@@ -309,7 +309,7 @@ account
   .description(`Use this endpoint to complete the user account password reset. Both the **userId** and **secret** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the [POST /account/recovery](https://appwrite.io/docs/references/cloud/client-web/account#createRecovery) endpoint.
 
 Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.`)
-  .requiredOption(`--userid <userid>`, `User ID.`)
+  .requiredOption(`--user-id <user-id>`, `User ID.`)
   .requiredOption(`--secret <secret>`, `Valid reset token.`)
   .requiredOption(`--password <password>`, `New user password. Must be between 8 and 256 chars.`)
   .action(
@@ -363,7 +363,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
 account
   .command(`update-magic-url-session`)
   .description(`Use this endpoint to create a session from token. Provide the **userId** and **secret** parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.`)
-  .requiredOption(`--userid <userid>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--secret <secret>`, `Valid verification token.`)
   .action(
     actionRunner(
@@ -396,7 +396,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
 account
   .command(`update-phone-session`)
   .description(`Use this endpoint to create a session from token. Provide the **userId** and **secret** parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.`)
-  .requiredOption(`--userid <userid>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--secret <secret>`, `Valid verification token.`)
   .action(
     actionRunner(
@@ -408,7 +408,7 @@ account
 account
   .command(`create-session`)
   .description(`Use this endpoint to create a session from token. Provide the **userId** and **secret** parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.`)
-  .requiredOption(`--userid <userid>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--secret <secret>`, `Secret of a token generated by login methods. For example, the \`createMagicURLToken\` or \`createPhoneToken\` methods.`)
   .action(
     actionRunner(
@@ -420,7 +420,7 @@ account
 account
   .command(`get-session`)
   .description(`Use this endpoint to get a logged in user's session using a Session ID. Inputting 'current' will return the current session being used.`)
-  .requiredOption(`--sessionid <sessionid>`, `Session ID. Use the string 'current' to get the current device session.`)
+  .requiredOption(`--session-id <session-id>`, `Session ID. Use the string 'current' to get the current device session.`)
   .action(
     actionRunner(
       async ({ sessionId }) =>
@@ -431,7 +431,7 @@ account
 account
   .command(`update-session`)
   .description(`Use this endpoint to extend a session's length. Extending a session is useful when session expiry is short. If the session was created using an OAuth provider, this endpoint refreshes the access token from the provider.`)
-  .requiredOption(`--sessionid <sessionid>`, `Session ID. Use the string 'current' to update the current device session.`)
+  .requiredOption(`--session-id <session-id>`, `Session ID. Use the string 'current' to update the current device session.`)
   .action(
     actionRunner(
       async ({ sessionId }) =>
@@ -442,7 +442,7 @@ account
 account
   .command(`delete-session`)
   .description(`Logout the user. Use 'current' as the session ID to logout on this device, use a session ID to logout on another device. If you're looking to logout the user on all devices, use [Delete Sessions](https://appwrite.io/docs/references/cloud/client-web/account#deleteSessions) instead.`)
-  .requiredOption(`--sessionid <sessionid>`, `Session ID. Use the string 'current' to delete the current device session.`)
+  .requiredOption(`--session-id <session-id>`, `Session ID. Use the string 'current' to delete the current device session.`)
   .action(
     actionRunner(
       async ({ sessionId }) =>
@@ -462,9 +462,9 @@ account
 account
   .command(`create-push-target`)
   .description(`Use this endpoint to register a device for push notifications. Provide a target ID (custom or generated using ID.unique()), a device identifier (usually a device token), and optionally specify which provider should send notifications to this target. The target is automatically linked to the current session and includes device information like brand and model.`)
-  .requiredOption(`--targetid <targetid>`, `Target ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--target-id <target-id>`, `Target ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--identifier <identifier>`, `The target identifier (token, email, phone etc.)`)
-  .option(`--providerid <providerid>`, `Provider ID. Message will be sent to this target from the specified provider ID. If no provider ID is set the first setup provider will be used.`)
+  .option(`--provider-id <provider-id>`, `Provider ID. Message will be sent to this target from the specified provider ID. If no provider ID is set the first setup provider will be used.`)
   .action(
     actionRunner(
       async ({ targetId, identifier, providerId }) =>
@@ -475,7 +475,7 @@ account
 account
   .command(`update-push-target`)
   .description(`Update the currently logged in user's push notification target. You can modify the target's identifier (device token) and provider ID (token, email, phone etc.). The target must exist and belong to the current user. If you change the provider ID, notifications will be sent through the new messaging provider instead.`)
-  .requiredOption(`--targetid <targetid>`, `Target ID.`)
+  .requiredOption(`--target-id <target-id>`, `Target ID.`)
   .requiredOption(`--identifier <identifier>`, `The target identifier (token, email, phone etc.)`)
   .action(
     actionRunner(
@@ -487,7 +487,7 @@ account
 account
   .command(`delete-push-target`)
   .description(`Delete a push notification target for the currently logged in user. After deletion, the device will no longer receive push notifications. The target must exist and belong to the current user.`)
-  .requiredOption(`--targetid <targetid>`, `Target ID.`)
+  .requiredOption(`--target-id <target-id>`, `Target ID.`)
   .action(
     actionRunner(
       async ({ targetId }) =>
@@ -501,7 +501,7 @@ account
 
 A user is limited to 10 active sessions at a time by default. [Learn more about session limits](https://appwrite.io/docs/authentication-security#limits).
 `)
-  .requiredOption(`--userid <userid>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars. If the email address has never been used, a new account is created using the provided userId. Otherwise, if the email address is already attached to an account, the user ID is ignored.`)
+  .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars. If the email address has never been used, a new account is created using the provided userId. Otherwise, if the email address is already attached to an account, the user ID is ignored.`)
   .requiredOption(`--email <email>`, `User email.`)
   .option(
     `--phrase [value]`,
@@ -522,7 +522,7 @@ account
 
 A user is limited to 10 active sessions at a time by default. [Learn more about session limits](https://appwrite.io/docs/authentication-security#limits).
 `)
-  .requiredOption(`--userid <userid>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars. If the email address has never been used, a new account is created using the provided userId. Otherwise, if the email address is already attached to an account, the user ID is ignored.`)
+  .requiredOption(`--user-id <user-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars. If the email address has never been used, a new account is created using the provided userId. Otherwise, if the email address is already attached to an account, the user ID is ignored.`)
   .requiredOption(`--email <email>`, `User email.`)
   .option(`--url <url>`, `URL to redirect the user back to your app from the magic URL login. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.`)
   .option(
@@ -563,7 +563,7 @@ account
   .description(`Sends the user an SMS with a secret key for creating a session. If the provided user ID has not be registered, a new user will be created. Use the returned user ID and secret and submit a request to the [POST /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The secret sent to the user's phone is valid for 15 minutes.
 
 A user is limited to 10 active sessions at a time by default. [Learn more about session limits](https://appwrite.io/docs/authentication-security#limits).`)
-  .requiredOption(`--userid <userid>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars. If the phone number has never been used, a new account is created using the provided userId. Otherwise, if the phone number is already attached to an account, the user ID is ignored.`)
+  .requiredOption(`--user-id <user-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars. If the phone number has never been used, a new account is created using the provided userId. Otherwise, if the phone number is already attached to an account, the user ID is ignored.`)
   .requiredOption(`--phone <phone>`, `Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
   .action(
     actionRunner(
@@ -603,7 +603,7 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
 account
   .command(`update-email-verification`)
   .description(`Use this endpoint to complete the user email verification process. Use both the **userId** and **secret** parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.`)
-  .requiredOption(`--userid <userid>`, `User ID.`)
+  .requiredOption(`--user-id <user-id>`, `User ID.`)
   .requiredOption(`--secret <secret>`, `Valid verification token.`)
   .action(
     actionRunner(
@@ -615,7 +615,7 @@ account
 account
   .command(`update-verification`)
   .description(`Use this endpoint to complete the user email verification process. Use both the **userId** and **secret** parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.`)
-  .requiredOption(`--userid <userid>`, `User ID.`)
+  .requiredOption(`--user-id <user-id>`, `User ID.`)
   .requiredOption(`--secret <secret>`, `Valid verification token.`)
   .action(
     actionRunner(
@@ -636,7 +636,7 @@ account
 account
   .command(`update-phone-verification`)
   .description(`Use this endpoint to complete the user phone verification process. Use the **userId** and **secret** that were sent to your user's phone number to verify the user email ownership. If confirmed this route will return a 200 status code.`)
-  .requiredOption(`--userid <userid>`, `User ID.`)
+  .requiredOption(`--user-id <user-id>`, `User ID.`)
   .requiredOption(`--secret <secret>`, `Valid verification token.`)
   .action(
     actionRunner(
