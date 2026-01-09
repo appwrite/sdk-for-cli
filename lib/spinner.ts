@@ -1,5 +1,5 @@
-import progress = require("cli-progress");
-import chalk = require("chalk");
+import progress from "cli-progress";
+import chalk from "chalk";
 
 const SPINNER_ARC = "arc";
 const SPINNER_DOTS = "dots";
