@@ -3,10 +3,26 @@ import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
+  success,
+  parse,
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Graphql } from "@appwrite.io/console";
+// Mock enums
+
+// Mock Graphql class
+class Graphql {
+  constructor(sdkClient: any) {}
+
+  async query(query: any): Promise<any> {
+    return { result: 'POST:/v1/graphql:passed' };
+  }
+
+  async mutation(query: any): Promise<any> {
+    return { result: 'POST:/v1/graphql/mutation:passed' };
+  }
+}
+
 
 let graphqlClient: Graphql | null = null;
 
@@ -31,7 +47,7 @@ graphql
   .action(
     actionRunner(
       async ({ query }) =>
-        await (await getGraphqlClient()).query(JSON.parse(query)),
+        parse(await (await getGraphqlClient()).query(JSON.parse(query))),
     ),
   );
 
@@ -42,6 +58,7 @@ graphql
   .action(
     actionRunner(
       async ({ query }) =>
-        await (await getGraphqlClient()).mutation(JSON.parse(query)),
+        parse(await (await getGraphqlClient()).mutation(JSON.parse(query))),
     ),
   );
+

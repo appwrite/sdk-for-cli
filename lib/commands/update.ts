@@ -1,19 +1,14 @@
-import fs from "fs";
-import path from "path";
 import { spawn } from "child_process";
 import { Command } from "commander";
 import chalk from "chalk";
 import inquirer from "inquirer";
-import {
-  success,
-  log,
-  warn,
-  error,
-  hint,
-  actionRunner,
-  commandDescriptions,
-} from "../parser.js";
+import { success, log, warn, error, hint, actionRunner } from "../parser.js";
 import { getLatestVersion, compareVersions } from "../utils.js";
+import {
+  GITHUB_RELEASES_URL,
+  NPM_PACKAGE_NAME,
+  SDK_TITLE,
+} from "../constants.js";
 import packageJson from "../../package.json" with { type: "json" };
 const { version } = packageJson;
 
@@ -26,7 +21,7 @@ const isInstalledViaNpm = (): boolean => {
 
     if (
       scriptPath.includes("node_modules") &&
-      scriptPath.includes("appwrite-cli")
+      scriptPath.includes(NPM_PACKAGE_NAME)
     ) {
       return true;
     }
@@ -95,7 +90,7 @@ const execCommand = (
  */
 const updateViaNpm = async (): Promise<void> => {
   try {
-    await execCommand("npm", ["install", "-g", "appwrite-cli@latest"]);
+    await execCommand("npm", ["install", "-g", `${NPM_PACKAGE_NAME}@latest`]);
     console.log("");
     success("Updated to latest version via npm!");
     hint("Run 'appwrite --version' to verify the new version.");
@@ -110,7 +105,7 @@ const updateViaNpm = async (): Promise<void> => {
     } else {
       console.log("");
       error(`Failed to update via npm: ${e.message}`);
-      hint("Try running: npm install -g appwrite-cli@latest --force");
+      hint(`Try running: npm install -g ${NPM_PACKAGE_NAME}@latest --force`);
     }
   }
 };
@@ -148,7 +143,7 @@ const showManualInstructions = (latestVersion: string): void => {
   console.log("");
 
   log(`${chalk.bold("Option 1: NPM")}`);
-  console.log(`  npm install -g appwrite-cli@latest`);
+  console.log(`  npm install -g ${NPM_PACKAGE_NAME}@latest`);
   console.log("");
 
   log(`${chalk.bold("Option 2: Homebrew")}`);
@@ -156,9 +151,7 @@ const showManualInstructions = (latestVersion: string): void => {
   console.log("");
 
   log(`${chalk.bold("Option 3: Download Binary")}`);
-  console.log(
-    `  Visit: https://github.com/appwrite-cli/releases/tag/${latestVersion}`,
-  );
+  console.log(`  Visit: ${GITHUB_RELEASES_URL}/tag/${latestVersion}`);
 };
 
 /**
@@ -240,14 +233,12 @@ const updateCli = async ({ manual }: UpdateOptions = {}): Promise<void> => {
   } catch (e: any) {
     console.log("");
     error(`Failed to check for updates: ${e.message}`);
-    hint(
-      "You can manually check for updates at: https://github.com/appwrite-cli/releases",
-    );
+    hint(`You can manually check for updates at: ${GITHUB_RELEASES_URL}`);
   }
 };
 
 export const update = new Command("update")
-  .description("Update the Appwrite CLI to the latest version")
+  .description(`Update the ${SDK_TITLE} CLI to the latest version`)
   .option(
     "--manual",
     "Show manual update instructions instead of auto-updating",

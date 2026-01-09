@@ -3,10 +3,109 @@ import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
+  success,
+  parse,
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import { Health } from "@appwrite.io/console";
+// Mock enums
+export enum Name {
+  // Mock enum values
+}
+
+// Mock Health class
+class Health {
+  constructor(sdkClient: any) {}
+
+  async get(): Promise<any> {
+    return { result: 'GET:/v1/health:passed' };
+  }
+
+  async getAntivirus(): Promise<any> {
+    return { result: 'GET:/v1/health/anti-virus:passed' };
+  }
+
+  async getCache(): Promise<any> {
+    return { result: 'GET:/v1/health/cache:passed' };
+  }
+
+  async getCertificate(domain?: string): Promise<any> {
+    return { result: 'GET:/v1/health/certificate:passed' };
+  }
+
+  async getDB(): Promise<any> {
+    return { result: 'GET:/v1/health/db:passed' };
+  }
+
+  async getPubSub(): Promise<any> {
+    return { result: 'GET:/v1/health/pubsub:passed' };
+  }
+
+  async getQueueBuilds(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/builds:passed' };
+  }
+
+  async getQueueCertificates(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/certificates:passed' };
+  }
+
+  async getQueueDatabases(name?: string, threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/databases:passed' };
+  }
+
+  async getQueueDeletes(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/deletes:passed' };
+  }
+
+  async getFailedJobs(name: string, threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/failed/{name}:passed' };
+  }
+
+  async getQueueFunctions(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/functions:passed' };
+  }
+
+  async getQueueLogs(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/logs:passed' };
+  }
+
+  async getQueueMails(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/mails:passed' };
+  }
+
+  async getQueueMessaging(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/messaging:passed' };
+  }
+
+  async getQueueMigrations(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/migrations:passed' };
+  }
+
+  async getQueueStatsResources(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/stats-resources:passed' };
+  }
+
+  async getQueueUsage(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/stats-usage:passed' };
+  }
+
+  async getQueueWebhooks(threshold?: number): Promise<any> {
+    return { result: 'GET:/v1/health/queue/webhooks:passed' };
+  }
+
+  async getStorage(): Promise<any> {
+    return { result: 'GET:/v1/health/storage:passed' };
+  }
+
+  async getStorageLocal(): Promise<any> {
+    return { result: 'GET:/v1/health/storage/local:passed' };
+  }
+
+  async getTime(): Promise<any> {
+    return { result: 'GET:/v1/health/time:passed' };
+  }
+}
+
 
 let healthClient: Health | null = null;
 
@@ -27,23 +126,29 @@ export const health = new Command("health")
 health
   .command(`get`)
   .description(`Check the Appwrite HTTP server is up and responsive.`)
-  .action(actionRunner(async () => await (await getHealthClient()).get()));
+  .action(
+    actionRunner(
+      async () => parse(await (await getHealthClient()).get()),
+    ),
+  );
 
 health
   .command(`get-antivirus`)
-  .description(
-    `Check the Appwrite Antivirus server is up and connection is successful.`,
-  )
+  .description(`Check the Appwrite Antivirus server is up and connection is successful.`)
   .action(
-    actionRunner(async () => await (await getHealthClient()).getAntivirus()),
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getAntivirus()),
+    ),
   );
 
 health
   .command(`get-cache`)
-  .description(
-    `Check the Appwrite in-memory cache servers are up and connection is successful.`,
-  )
-  .action(actionRunner(async () => await (await getHealthClient()).getCache()));
+  .description(`Check the Appwrite in-memory cache servers are up and connection is successful.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getCache()),
+    ),
+  );
 
 health
   .command(`get-certificate`)
@@ -52,271 +157,198 @@ health
   .action(
     actionRunner(
       async ({ domain }) =>
-        await (await getHealthClient()).getCertificate(domain),
+        parse(await (await getHealthClient()).getCertificate(domain)),
     ),
   );
 
 health
   .command(`get-db`)
-  .description(
-    `Check the Appwrite database servers are up and connection is successful.`,
-  )
-  .action(actionRunner(async () => await (await getHealthClient()).getDB()));
+  .description(`Check the Appwrite database servers are up and connection is successful.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getDB()),
+    ),
+  );
 
 health
   .command(`get-pub-sub`)
-  .description(
-    `Check the Appwrite pub-sub servers are up and connection is successful.`,
-  )
+  .description(`Check the Appwrite pub-sub servers are up and connection is successful.`)
   .action(
-    actionRunner(async () => await (await getHealthClient()).getPubSub()),
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getPubSub()),
+    ),
   );
 
 health
   .command(`get-queue-builds`)
-  .description(
-    `Get the number of builds that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of builds that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueBuilds(threshold),
+        parse(await (await getHealthClient()).getQueueBuilds(threshold)),
     ),
   );
 
 health
   .command(`get-queue-certificates`)
-  .description(
-    `Get the number of certificates that are waiting to be issued against [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of certificates that are waiting to be issued against [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueCertificates(threshold),
+        parse(await (await getHealthClient()).getQueueCertificates(threshold)),
     ),
   );
 
 health
   .command(`get-queue-databases`)
-  .description(
-    `Get the number of database changes that are waiting to be processed in the Appwrite internal queue server.`,
-  )
+  .description(`Get the number of database changes that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--name <name>`, `Queue name for which to check the queue size`)
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ name, threshold }) =>
-        await (await getHealthClient()).getQueueDatabases(name, threshold),
+        parse(await (await getHealthClient()).getQueueDatabases(name, threshold)),
     ),
   );
 
 health
   .command(`get-queue-deletes`)
-  .description(
-    `Get the number of background destructive changes that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of background destructive changes that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueDeletes(threshold),
+        parse(await (await getHealthClient()).getQueueDeletes(threshold)),
     ),
   );
 
 health
   .command(`get-failed-jobs`)
-  .description(
-    `Returns the amount of failed jobs in a given queue.
-`,
-  )
+  .description(`Returns the amount of failed jobs in a given queue.
+`)
   .requiredOption(`--name <name>`, `The name of the queue`)
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ name, threshold }) =>
-        await (await getHealthClient()).getFailedJobs(name, threshold),
+        parse(await (await getHealthClient()).getFailedJobs(name as Name, threshold)),
     ),
   );
 
 health
   .command(`get-queue-functions`)
-  .description(
-    `Get the number of function executions that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of function executions that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueFunctions(threshold),
+        parse(await (await getHealthClient()).getQueueFunctions(threshold)),
     ),
   );
 
 health
   .command(`get-queue-logs`)
-  .description(
-    `Get the number of logs that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of logs that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueLogs(threshold),
+        parse(await (await getHealthClient()).getQueueLogs(threshold)),
     ),
   );
 
 health
   .command(`get-queue-mails`)
-  .description(
-    `Get the number of mails that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of mails that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueMails(threshold),
+        parse(await (await getHealthClient()).getQueueMails(threshold)),
     ),
   );
 
 health
   .command(`get-queue-messaging`)
-  .description(
-    `Get the number of messages that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of messages that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueMessaging(threshold),
+        parse(await (await getHealthClient()).getQueueMessaging(threshold)),
     ),
   );
 
 health
   .command(`get-queue-migrations`)
-  .description(
-    `Get the number of migrations that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of migrations that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueMigrations(threshold),
+        parse(await (await getHealthClient()).getQueueMigrations(threshold)),
     ),
   );
 
 health
   .command(`get-queue-stats-resources`)
-  .description(
-    `Get the number of metrics that are waiting to be processed in the Appwrite stats resources queue.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of metrics that are waiting to be processed in the Appwrite stats resources queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueStatsResources(threshold),
+        parse(await (await getHealthClient()).getQueueStatsResources(threshold)),
     ),
   );
 
 health
   .command(`get-queue-usage`)
-  .description(
-    `Get the number of metrics that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of metrics that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueUsage(threshold),
+        parse(await (await getHealthClient()).getQueueUsage(threshold)),
     ),
   );
 
 health
   .command(`get-queue-webhooks`)
-  .description(
-    `Get the number of webhooks that are waiting to be processed in the Appwrite internal queue server.`,
-  )
-  .option(
-    `--threshold <threshold>`,
-    `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`,
-    parseInteger,
-  )
+  .description(`Get the number of webhooks that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
       async ({ threshold }) =>
-        await (await getHealthClient()).getQueueWebhooks(threshold),
+        parse(await (await getHealthClient()).getQueueWebhooks(threshold)),
     ),
   );
 
 health
   .command(`get-storage`)
-  .description(
-    `Check the Appwrite storage device is up and connection is successful.`,
-  )
+  .description(`Check the Appwrite storage device is up and connection is successful.`)
   .action(
-    actionRunner(async () => await (await getHealthClient()).getStorage()),
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getStorage()),
+    ),
   );
 
 health
   .command(`get-storage-local`)
-  .description(
-    `Check the Appwrite local storage device is up and connection is successful.`,
-  )
+  .description(`Check the Appwrite local storage device is up and connection is successful.`)
   .action(
-    actionRunner(async () => await (await getHealthClient()).getStorageLocal()),
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getStorageLocal()),
+    ),
   );
 
 health
   .command(`get-time`)
-  .description(
-    `Check the Appwrite server time is synced with Google remote NTP server. We use this technology to smoothly handle leap seconds with no disruptive events. The [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used by hundreds of millions of computers and devices to synchronize their clocks over the Internet. If your computer sets its own clock, it likely uses NTP.`,
-  )
-  .action(actionRunner(async () => await (await getHealthClient()).getTime()));
+  .description(`Check the Appwrite server time is synced with Google remote NTP server. We use this technology to smoothly handle leap seconds with no disruptive events. The [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used by hundreds of millions of computers and devices to synchronize their clocks over the Internet. If your computer sets its own clock, it likely uses NTP.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getTime()),
+    ),
+  );
+

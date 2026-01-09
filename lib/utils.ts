@@ -4,16 +4,57 @@ import net from "net";
 import childProcess from "child_process";
 import chalk from "chalk";
 import { fetch } from "undici";
+import type { Models } from "@appwrite.io/console";
 import { localConfig, globalConfig } from "./config.js";
+import type { SettingsType } from "./commands/config.js";
+import { NPM_REGISTRY_URL, DEFAULT_ENDPOINT } from "./constants.js";
+
+export const createSettingsObject = (project: Models.Project): SettingsType => {
+  return {
+    services: {
+      account: project.serviceStatusForAccount,
+      avatars: project.serviceStatusForAvatars,
+      databases: project.serviceStatusForDatabases,
+      locale: project.serviceStatusForLocale,
+      health: project.serviceStatusForHealth,
+      storage: project.serviceStatusForStorage,
+      teams: project.serviceStatusForTeams,
+      users: project.serviceStatusForUsers,
+      sites: project.serviceStatusForSites,
+      functions: project.serviceStatusForFunctions,
+      graphql: project.serviceStatusForGraphql,
+      messaging: project.serviceStatusForMessaging,
+    },
+    auth: {
+      methods: {
+        jwt: project.authJWT,
+        phone: project.authPhone,
+        invites: project.authInvites,
+        anonymous: project.authAnonymous,
+        "email-otp": project.authEmailOtp,
+        "magic-url": project.authUsersAuthMagicURL,
+        "email-password": project.authEmailPassword,
+      },
+      security: {
+        duration: project.authDuration,
+        limit: project.authLimit,
+        sessionsLimit: project.authSessionsLimit,
+        passwordHistory: project.authPasswordHistory,
+        passwordDictionary: project.authPasswordDictionary,
+        personalDataCheck: project.authPersonalDataCheck,
+        sessionAlerts: project.authSessionAlerts,
+        mockNumbers: project.authMockNumbers,
+      },
+    },
+  };
+};
 
 /**
  * Get the latest version from npm registry
  */
 export async function getLatestVersion(): Promise<string> {
   try {
-    const response = await fetch(
-      "https://registry.npmjs.org/appwrite-cli/latest",
-    );
+    const response = await fetch(NPM_REGISTRY_URL);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -346,7 +387,7 @@ function getUsersPath(action: string, ids: string[]): string {
 }
 
 export function isCloud(): boolean {
-  const endpoint = globalConfig.getEndpoint() || "https://cloud.appwrite.io/v1";
+  const endpoint = globalConfig.getEndpoint() || DEFAULT_ENDPOINT;
   const hostname = new URL(endpoint).hostname;
   return hostname.endsWith("appwrite.io");
 }

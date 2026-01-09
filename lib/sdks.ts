@@ -1,18 +1,24 @@
 import { globalConfig, localConfig } from "./config.js";
 import { Client } from "@appwrite.io/console";
 import os from "os";
+import {
+  DEFAULT_ENDPOINT,
+  EXECUTABLE_NAME,
+  SDK_TITLE,
+  SDK_VERSION,
+} from "./constants.js";
 
 export const sdkForConsole = async (
   requiresAuth: boolean = true,
 ): Promise<Client> => {
   const client = new Client();
-  const endpoint = globalConfig.getEndpoint() || "https://cloud.appwrite.io/v1";
+  const endpoint = globalConfig.getEndpoint() || DEFAULT_ENDPOINT;
   const cookie = globalConfig.getCookie();
   const selfSigned = globalConfig.getSelfSigned();
 
   if (requiresAuth && cookie === "") {
     throw new Error(
-      "Session not found. Please run `appwrite login` to create a session",
+      `Session not found. Please run \`${EXECUTABLE_NAME} login\` to create a session`,
     );
   }
 
@@ -20,8 +26,8 @@ export const sdkForConsole = async (
     "x-sdk-name": "Command Line",
     "x-sdk-platform": "console",
     "x-sdk-language": "cli",
-    "x-sdk-version": "13.0.0-rc.2",
-    "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
+    "x-sdk-version": SDK_VERSION,
+    "user-agent": `AppwriteCLI/${SDK_VERSION} (${os.type()} ${os.version()}; ${os.arch()})`,
   };
 
   client
@@ -38,9 +44,7 @@ export const sdkForProject = async (): Promise<Client> => {
   const client = new Client();
 
   const endpoint =
-    localConfig.getEndpoint() ||
-    globalConfig.getEndpoint() ||
-    "https://cloud.appwrite.io/v1";
+    localConfig.getEndpoint() || globalConfig.getEndpoint() || DEFAULT_ENDPOINT;
 
   const project = localConfig.getProject().projectId
     ? localConfig.getProject().projectId
@@ -52,7 +56,7 @@ export const sdkForProject = async (): Promise<Client> => {
 
   if (!project) {
     throw new Error(
-      "Project is not set. Please run `appwrite init project` to initialize the current directory with an Appwrite project.",
+      `Project is not set. Please run \`${EXECUTABLE_NAME} init project\` to initialize the current directory with an ${SDK_TITLE} project.`,
     );
   }
 
@@ -60,8 +64,8 @@ export const sdkForProject = async (): Promise<Client> => {
     "x-sdk-name": "Command Line",
     "x-sdk-platform": "console",
     "x-sdk-language": "cli",
-    "x-sdk-version": "13.0.0-rc.2",
-    "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
+    "x-sdk-version": SDK_VERSION,
+    "user-agent": `AppwriteCLI/${SDK_VERSION} (${os.type()} ${os.version()}; ${os.arch()})`,
   };
 
   client
@@ -79,6 +83,6 @@ export const sdkForProject = async (): Promise<Client> => {
   }
 
   throw new Error(
-    "Session not found. Please run `appwrite login` to create a session.",
+    `Session not found. Please run \`${EXECUTABLE_NAME} login\` to create a session.`,
   );
 };

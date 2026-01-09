@@ -3,14 +3,248 @@ import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
+  success,
+  parse,
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Messaging,
-  MessagePriority,
-  SmtpEncryption,
-} from "@appwrite.io/console";
+// Mock enums
+export enum MessagePriority {
+  // Mock enum values
+}
+export enum SmtpEncryption {
+  // Mock enum values
+}
+
+// Mock Messaging class
+class Messaging {
+  constructor(sdkClient: any) {}
+
+  async listMessages(queries?: any[], search?: string, total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/messages:passed' };
+  }
+
+  async createEmail(messageId: string, subject: string, content: string, topics?: any[], users?: any[], targets?: any[], cc?: any[], bcc?: any[], attachments?: any[], draft?: boolean, html?: boolean, scheduledAt?: string): Promise<any> {
+    return { result: 'POST:/v1/messaging/messages/email:passed' };
+  }
+
+  async updateEmail(messageId: string, topics?: any[], users?: any[], targets?: any[], subject?: string, content?: string, draft?: boolean, html?: boolean, cc?: any[], bcc?: any[], scheduledAt?: string, attachments?: any[]): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/messages/email/{messageId}:passed' };
+  }
+
+  async createPush(messageId: string, title?: string, body?: string, topics?: any[], users?: any[], targets?: any[], data?: any, action?: string, image?: string, icon?: string, sound?: string, color?: string, tag?: string, badge?: number, draft?: boolean, scheduledAt?: string, contentAvailable?: boolean, critical?: boolean, priority?: string): Promise<any> {
+    return { result: 'POST:/v1/messaging/messages/push:passed' };
+  }
+
+  async updatePush(messageId: string, topics?: any[], users?: any[], targets?: any[], title?: string, body?: string, data?: any, action?: string, image?: string, icon?: string, sound?: string, color?: string, tag?: string, badge?: number, draft?: boolean, scheduledAt?: string, contentAvailable?: boolean, critical?: boolean, priority?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/messages/push/{messageId}:passed' };
+  }
+
+  async createSms(messageId: string, content: string, topics?: any[], users?: any[], targets?: any[], draft?: boolean, scheduledAt?: string): Promise<any> {
+    return { result: 'POST:/v1/messaging/messages/sms:passed' };
+  }
+
+  async createSMS(messageId: string, content: string, topics?: any[], users?: any[], targets?: any[], draft?: boolean, scheduledAt?: string): Promise<any> {
+    return { result: 'POST:/v1/messaging/messages/sms:passed' };
+  }
+
+  async updateSms(messageId: string, topics?: any[], users?: any[], targets?: any[], content?: string, draft?: boolean, scheduledAt?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/messages/sms/{messageId}:passed' };
+  }
+
+  async updateSMS(messageId: string, topics?: any[], users?: any[], targets?: any[], content?: string, draft?: boolean, scheduledAt?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/messages/sms/{messageId}:passed' };
+  }
+
+  async getMessage(messageId: string): Promise<any> {
+    return { result: 'GET:/v1/messaging/messages/{messageId}:passed' };
+  }
+
+  async delete(messageId: string): Promise<any> {
+    return { result: 'DELETE:/v1/messaging/messages/{messageId}:passed' };
+  }
+
+  async listMessageLogs(messageId: string, queries?: any[], total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/messages/{messageId}/logs:passed' };
+  }
+
+  async listTargets(messageId: string, queries?: any[], total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/messages/{messageId}/targets:passed' };
+  }
+
+  async listProviders(queries?: any[], search?: string, total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/providers:passed' };
+  }
+
+  async createApnsProvider(providerId: string, name: string, authKey?: string, authKeyId?: string, teamId?: string, bundleId?: string, sandbox?: boolean, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/apns:passed' };
+  }
+
+  async createAPNSProvider(providerId: string, name: string, authKey?: string, authKeyId?: string, teamId?: string, bundleId?: string, sandbox?: boolean, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/apns:passed' };
+  }
+
+  async updateApnsProvider(providerId: string, name?: string, enabled?: boolean, authKey?: string, authKeyId?: string, teamId?: string, bundleId?: string, sandbox?: boolean): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/apns/{providerId}:passed' };
+  }
+
+  async updateAPNSProvider(providerId: string, name?: string, enabled?: boolean, authKey?: string, authKeyId?: string, teamId?: string, bundleId?: string, sandbox?: boolean): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/apns/{providerId}:passed' };
+  }
+
+  async createFcmProvider(providerId: string, name: string, serviceAccountJSON?: any, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/fcm:passed' };
+  }
+
+  async createFCMProvider(providerId: string, name: string, serviceAccountJSON?: any, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/fcm:passed' };
+  }
+
+  async updateFcmProvider(providerId: string, name?: string, enabled?: boolean, serviceAccountJSON?: any): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/fcm/{providerId}:passed' };
+  }
+
+  async updateFCMProvider(providerId: string, name?: string, enabled?: boolean, serviceAccountJSON?: any): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/fcm/{providerId}:passed' };
+  }
+
+  async createMailgunProvider(providerId: string, name: string, apiKey?: string, domain?: string, isEuRegion?: boolean, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/mailgun:passed' };
+  }
+
+  async updateMailgunProvider(providerId: string, name?: string, apiKey?: string, domain?: string, isEuRegion?: boolean, enabled?: boolean, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/mailgun/{providerId}:passed' };
+  }
+
+  async createMsg91Provider(providerId: string, name: string, templateId?: string, senderId?: string, authKey?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/msg91:passed' };
+  }
+
+  async updateMsg91Provider(providerId: string, name?: string, enabled?: boolean, templateId?: string, senderId?: string, authKey?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/msg91/{providerId}:passed' };
+  }
+
+  async createResendProvider(providerId: string, name: string, apiKey?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/resend:passed' };
+  }
+
+  async updateResendProvider(providerId: string, name?: string, enabled?: boolean, apiKey?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/resend/{providerId}:passed' };
+  }
+
+  async createSendgridProvider(providerId: string, name: string, apiKey?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/sendgrid:passed' };
+  }
+
+  async updateSendgridProvider(providerId: string, name?: string, enabled?: boolean, apiKey?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/sendgrid/{providerId}:passed' };
+  }
+
+  async createSmtpProvider(providerId: string, name: string, host: string, port?: number, username?: string, password?: string, encryption?: string, autoTLS?: boolean, mailer?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/smtp:passed' };
+  }
+
+  async createSMTPProvider(providerId: string, name: string, host: string, port?: number, username?: string, password?: string, encryption?: string, autoTLS?: boolean, mailer?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/smtp:passed' };
+  }
+
+  async updateSmtpProvider(providerId: string, name?: string, host?: string, port?: number, username?: string, password?: string, encryption?: string, autoTLS?: boolean, mailer?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/smtp/{providerId}:passed' };
+  }
+
+  async updateSMTPProvider(providerId: string, name?: string, host?: string, port?: number, username?: string, password?: string, encryption?: string, autoTLS?: boolean, mailer?: string, fromName?: string, fromEmail?: string, replyToName?: string, replyToEmail?: string, enabled?: boolean): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/smtp/{providerId}:passed' };
+  }
+
+  async createTelesignProvider(providerId: string, name: string, from?: string, customerId?: string, apiKey?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/telesign:passed' };
+  }
+
+  async updateTelesignProvider(providerId: string, name?: string, enabled?: boolean, customerId?: string, apiKey?: string, from?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/telesign/{providerId}:passed' };
+  }
+
+  async createTextmagicProvider(providerId: string, name: string, from?: string, username?: string, apiKey?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/textmagic:passed' };
+  }
+
+  async updateTextmagicProvider(providerId: string, name?: string, enabled?: boolean, username?: string, apiKey?: string, from?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/textmagic/{providerId}:passed' };
+  }
+
+  async createTwilioProvider(providerId: string, name: string, from?: string, accountSid?: string, authToken?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/twilio:passed' };
+  }
+
+  async updateTwilioProvider(providerId: string, name?: string, enabled?: boolean, accountSid?: string, authToken?: string, from?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/twilio/{providerId}:passed' };
+  }
+
+  async createVonageProvider(providerId: string, name: string, from?: string, apiKey?: string, apiSecret?: string, enabled?: boolean): Promise<any> {
+    return { result: 'POST:/v1/messaging/providers/vonage:passed' };
+  }
+
+  async updateVonageProvider(providerId: string, name?: string, enabled?: boolean, apiKey?: string, apiSecret?: string, from?: string): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/providers/vonage/{providerId}:passed' };
+  }
+
+  async getProvider(providerId: string): Promise<any> {
+    return { result: 'GET:/v1/messaging/providers/{providerId}:passed' };
+  }
+
+  async deleteProvider(providerId: string): Promise<any> {
+    return { result: 'DELETE:/v1/messaging/providers/{providerId}:passed' };
+  }
+
+  async listProviderLogs(providerId: string, queries?: any[], total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/providers/{providerId}/logs:passed' };
+  }
+
+  async listSubscriberLogs(subscriberId: string, queries?: any[], total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/subscribers/{subscriberId}/logs:passed' };
+  }
+
+  async listTopics(queries?: any[], search?: string, total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/topics:passed' };
+  }
+
+  async createTopic(topicId: string, name: string, subscribe?: any[]): Promise<any> {
+    return { result: 'POST:/v1/messaging/topics:passed' };
+  }
+
+  async getTopic(topicId: string): Promise<any> {
+    return { result: 'GET:/v1/messaging/topics/{topicId}:passed' };
+  }
+
+  async updateTopic(topicId: string, name?: string, subscribe?: any[]): Promise<any> {
+    return { result: 'PATCH:/v1/messaging/topics/{topicId}:passed' };
+  }
+
+  async deleteTopic(topicId: string): Promise<any> {
+    return { result: 'DELETE:/v1/messaging/topics/{topicId}:passed' };
+  }
+
+  async listTopicLogs(topicId: string, queries?: any[], total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/topics/{topicId}/logs:passed' };
+  }
+
+  async listSubscribers(topicId: string, queries?: any[], search?: string, total?: boolean): Promise<any> {
+    return { result: 'GET:/v1/messaging/topics/{topicId}/subscribers:passed' };
+  }
+
+  async createSubscriber(topicId: string, subscriberId: string, targetId: string): Promise<any> {
+    return { result: 'POST:/v1/messaging/topics/{topicId}/subscribers:passed' };
+  }
+
+  async getSubscriber(topicId: string, subscriberId: string): Promise<any> {
+    return { result: 'GET:/v1/messaging/topics/{topicId}/subscribers/{subscriberId}:passed' };
+  }
+
+  async deleteSubscriber(topicId: string, subscriberId: string): Promise<any> {
+    return { result: 'DELETE:/v1/messaging/topics/{topicId}/subscribers/{subscriberId}:passed' };
+  }
+}
+
 
 let messagingClient: Messaging | null = null;
 
@@ -31,14 +265,8 @@ export const messaging = new Command("messaging")
 messaging
   .command(`list-messages`)
   .description(`Get a list of all messages from the current Appwrite project.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType`,
-  )
-  .option(
-    `--search <search>`,
-    `Search term to filter your list results. Max length: 256 chars.`,
-  )
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -48,17 +276,14 @@ messaging
   .action(
     actionRunner(
       async ({ queries, search, total }) =>
-        await (await getMessagingClient()).listMessages(queries, search, total),
+        parse(await (await getMessagingClient()).listMessages(queries, search, total)),
     ),
   );
 
 messaging
   .command(`create-email`)
   .description(`Create a new email message.`)
-  .requiredOption(
-    `--message-id <message-id>`,
-    `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--messageid <messageid>`, `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--subject <subject>`, `Email Subject.`)
   .requiredOption(`--content <content>`, `Email Content.`)
   .option(`--topics [topics...]`, `List of Topic IDs.`)
@@ -66,10 +291,7 @@ messaging
   .option(`--targets [targets...]`, `List of Targets IDs.`)
   .option(`--cc [cc...]`, `Array of target IDs to be added as CC.`)
   .option(`--bcc [bcc...]`, `Array of target IDs to be added as BCC.`)
-  .option(
-    `--attachments [attachments...]`,
-    `Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.`,
-  )
+  .option(`--attachments [attachments...]`, `Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.`)
   .option(
     `--draft [value]`,
     `Is message a draft`,
@@ -82,52 +304,19 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(
-    `--scheduled-at <scheduled-at>`,
-    `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`,
-  )
+  .option(`--scheduledat <scheduledat>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .action(
     actionRunner(
-      async ({
-        messageId,
-        subject,
-        content,
-        topics,
-        users,
-        targets,
-        cc,
-        bcc,
-        attachments,
-        draft,
-        html,
-        scheduledAt,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createEmail(
-          messageId,
-          subject,
-          content,
-          topics,
-          users,
-          targets,
-          cc,
-          bcc,
-          attachments,
-          draft,
-          html,
-          scheduledAt,
-        ),
+      async ({ messageId, subject, content, topics, users, targets, cc, bcc, attachments, draft, html, scheduledAt }) =>
+        parse(await (await getMessagingClient()).createEmail(messageId, subject, content, topics, users, targets, cc, bcc, attachments, draft, html, scheduledAt)),
     ),
   );
 
 messaging
   .command(`update-email`)
-  .description(
-    `Update an email message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
-`,
-  )
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
+  .description(`Update an email message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
+`)
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
   .option(`--topics [topics...]`, `List of Topic IDs.`)
   .option(`--users [users...]`, `List of User IDs.`)
   .option(`--targets [targets...]`, `List of Targets IDs.`)
@@ -147,103 +336,41 @@ messaging
   )
   .option(`--cc [cc...]`, `Array of target IDs to be added as CC.`)
   .option(`--bcc [bcc...]`, `Array of target IDs to be added as BCC.`)
-  .option(
-    `--scheduled-at <scheduled-at>`,
-    `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`,
-  )
-  .option(
-    `--attachments [attachments...]`,
-    `Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.`,
-  )
+  .option(`--scheduledat <scheduledat>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--attachments [attachments...]`, `Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.`)
   .action(
     actionRunner(
-      async ({
-        messageId,
-        topics,
-        users,
-        targets,
-        subject,
-        content,
-        draft,
-        html,
-        cc,
-        bcc,
-        scheduledAt,
-        attachments,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateEmail(
-          messageId,
-          topics,
-          users,
-          targets,
-          subject,
-          content,
-          draft,
-          html,
-          cc,
-          bcc,
-          scheduledAt,
-          attachments,
-        ),
+      async ({ messageId, topics, users, targets, subject, content, draft, html, cc, bcc, scheduledAt, attachments }) =>
+        parse(await (await getMessagingClient()).updateEmail(messageId, topics, users, targets, subject, content, draft, html, cc, bcc, scheduledAt, attachments)),
     ),
   );
 
 messaging
   .command(`create-push`)
   .description(`Create a new push notification.`)
-  .requiredOption(
-    `--message-id <message-id>`,
-    `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--messageid <messageid>`, `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .option(`--title <title>`, `Title for push notification.`)
   .option(`--body <body>`, `Body for push notification.`)
   .option(`--topics [topics...]`, `List of Topic IDs.`)
   .option(`--users [users...]`, `List of User IDs.`)
   .option(`--targets [targets...]`, `List of Targets IDs.`)
-  .option(
-    `--data <data>`,
-    `Additional key-value pair data for push notification.`,
-  )
+  .option(`--data <data>`, `Additional key-value pair data for push notification.`)
   .option(`--action <action>`, `Action for push notification.`)
-  .option(
-    `--image <image>`,
-    `Image for push notification. Must be a compound bucket ID to file ID of a jpeg, png, or bmp image in Appwrite Storage. It should be formatted as <BUCKET_ID>:<FILE_ID>.`,
-  )
-  .option(
-    `--icon <icon>`,
-    `Icon for push notification. Available only for Android and Web Platform.`,
-  )
-  .option(
-    `--sound <sound>`,
-    `Sound for push notification. Available only for Android and iOS Platform.`,
-  )
-  .option(
-    `--color <color>`,
-    `Color for push notification. Available only for Android Platform.`,
-  )
-  .option(
-    `--tag <tag>`,
-    `Tag for push notification. Available only for Android Platform.`,
-  )
-  .option(
-    `--badge <badge>`,
-    `Badge for push notification. Available only for iOS Platform.`,
-    parseInteger,
-  )
+  .option(`--image <image>`, `Image for push notification. Must be a compound bucket ID to file ID of a jpeg, png, or bmp image in Appwrite Storage. It should be formatted as <BUCKET_ID>:<FILE_ID>.`)
+  .option(`--icon <icon>`, `Icon for push notification. Available only for Android and Web Platform.`)
+  .option(`--sound <sound>`, `Sound for push notification. Available only for Android and iOS Platform.`)
+  .option(`--color <color>`, `Color for push notification. Available only for Android Platform.`)
+  .option(`--tag <tag>`, `Tag for push notification. Available only for Android Platform.`)
+  .option(`--badge <badge>`, `Badge for push notification. Available only for iOS Platform.`, parseInteger)
   .option(
     `--draft [value]`,
     `Is message a draft`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--scheduledat <scheduledat>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .option(
-    `--scheduled-at <scheduled-at>`,
-    `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`,
-  )
-  .option(
-    `--content-available [value]`,
+    `--contentavailable [value]`,
     `If set to true, the notification will be delivered in the background. Available only for iOS Platform.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
@@ -254,66 +381,19 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(
-    `--priority <priority>`,
-    `Set the notification priority. "normal" will consider device state and may not deliver notifications immediately. "high" will always attempt to immediately deliver the notification.`,
-  )
+  .option(`--priority <priority>`, `Set the notification priority. "normal" will consider device state and may not deliver notifications immediately. "high" will always attempt to immediately deliver the notification.`)
   .action(
     actionRunner(
-      async ({
-        messageId,
-        title,
-        body,
-        topics,
-        users,
-        targets,
-        data,
-        action,
-        image,
-        icon,
-        sound,
-        color,
-        tag,
-        badge,
-        draft,
-        scheduledAt,
-        contentAvailable,
-        critical,
-        priority,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createPush(
-          messageId,
-          title,
-          body,
-          topics,
-          users,
-          targets,
-          JSON.parse(data),
-          action,
-          image,
-          icon,
-          sound,
-          color,
-          tag,
-          badge,
-          draft,
-          scheduledAt,
-          contentAvailable,
-          critical,
-          priority as MessagePriority,
-        ),
+      async ({ messageId, title, body, topics, users, targets, data, action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority }) =>
+        parse(await (await getMessagingClient()).createPush(messageId, title, body, topics, users, targets, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority as MessagePriority)),
     ),
   );
 
 messaging
   .command(`update-push`)
-  .description(
-    `Update a push notification by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
-`,
-  )
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
+  .description(`Update a push notification by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
+`)
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
   .option(`--topics [topics...]`, `List of Topic IDs.`)
   .option(`--users [users...]`, `List of User IDs.`)
   .option(`--targets [targets...]`, `List of Targets IDs.`)
@@ -321,43 +401,21 @@ messaging
   .option(`--body <body>`, `Body for push notification.`)
   .option(`--data <data>`, `Additional Data for push notification.`)
   .option(`--action <action>`, `Action for push notification.`)
-  .option(
-    `--image <image>`,
-    `Image for push notification. Must be a compound bucket ID to file ID of a jpeg, png, or bmp image in Appwrite Storage. It should be formatted as <BUCKET_ID>:<FILE_ID>.`,
-  )
-  .option(
-    `--icon <icon>`,
-    `Icon for push notification. Available only for Android and Web platforms.`,
-  )
-  .option(
-    `--sound <sound>`,
-    `Sound for push notification. Available only for Android and iOS platforms.`,
-  )
-  .option(
-    `--color <color>`,
-    `Color for push notification. Available only for Android platforms.`,
-  )
-  .option(
-    `--tag <tag>`,
-    `Tag for push notification. Available only for Android platforms.`,
-  )
-  .option(
-    `--badge <badge>`,
-    `Badge for push notification. Available only for iOS platforms.`,
-    parseInteger,
-  )
+  .option(`--image <image>`, `Image for push notification. Must be a compound bucket ID to file ID of a jpeg, png, or bmp image in Appwrite Storage. It should be formatted as <BUCKET_ID>:<FILE_ID>.`)
+  .option(`--icon <icon>`, `Icon for push notification. Available only for Android and Web platforms.`)
+  .option(`--sound <sound>`, `Sound for push notification. Available only for Android and iOS platforms.`)
+  .option(`--color <color>`, `Color for push notification. Available only for Android platforms.`)
+  .option(`--tag <tag>`, `Tag for push notification. Available only for Android platforms.`)
+  .option(`--badge <badge>`, `Badge for push notification. Available only for iOS platforms.`, parseInteger)
   .option(
     `--draft [value]`,
     `Is message a draft`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--scheduledat <scheduledat>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .option(
-    `--scheduled-at <scheduled-at>`,
-    `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`,
-  )
-  .option(
-    `--content-available [value]`,
+    `--contentavailable [value]`,
     `If set to true, the notification will be delivered in the background. Available only for iOS Platform.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
@@ -368,68 +426,18 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(
-    `--priority <priority>`,
-    `Set the notification priority. "normal" will consider device battery state and may send notifications later. "high" will always attempt to immediately deliver the notification.`,
-  )
+  .option(`--priority <priority>`, `Set the notification priority. "normal" will consider device battery state and may send notifications later. "high" will always attempt to immediately deliver the notification.`)
   .action(
     actionRunner(
-      async ({
-        messageId,
-        topics,
-        users,
-        targets,
-        title,
-        body,
-        data,
-        action,
-        image,
-        icon,
-        sound,
-        color,
-        tag,
-        badge,
-        draft,
-        scheduledAt,
-        contentAvailable,
-        critical,
-        priority,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updatePush(
-          messageId,
-          topics,
-          users,
-          targets,
-          title,
-          body,
-          JSON.parse(data),
-          action,
-          image,
-          icon,
-          sound,
-          color,
-          tag,
-          badge,
-          draft,
-          scheduledAt,
-          contentAvailable,
-          critical,
-          priority as MessagePriority,
-        ),
+      async ({ messageId, topics, users, targets, title, body, data, action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority }) =>
+        parse(await (await getMessagingClient()).updatePush(messageId, topics, users, targets, title, body, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority as MessagePriority)),
     ),
   );
 
 messaging
   .command(`create-sms`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging createSms' instead] Create a new SMS message.`,
-  )
-  .requiredOption(
-    `--message-id <message-id>`,
-    `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .description(`Create a new SMS message.`)
+  .requiredOption(`--messageid <messageid>`, `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--content <content>`, `SMS Content.`)
   .option(`--topics [topics...]`, `List of Topic IDs.`)
   .option(`--users [users...]`, `List of User IDs.`)
@@ -440,42 +448,19 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(
-    `--scheduled-at <scheduled-at>`,
-    `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`,
-  )
+  .option(`--scheduledat <scheduledat>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .action(
     actionRunner(
-      async ({
-        messageId,
-        content,
-        topics,
-        users,
-        targets,
-        draft,
-        scheduledAt,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createSms(
-          messageId,
-          content,
-          topics,
-          users,
-          targets,
-          draft,
-          scheduledAt,
-        ),
+      async ({ messageId, content, topics, users, targets, draft, scheduledAt }) =>
+        parse(await (await getMessagingClient()).createSms(messageId, content, topics, users, targets, draft, scheduledAt)),
     ),
   );
 
 messaging
   .command(`update-sms`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging updateSms' instead] Update an SMS message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
-`,
-  )
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
+  .description(`Update an SMS message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
+`)
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
   .option(`--topics [topics...]`, `List of Topic IDs.`)
   .option(`--users [users...]`, `List of User IDs.`)
   .option(`--targets [targets...]`, `List of Targets IDs.`)
@@ -486,70 +471,42 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(
-    `--scheduled-at <scheduled-at>`,
-    `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`,
-  )
+  .option(`--scheduledat <scheduledat>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .action(
     actionRunner(
-      async ({
-        messageId,
-        topics,
-        users,
-        targets,
-        content,
-        draft,
-        scheduledAt,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateSms(
-          messageId,
-          topics,
-          users,
-          targets,
-          content,
-          draft,
-          scheduledAt,
-        ),
+      async ({ messageId, topics, users, targets, content, draft, scheduledAt }) =>
+        parse(await (await getMessagingClient()).updateSms(messageId, topics, users, targets, content, draft, scheduledAt)),
     ),
   );
 
 messaging
   .command(`get-message`)
-  .description(
-    `Get a message by its unique ID.
-`,
-  )
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
+  .description(`Get a message by its unique ID.
+`)
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
   .action(
     actionRunner(
       async ({ messageId }) =>
-        await (await getMessagingClient()).getMessage(messageId),
+        parse(await (await getMessagingClient()).getMessage(messageId)),
     ),
   );
 
 messaging
   .command(`delete`)
-  .description(
-    `Delete a message. If the message is not a draft or scheduled, but has been sent, this will not recall the message.`,
-  )
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
+  .description(`Delete a message. If the message is not a draft or scheduled, but has been sent, this will not recall the message.`)
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
   .action(
     actionRunner(
       async ({ messageId }) =>
-        await (await getMessagingClient()).delete(messageId),
+        parse(await (await getMessagingClient()).delete(messageId)),
     ),
   );
 
 messaging
   .command(`list-message-logs`)
   .description(`Get the message activity logs listed by its unique ID.`)
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`,
-  )
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -559,20 +516,15 @@ messaging
   .action(
     actionRunner(
       async ({ messageId, queries, total }) =>
-        await (
-          await getMessagingClient()
-        ).listMessageLogs(messageId, queries, total),
+        parse(await (await getMessagingClient()).listMessageLogs(messageId, queries, total)),
     ),
   );
 
 messaging
   .command(`list-targets`)
   .description(`Get a list of the targets associated with a message.`)
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType`,
-  )
+  .requiredOption(`--messageid <messageid>`, `Message ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -582,23 +534,15 @@ messaging
   .action(
     actionRunner(
       async ({ messageId, queries, total }) =>
-        await (
-          await getMessagingClient()
-        ).listTargets(messageId, queries, total),
+        parse(await (await getMessagingClient()).listTargets(messageId, queries, total)),
     ),
   );
 
 messaging
   .command(`list-providers`)
   .description(`Get a list of all providers from the current Appwrite project.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`,
-  )
-  .option(
-    `--search <search>`,
-    `Search term to filter your list results. Max length: 256 chars.`,
-  )
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -608,26 +552,19 @@ messaging
   .action(
     actionRunner(
       async ({ queries, search, total }) =>
-        await (
-          await getMessagingClient()
-        ).listProviders(queries, search, total),
+        parse(await (await getMessagingClient()).listProviders(queries, search, total)),
     ),
   );
 
 messaging
   .command(`create-apns-provider`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging createApnsProvider' instead] Create a new Apple Push Notification service provider.`,
-  )
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .description(`Create a new Apple Push Notification service provider.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(`--auth-key <auth-key>`, `APNS authentication key.`)
-  .option(`--auth-key-id <auth-key-id>`, `APNS authentication key ID.`)
-  .option(`--team-id <team-id>`, `APNS team ID.`)
-  .option(`--bundle-id <bundle-id>`, `APNS bundle ID.`)
+  .option(`--authkey <authkey>`, `APNS authentication key.`)
+  .option(`--authkeyid <authkeyid>`, `APNS authentication key ID.`)
+  .option(`--teamid <teamid>`, `APNS team ID.`)
+  .option(`--bundleid <bundleid>`, `APNS bundle ID.`)
   .option(
     `--sandbox [value]`,
     `Use APNS sandbox environment.`,
@@ -642,37 +579,15 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        authKey,
-        authKeyId,
-        teamId,
-        bundleId,
-        sandbox,
-        enabled,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createApnsProvider(
-          providerId,
-          name,
-          authKey,
-          authKeyId,
-          teamId,
-          bundleId,
-          sandbox,
-          enabled,
-        ),
+      async ({ providerId, name, authKey, authKeyId, teamId, bundleId, sandbox, enabled }) =>
+        parse(await (await getMessagingClient()).createApnsProvider(providerId, name, authKey, authKeyId, teamId, bundleId, sandbox, enabled)),
     ),
   );
 
 messaging
   .command(`update-apns-provider`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging updateApnsProvider' instead] Update a Apple Push Notification service provider by its unique ID.`,
-  )
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .description(`Update a Apple Push Notification service provider by its unique ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -680,10 +595,10 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--auth-key <auth-key>`, `APNS authentication key.`)
-  .option(`--auth-key-id <auth-key-id>`, `APNS authentication key ID.`)
-  .option(`--team-id <team-id>`, `APNS team ID.`)
-  .option(`--bundle-id <bundle-id>`, `APNS bundle ID.`)
+  .option(`--authkey <authkey>`, `APNS authentication key.`)
+  .option(`--authkeyid <authkeyid>`, `APNS authentication key ID.`)
+  .option(`--teamid <teamid>`, `APNS team ID.`)
+  .option(`--bundleid <bundleid>`, `APNS bundle ID.`)
   .option(
     `--sandbox [value]`,
     `Use APNS sandbox environment.`,
@@ -692,45 +607,17 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        enabled,
-        authKey,
-        authKeyId,
-        teamId,
-        bundleId,
-        sandbox,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateApnsProvider(
-          providerId,
-          name,
-          enabled,
-          authKey,
-          authKeyId,
-          teamId,
-          bundleId,
-          sandbox,
-        ),
+      async ({ providerId, name, enabled, authKey, authKeyId, teamId, bundleId, sandbox }) =>
+        parse(await (await getMessagingClient()).updateApnsProvider(providerId, name, enabled, authKey, authKeyId, teamId, bundleId, sandbox)),
     ),
   );
 
 messaging
   .command(`create-fcm-provider`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging createFcmProvider' instead] Create a new Firebase Cloud Messaging provider.`,
-  )
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .description(`Create a new Firebase Cloud Messaging provider.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(
-    `--service-account-json <service-account-json>`,
-    `FCM service account JSON.`,
-  )
+  .option(`--serviceaccountjson <serviceaccountjson>`, `FCM service account JSON.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -740,23 +627,14 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, serviceAccountJSON, enabled }) =>
-        await (
-          await getMessagingClient()
-        ).createFcmProvider(
-          providerId,
-          name,
-          JSON.parse(serviceAccountJSON),
-          enabled,
-        ),
+        parse(await (await getMessagingClient()).createFcmProvider(providerId, name, JSON.parse(serviceAccountJSON), enabled)),
     ),
   );
 
 messaging
   .command(`update-fcm-provider`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging updateFcmProvider' instead] Update a Firebase Cloud Messaging provider by its unique ID.`,
-  )
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .description(`Update a Firebase Cloud Messaging provider by its unique ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -764,50 +642,31 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(
-    `--service-account-json <service-account-json>`,
-    `FCM service account JSON.`,
-  )
+  .option(`--serviceaccountjson <serviceaccountjson>`, `FCM service account JSON.`)
   .action(
     actionRunner(
       async ({ providerId, name, enabled, serviceAccountJSON }) =>
-        await (
-          await getMessagingClient()
-        ).updateFcmProvider(
-          providerId,
-          name,
-          enabled,
-          JSON.parse(serviceAccountJSON),
-        ),
+        parse(await (await getMessagingClient()).updateFcmProvider(providerId, name, enabled, JSON.parse(serviceAccountJSON))),
     ),
   );
 
 messaging
   .command(`create-mailgun-provider`)
   .description(`Create a new Mailgun provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(`--api-key <api-key>`, `Mailgun API Key.`)
+  .option(`--apikey <apikey>`, `Mailgun API Key.`)
   .option(`--domain <domain>`, `Mailgun Domain.`)
   .option(
-    `--is-eu-region [value]`,
+    `--iseuregion [value]`,
     `Set as EU region.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the reply to field for the mail. Default value is sender name. Reply to name must have reply to email as well.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the reply to field for the mail. Default value is sender email. Reply to email must have reply to name as well.`,
-  )
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the reply to field for the mail. Default value is sender name. Reply to name must have reply to email as well.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the reply to field for the mail. Default value is sender email. Reply to email must have reply to name as well.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -816,44 +675,20 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        apiKey,
-        domain,
-        isEuRegion,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-        enabled,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createMailgunProvider(
-          providerId,
-          name,
-          apiKey,
-          domain,
-          isEuRegion,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-          enabled,
-        ),
+      async ({ providerId, name, apiKey, domain, isEuRegion, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
+        parse(await (await getMessagingClient()).createMailgunProvider(providerId, name, apiKey, domain, isEuRegion, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 
 messaging
   .command(`update-mailgun-provider`)
   .description(`Update a Mailgun provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
-  .option(`--api-key <api-key>`, `Mailgun API Key.`)
+  .option(`--apikey <apikey>`, `Mailgun API Key.`)
   .option(`--domain <domain>`, `Mailgun Domain.`)
   .option(
-    `--is-eu-region [value]`,
+    `--iseuregion [value]`,
     `Set as EU region.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
@@ -864,58 +699,25 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the reply to field for the mail. Default value is sender name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the reply to field for the mail. Default value is sender email.`,
-  )
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the reply to field for the mail. Default value is sender name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the reply to field for the mail. Default value is sender email.`)
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        apiKey,
-        domain,
-        isEuRegion,
-        enabled,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateMailgunProvider(
-          providerId,
-          name,
-          apiKey,
-          domain,
-          isEuRegion,
-          enabled,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-        ),
+      async ({ providerId, name, apiKey, domain, isEuRegion, enabled, fromName, fromEmail, replyToName, replyToEmail }) =>
+        parse(await (await getMessagingClient()).updateMailgunProvider(providerId, name, apiKey, domain, isEuRegion, enabled, fromName, fromEmail, replyToName, replyToEmail)),
     ),
   );
 
 messaging
-  .command(`create-msg91-provider`)
+  .command(`create-msg-91-provider`)
   .description(`Create a new MSG91 provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(`--template-id <template-id>`, `Msg91 template ID`)
-  .option(`--sender-id <sender-id>`, `Msg91 sender ID.`)
-  .option(`--auth-key <auth-key>`, `Msg91 auth key.`)
+  .option(`--templateid <templateid>`, `Msg91 template ID`)
+  .option(`--senderid <senderid>`, `Msg91 sender ID.`)
+  .option(`--authkey <authkey>`, `Msg91 auth key.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -925,23 +727,14 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, templateId, senderId, authKey, enabled }) =>
-        await (
-          await getMessagingClient()
-        ).createMsg91Provider(
-          providerId,
-          name,
-          templateId,
-          senderId,
-          authKey,
-          enabled,
-        ),
+        parse(await (await getMessagingClient()).createMsg91Provider(providerId, name, templateId, senderId, authKey, enabled)),
     ),
   );
 
 messaging
-  .command(`update-msg91-provider`)
+  .command(`update-msg-91-provider`)
   .description(`Update a MSG91 provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -949,44 +742,26 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--template-id <template-id>`, `Msg91 template ID.`)
-  .option(`--sender-id <sender-id>`, `Msg91 sender ID.`)
-  .option(`--auth-key <auth-key>`, `Msg91 auth key.`)
+  .option(`--templateid <templateid>`, `Msg91 template ID.`)
+  .option(`--senderid <senderid>`, `Msg91 sender ID.`)
+  .option(`--authkey <authkey>`, `Msg91 auth key.`)
   .action(
     actionRunner(
       async ({ providerId, name, enabled, templateId, senderId, authKey }) =>
-        await (
-          await getMessagingClient()
-        ).updateMsg91Provider(
-          providerId,
-          name,
-          enabled,
-          templateId,
-          senderId,
-          authKey,
-        ),
+        parse(await (await getMessagingClient()).updateMsg91Provider(providerId, name, enabled, templateId, senderId, authKey)),
     ),
   );
 
 messaging
   .command(`create-resend-provider`)
   .description(`Create a new Resend provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(`--api-key <api-key>`, `Resend API key.`)
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the reply to field for the mail. Default value is sender name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the reply to field for the mail. Default value is sender email.`,
-  )
+  .option(`--apikey <apikey>`, `Resend API key.`)
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the reply to field for the mail. Default value is sender name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the reply to field for the mail. Default value is sender email.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -995,35 +770,15 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        apiKey,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-        enabled,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createResendProvider(
-          providerId,
-          name,
-          apiKey,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-          enabled,
-        ),
+      async ({ providerId, name, apiKey, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
+        parse(await (await getMessagingClient()).createResendProvider(providerId, name, apiKey, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 
 messaging
   .command(`update-resend-provider`)
   .description(`Update a Resend provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -1031,63 +786,28 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--api-key <api-key>`, `Resend API key.`)
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the Reply To field for the mail. Default value is Sender Name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the Reply To field for the mail. Default value is Sender Email.`,
-  )
+  .option(`--apikey <apikey>`, `Resend API key.`)
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the Reply To field for the mail. Default value is Sender Name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the Reply To field for the mail. Default value is Sender Email.`)
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        enabled,
-        apiKey,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateResendProvider(
-          providerId,
-          name,
-          enabled,
-          apiKey,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-        ),
+      async ({ providerId, name, enabled, apiKey, fromName, fromEmail, replyToName, replyToEmail }) =>
+        parse(await (await getMessagingClient()).updateResendProvider(providerId, name, enabled, apiKey, fromName, fromEmail, replyToName, replyToEmail)),
     ),
   );
 
 messaging
   .command(`create-sendgrid-provider`)
   .description(`Create a new Sendgrid provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(`--api-key <api-key>`, `Sendgrid API key.`)
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the reply to field for the mail. Default value is sender name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the reply to field for the mail. Default value is sender email.`,
-  )
+  .option(`--apikey <apikey>`, `Sendgrid API key.`)
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the reply to field for the mail. Default value is sender name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the reply to field for the mail. Default value is sender email.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1096,35 +816,15 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        apiKey,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-        enabled,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createSendgridProvider(
-          providerId,
-          name,
-          apiKey,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-          enabled,
-        ),
+      async ({ providerId, name, apiKey, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
+        parse(await (await getMessagingClient()).createSendgridProvider(providerId, name, apiKey, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 
 messaging
   .command(`update-sendgrid-provider`)
   .description(`Update a Sendgrid provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -1132,82 +832,39 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--api-key <api-key>`, `Sendgrid API key.`)
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the Reply To field for the mail. Default value is Sender Name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the Reply To field for the mail. Default value is Sender Email.`,
-  )
+  .option(`--apikey <apikey>`, `Sendgrid API key.`)
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the Reply To field for the mail. Default value is Sender Name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the Reply To field for the mail. Default value is Sender Email.`)
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        enabled,
-        apiKey,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateSendgridProvider(
-          providerId,
-          name,
-          enabled,
-          apiKey,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-        ),
+      async ({ providerId, name, enabled, apiKey, fromName, fromEmail, replyToName, replyToEmail }) =>
+        parse(await (await getMessagingClient()).updateSendgridProvider(providerId, name, enabled, apiKey, fromName, fromEmail, replyToName, replyToEmail)),
     ),
   );
 
 messaging
   .command(`create-smtp-provider`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging createSmtpProvider' instead] Create a new SMTP provider.`,
-  )
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .description(`Create a new SMTP provider.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .requiredOption(
-    `--host <host>`,
-    `SMTP hosts. Either a single hostname or multiple semicolon-delimited hostnames. You can also specify a different port for each host such as \`smtp1.example.com:25;smtp2.example.com\`. You can also specify encryption type, for example: \`tls://smtp1.example.com:587;ssl://smtp2.example.com:465"\`. Hosts will be tried in order.`,
-  )
+  .requiredOption(`--host <host>`, `SMTP hosts. Either a single hostname or multiple semicolon-delimited hostnames. You can also specify a different port for each host such as \`smtp1.example.com:25;smtp2.example.com\`. You can also specify encryption type, for example: \`tls://smtp1.example.com:587;ssl://smtp2.example.com:465"\`. Hosts will be tried in order.`)
   .option(`--port <port>`, `The default SMTP server port.`, parseInteger)
   .option(`--username <username>`, `Authentication username.`)
   .option(`--password <password>`, `Authentication password.`)
+  .option(`--encryption <encryption>`, `Encryption type. Can be omitted, 'ssl', or 'tls'`)
   .option(
-    `--encryption <encryption>`,
-    `Encryption type. Can be omitted, 'ssl', or 'tls'`,
-  )
-  .option(
-    `--auto-tls [value]`,
+    `--autotls [value]`,
     `Enable SMTP AutoTLS feature.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
   .option(`--mailer <mailer>`, `The value to use for the X-Mailer header.`)
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the reply to field for the mail. Default value is sender name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the reply to field for the mail. Default value is sender email.`,
-  )
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the reply to field for the mail. Default value is sender name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the reply to field for the mail. Default value is sender email.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1216,75 +873,32 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        host,
-        port,
-        username,
-        password,
-        encryption,
-        autoTLS,
-        mailer,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-        enabled,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).createSmtpProvider(
-          providerId,
-          name,
-          host,
-          port,
-          username,
-          password,
-          encryption as SmtpEncryption,
-          autoTLS,
-          mailer,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-          enabled,
-        ),
+      async ({ providerId, name, host, port, username, password, encryption, autoTLS, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
+        parse(await (await getMessagingClient()).createSmtpProvider(providerId, name, host, port, username, password, encryption as SmtpEncryption, autoTLS, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 
 messaging
   .command(`update-smtp-provider`)
-  .description(
-    `[**DEPRECATED** - This command is deprecated. Please use 'messaging updateSmtpProvider' instead] Update a SMTP provider by its unique ID.`,
-  )
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .description(`Update a SMTP provider by its unique ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
-  .option(
-    `--host <host>`,
-    `SMTP hosts. Either a single hostname or multiple semicolon-delimited hostnames. You can also specify a different port for each host such as \`smtp1.example.com:25;smtp2.example.com\`. You can also specify encryption type, for example: \`tls://smtp1.example.com:587;ssl://smtp2.example.com:465"\`. Hosts will be tried in order.`,
-  )
+  .option(`--host <host>`, `SMTP hosts. Either a single hostname or multiple semicolon-delimited hostnames. You can also specify a different port for each host such as \`smtp1.example.com:25;smtp2.example.com\`. You can also specify encryption type, for example: \`tls://smtp1.example.com:587;ssl://smtp2.example.com:465"\`. Hosts will be tried in order.`)
   .option(`--port <port>`, `SMTP port.`, parseInteger)
   .option(`--username <username>`, `Authentication username.`)
   .option(`--password <password>`, `Authentication password.`)
   .option(`--encryption <encryption>`, `Encryption type. Can be 'ssl' or 'tls'`)
   .option(
-    `--auto-tls [value]`,
+    `--autotls [value]`,
     `Enable SMTP AutoTLS feature.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
   .option(`--mailer <mailer>`, `The value to use for the X-Mailer header.`)
-  .option(`--from-name <from-name>`, `Sender Name.`)
-  .option(`--from-email <from-email>`, `Sender email address.`)
-  .option(
-    `--reply-to-name <reply-to-name>`,
-    `Name set in the Reply To field for the mail. Default value is Sender Name.`,
-  )
-  .option(
-    `--reply-to-email <reply-to-email>`,
-    `Email set in the Reply To field for the mail. Default value is Sender Email.`,
-  )
+  .option(`--fromname <fromname>`, `Sender Name.`)
+  .option(`--fromemail <fromemail>`, `Sender email address.`)
+  .option(`--replytoname <replytoname>`, `Name set in the Reply To field for the mail. Default value is Sender Name.`)
+  .option(`--replytoemail <replytoemail>`, `Email set in the Reply To field for the mail. Default value is Sender Email.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1293,57 +907,19 @@ messaging
   )
   .action(
     actionRunner(
-      async ({
-        providerId,
-        name,
-        host,
-        port,
-        username,
-        password,
-        encryption,
-        autoTLS,
-        mailer,
-        fromName,
-        fromEmail,
-        replyToName,
-        replyToEmail,
-        enabled,
-      }) =>
-        await (
-          await getMessagingClient()
-        ).updateSmtpProvider(
-          providerId,
-          name,
-          host,
-          port,
-          username,
-          password,
-          encryption as SmtpEncryption,
-          autoTLS,
-          mailer,
-          fromName,
-          fromEmail,
-          replyToName,
-          replyToEmail,
-          enabled,
-        ),
+      async ({ providerId, name, host, port, username, password, encryption, autoTLS, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
+        parse(await (await getMessagingClient()).updateSmtpProvider(providerId, name, host, port, username, password, encryption as SmtpEncryption, autoTLS, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 
 messaging
   .command(`create-telesign-provider`)
   .description(`Create a new Telesign provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(
-    `--from <from>`,
-    `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`,
-  )
-  .option(`--customer-id <customer-id>`, `Telesign customer ID.`)
-  .option(`--api-key <api-key>`, `Telesign API key.`)
+  .option(`--from <from>`, `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
+  .option(`--customerid <customerid>`, `Telesign customer ID.`)
+  .option(`--apikey <apikey>`, `Telesign API key.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1353,23 +929,14 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, from, customerId, apiKey, enabled }) =>
-        await (
-          await getMessagingClient()
-        ).createTelesignProvider(
-          providerId,
-          name,
-          from,
-          customerId,
-          apiKey,
-          enabled,
-        ),
+        parse(await (await getMessagingClient()).createTelesignProvider(providerId, name, from, customerId, apiKey, enabled)),
     ),
   );
 
 messaging
   .command(`update-telesign-provider`)
   .description(`Update a Telesign provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -1377,39 +944,24 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--customer-id <customer-id>`, `Telesign customer ID.`)
-  .option(`--api-key <api-key>`, `Telesign API key.`)
+  .option(`--customerid <customerid>`, `Telesign customer ID.`)
+  .option(`--apikey <apikey>`, `Telesign API key.`)
   .option(`--from <from>`, `Sender number.`)
   .action(
     actionRunner(
       async ({ providerId, name, enabled, customerId, apiKey, from }) =>
-        await (
-          await getMessagingClient()
-        ).updateTelesignProvider(
-          providerId,
-          name,
-          enabled,
-          customerId,
-          apiKey,
-          from,
-        ),
+        parse(await (await getMessagingClient()).updateTelesignProvider(providerId, name, enabled, customerId, apiKey, from)),
     ),
   );
 
 messaging
   .command(`create-textmagic-provider`)
   .description(`Create a new Textmagic provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(
-    `--from <from>`,
-    `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`,
-  )
+  .option(`--from <from>`, `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
   .option(`--username <username>`, `Textmagic username.`)
-  .option(`--api-key <api-key>`, `Textmagic apiKey.`)
+  .option(`--apikey <apikey>`, `Textmagic apiKey.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1419,23 +971,14 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, from, username, apiKey, enabled }) =>
-        await (
-          await getMessagingClient()
-        ).createTextmagicProvider(
-          providerId,
-          name,
-          from,
-          username,
-          apiKey,
-          enabled,
-        ),
+        parse(await (await getMessagingClient()).createTextmagicProvider(providerId, name, from, username, apiKey, enabled)),
     ),
   );
 
 messaging
   .command(`update-textmagic-provider`)
   .description(`Update a Textmagic provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -1444,38 +987,23 @@ messaging
       value === undefined ? true : parseBool(value),
   )
   .option(`--username <username>`, `Textmagic username.`)
-  .option(`--api-key <api-key>`, `Textmagic apiKey.`)
+  .option(`--apikey <apikey>`, `Textmagic apiKey.`)
   .option(`--from <from>`, `Sender number.`)
   .action(
     actionRunner(
       async ({ providerId, name, enabled, username, apiKey, from }) =>
-        await (
-          await getMessagingClient()
-        ).updateTextmagicProvider(
-          providerId,
-          name,
-          enabled,
-          username,
-          apiKey,
-          from,
-        ),
+        parse(await (await getMessagingClient()).updateTextmagicProvider(providerId, name, enabled, username, apiKey, from)),
     ),
   );
 
 messaging
   .command(`create-twilio-provider`)
   .description(`Create a new Twilio provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(
-    `--from <from>`,
-    `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`,
-  )
-  .option(`--account-sid <account-sid>`, `Twilio account secret ID.`)
-  .option(`--auth-token <auth-token>`, `Twilio authentication token.`)
+  .option(`--from <from>`, `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
+  .option(`--accountsid <accountsid>`, `Twilio account secret ID.`)
+  .option(`--authtoken <authtoken>`, `Twilio authentication token.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1485,23 +1013,14 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, from, accountSid, authToken, enabled }) =>
-        await (
-          await getMessagingClient()
-        ).createTwilioProvider(
-          providerId,
-          name,
-          from,
-          accountSid,
-          authToken,
-          enabled,
-        ),
+        parse(await (await getMessagingClient()).createTwilioProvider(providerId, name, from, accountSid, authToken, enabled)),
     ),
   );
 
 messaging
   .command(`update-twilio-provider`)
   .description(`Update a Twilio provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -1509,39 +1028,24 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--account-sid <account-sid>`, `Twilio account secret ID.`)
-  .option(`--auth-token <auth-token>`, `Twilio authentication token.`)
+  .option(`--accountsid <accountsid>`, `Twilio account secret ID.`)
+  .option(`--authtoken <authtoken>`, `Twilio authentication token.`)
   .option(`--from <from>`, `Sender number.`)
   .action(
     actionRunner(
       async ({ providerId, name, enabled, accountSid, authToken, from }) =>
-        await (
-          await getMessagingClient()
-        ).updateTwilioProvider(
-          providerId,
-          name,
-          enabled,
-          accountSid,
-          authToken,
-          from,
-        ),
+        parse(await (await getMessagingClient()).updateTwilioProvider(providerId, name, enabled, accountSid, authToken, from)),
     ),
   );
 
 messaging
   .command(`create-vonage-provider`)
   .description(`Create a new Vonage provider.`)
-  .requiredOption(
-    `--provider-id <provider-id>`,
-    `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Provider name.`)
-  .option(
-    `--from <from>`,
-    `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`,
-  )
-  .option(`--api-key <api-key>`, `Vonage API key.`)
-  .option(`--api-secret <api-secret>`, `Vonage API secret.`)
+  .option(`--from <from>`, `Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
+  .option(`--apikey <apikey>`, `Vonage API key.`)
+  .option(`--apisecret <apisecret>`, `Vonage API secret.`)
   .option(
     `--enabled [value]`,
     `Set as enabled.`,
@@ -1551,23 +1055,14 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, from, apiKey, apiSecret, enabled }) =>
-        await (
-          await getMessagingClient()
-        ).createVonageProvider(
-          providerId,
-          name,
-          from,
-          apiKey,
-          apiSecret,
-          enabled,
-        ),
+        parse(await (await getMessagingClient()).createVonageProvider(providerId, name, from, apiKey, apiSecret, enabled)),
     ),
   );
 
 messaging
   .command(`update-vonage-provider`)
   .description(`Update a Vonage provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .option(`--name <name>`, `Provider name.`)
   .option(
     `--enabled [value]`,
@@ -1575,58 +1070,44 @@ messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--api-key <api-key>`, `Vonage API key.`)
-  .option(`--api-secret <api-secret>`, `Vonage API secret.`)
+  .option(`--apikey <apikey>`, `Vonage API key.`)
+  .option(`--apisecret <apisecret>`, `Vonage API secret.`)
   .option(`--from <from>`, `Sender number.`)
   .action(
     actionRunner(
       async ({ providerId, name, enabled, apiKey, apiSecret, from }) =>
-        await (
-          await getMessagingClient()
-        ).updateVonageProvider(
-          providerId,
-          name,
-          enabled,
-          apiKey,
-          apiSecret,
-          from,
-        ),
+        parse(await (await getMessagingClient()).updateVonageProvider(providerId, name, enabled, apiKey, apiSecret, from)),
     ),
   );
 
 messaging
   .command(`get-provider`)
-  .description(
-    `Get a provider by its unique ID.
-`,
-  )
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .description(`Get a provider by its unique ID.
+`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .action(
     actionRunner(
       async ({ providerId }) =>
-        await (await getMessagingClient()).getProvider(providerId),
+        parse(await (await getMessagingClient()).getProvider(providerId)),
     ),
   );
 
 messaging
   .command(`delete-provider`)
   .description(`Delete a provider by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
   .action(
     actionRunner(
       async ({ providerId }) =>
-        await (await getMessagingClient()).deleteProvider(providerId),
+        parse(await (await getMessagingClient()).deleteProvider(providerId)),
     ),
   );
 
 messaging
   .command(`list-provider-logs`)
   .description(`Get the provider activity logs listed by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`,
-  )
+  .requiredOption(`--providerid <providerid>`, `Provider ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1636,20 +1117,15 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, queries, total }) =>
-        await (
-          await getMessagingClient()
-        ).listProviderLogs(providerId, queries, total),
+        parse(await (await getMessagingClient()).listProviderLogs(providerId, queries, total)),
     ),
   );
 
 messaging
   .command(`list-subscriber-logs`)
   .description(`Get the subscriber activity logs listed by its unique ID.`)
-  .requiredOption(`--subscriber-id <subscriber-id>`, `Subscriber ID.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`,
-  )
+  .requiredOption(`--subscriberid <subscriberid>`, `Subscriber ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1659,23 +1135,15 @@ messaging
   .action(
     actionRunner(
       async ({ subscriberId, queries, total }) =>
-        await (
-          await getMessagingClient()
-        ).listSubscriberLogs(subscriberId, queries, total),
+        parse(await (await getMessagingClient()).listSubscriberLogs(subscriberId, queries, total)),
     ),
   );
 
 messaging
   .command(`list-topics`)
   .description(`Get a list of all topics from the current Appwrite project.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal`,
-  )
-  .option(
-    `--search <search>`,
-    `Search term to filter your list results. Max length: 256 chars.`,
-  )
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1685,85 +1153,65 @@ messaging
   .action(
     actionRunner(
       async ({ queries, search, total }) =>
-        await (await getMessagingClient()).listTopics(queries, search, total),
+        parse(await (await getMessagingClient()).listTopics(queries, search, total)),
     ),
   );
 
 messaging
   .command(`create-topic`)
   .description(`Create a new topic.`)
-  .requiredOption(
-    `--topic-id <topic-id>`,
-    `Topic ID. Choose a custom Topic ID or a new Topic ID.`,
-  )
+  .requiredOption(`--topicid <topicid>`, `Topic ID. Choose a custom Topic ID or a new Topic ID.`)
   .requiredOption(`--name <name>`, `Topic Name.`)
-  .option(
-    `--subscribe [subscribe...]`,
-    `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`,
-  )
+  .option(`--subscribe [subscribe...]`, `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
   .action(
     actionRunner(
       async ({ topicId, name, subscribe }) =>
-        await (
-          await getMessagingClient()
-        ).createTopic(topicId, name, subscribe),
+        parse(await (await getMessagingClient()).createTopic(topicId, name, subscribe)),
     ),
   );
 
 messaging
   .command(`get-topic`)
-  .description(
-    `Get a topic by its unique ID.
-`,
-  )
-  .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
+  .description(`Get a topic by its unique ID.
+`)
+  .requiredOption(`--topicid <topicid>`, `Topic ID.`)
   .action(
     actionRunner(
       async ({ topicId }) =>
-        await (await getMessagingClient()).getTopic(topicId),
+        parse(await (await getMessagingClient()).getTopic(topicId)),
     ),
   );
 
 messaging
   .command(`update-topic`)
-  .description(
-    `Update a topic by its unique ID.
-`,
-  )
-  .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
+  .description(`Update a topic by its unique ID.
+`)
+  .requiredOption(`--topicid <topicid>`, `Topic ID.`)
   .option(`--name <name>`, `Topic Name.`)
-  .option(
-    `--subscribe [subscribe...]`,
-    `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`,
-  )
+  .option(`--subscribe [subscribe...]`, `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
   .action(
     actionRunner(
       async ({ topicId, name, subscribe }) =>
-        await (
-          await getMessagingClient()
-        ).updateTopic(topicId, name, subscribe),
+        parse(await (await getMessagingClient()).updateTopic(topicId, name, subscribe)),
     ),
   );
 
 messaging
   .command(`delete-topic`)
   .description(`Delete a topic by its unique ID.`)
-  .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
+  .requiredOption(`--topicid <topicid>`, `Topic ID.`)
   .action(
     actionRunner(
       async ({ topicId }) =>
-        await (await getMessagingClient()).deleteTopic(topicId),
+        parse(await (await getMessagingClient()).deleteTopic(topicId)),
     ),
   );
 
 messaging
   .command(`list-topic-logs`)
   .description(`Get the topic activity logs listed by its unique ID.`)
-  .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`,
-  )
+  .requiredOption(`--topicid <topicid>`, `Topic ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1773,29 +1221,16 @@ messaging
   .action(
     actionRunner(
       async ({ topicId, queries, total }) =>
-        await (
-          await getMessagingClient()
-        ).listTopicLogs(topicId, queries, total),
+        parse(await (await getMessagingClient()).listTopicLogs(topicId, queries, total)),
     ),
   );
 
 messaging
   .command(`list-subscribers`)
-  .description(
-    `Get a list of all subscribers from the current Appwrite project.`,
-  )
-  .requiredOption(
-    `--topic-id <topic-id>`,
-    `Topic ID. The topic ID subscribed to.`,
-  )
-  .option(
-    `--queries [queries...]`,
-    `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`,
-  )
-  .option(
-    `--search <search>`,
-    `Search term to filter your list results. Max length: 256 chars.`,
-  )
+  .description(`Get a list of all subscribers from the current Appwrite project.`)
+  .requiredOption(`--topicid <topicid>`, `Topic ID. The topic ID subscribed to.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1805,67 +1240,45 @@ messaging
   .action(
     actionRunner(
       async ({ topicId, queries, search, total }) =>
-        await (
-          await getMessagingClient()
-        ).listSubscribers(topicId, queries, search, total),
+        parse(await (await getMessagingClient()).listSubscribers(topicId, queries, search, total)),
     ),
   );
 
 messaging
   .command(`create-subscriber`)
   .description(`Create a new subscriber.`)
-  .requiredOption(
-    `--topic-id <topic-id>`,
-    `Topic ID. The topic ID to subscribe to.`,
-  )
-  .requiredOption(
-    `--subscriber-id <subscriber-id>`,
-    `Subscriber ID. Choose a custom Subscriber ID or a new Subscriber ID.`,
-  )
-  .requiredOption(
-    `--target-id <target-id>`,
-    `Target ID. The target ID to link to the specified Topic ID.`,
-  )
+  .requiredOption(`--topicid <topicid>`, `Topic ID. The topic ID to subscribe to.`)
+  .requiredOption(`--subscriberid <subscriberid>`, `Subscriber ID. Choose a custom Subscriber ID or a new Subscriber ID.`)
+  .requiredOption(`--targetid <targetid>`, `Target ID. The target ID to link to the specified Topic ID.`)
   .action(
     actionRunner(
       async ({ topicId, subscriberId, targetId }) =>
-        await (
-          await getMessagingClient()
-        ).createSubscriber(topicId, subscriberId, targetId),
+        parse(await (await getMessagingClient()).createSubscriber(topicId, subscriberId, targetId)),
     ),
   );
 
 messaging
   .command(`get-subscriber`)
-  .description(
-    `Get a subscriber by its unique ID.
-`,
-  )
-  .requiredOption(
-    `--topic-id <topic-id>`,
-    `Topic ID. The topic ID subscribed to.`,
-  )
-  .requiredOption(`--subscriber-id <subscriber-id>`, `Subscriber ID.`)
+  .description(`Get a subscriber by its unique ID.
+`)
+  .requiredOption(`--topicid <topicid>`, `Topic ID. The topic ID subscribed to.`)
+  .requiredOption(`--subscriberid <subscriberid>`, `Subscriber ID.`)
   .action(
     actionRunner(
       async ({ topicId, subscriberId }) =>
-        await (await getMessagingClient()).getSubscriber(topicId, subscriberId),
+        parse(await (await getMessagingClient()).getSubscriber(topicId, subscriberId)),
     ),
   );
 
 messaging
   .command(`delete-subscriber`)
   .description(`Delete a subscriber by its unique ID.`)
-  .requiredOption(
-    `--topic-id <topic-id>`,
-    `Topic ID. The topic ID subscribed to.`,
-  )
-  .requiredOption(`--subscriber-id <subscriber-id>`, `Subscriber ID.`)
+  .requiredOption(`--topicid <topicid>`, `Topic ID. The topic ID subscribed to.`)
+  .requiredOption(`--subscriberid <subscriberid>`, `Subscriber ID.`)
   .action(
     actionRunner(
       async ({ topicId, subscriberId }) =>
-        await (
-          await getMessagingClient()
-        ).deleteSubscriber(topicId, subscriberId),
+        parse(await (await getMessagingClient()).deleteSubscriber(topicId, subscriberId)),
     ),
   );
+

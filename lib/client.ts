@@ -10,6 +10,14 @@ import type {
   ResponseType,
   FileUpload,
 } from "./types.js";
+import {
+  DEFAULT_ENDPOINT,
+  SDK_NAME,
+  SDK_PLATFORM,
+  SDK_LANGUAGE,
+  SDK_VERSION,
+  SDK_TITLE,
+} from "./constants.js";
 
 const JSONBigInt = JSONbig({ storeAsString: false });
 
@@ -19,15 +27,15 @@ class Client {
   private selfSigned: boolean;
 
   constructor() {
-    this.endpoint = "https://cloud.appwrite.io/v1";
+    this.endpoint = DEFAULT_ENDPOINT;
     this.selfSigned = false;
     this.headers = {
       "content-type": "",
-      "x-sdk-name": "Command Line",
-      "x-sdk-platform": "console",
-      "x-sdk-language": "cli",
-      "x-sdk-version": "13.0.0-rc.2",
-      "user-agent": `AppwriteCLI/13.0.0-rc.2 (${os.type()} ${os.version()}; ${os.arch()})`,
+      "x-sdk-name": SDK_NAME,
+      "x-sdk-platform": SDK_PLATFORM,
+      "x-sdk-language": SDK_LANGUAGE,
+      "x-sdk-version": SDK_VERSION,
+      "user-agent": `${SDK_TITLE}CLI/${SDK_VERSION} (${os.type()} ${os.version()}; ${os.arch()})`,
       "X-Appwrite-Response-Format": "1.8.1",
     };
   }

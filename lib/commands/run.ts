@@ -130,7 +130,7 @@ const runFunction = async ({
     "If you wish to change your local settings, update the appwrite.config.json file and rerun the 'appwrite run' command.",
   );
   hint(
-    "Permissions, events, CRON and timeouts dont apply when running locally.",
+    "Permissions, events, CRON and timeouts don't apply when running locally.",
   );
 
   await dockerCleanup(func.$id);

@@ -8,6 +8,12 @@ import os from "os";
 import { Client } from "@appwrite.io/console";
 import { isCloud } from "./utils.js";
 import type { CliConfig } from "./types.js";
+import {
+  SDK_VERSION,
+  SDK_TITLE,
+  SDK_LOGO,
+  EXECUTABLE_NAME,
+} from "./constants.js";
 
 const cliConfig: CliConfig = {
   verbose: false,
@@ -128,8 +134,8 @@ export const parseError = (err: Error): void => {
         // Silently fail
       }
 
-      const version = "13.0.0-rc.2";
-      const stepsToReproduce = `Running \`appwrite ${(cliConfig.reportData as any).data.args.join(" ")}\``;
+      const version = SDK_VERSION;
+      const stepsToReproduce = `Running \`${EXECUTABLE_NAME} ${(cliConfig.reportData as any).data.args.join(" ")}\``;
       const yourEnvironment = `CLI version: ${version}\nOperation System: ${os.type()}\nAppwrite version: ${appwriteVersion}\nIs Cloud: ${isCloud()}`;
 
       const stack = "```\n" + (err.stack || err.message) + "\n```";
@@ -226,8 +232,7 @@ export const error = (message?: string): void => {
   console.error(`${chalk.red.bold("✗ Error:")} ${chalk.red(message ?? "")}`);
 };
 
-export const logo =
-  "\n    _                            _ _           ___   __   _____\n   \/_\\  _ __  _ ____      ___ __(_) |_ ___    \/ __\\ \/ \/   \\_   \\\n  \/\/_\\\\| '_ \\| '_ \\ \\ \/\\ \/ \/ '__| | __\/ _ \\  \/ \/   \/ \/     \/ \/\\\/\n \/  _  \\ |_) | |_) \\ V  V \/| |  | | ||  __\/ \/ \/___\/ \/___\/\\\/ \/_\n \\_\/ \\_\/ .__\/| .__\/ \\_\/\\_\/ |_|  |_|\\__\\___| \\____\/\\____\/\\____\/\n       |_|   |_|\n\n";
+export const logo = SDK_LOGO;
 
 export const commandDescriptions: Record<string, string> = {
   account: `The account command allows you to authenticate and manage a user account.`,
@@ -235,25 +240,25 @@ export const commandDescriptions: Record<string, string> = {
   avatars: `The avatars command aims to help you complete everyday tasks related to your app image, icons, and avatars.`,
   databases: `(Legacy) The databases command allows you to create structured collections of documents and query and filter lists of documents.`,
   "tables-db": `The tables-db command allows you to create structured tables of columns and query and filter lists of rows.`,
-  init: `The init command provides a convenient wrapper for creating and initializing projects, functions, collections, buckets, teams, and messaging-topics in  Appwrite.`,
+  init: `The init command provides a convenient wrapper for creating and initializing projects, functions, collections, buckets, teams, and messaging-topics in ${SDK_TITLE}.`,
   push: `The push command provides a convenient wrapper for pushing your functions, collections, buckets, teams, and messaging-topics.`,
   run: `The run command allows you to run the project locally to allow easy development and quick debugging.`,
   functions: `The functions command allows you to view, create, and manage your Cloud Functions.`,
-  health: `The health command allows you to both validate and monitor your Appwrite server's health.`,
-  pull: `The pull command helps you pull your Appwrite project, functions, collections, buckets, teams, and messaging-topics`,
+  health: `The health command allows you to both validate and monitor your ${SDK_TITLE} server's health.`,
+  pull: `The pull command helps you pull your ${SDK_TITLE} project, functions, collections, buckets, teams, and messaging-topics`,
   locale: `The locale command allows you to customize your app based on your users' location.`,
   sites: `The sites command allows you to view, create and manage your Appwrite Sites.`,
   storage: `The storage command allows you to manage your project files.`,
   teams: `The teams command allows you to group users of your project to enable them to share read and write access to your project resources.`,
-  update: `The update command allows you to update the Appwrite CLI to the latest version.`,
+  update: `The update command allows you to update the ${SDK_TITLE} CLI to the latest version.`,
   users: `The users command allows you to manage your project users.`,
   projects: `The projects command allows you to manage your projects, add platforms, manage API keys, Dev Keys etc.`,
   project: `The project command allows you to manage project related resources like usage, variables, etc.`,
   client: `The client command allows you to configure your CLI`,
   login: `The login command allows you to authenticate and manage a user account.`,
-  logout: `The logout command allows you to log out of your Appwrite account.`,
-  whoami: `The whomai command gives information about the currently logged-in user.`,
-  register: `Outputs the link to create an Appwrite account.`,
+  logout: `The logout command allows you to log out of your ${SDK_TITLE} account.`,
+  whoami: `The whoami command gives information about the currently logged-in user.`,
+  register: `Outputs the link to create an ${SDK_TITLE} account.`,
   console: `The console command gives you access to the APIs used by the Appwrite Console.`,
   messaging: `The messaging command allows you to manage topics and targets and send messages.`,
   migrations: `The migrations command allows you to migrate data between services.`,
