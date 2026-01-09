@@ -10,7 +10,7 @@ import fs from "fs";
 import { log, error, success } from "../parser.js";
 import { openRuntimesVersion, systemTools, Queue } from "./utils.js";
 import { getAllFiles } from "../utils.js";
-import type { FunctionConfig } from "../types.js";
+import type { FunctionType } from "../commands/config.js";
 
 export async function dockerStop(id: string): Promise<void> {
   const stopProcess = childProcess.spawn("docker", ["rm", "--force", id], {
@@ -26,7 +26,7 @@ export async function dockerStop(id: string): Promise<void> {
   });
 }
 
-export async function dockerPull(func: FunctionConfig): Promise<void> {
+export async function dockerPull(func: FunctionType): Promise<void> {
   const runtimeChunks = func.runtime.split("-");
   const runtimeVersion = runtimeChunks.pop();
   const runtimeName = runtimeChunks.join("-");
@@ -48,7 +48,7 @@ export async function dockerPull(func: FunctionConfig): Promise<void> {
 }
 
 export async function dockerBuild(
-  func: FunctionConfig,
+  func: FunctionType,
   variables: Record<string, string>,
 ): Promise<void> {
   const runtimeChunks = func.runtime.split("-");
@@ -78,111 +78,125 @@ export async function dockerBuild(
     fs.mkdirSync(tmpBuildPath, { recursive: true });
   }
 
-  for (const f of files) {
-    const filePath = path.join(tmpBuildPath, f);
-    const fileDir = path.dirname(filePath);
-    if (!fs.existsSync(fileDir)) {
-      fs.mkdirSync(fileDir, { recursive: true });
+  let killInterval: ReturnType<typeof setInterval> | undefined;
+
+  try {
+    for (const f of files) {
+      const filePath = path.join(tmpBuildPath, f);
+      const fileDir = path.dirname(filePath);
+      if (!fs.existsSync(fileDir)) {
+        fs.mkdirSync(fileDir, { recursive: true });
+      }
+
+      const sourcePath = path.join(functionDir, f);
+      fs.copyFileSync(sourcePath, filePath);
     }
 
-    const sourcePath = path.join(functionDir, f);
-    fs.copyFileSync(sourcePath, filePath);
-  }
+    const params: string[] = ["run"];
+    params.push("--name", id);
+    params.push("-v", `${tmpBuildPath}/:/mnt/code:rw`);
+    params.push("-e", "OPEN_RUNTIMES_ENV=development");
+    params.push("-e", "OPEN_RUNTIMES_SECRET=");
+    params.push("-e", `OPEN_RUNTIMES_ENTRYPOINT=${func.entrypoint}`);
 
-  const params: string[] = ["run"];
-  params.push("--name", id);
-  params.push("-v", `${tmpBuildPath}/:/mnt/code:rw`);
-  params.push("-e", "OPEN_RUNTIMES_ENV=development");
-  params.push("-e", "OPEN_RUNTIMES_SECRET=");
-  params.push("-e", `OPEN_RUNTIMES_ENTRYPOINT=${func.entrypoint}`);
-
-  for (const k of Object.keys(variables)) {
-    params.push("-e", `${k}=${variables[k]}`);
-  }
-
-  params.push(imageName, "sh", "-c", `helpers/build.sh "${func.commands}"`);
-
-  const buildProcess = childProcess.spawn("docker", params, {
-    stdio: "pipe",
-    cwd: functionDir,
-    env: {
-      ...process.env,
-      DOCKER_CLI_HINTS: "false",
-    },
-  });
-
-  buildProcess.stdout.on("data", (data) => {
-    process.stdout.write(chalk.blackBright(`${data}\n`));
-  });
-
-  buildProcess.stderr.on("data", (data) => {
-    process.stderr.write(chalk.blackBright(`${data}\n`));
-  });
-
-  const killInterval = setInterval(() => {
-    if (!Queue.isEmpty()) {
-      log("Cancelling build ...");
-      buildProcess.stdout.destroy();
-      buildProcess.stdin.destroy();
-      buildProcess.stderr.destroy();
-      buildProcess.kill("SIGKILL");
-      clearInterval(killInterval);
+    for (const k of Object.keys(variables)) {
+      params.push("-e", `${k}=${variables[k]}`);
     }
-  }, 100);
 
-  await new Promise<void>((res) => {
-    buildProcess.on("close", res);
-  });
+    params.push(imageName, "sh", "-c", `helpers/build.sh "${func.commands}"`);
 
-  clearInterval(killInterval);
-  if (!Queue.isEmpty()) {
-    return;
-  }
-
-  const copyPath = path.join(
-    localConfig.getDirname(),
-    func.path,
-    ".appwrite",
-    "build.tar.gz",
-  );
-  const copyDir = path.dirname(copyPath);
-  if (!fs.existsSync(copyDir)) {
-    fs.mkdirSync(copyDir, { recursive: true });
-  }
-
-  const copyProcess = childProcess.spawn(
-    "docker",
-    ["cp", `${id}:/mnt/code/code.tar.gz`, copyPath],
-    {
+    const buildProcess = childProcess.spawn("docker", params, {
       stdio: "pipe",
       cwd: functionDir,
       env: {
         ...process.env,
         DOCKER_CLI_HINTS: "false",
       },
-    },
-  );
+    });
 
-  await new Promise<void>((res) => {
-    copyProcess.on("close", res);
-  });
+    buildProcess.stdout.on("data", (data) => {
+      process.stdout.write(chalk.blackBright(`${data}\n`));
+    });
 
-  await dockerStop(id);
+    buildProcess.stderr.on("data", (data) => {
+      process.stderr.write(chalk.blackBright(`${data}\n`));
+    });
 
-  const tempPath = path.join(
-    localConfig.getDirname(),
-    func.path,
-    "code.tar.gz",
-  );
-  if (fs.existsSync(tempPath)) {
-    fs.rmSync(tempPath, { force: true });
+    killInterval = setInterval(() => {
+      if (!Queue.isEmpty()) {
+        log("Cancelling build ...");
+        buildProcess.stdout.destroy();
+        buildProcess.stdin.destroy();
+        buildProcess.stderr.destroy();
+        buildProcess.kill("SIGKILL");
+        clearInterval(killInterval);
+      }
+    }, 100);
+
+    await new Promise<void>((res) => {
+      buildProcess.on("close", res);
+    });
+
+    clearInterval(killInterval);
+    killInterval = undefined;
+
+    if (!Queue.isEmpty()) {
+      await dockerStop(id);
+      return;
+    }
+
+    const copyPath = path.join(
+      localConfig.getDirname(),
+      func.path,
+      ".appwrite",
+      "build.tar.gz",
+    );
+    const copyDir = path.dirname(copyPath);
+    if (!fs.existsSync(copyDir)) {
+      fs.mkdirSync(copyDir, { recursive: true });
+    }
+
+    const copyProcess = childProcess.spawn(
+      "docker",
+      ["cp", `${id}:/mnt/code/code.tar.gz`, copyPath],
+      {
+        stdio: "pipe",
+        cwd: functionDir,
+        env: {
+          ...process.env,
+          DOCKER_CLI_HINTS: "false",
+        },
+      },
+    );
+
+    await new Promise<void>((res) => {
+      copyProcess.on("close", res);
+    });
+
+    await dockerStop(id);
+  } finally {
+    // Clean up interval if still running
+    if (killInterval !== undefined) {
+      clearInterval(killInterval);
+    }
+
+    // Clean up temp files
+    const tempPath = path.join(
+      localConfig.getDirname(),
+      func.path,
+      "code.tar.gz",
+    );
+    if (fs.existsSync(tempPath)) {
+      fs.rmSync(tempPath, { force: true });
+    }
+
+    // Always clean up tmpBuildPath
+    fs.rmSync(tmpBuildPath, { recursive: true, force: true });
   }
-
-  fs.rmSync(tmpBuildPath, { recursive: true, force: true });
 }
 
 export async function dockerStart(
-  func: FunctionConfig,
+  func: FunctionType,
   variables: Record<string, string>,
   port: number,
 ): Promise<void> {

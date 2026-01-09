@@ -13,6 +13,7 @@ import {
   getSitesService,
   getDatabasesService,
 } from "./services.js";
+import { SDK_TITLE, DEFAULT_ENDPOINT, EXECUTABLE_NAME } from "./constants.js";
 
 interface Answers {
   override?: boolean;
@@ -48,9 +49,9 @@ const whenOverride = (answers: Answers): boolean =>
   answers.override === undefined ? true : answers.override;
 
 const getIgnores = (runtime: string): string[] => {
-  const languge = runtime.split("-").slice(0, -1).join("-");
+  const language = runtime.split("-").slice(0, -1).join("-");
 
-  switch (languge) {
+  switch (language) {
     case "cpp":
       return ["build", "CMakeFiles", "CMakeCaches.txt"];
     case "dart":
@@ -82,9 +83,9 @@ const getIgnores = (runtime: string): string[] => {
 };
 
 const getEntrypoint = (runtime: string): string | undefined => {
-  const languge = runtime.split("-").slice(0, -1).join("-");
+  const language = runtime.split("-").slice(0, -1).join("-");
 
-  switch (languge) {
+  switch (language) {
     case "dart":
       return "lib/main.dart";
     case "deno":
@@ -120,9 +121,9 @@ const getEntrypoint = (runtime: string): string | undefined => {
 };
 
 const getInstallCommand = (runtime: string): string | undefined => {
-  const languge = runtime.split("-").slice(0, -1).join("-");
+  const language = runtime.split("-").slice(0, -1).join("-");
 
-  switch (languge) {
+  switch (language) {
     case "dart":
       return "dart pub get";
     case "deno":
@@ -156,7 +157,7 @@ export const questionsInitProject: Question[] = [
   {
     type: "confirm",
     name: "override",
-    message: `An Appwrite project ( ${localConfig.getProject()["projectId"]} ) is already associated with the current directory. Would you like to override`,
+    message: `An ${SDK_TITLE} project ( ${localConfig.getProject()["projectId"]} ) is already associated with the current directory. Would you like to override it?`,
     when() {
       return Object.keys(localConfig.getProject()).length !== 0;
     },
@@ -233,7 +234,7 @@ export const questionsInitProject: Question[] = [
   {
     type: "search-list",
     name: "project",
-    message: "Choose your Appwrite project.",
+    message: `Choose your ${SDK_TITLE} project.`,
     choices: async (answers: Answers) => {
       const queries = [
         JSON.stringify({
@@ -273,11 +274,10 @@ export const questionsInitProject: Question[] = [
   {
     type: "list",
     name: "region",
-    message: "Select your Appwrite Cloud region",
+    message: `Select your ${SDK_TITLE} Cloud region`,
     choices: async () => {
       let client = await sdkForConsole(true);
-      const endpoint =
-        globalConfig.getEndpoint() || "https://cloud.appwrite.io/v1";
+      const endpoint = globalConfig.getEndpoint() || DEFAULT_ENDPOINT;
       let response = (await client.call(
         "GET",
         new URL(endpoint + "/console/regions"),
@@ -306,7 +306,7 @@ export const questionsInitProjectAutopull: Question[] = [
   {
     type: "confirm",
     name: "autopull",
-    message: `Would you like to pull all resources from project you just linked?`,
+    message: `Would you like to pull all resources from the project you just linked?`,
   },
 ];
 
@@ -348,7 +348,7 @@ export const questionsPullFunctions: Question[] = [
       );
 
       if (functions.length === 0) {
-        throw "We couldn't find any functions in your Appwrite project";
+        throw `We couldn't find any functions in your ${SDK_TITLE} project`;
       }
       return functions.map((func: any) => {
         return {
@@ -383,7 +383,7 @@ export const questionsPullSites: Question[] = [
       );
 
       if (sites.length === 0) {
-        throw "We couldn't find any sites in your Appwrite project";
+        throw `We couldn't find any sites in your ${SDK_TITLE} project`;
       }
       return sites.map((site: any) => {
         return {
@@ -502,7 +502,7 @@ export const questionsCreateBucket: Question[] = [
 export const questionsCreateTeam: Question[] = [
   {
     type: "input",
-    name: "bucket",
+    name: "team",
     message: "What would you like to name your team?",
     default: "My Awesome Team",
   },
@@ -703,7 +703,7 @@ export const questionsLogin: Question[] = [
   {
     type: "list",
     name: "method",
-    message: "What you like to do?",
+    message: "What would you like to do?",
     choices: [
       { name: "Login to an account", value: "login" },
       { name: "Switch to an account", value: "select" },
@@ -771,7 +771,7 @@ export const questionGetEndpoint: Question[] = [
   {
     type: "input",
     name: "endpoint",
-    message: "Enter the endpoint of your Appwrite server",
+    message: `Enter the endpoint of your ${SDK_TITLE} server`,
     default: "http://localhost/v1",
     async validate(value: string) {
       if (!value) {
@@ -1014,7 +1014,6 @@ export const questionsGetEntrypoint: Question[] = [
     type: "input",
     name: "entrypoint",
     message: "Enter the entrypoint",
-    default: null,
     validate(value: string) {
       if (!value) {
         return "Please enter your entrypoint";
@@ -1062,11 +1061,11 @@ export const questionsListFactors: Question[] = [
           value: "totp",
         },
         {
-          name: `Email (Get a security code at your Appwrite email address)`,
+          name: `Email (Get a security code at your ${SDK_TITLE} email address)`,
           value: "email",
         },
         {
-          name: `SMS (Get a security code on your Appwrite phone number)`,
+          name: `SMS (Get a security code on your ${SDK_TITLE} phone number)`,
           value: "phone",
         },
         {
@@ -1104,7 +1103,7 @@ export const questionsRunFunctions: Question[] = [
       let functions = localConfig.getFunctions();
       if (functions.length === 0) {
         throw new Error(
-          "No functions found. Use 'appwrite pull functions' to synchronize existing one, or use 'appwrite init function' to create a new one.",
+          `No functions found. Use '${EXECUTABLE_NAME} pull functions' to synchronize existing one, or use '${EXECUTABLE_NAME} init function' to create a new one.`,
         );
       }
       let choices = functions.map((func: any, idx: number) => {

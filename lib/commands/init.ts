@@ -32,6 +32,7 @@ import {
 import { sdkForConsole } from "../sdks.js";
 import { isCloud } from "../utils.js";
 import { Account } from "@appwrite.io/console";
+import { DEFAULT_ENDPOINT, EXECUTABLE_NAME } from "../constants.js";
 
 const initResources = async (): Promise<void> => {
   const actions: Record<string, (options?: any) => Promise<void>> = {
@@ -67,7 +68,9 @@ const initProject = async ({
 
   try {
     if (globalConfig.getEndpoint() === "" || globalConfig.getCookie() === "") {
-      throw "";
+      throw new Error(
+        `Missing endpoint or cookie configuration. Please run '${EXECUTABLE_NAME} login' first.`,
+      );
     }
     const client = await sdkForConsole();
     const accountClient = new Account(client);
@@ -75,7 +78,7 @@ const initProject = async ({
     await accountClient.get();
   } catch (e) {
     error(
-      "Error Session not found. Please run 'appwrite login' to create a session",
+      `Error Session not found. Please run '${EXECUTABLE_NAME} login' to create a session`,
     );
     process.exit(1);
   }
@@ -115,7 +118,7 @@ const initProject = async ({
   }
 
   localConfig.clear(); // Clear the config to avoid any conflicts
-  const url = new URL("https://cloud.appwrite.io/v1");
+  const url = new URL(DEFAULT_ENDPOINT);
 
   if (answers.start === "new") {
     const projectsService = await getProjectsService();
@@ -155,13 +158,13 @@ const initProject = async ({
       });
     } else {
       log(
-        "You can run 'appwrite pull all' to synchronize all of your existing resources.",
+        `You can run '${EXECUTABLE_NAME} pull all' to synchronize all of your existing resources.`,
       );
     }
   }
 
   hint(
-    "Next you can use 'appwrite init' to create resources in your project, or use 'appwrite pull' and 'appwrite push' to synchronize your project.",
+    `Next you can use '${EXECUTABLE_NAME} init' to create resources in your project, or use '${EXECUTABLE_NAME} pull' and '${EXECUTABLE_NAME} push' to synchronize your project.`,
   );
 };
 
@@ -175,7 +178,9 @@ const initBucket = async (): Promise<void> => {
     enabled: true,
   });
   success("Initialing bucket");
-  log("Next you can use 'appwrite push bucket' to deploy the changes.");
+  log(
+    `Next you can use '${EXECUTABLE_NAME} push bucket' to deploy the changes.`,
+  );
 };
 
 const initTeam = async (): Promise<void> => {
@@ -183,11 +188,11 @@ const initTeam = async (): Promise<void> => {
 
   localConfig.addTeam({
     $id: answers.id === "unique()" ? ID.unique() : answers.id,
-    name: answers.bucket,
+    name: answers.team,
   });
 
   success("Initialing team");
-  log("Next you can use 'appwrite push team' to deploy the changes.");
+  log(`Next you can use '${EXECUTABLE_NAME} push team' to deploy the changes.`);
 };
 
 const initTable = async (): Promise<void> => {
@@ -222,7 +227,9 @@ const initTable = async (): Promise<void> => {
   });
 
   success("Initialing table");
-  log("Next you can use 'appwrite push table' to deploy the changes.");
+  log(
+    `Next you can use '${EXECUTABLE_NAME} push table' to deploy the changes.`,
+  );
 };
 
 const initCollection = async (): Promise<void> => {
@@ -256,7 +263,9 @@ const initCollection = async (): Promise<void> => {
   });
 
   success("Initialing collection");
-  log("Next you can use 'appwrite push collection' to deploy the changes.");
+  log(
+    `Next you can use '${EXECUTABLE_NAME} push collection' to deploy the changes.`,
+  );
 };
 
 const initTopic = async (): Promise<void> => {
@@ -268,7 +277,9 @@ const initTopic = async (): Promise<void> => {
   });
 
   success("Initialing topic");
-  log("Next you can use 'appwrite push topic' to deploy the changes.");
+  log(
+    `Next you can use '${EXECUTABLE_NAME} push topic' to deploy the changes.`,
+  );
 };
 
 const initFunction = async (): Promise<void> => {
@@ -434,7 +445,7 @@ const initFunction = async (): Promise<void> => {
   localConfig.addFunction(data);
   success("Initialing function");
   log(
-    "Next you can use 'appwrite run function' to develop a function locally. To deploy the function, use 'appwrite push function'",
+    `Next you can use '${EXECUTABLE_NAME} run function' to develop a function locally. To deploy the function, use '${EXECUTABLE_NAME} push function'`,
   );
 };
 
@@ -586,7 +597,7 @@ const initSite = async (): Promise<void> => {
   const readmePath = path.join(process.cwd(), "sites", siteName, "README.md");
   const readmeFile = fs.readFileSync(readmePath).toString();
   const newReadmeFile = readmeFile.split("\n");
-  newReadmeFile[0] = `# ${answers.key}`;
+  newReadmeFile[0] = `# ${answers.name}`;
   newReadmeFile.splice(1, 2);
   fs.writeFileSync(readmePath, newReadmeFile.join("\n"));
 
@@ -655,7 +666,7 @@ const initSite = async (): Promise<void> => {
 
   localConfig.addSite(data);
   success("Initializing site");
-  log("Next you can use 'appwrite push site' to deploy the changes.");
+  log(`Next you can use '${EXECUTABLE_NAME} push site' to deploy the changes.`);
 };
 
 export const init = new Command("init")

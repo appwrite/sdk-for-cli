@@ -217,4 +217,4 @@ export const types = new Command("types")
   .addArgument(typesOutputArgument)
   .addOption(typesLanguageOption)
   .addOption(typesStrictOption)
-  .action(actionRunner(typesCommand));
+  .action(typesCommand);

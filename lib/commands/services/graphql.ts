@@ -3,6 +3,8 @@ import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
+  success,
+  parse,
   parseBool,
   parseInteger,
 } from "../../parser.js";
@@ -31,7 +33,7 @@ graphql
   .action(
     actionRunner(
       async ({ query }) =>
-        await (await getGraphqlClient()).query(JSON.parse(query)),
+        parse(await (await getGraphqlClient()).query(JSON.parse(query))),
     ),
   );
 
@@ -42,6 +44,7 @@ graphql
   .action(
     actionRunner(
       async ({ query }) =>
-        await (await getGraphqlClient()).mutation(JSON.parse(query)),
+        parse(await (await getGraphqlClient()).mutation(JSON.parse(query))),
     ),
   );
+
