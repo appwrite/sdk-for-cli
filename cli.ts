@@ -5,13 +5,16 @@ const oldWidth = process.stdout.columns;
 process.stdout.columns = 100;
 /** ---------------------------------------------- */
 
+import { createRequire } from 'module';
 import { program } from 'commander';
-import chalk = require('chalk');
-const { version } = require('../package.json');
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+
+import packageJson from './package.json' with { type: 'json' };
 import { commandDescriptions, cliConfig } from './lib/parser.js';
-import { client } from './lib/commands/generic.js';
 import { getLatestVersion, compareVersions } from './lib/utils.js';
-import inquirer = require('inquirer');
+
+import { client } from './lib/commands/generic.js';
 import { login, logout, whoami, migrate, register } from './lib/commands/generic.js';
 import { init } from './lib/commands/init.js';
 import { types } from './lib/commands/types.js';
@@ -19,6 +22,7 @@ import { pull } from './lib/commands/pull.js';
 import { run } from './lib/commands/run.js';
 import { push, deploy } from './lib/commands/push.js';
 import { update } from './lib/commands/update.js';
+
 import { account } from './lib/commands/services/account.js';
 import { console } from './lib/commands/services/console.js';
 import { databases } from './lib/commands/services/databases.js';
@@ -39,7 +43,11 @@ import { tokens } from './lib/commands/services/tokens.js';
 import { users } from './lib/commands/services/users.js';
 import { vcs } from './lib/commands/services/vcs.js';
 
-inquirer.registerPrompt('search-list', require('inquirer-search-list'));
+const require = createRequire(import.meta.url);
+const inquirerSearchList = require('inquirer-search-list');
+
+const { version } = packageJson;
+inquirer.registerPrompt('search-list', inquirerSearchList);
 
 /**
  * Check for updates and show version information

@@ -1,5 +1,9 @@
 # Change Log
 
+## 13.0.0-rc.4
+
+- Fix CLI ES module import issues
+
 ## 13.0.0-rc.3
 
 - Add `Schema` class for programmatically pushing and pulling appwrite config
