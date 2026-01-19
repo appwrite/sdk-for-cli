@@ -42,7 +42,7 @@ export const projects = new Command("projects")
 projects
   .command(`list`)
   .description(`Get a list of all projects. You can use the query params to filter your results. `)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -426,6 +426,18 @@ projects
     actionRunner(
       async ({ projectId, keyId }) =>
         parse(await (await getProjectsClient()).deleteKey(projectId, keyId)),
+    ),
+  );
+
+projects
+  .command(`update-labels`)
+  .description(`Update the project labels by its unique ID. Labels can be used to easily filter projects in an organization.`)
+  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .requiredOption(`--labels [labels...]`, `Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.`)
+  .action(
+    actionRunner(
+      async ({ projectId, labels }) =>
+        parse(await (await getProjectsClient()).updateLabels(projectId, labels)),
     ),
   );
 
