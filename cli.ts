@@ -22,6 +22,7 @@ import { pull } from './lib/commands/pull.js';
 import { run } from './lib/commands/run.js';
 import { push, deploy } from './lib/commands/push.js';
 import { update } from './lib/commands/update.js';
+import { generate } from './lib/commands/generate.js';
 
 import { account } from './lib/commands/services/account.js';
 import { console } from './lib/commands/services/console.js';
@@ -133,6 +134,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(deploy)
         .addCommand(run)
         .addCommand(update)
+        .addCommand(generate)
         .addCommand(logout)
         .addCommand(account)
         .addCommand(console)
