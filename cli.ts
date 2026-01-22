@@ -5,7 +5,6 @@ const oldWidth = process.stdout.columns;
 process.stdout.columns = 100;
 /** ---------------------------------------------- */
 
-import { createRequire } from 'module';
 import { program } from 'commander';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
@@ -13,6 +12,7 @@ import inquirer from 'inquirer';
 import packageJson from './package.json' with { type: 'json' };
 import { commandDescriptions, cliConfig } from './lib/parser.js';
 import { getLatestVersion, compareVersions } from './lib/utils.js';
+import inquirerSearchList from 'inquirer-search-list';
 
 import { client } from './lib/commands/generic.js';
 import { login, logout, whoami, migrate, register } from './lib/commands/generic.js';
@@ -43,9 +43,6 @@ import { teams } from './lib/commands/services/teams.js';
 import { tokens } from './lib/commands/services/tokens.js';
 import { users } from './lib/commands/services/users.js';
 import { vcs } from './lib/commands/services/vcs.js';
-
-const require = createRequire(import.meta.url);
-const inquirerSearchList = require('inquirer-search-list');
 
 const { version } = packageJson;
 inquirer.registerPrompt('search-list', inquirerSearchList);

@@ -1,5 +1,10 @@
 # Change Log
 
+## 13.1.0-rc.2
+
+- Update generated `databases` services to automatically initialize a client instance
+- Update generator to use handlebars templates
+
 ## 13.1.0-rc.1
 
 - Feat: `appwrite generate` command to create a fully typesafe SDK for your Appwrite project
