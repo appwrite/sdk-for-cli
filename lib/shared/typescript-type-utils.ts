@@ -19,20 +19,6 @@ export type TypeAttribute = AttributeType | ColumnType;
 export type TypeEntity = Pick<CollectionType | TableType, "$id" | "name">;
 
 /**
- * Sanitizes a string for use as an enum key.
- * Handles edge cases like strings starting with numbers or containing invalid characters.
- */
-export function sanitizeEnumKey(value: string): string {
-  let key = LanguageMeta.toUpperSnakeCase(value);
-
-  if (!key || /^\d/.test(key)) {
-    key = `_${key}`;
-  }
-
-  return key;
-}
-
-/**
  * Converts an attribute to its TypeScript type representation.
  *
  * @param attribute - The attribute to convert
@@ -113,43 +99,6 @@ export function getTypeScriptType(
 }
 
 /**
- * Generates TypeScript enum code for an attribute with enum format.
- *
- * @param entityName - Name of the entity containing the attribute
- * @param attributeKey - The attribute key
- * @param elements - The enum elements/values
- * @returns The TypeScript enum code string
- */
-export function generateEnumCode(
-  entityName: string,
-  attributeKey: string,
-  elements: string[],
-): string {
-  const enumName =
-    LanguageMeta.toPascalCase(entityName) +
-    LanguageMeta.toPascalCase(attributeKey);
-  const usedKeys = new Set<string>();
-
-  const enumValues = elements
-    .map((element: string, index: number) => {
-      let key = sanitizeEnumKey(element);
-      if (usedKeys.has(key)) {
-        let disambiguator = 1;
-        while (usedKeys.has(`${key}_${disambiguator}`)) {
-          disambiguator++;
-        }
-        key = `${key}_${disambiguator}`;
-      }
-      usedKeys.add(key);
-      const isLast = index === elements.length - 1;
-      return `    ${key} = ${JSON.stringify(element)}${isLast ? "" : ","}`;
-    })
-    .join("\n");
-
-  return `export enum ${enumName} {\n${enumValues}\n}`;
-}
-
-/**
  * Detects the Appwrite dependency to use based on the project's package.json or deno.json.
  *
  * @returns The appropriate Appwrite import path
@@ -191,12 +140,18 @@ export function getAppwriteDependency(): string {
 }
 
 /**
- * Checks if the Appwrite dependency supports bulk methods.
+ * Checks if the Appwrite dependency supports server-side methods.
  *
  * @param appwriteDep - The Appwrite dependency string
- * @returns True if bulk methods are supported
+ * @param override - Optional override (auto|true|false)
+ * @returns True if server-side methods are supported
  */
-export function supportsBulkMethods(appwriteDep: string): boolean {
+export function supportsServerSideMethods(
+  appwriteDep: string,
+  override: "auto" | "true" | "false" = "auto",
+): boolean {
+  if (override === "true") return true;
+  if (override === "false") return false;
   return (
     appwriteDep === "node-appwrite" ||
     appwriteDep === "npm:node-appwrite" ||
