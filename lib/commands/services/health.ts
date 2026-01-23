@@ -86,6 +86,17 @@ health
   );
 
 health
+  .command(`get-queue-audits`)
+  .description(`Get the number of audit logs that are waiting to be processed in the Appwrite internal queue server.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueAudits(threshold)),
+    ),
+  );
+
+health
   .command(`get-queue-builds`)
   .description(`Get the number of builds that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
