@@ -1,5 +1,5 @@
-import { Client, TablesDB, ID, Query, type Models, Permission } from '{{appwriteDep}}';
-import type { DatabaseHandle, DatabaseId, DatabaseTableMap, DatabaseTables, QueryBuilder } from './types.js';
+import { Client, TablesDB, ID, Query, type Models, Permission, Role } from '{{appwriteDep}}';
+import type { DatabaseHandle, DatabaseId, DatabaseTableMap, DatabaseTables, QueryBuilder, PermissionBuilder, RoleBuilder, RoleString } from './types.js';
 {{#if supportsServerSide}}
 import { PROJECT_ID, ENDPOINT, API_KEY } from './constants.js';
 {{else}}
@@ -35,8 +35,26 @@ const createQueryBuilder = <T>(): QueryBuilder<T> => ({
 
 {{{TABLES_WITH_RELATIONSHIPS}}}
 
-const serializePermissions = (permissions?: Permission[]): string[] | undefined =>
-  permissions?.map((permission) => permission.toString());
+const roleBuilder: RoleBuilder = {
+  any: () => Role.any() as RoleString,
+  user: (userId, status?) => Role.user(userId, status) as RoleString,
+  users: (status?) => Role.users(status) as RoleString,
+  guests: () => Role.guests() as RoleString,
+  team: (teamId, role?) => Role.team(teamId, role) as RoleString,
+  member: (memberId) => Role.member(memberId) as RoleString,
+  label: (label) => Role.label(label) as RoleString,
+};
+
+const permissionBuilder: PermissionBuilder = {
+  read: (role) => Permission.read(role),
+  write: (role) => Permission.write(role),
+  create: (role) => Permission.create(role),
+  update: (role) => Permission.update(role),
+  delete: (role) => Permission.delete(role),
+};
+
+const resolvePermissions = (callback?: (permission: { read: (role: RoleString) => string; write: (role: RoleString) => string; create: (role: RoleString) => string; update: (role: RoleString) => string; delete: (role: RoleString) => string }, role: { any: () => RoleString; user: (userId: string, status?: string) => RoleString; users: (status?: string) => RoleString; guests: () => RoleString; team: (teamId: string, role?: string) => RoleString; member: (memberId: string) => RoleString; label: (label: string) => RoleString }) => string[]): string[] | undefined =>
+  callback?.(permissionBuilder, roleBuilder);
 
 function createTableApi<T extends Models.Row>(
   tablesDB: TablesDB,
@@ -44,13 +62,13 @@ function createTableApi<T extends Models.Row>(
   tableId: string,
 ) {
   return {
-    create: (data: any, options?: { rowId?: string; permissions?: Permission[]; transactionId?: string }) =>
+    create: (data: any, options?: { rowId?: string; permissions?: (permission: { read: (role: RoleString) => string; write: (role: RoleString) => string; create: (role: RoleString) => string; update: (role: RoleString) => string; delete: (role: RoleString) => string }, role: { any: () => RoleString; user: (userId: string, status?: string) => RoleString; users: (status?: string) => RoleString; guests: () => RoleString; team: (teamId: string, role?: string) => RoleString; member: (memberId: string) => RoleString; label: (label: string) => RoleString }) => string[]; transactionId?: string }) =>
       tablesDB.createRow<T>({
         databaseId,
         tableId,
         rowId: options?.rowId ?? ID.unique(),
         data,
-        permissions: serializePermissions(options?.permissions),
+        permissions: resolvePermissions(options?.permissions),
         transactionId: options?.transactionId,
       }),
     get: (id: string) =>
@@ -59,13 +77,13 @@ function createTableApi<T extends Models.Row>(
         tableId,
         rowId: id,
       }),
-    update: (id: string, data: any, options?: { permissions?: Permission[]; transactionId?: string }) =>
+    update: (id: string, data: any, options?: { permissions?: (permission: { read: (role: RoleString) => string; write: (role: RoleString) => string; create: (role: RoleString) => string; update: (role: RoleString) => string; delete: (role: RoleString) => string }, role: { any: () => RoleString; user: (userId: string, status?: string) => RoleString; users: (status?: string) => RoleString; guests: () => RoleString; team: (teamId: string, role?: string) => RoleString; member: (memberId: string) => RoleString; label: (label: string) => RoleString }) => string[]; transactionId?: string }) =>
       tablesDB.updateRow<T>({
         databaseId,
         tableId,
         rowId: id,
         data,
-        ...(options?.permissions ? { permissions: serializePermissions(options.permissions) } : {}),
+        ...(options?.permissions ? { permissions: resolvePermissions(options.permissions) } : {}),
         transactionId: options?.transactionId,
       }),
     delete: async (id: string, options?: { transactionId?: string }) => {
@@ -97,53 +115,53 @@ function createDatabaseHandle<D extends DatabaseId>(
   const dbMap = tableIdMap[databaseId];
 
   return {
-    use: <T extends keyof DatabaseTableMap[D] & string>(tableName: T): DatabaseTableMap[D][T] => {
-      if (!hasOwn(dbMap, tableName)) {
-        throw new Error(`Unknown table "${tableName}" in database "${databaseId}"`);
+    use: <T extends keyof DatabaseTableMap[D] & string>(tableId: T): DatabaseTableMap[D][T] => {
+      if (!hasOwn(dbMap, tableId)) {
+        throw new Error(`Unknown table "${tableId}" in database "${databaseId}"`);
       }
 
-      if (!tableApiCache.has(tableName)) {
-        const tableId = dbMap[tableName];
-        const api = createTableApi(tablesDB, databaseId, tableId);
+      if (!tableApiCache.has(tableId)) {
+        const resolvedTableId = dbMap[tableId];
+        const api = createTableApi(tablesDB, databaseId, resolvedTableId);
         {{{BULK_REMOVAL}}}
-        tableApiCache.set(tableName, api);
+        tableApiCache.set(tableId, api);
       }
-      return tableApiCache.get(tableName) as DatabaseTableMap[D][T];
+      return tableApiCache.get(tableId) as DatabaseTableMap[D][T];
     },
 {{#if supportsServerSide}}
-    create: (tableId: string, name: string, options?: { permissions?: Permission[]; rowSecurity?: boolean; enabled?: boolean; columns?: any[]; indexes?: any[] }) =>
+    create: (tableId: string, name: string, options?: { permissions?: (permission: { read: (role: RoleString) => string; write: (role: RoleString) => string; create: (role: RoleString) => string; update: (role: RoleString) => string; delete: (role: RoleString) => string }, role: { any: () => RoleString; user: (userId: string, status?: string) => RoleString; users: (status?: string) => RoleString; guests: () => RoleString; team: (teamId: string, role?: string) => RoleString; member: (memberId: string) => RoleString; label: (label: string) => RoleString }) => string[]; rowSecurity?: boolean; enabled?: boolean; columns?: any[]; indexes?: any[] }) =>
       tablesDB.createTable({
         databaseId,
         tableId,
         name,
-        permissions: serializePermissions(options?.permissions),
+        permissions: resolvePermissions(options?.permissions),
         rowSecurity: options?.rowSecurity,
         enabled: options?.enabled,
         columns: options?.columns,
         indexes: options?.indexes,
       }),
-    update: (tableName: string, name: string, options?: { permissions?: Permission[]; rowSecurity?: boolean; enabled?: boolean }) => {
-      if (!hasOwn(dbMap, tableName)) {
-        throw new Error(`Unknown table "${tableName}" in database "${databaseId}"`);
+    update: (tableId: string, options?: { name?: string; permissions?: (permission: { read: (role: RoleString) => string; write: (role: RoleString) => string; create: (role: RoleString) => string; update: (role: RoleString) => string; delete: (role: RoleString) => string }, role: { any: () => RoleString; user: (userId: string, status?: string) => RoleString; users: (status?: string) => RoleString; guests: () => RoleString; team: (teamId: string, role?: string) => RoleString; member: (memberId: string) => RoleString; label: (label: string) => RoleString }) => string[]; rowSecurity?: boolean; enabled?: boolean }) => {
+      if (!hasOwn(dbMap, tableId)) {
+        throw new Error(`Unknown table "${tableId}" in database "${databaseId}"`);
       }
-      const tableId = dbMap[tableName];
+      const resolvedTableId = dbMap[tableId];
       return tablesDB.updateTable({
         databaseId,
-        tableId,
-        name,
-        permissions: serializePermissions(options?.permissions),
+        tableId: resolvedTableId,
+        name: options?.name ?? tableId, // TODO: remove this fallback once fixed in other SDKs
+        permissions: resolvePermissions(options?.permissions),
         rowSecurity: options?.rowSecurity,
         enabled: options?.enabled,
       });
     },
-    delete: async (tableName: string) => {
-      if (!hasOwn(dbMap, tableName)) {
-        throw new Error(`Unknown table "${tableName}" in database "${databaseId}"`);
+    delete: async (tableId: string) => {
+      if (!hasOwn(dbMap, tableId)) {
+        throw new Error(`Unknown table "${tableId}" in database "${databaseId}"`);
       }
-      const tableId = dbMap[tableName];
+      const resolvedTableId = dbMap[tableId];
       await tablesDB.deleteTable({
         databaseId,
-        tableId,
+        tableId: resolvedTableId,
       });
     },
 {{/if}}
@@ -171,12 +189,13 @@ function createDatabasesApi(tablesDB: TablesDB): DatabaseTables {
         name,
         enabled: options?.enabled,
       }),
-    update: (databaseId: DatabaseId, name: string, options?: { enabled?: boolean }) =>
-      tablesDB.update({
+    update: (databaseId: DatabaseId, options?: { name?: string; enabled?: boolean }) => {
+      return tablesDB.update({
         databaseId,
-        name,
+        name: options?.name ?? databaseId,
         enabled: options?.enabled,
-      }),
+      });
+    },
     delete: async (databaseId: DatabaseId) => {
       await tablesDB.delete({
         databaseId,
