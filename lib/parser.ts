@@ -41,7 +41,7 @@ export const parse = (data: Record<string, any>): void => {
       } else {
         drawJSON(data[key]);
       }
-    } else if (typeof data[key] === "object") {
+    } else if (typeof data[key] === "object" && data[key] !== null) {
       if (data[key]?.constructor?.name === "BigNumber") {
         console.log(`${chalk.yellow.bold(key)} : ${data[key]}`);
       } else {
@@ -55,23 +55,35 @@ export const parse = (data: Record<string, any>): void => {
 };
 
 export const drawTable = (data: Array<Record<string, any>>): void => {
-  if (data.length == 0) {
+  // 1. Enhanced Guard: Check for empty data or if the first element is null
+  if (!data || data.length === 0 || data[0] === null) {
     console.log("[]");
     return;
   }
 
-  // Create an object with all the keys in it
-  const obj = data.reduce((res, item) => ({ ...res, ...item }), {});
+  // 2. Safely create an object with all keys. 
+  // Added a check (item || {}) to ensure spread doesn't fail if an array element is null.
+  const obj = data.reduce((res, item) => ({ ...res, ...(item || {}) }), {});
+  
   // Get those keys as an array
   const keys = Object.keys(obj);
-  // Create an object with all keys set to the default value ''
+
+  // 3. Early exit if no keys are found (prevents crash on Object.keys(data[0]))
+  if (keys.length === 0) {
+    console.log("-");
+    return;
+  }
+
+  // Create an object with all keys set to the default value '-'
   const def = keys.reduce((result: Record<string, string>, key) => {
     result[key] = "-";
     return result;
   }, {});
-  // Use object destructuring to replace all default values with the ones we have
-  data = data.map((item) => ({ ...def, ...item }));
 
+  // Replace default values with actual values, ensuring 'item' is an object
+  data = data.map((item) => ({ ...def, ...(item || {}) }));
+
+  // This is now safe because we checked data[0] and keys.length above
   const columns = Object.keys(data[0]);
 
   const table = new Table({
@@ -98,7 +110,7 @@ export const drawTable = (data: Array<Record<string, any>>): void => {
   data.forEach((row) => {
     const rowValues: any[] = [];
     for (const key in row) {
-      if (row[key] === null) {
+      if (row[key] === null || row[key] === undefined) {
         rowValues.push("-");
       } else if (Array.isArray(row[key])) {
         rowValues.push(JSON.stringify(row[key]));
