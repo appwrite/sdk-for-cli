@@ -8,10 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Console,
-  ConsoleResourceType,
-} from "@appwrite.io/console";
+import { Console } from "@appwrite.io/console";
 
 let consoleClient: Console | null = null;
 
@@ -37,7 +34,7 @@ console
   .action(
     actionRunner(
       async ({ value, type }) =>
-        parse(await (await getConsoleClient()).getResource(value, type as ConsoleResourceType)),
+        parse(await (await getConsoleClient()).getResource(value, type)),
     ),
   );
 

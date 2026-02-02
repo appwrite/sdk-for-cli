@@ -8,12 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Account,
-  AuthenticatorType,
-  AuthenticationFactor,
-  OAuthProvider,
-} from "@appwrite.io/console";
+import { Account } from "@appwrite.io/console";
 
 let accountClient: Account | null = null;
 
@@ -151,7 +146,7 @@ account
   .action(
     actionRunner(
       async ({ type }) =>
-        parse(await (await getAccountClient()).createMfaAuthenticator(type as AuthenticatorType)),
+        parse(await (await getAccountClient()).createMfaAuthenticator(type)),
     ),
   );
 
@@ -163,7 +158,7 @@ account
   .action(
     actionRunner(
       async ({ type, otp }) =>
-        parse(await (await getAccountClient()).updateMfaAuthenticator(type as AuthenticatorType, otp)),
+        parse(await (await getAccountClient()).updateMfaAuthenticator(type, otp)),
     ),
   );
 
@@ -174,7 +169,7 @@ account
   .action(
     actionRunner(
       async ({ type }) =>
-        parse(await (await getAccountClient()).deleteMfaAuthenticator(type as AuthenticatorType)),
+        parse(await (await getAccountClient()).deleteMfaAuthenticator(type)),
     ),
   );
 
@@ -185,7 +180,7 @@ account
   .action(
     actionRunner(
       async ({ factor }) =>
-        parse(await (await getAccountClient()).createMfaChallenge(factor as AuthenticationFactor)),
+        parse(await (await getAccountClient()).createMfaChallenge(factor)),
     ),
   );
 
@@ -387,7 +382,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
   .action(
     actionRunner(
       async ({ provider, success, failure, scopes }) => {
-        const url = (await getAccountClient()).createOAuth2Session(provider as OAuthProvider, success, failure, scopes);
+        const url = (await getAccountClient()).createOAuth2Session(provider, success, failure, scopes);
         if (url) console.log(url);
       },
     ),
@@ -552,7 +547,7 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
   .action(
     actionRunner(
       async ({ provider, success, failure, scopes }) => {
-        const url = (await getAccountClient()).createOAuth2Token(provider as OAuthProvider, success, failure, scopes);
+        const url = (await getAccountClient()).createOAuth2Token(provider, success, failure, scopes);
         if (url) console.log(url);
       },
     ),

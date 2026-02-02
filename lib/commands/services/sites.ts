@@ -9,16 +9,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Sites,
-  Framework,
-  BuildRuntime,
-  Adapter,
-  UsageRange,
-  TemplateReferenceType,
-  VCSReferenceType,
-  DeploymentDownloadType,
-} from "@appwrite.io/console";
+import { Sites } from "@appwrite.io/console";
 
 let sitesClient: Sites | null = null;
 
@@ -93,7 +84,7 @@ sites
   .action(
     actionRunner(
       async ({ siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getSitesClient()).create(siteId, name, framework as Framework, buildRuntime as BuildRuntime, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, adapter as Adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+        parse(await (await getSitesClient()).create(siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
     ),
   );
 
@@ -147,7 +138,7 @@ sites
   .action(
     actionRunner(
       async ({ range }) =>
-        parse(await (await getSitesClient()).listUsage(range as UsageRange)),
+        parse(await (await getSitesClient()).listUsage(range)),
     ),
   );
 
@@ -201,7 +192,7 @@ sites
   .action(
     actionRunner(
       async ({ siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getSitesClient()).update(siteId, name, framework as Framework, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, buildRuntime as BuildRuntime, adapter as Adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+        parse(await (await getSitesClient()).update(siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
     ),
   );
 
@@ -295,7 +286,7 @@ Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/p
   .action(
     actionRunner(
       async ({ siteId, repository, owner, rootDirectory, type, reference, activate }) =>
-        parse(await (await getSitesClient()).createTemplateDeployment(siteId, repository, owner, rootDirectory, type as TemplateReferenceType, reference, activate)),
+        parse(await (await getSitesClient()).createTemplateDeployment(siteId, repository, owner, rootDirectory, type, reference, activate)),
     ),
   );
 
@@ -316,7 +307,7 @@ This endpoint lets you create deployment from a branch, commit, or a tag.`)
   .action(
     actionRunner(
       async ({ siteId, type, reference, activate }) =>
-        parse(await (await getSitesClient()).createVcsDeployment(siteId, type as VCSReferenceType, reference, activate)),
+        parse(await (await getSitesClient()).createVcsDeployment(siteId, type, reference, activate)),
     ),
   );
 
@@ -354,7 +345,7 @@ sites
   .action(
     actionRunner(
       async ({ siteId, deploymentId, type, destination }) => {
-        const url = await (await getSitesClient()).getDeploymentDownload(siteId, deploymentId, type as DeploymentDownloadType);
+        const url = await (await getSitesClient()).getDeploymentDownload(siteId, deploymentId, type);
         const response = await fetch(url);
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
@@ -425,7 +416,7 @@ sites
   .action(
     actionRunner(
       async ({ siteId, range }) =>
-        parse(await (await getSitesClient()).getUsage(siteId, range as UsageRange)),
+        parse(await (await getSitesClient()).getUsage(siteId, range)),
     ),
   );
 

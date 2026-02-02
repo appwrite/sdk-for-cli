@@ -8,10 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Project,
-  ProjectUsageRange,
-} from "@appwrite.io/console";
+import { Project } from "@appwrite.io/console";
 
 let projectClient: Project | null = null;
 
@@ -38,7 +35,7 @@ project
   .action(
     actionRunner(
       async ({ startDate, endDate, period }) =>
-        parse(await (await getProjectClient()).getUsage(startDate, endDate, period as ProjectUsageRange)),
+        parse(await (await getProjectClient()).getUsage(startDate, endDate, period)),
     ),
   );
 

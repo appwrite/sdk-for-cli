@@ -9,13 +9,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Storage,
-  Compression,
-  ImageGravity,
-  ImageFormat,
-  UsageRange,
-} from "@appwrite.io/console";
+import { Storage } from "@appwrite.io/console";
 
 let storageClient: Storage | null = null;
 
@@ -93,7 +87,7 @@ storage
   .action(
     actionRunner(
       async ({ bucketId, name, permissions, fileSecurity, enabled, maximumFileSize, allowedFileExtensions, compression, encryption, antivirus, transformations }) =>
-        parse(await (await getStorageClient()).createBucket(bucketId, name, permissions, fileSecurity, enabled, maximumFileSize, allowedFileExtensions, compression as Compression, encryption, antivirus, transformations)),
+        parse(await (await getStorageClient()).createBucket(bucketId, name, permissions, fileSecurity, enabled, maximumFileSize, allowedFileExtensions, compression, encryption, antivirus, transformations)),
     ),
   );
 
@@ -150,7 +144,7 @@ storage
   .action(
     actionRunner(
       async ({ bucketId, name, permissions, fileSecurity, enabled, maximumFileSize, allowedFileExtensions, compression, encryption, antivirus, transformations }) =>
-        parse(await (await getStorageClient()).updateBucket(bucketId, name, permissions, fileSecurity, enabled, maximumFileSize, allowedFileExtensions, compression as Compression, encryption, antivirus, transformations)),
+        parse(await (await getStorageClient()).updateBucket(bucketId, name, permissions, fileSecurity, enabled, maximumFileSize, allowedFileExtensions, compression, encryption, antivirus, transformations)),
     ),
   );
 
@@ -283,7 +277,7 @@ storage
   .action(
     actionRunner(
       async ({ bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output, token, destination }) => {
-        const url = await (await getStorageClient()).getFilePreview(bucketId, fileId, width, height, gravity as ImageGravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output as ImageFormat, token);
+        const url = await (await getStorageClient()).getFilePreview(bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output, token);
         const response = await fetch(url);
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
@@ -319,7 +313,7 @@ storage
   .action(
     actionRunner(
       async ({ range }) =>
-        parse(await (await getStorageClient()).getUsage(range as UsageRange)),
+        parse(await (await getStorageClient()).getUsage(range)),
     ),
   );
 
@@ -332,7 +326,7 @@ storage
   .action(
     actionRunner(
       async ({ bucketId, range }) =>
-        parse(await (await getStorageClient()).getBucketUsage(bucketId, range as UsageRange)),
+        parse(await (await getStorageClient()).getBucketUsage(bucketId, range)),
     ),
   );
 

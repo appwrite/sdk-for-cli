@@ -8,13 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  TablesDB,
-  UsageRange,
-  RelationshipType,
-  RelationMutate,
-  IndexType,
-} from "@appwrite.io/console";
+import { TablesDB } from "@appwrite.io/console";
 
 let tablesDBClient: TablesDB | null = null;
 
@@ -155,7 +149,7 @@ tablesDB
   .action(
     actionRunner(
       async ({ range }) =>
-        parse(await (await getTablesDBClient()).listUsage(range as UsageRange)),
+        parse(await (await getTablesDBClient()).listUsage(range)),
     ),
   );
 
@@ -174,7 +168,7 @@ tablesDB
   .command(`update`)
   .description(`Update a database by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--name <name>`, `Database name. Max length: 128 chars.`)
+  .option(`--name <name>`, `Database name. Max length: 128 chars.`)
   .option(
     `--enabled [value]`,
     `Is database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.`,
@@ -263,7 +257,7 @@ tablesDB
   .description(`Update a table by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .requiredOption(`--name <name>`, `Table name. Max length: 128 chars.`)
+  .option(`--name <name>`, `Table name. Max length: 128 chars.`)
   .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
   .option(
     `--row-security [value]`,
@@ -712,7 +706,7 @@ tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, relatedTableId, type, twoWay, key, twoWayKey, onDelete }) =>
-        parse(await (await getTablesDBClient()).createRelationshipColumn(databaseId, tableId, relatedTableId, type as RelationshipType, twoWay, key, twoWayKey, onDelete as RelationMutate)),
+        parse(await (await getTablesDBClient()).createRelationshipColumn(databaseId, tableId, relatedTableId, type, twoWay, key, twoWayKey, onDelete)),
     ),
   );
 
@@ -840,7 +834,7 @@ tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, key, onDelete, newKey }) =>
-        parse(await (await getTablesDBClient()).updateRelationshipColumn(databaseId, tableId, key, onDelete as RelationMutate, newKey)),
+        parse(await (await getTablesDBClient()).updateRelationshipColumn(databaseId, tableId, key, onDelete, newKey)),
     ),
   );
 
@@ -877,7 +871,7 @@ Type can be \`key\`, \`fulltext\`, or \`unique\`.`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, key, type, columns, orders, lengths }) =>
-        parse(await (await getTablesDBClient()).createIndex(databaseId, tableId, key, type as IndexType, columns, orders, lengths)),
+        parse(await (await getTablesDBClient()).createIndex(databaseId, tableId, key, type, columns, orders, lengths)),
     ),
   );
 
@@ -1132,7 +1126,7 @@ tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, range }) =>
-        parse(await (await getTablesDBClient()).getTableUsage(databaseId, tableId, range as UsageRange)),
+        parse(await (await getTablesDBClient()).getTableUsage(databaseId, tableId, range)),
     ),
   );
 
@@ -1144,7 +1138,7 @@ tablesDB
   .action(
     actionRunner(
       async ({ databaseId, range }) =>
-        parse(await (await getTablesDBClient()).getUsage(databaseId, range as UsageRange)),
+        parse(await (await getTablesDBClient()).getUsage(databaseId, range)),
     ),
   );
 

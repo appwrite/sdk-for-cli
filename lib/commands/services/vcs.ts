@@ -8,10 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Vcs,
-  VCSDetectionType,
-} from "@appwrite.io/console";
+import { Vcs } from "@appwrite.io/console";
 
 let vcsClient: Vcs | null = null;
 
@@ -39,7 +36,7 @@ vcs
   .action(
     actionRunner(
       async ({ installationId, providerRepositoryId, type, providerRootDirectory }) =>
-        parse(await (await getVcsClient()).createRepositoryDetection(installationId, providerRepositoryId, type as VCSDetectionType, providerRootDirectory)),
+        parse(await (await getVcsClient()).createRepositoryDetection(installationId, providerRepositoryId, type, providerRootDirectory)),
     ),
   );
 
@@ -53,7 +50,7 @@ vcs
   .action(
     actionRunner(
       async ({ installationId, type, search, queries }) =>
-        parse(await (await getVcsClient()).listRepositories(installationId, type as VCSDetectionType, search, queries)),
+        parse(await (await getVcsClient()).listRepositories(installationId, type, search, queries)),
     ),
   );
 

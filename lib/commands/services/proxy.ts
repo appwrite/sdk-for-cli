@@ -8,11 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Proxy,
-  StatusCode,
-  ProxyResourceType,
-} from "@appwrite.io/console";
+import { Proxy } from "@appwrite.io/console";
 
 let proxyClient: Proxy | null = null;
 
@@ -83,7 +79,7 @@ proxy
   .action(
     actionRunner(
       async ({ domain, url, statusCode, resourceId, resourceType }) =>
-        parse(await (await getProxyClient()).createRedirectRule(domain, url, statusCode as StatusCode, resourceId, resourceType as ProxyResourceType)),
+        parse(await (await getProxyClient()).createRedirectRule(domain, url, statusCode, resourceId, resourceType)),
     ),
   );
 

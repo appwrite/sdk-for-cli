@@ -8,10 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Health,
-  Name,
-} from "@appwrite.io/console";
+import { Health } from "@appwrite.io/console";
 
 let healthClient: Health | null = null;
 
@@ -150,7 +147,7 @@ health
   .action(
     actionRunner(
       async ({ name, threshold }) =>
-        parse(await (await getHealthClient()).getFailedJobs(name as Name, threshold)),
+        parse(await (await getHealthClient()).getFailedJobs(name, threshold)),
     ),
   );
 
