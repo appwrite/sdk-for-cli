@@ -8,13 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Users,
-  PasswordHash,
-  UsageRange,
-  AuthenticatorType,
-  MessagingProviderType,
-} from "@appwrite.io/console";
+import { Users } from "@appwrite.io/console";
 
 let usersClient: Users | null = null;
 
@@ -197,7 +191,7 @@ users
   .action(
     actionRunner(
       async ({ userId, email, password, passwordVersion, name }) =>
-        parse(await (await getUsersClient()).createSHAUser(userId, email, password, passwordVersion as PasswordHash, name)),
+        parse(await (await getUsersClient()).createSHAUser(userId, email, password, passwordVersion, name)),
     ),
   );
 
@@ -209,7 +203,7 @@ users
   .action(
     actionRunner(
       async ({ range }) =>
-        parse(await (await getUsersClient()).getUsage(range as UsageRange)),
+        parse(await (await getUsersClient()).getUsage(range)),
     ),
   );
 
@@ -331,7 +325,7 @@ users
   .action(
     actionRunner(
       async ({ userId, type }) =>
-        parse(await (await getUsersClient()).deleteMfaAuthenticator(userId, type as AuthenticatorType)),
+        parse(await (await getUsersClient()).deleteMfaAuthenticator(userId, type)),
     ),
   );
 
@@ -533,7 +527,7 @@ users
   .action(
     actionRunner(
       async ({ userId, targetId, providerType, identifier, providerId, name }) =>
-        parse(await (await getUsersClient()).createTarget(userId, targetId, providerType as MessagingProviderType, identifier, providerId, name)),
+        parse(await (await getUsersClient()).createTarget(userId, targetId, providerType, identifier, providerId, name)),
     ),
   );
 

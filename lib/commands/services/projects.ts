@@ -8,20 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Projects,
-  Region,
-  Api,
-  AuthMethod,
-  OAuthProvider,
-  PlatformType,
-  ApiService,
-  SMTPSecure,
-  EmailTemplateType,
-  EmailTemplateLocale,
-  SmsTemplateType,
-  SmsTemplateLocale,
-} from "@appwrite.io/console";
+import { Projects } from "@appwrite.io/console";
 
 let projectsClient: Projects | null = null;
 
@@ -76,7 +63,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, name, teamId, region, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId }) =>
-        parse(await (await getProjectsClient()).create(projectId, name, teamId, region as Region, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId)),
+        parse(await (await getProjectsClient()).create(projectId, name, teamId, region, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId)),
     ),
   );
 
@@ -132,7 +119,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, api, status }) =>
-        parse(await (await getProjectsClient()).updateApiStatus(projectId, api as Api, status)),
+        parse(await (await getProjectsClient()).updateApiStatus(projectId, api, status)),
     ),
   );
 
@@ -279,7 +266,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, method, status }) =>
-        parse(await (await getProjectsClient()).updateAuthStatus(projectId, method as AuthMethod, status)),
+        parse(await (await getProjectsClient()).updateAuthStatus(projectId, method, status)),
     ),
   );
 
@@ -457,7 +444,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, provider, appId, secret, enabled }) =>
-        parse(await (await getProjectsClient()).updateOAuth2(projectId, provider as OAuthProvider, appId, secret, enabled)),
+        parse(await (await getProjectsClient()).updateOAuth2(projectId, provider, appId, secret, enabled)),
     ),
   );
 
@@ -490,7 +477,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, name, key, store, hostname }) =>
-        parse(await (await getProjectsClient()).createPlatform(projectId, type as PlatformType, name, key, store, hostname)),
+        parse(await (await getProjectsClient()).createPlatform(projectId, type, name, key, store, hostname)),
     ),
   );
 
@@ -543,7 +530,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, service, status }) =>
-        parse(await (await getProjectsClient()).updateServiceStatus(projectId, service as ApiService, status)),
+        parse(await (await getProjectsClient()).updateServiceStatus(projectId, service, status)),
     ),
   );
 
@@ -575,7 +562,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, enabled, senderName, senderEmail, replyTo, host, port, username, password, secure }) =>
-        parse(await (await getProjectsClient()).updateSmtp(projectId, enabled, senderName, senderEmail, replyTo, host, port, username, password, secure as SMTPSecure)),
+        parse(await (await getProjectsClient()).updateSmtp(projectId, enabled, senderName, senderEmail, replyTo, host, port, username, password, secure)),
     ),
   );
 
@@ -595,7 +582,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure }) =>
-        parse(await (await getProjectsClient()).createSmtpTest(projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure as SMTPSecure)),
+        parse(await (await getProjectsClient()).createSmtpTest(projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure)),
     ),
   );
 
@@ -620,7 +607,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).getEmailTemplate(projectId, type as EmailTemplateType, locale as EmailTemplateLocale)),
+        parse(await (await getProjectsClient()).getEmailTemplate(projectId, type, locale)),
     ),
   );
 
@@ -638,7 +625,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, locale, subject, message, senderName, senderEmail, replyTo }) =>
-        parse(await (await getProjectsClient()).updateEmailTemplate(projectId, type as EmailTemplateType, locale as EmailTemplateLocale, subject, message, senderName, senderEmail, replyTo)),
+        parse(await (await getProjectsClient()).updateEmailTemplate(projectId, type, locale, subject, message, senderName, senderEmail, replyTo)),
     ),
   );
 
@@ -651,7 +638,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).deleteEmailTemplate(projectId, type as EmailTemplateType, locale as EmailTemplateLocale)),
+        parse(await (await getProjectsClient()).deleteEmailTemplate(projectId, type, locale)),
     ),
   );
 
@@ -664,7 +651,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).getSmsTemplate(projectId, type as SmsTemplateType, locale as SmsTemplateLocale)),
+        parse(await (await getProjectsClient()).getSmsTemplate(projectId, type, locale)),
     ),
   );
 
@@ -678,7 +665,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, locale, message }) =>
-        parse(await (await getProjectsClient()).updateSmsTemplate(projectId, type as SmsTemplateType, locale as SmsTemplateLocale, message)),
+        parse(await (await getProjectsClient()).updateSmsTemplate(projectId, type, locale, message)),
     ),
   );
 
@@ -691,7 +678,7 @@ projects
   .action(
     actionRunner(
       async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).deleteSmsTemplate(projectId, type as SmsTemplateType, locale as SmsTemplateLocale)),
+        parse(await (await getProjectsClient()).deleteSmsTemplate(projectId, type, locale)),
     ),
   );
 

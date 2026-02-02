@@ -8,11 +8,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Messaging,
-  MessagePriority,
-  SmtpEncryption,
-} from "@appwrite.io/console";
+import { Messaging } from "@appwrite.io/console";
 
 let messagingClient: Messaging | null = null;
 
@@ -153,7 +149,7 @@ messaging
   .action(
     actionRunner(
       async ({ messageId, title, body, topics, users, targets, data, action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority }) =>
-        parse(await (await getMessagingClient()).createPush(messageId, title, body, topics, users, targets, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority as MessagePriority)),
+        parse(await (await getMessagingClient()).createPush(messageId, title, body, topics, users, targets, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority)),
     ),
   );
 
@@ -198,7 +194,7 @@ messaging
   .action(
     actionRunner(
       async ({ messageId, topics, users, targets, title, body, data, action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority }) =>
-        parse(await (await getMessagingClient()).updatePush(messageId, topics, users, targets, title, body, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority as MessagePriority)),
+        parse(await (await getMessagingClient()).updatePush(messageId, topics, users, targets, title, body, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority)),
     ),
   );
 
@@ -642,7 +638,7 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, host, port, username, password, encryption, autoTls, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
-        parse(await (await getMessagingClient()).createSmtpProvider(providerId, name, host, port, username, password, encryption as SmtpEncryption, autoTls, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled)),
+        parse(await (await getMessagingClient()).createSmtpProvider(providerId, name, host, port, username, password, encryption, autoTls, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 
@@ -676,7 +672,7 @@ messaging
   .action(
     actionRunner(
       async ({ providerId, name, host, port, username, password, encryption, autoTls, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
-        parse(await (await getMessagingClient()).updateSmtpProvider(providerId, name, host, port, username, password, encryption as SmtpEncryption, autoTls, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled)),
+        parse(await (await getMessagingClient()).updateSmtpProvider(providerId, name, host, port, username, password, encryption, autoTls, mailer, fromName, fromEmail, replyToName, replyToEmail, enabled)),
     ),
   );
 

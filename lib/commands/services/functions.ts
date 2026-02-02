@@ -9,15 +9,7 @@ import {
   parseBool,
   parseInteger,
 } from "../../parser.js";
-import {
-  Functions,
-  Runtime,
-  UsageRange,
-  TemplateReferenceType,
-  VCSReferenceType,
-  DeploymentDownloadType,
-  ExecutionMethod,
-} from "@appwrite.io/console";
+import { Functions } from "@appwrite.io/console";
 
 let functionsClient: Functions | null = null;
 
@@ -92,7 +84,7 @@ functions
   .action(
     actionRunner(
       async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getFunctionsClient()).create(functionId, name, runtime as Runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
     ),
   );
 
@@ -152,7 +144,7 @@ functions
   .action(
     actionRunner(
       async ({ range }) =>
-        parse(await (await getFunctionsClient()).listUsage(range as UsageRange)),
+        parse(await (await getFunctionsClient()).listUsage(range)),
     ),
   );
 
@@ -206,7 +198,7 @@ functions
   .action(
     actionRunner(
       async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getFunctionsClient()).update(functionId, name, runtime as Runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+        parse(await (await getFunctionsClient()).update(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
     ),
   );
 
@@ -304,7 +296,7 @@ Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/p
   .action(
     actionRunner(
       async ({ functionId, repository, owner, rootDirectory, type, reference, activate }) =>
-        parse(await (await getFunctionsClient()).createTemplateDeployment(functionId, repository, owner, rootDirectory, type as TemplateReferenceType, reference, activate)),
+        parse(await (await getFunctionsClient()).createTemplateDeployment(functionId, repository, owner, rootDirectory, type, reference, activate)),
     ),
   );
 
@@ -325,7 +317,7 @@ This endpoint lets you create deployment from a branch, commit, or a tag.`)
   .action(
     actionRunner(
       async ({ functionId, type, reference, activate }) =>
-        parse(await (await getFunctionsClient()).createVcsDeployment(functionId, type as VCSReferenceType, reference, activate)),
+        parse(await (await getFunctionsClient()).createVcsDeployment(functionId, type, reference, activate)),
     ),
   );
 
@@ -363,7 +355,7 @@ functions
   .action(
     actionRunner(
       async ({ functionId, deploymentId, type, destination }) => {
-        const url = await (await getFunctionsClient()).getDeploymentDownload(functionId, deploymentId, type as DeploymentDownloadType);
+        const url = await (await getFunctionsClient()).getDeploymentDownload(functionId, deploymentId, type);
         const response = await fetch(url);
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
@@ -420,7 +412,7 @@ functions
   .action(
     actionRunner(
       async ({ functionId, body, async, path, method, headers, scheduledAt }) =>
-        parse(await (await getFunctionsClient()).createExecution(functionId, body, async, path, method as ExecutionMethod, JSON.parse(headers), scheduledAt)),
+        parse(await (await getFunctionsClient()).createExecution(functionId, body, async, path, method, JSON.parse(headers), scheduledAt)),
     ),
   );
 
@@ -456,7 +448,7 @@ functions
   .action(
     actionRunner(
       async ({ functionId, range }) =>
-        parse(await (await getFunctionsClient()).getUsage(functionId, range as UsageRange)),
+        parse(await (await getFunctionsClient()).getUsage(functionId, range)),
     ),
   );
 
