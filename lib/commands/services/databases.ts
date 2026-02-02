@@ -626,6 +626,84 @@ databases
   );
 
 databases
+  .command(`create-longtext-attribute`)
+  .description(`Create a longtext attribute.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(
+    `--array [value]`,
+    `Is attribute an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, array }) =>
+        parse(await (await getDatabasesClient()).createLongtextAttribute(databaseId, collectionId, key, required, xdefault, array)),
+    ),
+  );
+
+databases
+  .command(`update-longtext-attribute`)
+  .description(`Update a longtext attribute. Changing the \`default\` value will not update already existing documents.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(`--new-key <new-key>`, `New Attribute Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, newKey }) =>
+        parse(await (await getDatabasesClient()).updateLongtextAttribute(databaseId, collectionId, key, required, xdefault, newKey)),
+    ),
+  );
+
+databases
+  .command(`create-mediumtext-attribute`)
+  .description(`Create a mediumtext attribute.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(
+    `--array [value]`,
+    `Is attribute an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, array }) =>
+        parse(await (await getDatabasesClient()).createMediumtextAttribute(databaseId, collectionId, key, required, xdefault, array)),
+    ),
+  );
+
+databases
+  .command(`update-mediumtext-attribute`)
+  .description(`Update a mediumtext attribute. Changing the \`default\` value will not update already existing documents.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(`--new-key <new-key>`, `New Attribute Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, newKey }) =>
+        parse(await (await getDatabasesClient()).updateMediumtextAttribute(databaseId, collectionId, key, required, xdefault, newKey)),
+    ),
+  );
+
+databases
   .command(`create-point-attribute`)
   .description(`Create a geometric point attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -759,6 +837,45 @@ databases
   );
 
 databases
+  .command(`create-text-attribute`)
+  .description(`Create a text attribute.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(
+    `--array [value]`,
+    `Is attribute an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, array }) =>
+        parse(await (await getDatabasesClient()).createTextAttribute(databaseId, collectionId, key, required, xdefault, array)),
+    ),
+  );
+
+databases
+  .command(`update-text-attribute`)
+  .description(`Update a text attribute. Changing the \`default\` value will not update already existing documents.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(`--new-key <new-key>`, `New Attribute Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, newKey }) =>
+        parse(await (await getDatabasesClient()).updateTextAttribute(databaseId, collectionId, key, required, xdefault, newKey)),
+    ),
+  );
+
+databases
   .command(`create-url-attribute`)
   .description(`Create a URL attribute.
 `)
@@ -794,6 +911,47 @@ databases
     actionRunner(
       async ({ databaseId, collectionId, key, required, xdefault, newKey }) =>
         parse(await (await getDatabasesClient()).updateUrlAttribute(databaseId, collectionId, key, required, xdefault, newKey)),
+    ),
+  );
+
+databases
+  .command(`create-varchar-attribute`)
+  .description(`Create a varchar attribute.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--size <size>`, `Attribute size for varchar attributes, in number of characters. Maximum size is 16381.`, parseInteger)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(
+    `--array [value]`,
+    `Is attribute an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, size, required, xdefault, array }) =>
+        parse(await (await getDatabasesClient()).createVarcharAttribute(databaseId, collectionId, key, size, required, xdefault, array)),
+    ),
+  );
+
+databases
+  .command(`update-varchar-attribute`)
+  .description(`Update a varchar attribute. Changing the \`default\` value will not update already existing documents.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
+  .option(`--size <size>`, `Maximum size of the varchar attribute.`, parseInteger)
+  .option(`--new-key <new-key>`, `New Attribute Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, size, newKey }) =>
+        parse(await (await getDatabasesClient()).updateVarcharAttribute(databaseId, collectionId, key, required, xdefault, size, newKey)),
     ),
   );
 

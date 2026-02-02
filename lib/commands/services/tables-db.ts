@@ -625,6 +625,84 @@ tablesDB
   );
 
 tablesDB
+  .command(`create-longtext-column`)
+  .description(`Create a longtext column.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(
+    `--array [value]`,
+    `Is column an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createLongtextColumn(databaseId, tableId, key, required, xdefault, array)),
+    ),
+  );
+
+tablesDB
+  .command(`update-longtext-column`)
+  .description(`Update a longtext column. Changing the \`default\` value will not update already existing rows.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateLongtextColumn(databaseId, tableId, key, required, xdefault, newKey)),
+    ),
+  );
+
+tablesDB
+  .command(`create-mediumtext-column`)
+  .description(`Create a mediumtext column.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(
+    `--array [value]`,
+    `Is column an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createMediumtextColumn(databaseId, tableId, key, required, xdefault, array)),
+    ),
+  );
+
+tablesDB
+  .command(`update-mediumtext-column`)
+  .description(`Update a mediumtext column. Changing the \`default\` value will not update already existing rows.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateMediumtextColumn(databaseId, tableId, key, required, xdefault, newKey)),
+    ),
+  );
+
+tablesDB
   .command(`create-point-column`)
   .description(`Create a geometric point column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -758,6 +836,45 @@ tablesDB
   );
 
 tablesDB
+  .command(`create-text-column`)
+  .description(`Create a text column.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(
+    `--array [value]`,
+    `Is column an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createTextColumn(databaseId, tableId, key, required, xdefault, array)),
+    ),
+  );
+
+tablesDB
+  .command(`update-text-column`)
+  .description(`Update a text column. Changing the \`default\` value will not update already existing rows.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(`--new-key <new-key>`, `New Column Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
+        parse(await (await getTablesDBClient()).updateTextColumn(databaseId, tableId, key, required, xdefault, newKey)),
+    ),
+  );
+
+tablesDB
   .command(`create-url-column`)
   .description(`Create a URL column.
 `)
@@ -793,6 +910,47 @@ tablesDB
     actionRunner(
       async ({ databaseId, tableId, key, required, xdefault, newKey }) =>
         parse(await (await getTablesDBClient()).updateUrlColumn(databaseId, tableId, key, required, xdefault, newKey)),
+    ),
+  );
+
+tablesDB
+  .command(`create-varchar-column`)
+  .description(`Create a varchar column.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--size <size>`, `Column size for varchar columns, in number of characters. Maximum size is 16381.`, parseInteger)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(
+    `--array [value]`,
+    `Is column an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, size, required, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createVarcharColumn(databaseId, tableId, key, size, required, xdefault, array)),
+    ),
+  );
+
+tablesDB
+  .command(`update-varchar-column`)
+  .description(`Update a varchar column. Changing the \`default\` value will not update already existing rows.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
+  .option(`--size <size>`, `Maximum size of the varchar column.`, parseInteger)
+  .option(`--new-key <new-key>`, `New Column Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, size, newKey }) =>
+        parse(await (await getTablesDBClient()).updateVarcharColumn(databaseId, tableId, key, required, xdefault, size, newKey)),
     ),
   );
 
