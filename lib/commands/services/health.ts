@@ -94,6 +94,28 @@ health
   );
 
 health
+  .command(`get-queue-billing-project-aggregation`)
+  .description(`Get billing project aggregation queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueBillingProjectAggregation(threshold)),
+    ),
+  );
+
+health
+  .command(`get-queue-billing-team-aggregation`)
+  .description(`Get billing team aggregation queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueBillingTeamAggregation(threshold)),
+    ),
+  );
+
+health
   .command(`get-queue-builds`)
   .description(`Get the number of builds that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -101,6 +123,17 @@ health
     actionRunner(
       async ({ threshold }) =>
         parse(await (await getHealthClient()).getQueueBuilds(threshold)),
+    ),
+  );
+
+health
+  .command(`get-queue-priority-builds`)
+  .description(`Get the priority builds queue size.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 500.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueuePriorityBuilds(threshold)),
     ),
   );
 
@@ -207,6 +240,17 @@ health
   );
 
 health
+  .command(`get-queue-region-manager`)
+  .description(`Get region manager queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 100.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueRegionManager(threshold)),
+    ),
+  );
+
+health
   .command(`get-queue-stats-resources`)
   .description(`Get the number of metrics that are waiting to be processed in the Appwrite stats resources queue.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -225,6 +269,17 @@ health
     actionRunner(
       async ({ threshold }) =>
         parse(await (await getHealthClient()).getQueueUsage(threshold)),
+    ),
+  );
+
+health
+  .command(`get-queue-threats`)
+  .description(`Get threats queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 100.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueThreats(threshold)),
     ),
   );
 

@@ -587,6 +587,18 @@ projects
   );
 
 projects
+  .command(`update-status`)
+  .description(`Update the status of a project`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .requiredOption(`--status <status>`, `New status for the project`)
+  .action(
+    actionRunner(
+      async ({ projectId, status }) =>
+        parse(await (await getProjectsClient()).updateStatus(projectId, status)),
+    ),
+  );
+
+projects
   .command(`update-team`)
   .description(`Update the team ID of a project allowing for it to be transferred to another team.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)

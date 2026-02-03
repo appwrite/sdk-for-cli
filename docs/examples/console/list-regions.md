@@ -1,0 +1,1 @@
+appwrite console list-regions
