@@ -1,7 +1,7 @@
 // SDK
 export const SDK_TITLE = 'Appwrite';
 export const SDK_TITLE_LOWER = 'appwrite';
-export const SDK_VERSION = '13.3.0';
+export const SDK_VERSION = '13.3.1';
 export const SDK_NAME = 'Command Line';
 export const SDK_PLATFORM = 'console';
 export const SDK_LANGUAGE = 'cli';
