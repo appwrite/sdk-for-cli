@@ -25,17 +25,14 @@ import { update } from './lib/commands/update.js';
 import { generate } from './lib/commands/generate.js';
 
 import { account } from './lib/commands/services/account.js';
-import { backups } from './lib/commands/services/backups.js';
 import { console } from './lib/commands/services/console.js';
 import { databases } from './lib/commands/services/databases.js';
-import { domains } from './lib/commands/services/domains.js';
 import { functions } from './lib/commands/services/functions.js';
 import { graphql } from './lib/commands/services/graphql.js';
 import { health } from './lib/commands/services/health.js';
 import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
-import { organizations } from './lib/commands/services/organizations.js';
 import { project } from './lib/commands/services/project.js';
 import { projects } from './lib/commands/services/projects.js';
 import { proxy } from './lib/commands/services/proxy.js';
@@ -137,17 +134,14 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(generate)
         .addCommand(logout)
         .addCommand(account)
-        .addCommand(backups)
         .addCommand(console)
         .addCommand(databases)
-        .addCommand(domains)
         .addCommand(functions)
         .addCommand(graphql)
         .addCommand(health)
         .addCommand(locale)
         .addCommand(messaging)
         .addCommand(migrations)
-        .addCommand(organizations)
         .addCommand(project)
         .addCommand(projects)
         .addCommand(proxy)
