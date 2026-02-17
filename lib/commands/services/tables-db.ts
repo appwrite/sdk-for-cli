@@ -639,10 +639,16 @@ tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xdefault, array }) =>
-        parse(await (await getTablesDBClient()).createLongtextColumn(databaseId, tableId, key, required, xdefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array, encrypt }) =>
+        parse(await (await getTablesDBClient()).createLongtextColumn(databaseId, tableId, key, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -678,10 +684,16 @@ tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xdefault, array }) =>
-        parse(await (await getTablesDBClient()).createMediumtextColumn(databaseId, tableId, key, required, xdefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array, encrypt }) =>
+        parse(await (await getTablesDBClient()).createMediumtextColumn(databaseId, tableId, key, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -850,10 +862,16 @@ tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, required, xdefault, array }) =>
-        parse(await (await getTablesDBClient()).createTextColumn(databaseId, tableId, key, required, xdefault, array)),
+      async ({ databaseId, tableId, key, required, xdefault, array, encrypt }) =>
+        parse(await (await getTablesDBClient()).createTextColumn(databaseId, tableId, key, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -929,10 +947,16 @@ tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, key, size, required, xdefault, array }) =>
-        parse(await (await getTablesDBClient()).createVarcharColumn(databaseId, tableId, key, size, required, xdefault, array)),
+      async ({ databaseId, tableId, key, size, required, xdefault, array, encrypt }) =>
+        parse(await (await getTablesDBClient()).createVarcharColumn(databaseId, tableId, key, size, required, xdefault, array, encrypt)),
     ),
   );
 

@@ -350,6 +350,7 @@ projects
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current project. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -358,8 +359,8 @@ projects
   )
   .action(
     actionRunner(
-      async ({ projectId, total }) =>
-        parse(await (await getProjectsClient()).listKeys(projectId, total)),
+      async ({ projectId, queries, total }) =>
+        parse(await (await getProjectsClient()).listKeys(projectId, queries, total)),
     ),
   );
 
@@ -369,11 +370,12 @@ projects
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
+  .option(`--key-id <key-id>`, `Key ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .option(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
-      async ({ projectId, name, scopes, expire }) =>
-        parse(await (await getProjectsClient()).createKey(projectId, name, scopes, expire)),
+      async ({ projectId, name, scopes, keyId, expire }) =>
+        parse(await (await getProjectsClient()).createKey(projectId, name, scopes, keyId, expire)),
     ),
   );
 
