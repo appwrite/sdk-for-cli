@@ -640,10 +640,16 @@ databases
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, collectionId, key, required, xdefault, array }) =>
-        parse(await (await getDatabasesClient()).createLongtextAttribute(databaseId, collectionId, key, required, xdefault, array)),
+      async ({ databaseId, collectionId, key, required, xdefault, array, encrypt }) =>
+        parse(await (await getDatabasesClient()).createLongtextAttribute(databaseId, collectionId, key, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -679,10 +685,16 @@ databases
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, collectionId, key, required, xdefault, array }) =>
-        parse(await (await getDatabasesClient()).createMediumtextAttribute(databaseId, collectionId, key, required, xdefault, array)),
+      async ({ databaseId, collectionId, key, required, xdefault, array, encrypt }) =>
+        parse(await (await getDatabasesClient()).createMediumtextAttribute(databaseId, collectionId, key, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -851,10 +863,16 @@ databases
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, collectionId, key, required, xdefault, array }) =>
-        parse(await (await getDatabasesClient()).createTextAttribute(databaseId, collectionId, key, required, xdefault, array)),
+      async ({ databaseId, collectionId, key, required, xdefault, array, encrypt }) =>
+        parse(await (await getDatabasesClient()).createTextAttribute(databaseId, collectionId, key, required, xdefault, array, encrypt)),
     ),
   );
 
@@ -930,10 +948,16 @@ databases
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--encrypt [value]`,
+    `Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, collectionId, key, size, required, xdefault, array }) =>
-        parse(await (await getDatabasesClient()).createVarcharAttribute(databaseId, collectionId, key, size, required, xdefault, array)),
+      async ({ databaseId, collectionId, key, size, required, xdefault, array, encrypt }) =>
+        parse(await (await getDatabasesClient()).createVarcharAttribute(databaseId, collectionId, key, size, required, xdefault, array, encrypt)),
     ),
   );
 
