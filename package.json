@@ -3,7 +3,7 @@
   "type": "module",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstracts and simplifies complex and repetitive development tasks behind a very simple REST API",
-  "version": "13.4.0",
+  "version": "13.4.1",
   "license": "BSD-3-Clause",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
