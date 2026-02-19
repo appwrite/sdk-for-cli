@@ -524,6 +524,57 @@ projects
   );
 
 projects
+  .command(`list-schedules`)
+  .description(`Get a list of all the project's schedules. You can use the query params to filter your results.`)
+  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: resourceType, resourceId, projectId, schedule, active, region`)
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ projectId, queries, total }) =>
+        parse(await (await getProjectsClient()).listSchedules(projectId, queries, total)),
+    ),
+  );
+
+projects
+  .command(`create-schedule`)
+  .description(`Create a new schedule for a resource.`)
+  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .requiredOption(`--resource-type <resource-type>`, `The resource type for the schedule. Possible values: function, execution, message.`)
+  .requiredOption(`--resource-id <resource-id>`, `The resource ID to associate with this schedule.`)
+  .requiredOption(`--schedule <schedule>`, `Schedule CRON expression.`)
+  .option(
+    `--active [value]`,
+    `Whether the schedule is active.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--data <data>`, `Schedule data as a JSON string. Used to store resource-specific context needed for execution.`)
+  .action(
+    actionRunner(
+      async ({ projectId, resourceType, resourceId, schedule, active, data }) =>
+        parse(await (await getProjectsClient()).createSchedule(projectId, resourceType, resourceId, schedule, active, JSON.parse(data))),
+    ),
+  );
+
+projects
+  .command(`get-schedule`)
+  .description(`Get a schedule by its unique ID.`)
+  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .requiredOption(`--schedule-id <schedule-id>`, `Schedule ID.`)
+  .action(
+    actionRunner(
+      async ({ projectId, scheduleId }) =>
+        parse(await (await getProjectsClient()).getSchedule(projectId, scheduleId)),
+    ),
+  );
+
+projects
   .command(`update-service-status`)
   .description(`Update the status of a specific service. Use this endpoint to enable or disable a service in your project. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
