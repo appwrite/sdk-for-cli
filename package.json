@@ -3,7 +3,7 @@
   "type": "module",
   "homepage": "https://appwrite.io/support",
   "description": "Appwrite is an open-source self-hosted backend server that abstracts and simplifies complex and repetitive development tasks behind a very simple REST API",
-  "version": "13.5.0",
+  "version": "13.4.0",
   "license": "BSD-3-Clause",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -46,7 +46,7 @@
     "windows-arm64": "esbuild cli.ts --bundle --loader:.hbs=text --platform=node --target=node18 --format=esm --external:fsevents --outfile=dist/bundle-win-arm64.mjs && pkg dist/bundle-win-arm64.mjs -t node18-win-arm64 -o build/appwrite-cli-win-arm64.exe"
   },
   "dependencies": {
-    "@appwrite.io/console": "^2.3.1",
+    "@appwrite.io/console": "^3.0.0",
     "chalk": "4.1.2",
     "chokidar": "^3.6.0",
     "cli-progress": "^3.12.0",
