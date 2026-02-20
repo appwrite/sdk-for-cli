@@ -37,7 +37,7 @@
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",
     "generate": "tsx scripts/generate-commands.ts",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bun test",
     "linux-x64": "bun build cli.ts --compile --sourcemap=inline --target=bun-linux-x64 --outfile build/appwrite-cli-linux-x64",
     "linux-arm64": "bun build cli.ts --compile --sourcemap=inline --target=bun-linux-arm64 --outfile build/appwrite-cli-linux-arm64",
     "mac-x64": "bun build cli.ts --compile --sourcemap=inline --target=bun-darwin-x64 --outfile build/appwrite-cli-darwin-x64",

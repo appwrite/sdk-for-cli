@@ -4,6 +4,7 @@ import { KeysAttributes } from "../../config.js";
 import { log, success, error, cliConfig, drawTable } from "../../parser.js";
 import { Pools } from "./pools.js";
 import inquirer from "inquirer";
+import type { Client } from "@appwrite.io/console";
 
 const changeableKeys = [
   "status",
@@ -53,11 +54,16 @@ const questionPushChangesConfirmation = [
 export class Attributes {
   private pools: Pools;
   private skipConfirmation: boolean;
+  private projectClient?: Client;
 
-  constructor(pools?: Pools, skipConfirmation = false) {
-    this.pools = pools || new Pools();
+  constructor(pools?: Pools, skipConfirmation = false, projectClient?: Client) {
+    this.pools = pools || new Pools(undefined, projectClient);
     this.skipConfirmation = skipConfirmation;
+    this.projectClient = projectClient;
   }
+
+  private getDatabasesService = async () =>
+    getDatabasesService(this.projectClient);
 
   private getConfirmation = async (): Promise<boolean> => {
     if (cliConfig.force || this.skipConfirmation) {
@@ -197,7 +203,7 @@ export class Attributes {
     collectionId: string,
     attribute: any,
   ): Promise<any> => {
-    const databasesService = await getDatabasesService();
+    const databasesService = await this.getDatabasesService();
     switch (attribute.type) {
       case "string":
         switch (attribute.format) {
@@ -373,7 +379,7 @@ export class Attributes {
     collectionId: string,
     attribute: any,
   ): Promise<any> => {
-    const databasesService = await getDatabasesService();
+    const databasesService = await this.getDatabasesService();
     switch (attribute.type) {
       case "string":
         switch (attribute.format) {
@@ -533,7 +539,7 @@ export class Attributes {
       `Deleting ${isIndex ? "index" : "attribute"} ${attribute.key} of ${collection.name} ( ${collection["$id"]} )`,
     );
 
-    const databasesService = await getDatabasesService();
+    const databasesService = await this.getDatabasesService();
     if (isIndex) {
       await databasesService.deleteIndex(
         collection["databaseId"],
@@ -733,7 +739,7 @@ export class Attributes {
   ): Promise<void> => {
     log(`Creating indexes ...`);
 
-    const databasesService = await getDatabasesService();
+    const databasesService = await this.getDatabasesService();
     for (let index of indexes) {
       await databasesService.createIndex({
         databaseId: collection["databaseId"],
