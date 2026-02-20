@@ -1373,8 +1373,12 @@ export class Push {
   }> {
     const { attempts, skipConfirmation = false } = options;
     const pollMaxDebounces = attempts ?? POLL_DEFAULT_VALUE;
-    const pools = new Pools(pollMaxDebounces);
-    const attributes = new Attributes(pools, skipConfirmation);
+    const pools = new Pools(pollMaxDebounces, this.projectClient);
+    const attributes = new Attributes(
+      pools,
+      skipConfirmation,
+      this.projectClient,
+    );
 
     let tablesChanged = new Set();
     const errors: any[] = [];
@@ -1506,8 +1510,12 @@ export class Push {
     errors: Error[];
   }> {
     const { skipConfirmation = false } = options;
-    const pools = new Pools(POLL_DEFAULT_VALUE);
-    const attributesHelper = new Attributes(pools, skipConfirmation);
+    const pools = new Pools(POLL_DEFAULT_VALUE, this.projectClient);
+    const attributesHelper = new Attributes(
+      pools,
+      skipConfirmation,
+      this.projectClient,
+    );
 
     const errors: Error[] = [];
 
