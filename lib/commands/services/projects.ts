@@ -545,7 +545,7 @@ projects
   .command(`create-schedule`)
   .description(`Create a new schedule for a resource.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--resource-type <resource-type>`, `The resource type for the schedule. Possible values: function, execution, message.`)
+  .requiredOption(`--resource-type <resource-type>`, `The resource type for the schedule. Possible values: function, execution, message, backup.`)
   .requiredOption(`--resource-id <resource-id>`, `The resource ID to associate with this schedule.`)
   .requiredOption(`--schedule <schedule>`, `Schedule CRON expression.`)
   .option(
