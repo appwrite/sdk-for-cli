@@ -1,14 +1,14 @@
 # Change Log
 
-## 13.5.0
+## 13.4.1
 
-* New: Added CLI commands under projects: `list-schedules`, `create-schedule`, and `get-schedule` for managing project schedules.
-* Packaging/build: Updated packaging to support explicit ESM/CJS outputs with exports. main now points to dist/index.cjs, module to dist/index.js, and exports include type and entry-point mappings. This enables better compatibility for both ESM and CommonJS users.
+* Fix very large double values (for example 1.7976931348623157e+308) from being expanded into giant integer literals
 
 ## 13.4.0
 
 * Add `--queries` option to `list-keys` command
 * Add `--key-id` option to `create-key` command
+* Add support for the new `Backups` service
 * Add `encrypt` param support to new string type attributes
 * Fix `bignumber.js` bundler conflict by removing direct dependency in favor of transitive dependency from `json-bigint`
 * Fix missing region in console failUrl for failed deployments
