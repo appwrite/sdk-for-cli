@@ -1,8 +1,18 @@
 # Change Log
 
-## 13.4.1
+## 13.6.0
 
-* Fix very large double values (for example 1.7976931348623157e+308) from being expanded into giant integer literals
+* Fix large double values (e.g. `1.7976931348623157e+308`) being expanded into huge integer literals.
+* Added `activities` command with `list-events` and `get-event`.
+* Added `backups` command with full support for archives, policies, and restorations.
+* Added account billing commands (addresses, coupons, invoices).
+* Added account API key management commands.
+* Added account payment method management commands (including provider and mandate updates).
+
+## 13.5.0
+
+* New: Added CLI commands under projects: `list-schedules`, `create-schedule`, and `get-schedule` for managing project schedules.
+* Packaging/build: Updated packaging to support explicit ESM/CJS outputs with exports. main now points to dist/index.cjs, module to dist/index.js, and exports include type and entry-point mappings. This enables better compatibility for both ESM and CommonJS users.
 
 ## 13.4.0
 
