@@ -1,5 +1,9 @@
 # Change Log
 
+## 13.6.1
+
+* Fix ESLind warnings in generated files with `appwrite generate` command.
+
 ## 13.6.0
 
 * Fix large double values (e.g. `1.7976931348623157e+308`) being expanded into huge integer literals.
