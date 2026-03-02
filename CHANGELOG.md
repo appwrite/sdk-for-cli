@@ -1,5 +1,9 @@
 # Change Log
 
+## 13.6.2
+
+* No user-facing SDK changes.
+
 ## 13.6.1
 
 * Fix ESLind warnings in generated files with `appwrite generate` command.
