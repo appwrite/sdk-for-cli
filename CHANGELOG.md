@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.0.0
+
+{\n  "bump": "major",\n  "version": "14.0.0",\n  "changelog": [\n    "* Breaking: Changed createDeployment signature; activate option now optional with default true; parameter order updated",\n    "* Added TTL option for cached query results in listDocuments and listRows",\n    "* Added get-console-pausing health status command",\n    "* Added project management commands: update-console-access and update-status",\n    "* Updated site deployment docs to reflect new activate option",\n    "* Updated role length limit for teams to 81 characters",\n    "* Added appwriteImportSource and importExtension options to code generator"\n  ]\n}
+
 ## 13.6.1
 
 * Fix ESLind warnings in generated files with `appwrite generate` command.
