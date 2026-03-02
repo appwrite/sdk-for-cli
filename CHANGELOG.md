@@ -1,5 +1,13 @@
 # Change Log
 
+## 13.5.3
+
+* No user-facing SDK changes.
+
+## 13.5.2
+
+* No user-facing SDK changes.
+
 ## 13.5.1
 
 * No user-facing SDK changes.
