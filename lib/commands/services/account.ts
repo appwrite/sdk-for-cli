@@ -201,7 +201,7 @@ account
 
 account
   .command(`list-keys`)
-  .description(`Get a list of all API keys from the current account. `)
+  .description(`Get a list of all API keys from the current account.`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,

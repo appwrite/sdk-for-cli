@@ -65,6 +65,19 @@ health
   );
 
 health
+  .command(`get-console-pausing`)
+  .description(`Get console pausing health status. Monitors projects approaching the pause threshold to detect potential issues with console access tracking.
+`)
+  .option(`--threshold <threshold>`, `Percentage threshold of projects approaching pause. When hit (equal or higher), endpoint returns server error. Default value is 10.`, parseInteger)
+  .option(`--inactivity-days <inactivity-days>`, `Number of days of inactivity before a project is paused. Should match the plan's projectInactivityDays setting. Default value is 7.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold, inactivityDays }) =>
+        parse(await (await getHealthClient()).getConsolePausing(threshold, inactivityDays)),
+    ),
+  );
+
+health
   .command(`get-db`)
   .description(`Check the Appwrite database servers are up and connection is successful.`)
   .action(

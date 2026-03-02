@@ -243,14 +243,19 @@ sites
   .description(`Create a new site code deployment. Use this endpoint to upload a new version of your site code. To activate your newly uploaded code, you'll need to update the site's deployment to use your new deployment ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
   .requiredOption(`--code <code>`, `Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.`)
-  .requiredOption(`--activate <activate>`, `Automatically activate the deployment when it is finished building.`, parseBool)
   .option(`--install-command <install-command>`, `Install Commands.`)
   .option(`--build-command <build-command>`, `Build Commands.`)
   .option(`--output-directory <output-directory>`, `Output Directory.`)
+  .option(
+    `--activate [value]`,
+    `Automatically activate the deployment when it is finished building.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ siteId, code, activate, installCommand, buildCommand, outputDirectory }) =>
-        parse(await (await getSitesClient()).createDeployment(siteId, code, activate, installCommand, buildCommand, outputDirectory)),
+      async ({ siteId, code, installCommand, buildCommand, outputDirectory, activate }) =>
+        parse(await (await getSitesClient()).createDeployment(siteId, code, installCommand, buildCommand, outputDirectory, activate)),
     ),
   );
 
