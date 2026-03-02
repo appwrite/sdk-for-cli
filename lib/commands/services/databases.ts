@@ -314,7 +314,7 @@ databases
   .description(`Create a boolean attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(
@@ -802,22 +802,6 @@ databases
   );
 
 databases
-  .command(`update-relationship-attribute`)
-  .description(`Update relationship attribute. [Learn more about relationship attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
-`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
-  .requiredOption(`--key <key>`, `Attribute Key.`)
-  .option(`--on-delete <on-delete>`, `Constraints option`)
-  .option(`--new-key <new-key>`, `New Attribute Key.`)
-  .action(
-    actionRunner(
-      async ({ databaseId, collectionId, key, onDelete, newKey }) =>
-        parse(await (await getDatabasesClient()).updateRelationshipAttribute(databaseId, collectionId, key, onDelete, newKey)),
-    ),
-  );
-
-databases
   .command(`create-string-attribute`)
   .description(`Create a string attribute.
 `)
@@ -1022,6 +1006,22 @@ databases
   );
 
 databases
+  .command(`update-relationship-attribute`)
+  .description(`Update relationship attribute. [Learn more about relationship attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .option(`--on-delete <on-delete>`, `Constraints option`)
+  .option(`--new-key <new-key>`, `New Attribute Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, onDelete, newKey }) =>
+        parse(await (await getDatabasesClient()).updateRelationshipAttribute(databaseId, collectionId, key, onDelete, newKey)),
+    ),
+  );
+
+databases
   .command(`list-documents`)
   .description(`Get a list of all the user's documents in a given collection. You can use the query params to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1034,11 +1034,10 @@ databases
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--ttl <ttl>`, `TTL (seconds) for cached responses when caching is enabled for select queries. Must be between 0 and 86400 (24 hours).`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, collectionId, queries, transactionId, total, ttl }) =>
-        parse(await (await getDatabasesClient()).listDocuments(databaseId, collectionId, queries, transactionId, total, ttl)),
+      async ({ databaseId, collectionId, queries, transactionId, total }) =>
+        parse(await (await getDatabasesClient()).listDocuments(databaseId, collectionId, queries, transactionId, total)),
     ),
   );
 

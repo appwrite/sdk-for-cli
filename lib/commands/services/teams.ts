@@ -139,7 +139,7 @@ Use the \`url\` parameter to redirect the user from the invitation email to your
 Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) Appwrite will accept the only redirect URLs under the domains you have added as a platform on the Appwrite Console.
 `)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
-  .requiredOption(`--roles [roles...]`, `Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.`)
+  .requiredOption(`--roles [roles...]`, `Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.`)
   .option(`--email <email>`, `Email of the new team member.`)
   .option(`--user-id <user-id>`, `ID of the user to be added to a team.`)
   .option(`--phone <phone>`, `Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
@@ -170,7 +170,7 @@ teams
 `)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
   .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
-  .requiredOption(`--roles [roles...]`, `An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.`)
+  .requiredOption(`--roles [roles...]`, `An array of strings. Use this param to set the user's roles in the team. A role can be any string. Learn more about [roles and permissions](https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.`)
   .action(
     actionRunner(
       async ({ teamId, membershipId, roles }) =>

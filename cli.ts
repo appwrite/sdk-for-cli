@@ -25,8 +25,7 @@ import { update } from './lib/commands/update.js';
 import { generate } from './lib/commands/generate.js';
 
 import { account } from './lib/commands/services/account.js';
-import { activities } from './lib/commands/services/activities.js';
-import { backups } from './lib/commands/services/backups.js';
+import { console } from './lib/commands/services/console.js';
 import { databases } from './lib/commands/services/databases.js';
 import { functions } from './lib/commands/services/functions.js';
 import { graphql } from './lib/commands/services/graphql.js';
@@ -135,8 +134,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(generate)
         .addCommand(logout)
         .addCommand(account)
-        .addCommand(activities)
-        .addCommand(backups)
+        .addCommand(console)
         .addCommand(databases)
         .addCommand(functions)
         .addCommand(graphql)
