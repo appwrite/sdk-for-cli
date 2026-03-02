@@ -1,17 +1,5 @@
 # Change Log
 
-## 13.5.3
-
-* No user-facing SDK changes.
-
-## 13.5.2
-
-* No user-facing SDK changes.
-
-## 13.5.1
-
-* No user-facing SDK changes.
-
 ## 13.5.0
 
 * New: Added CLI commands under projects: `list-schedules`, `create-schedule`, and `get-schedule` for managing project schedules.
