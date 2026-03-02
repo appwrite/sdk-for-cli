@@ -1109,10 +1109,11 @@ tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--ttl <ttl>`, `TTL (seconds) for cached responses when caching is enabled for select queries. Must be between 0 and 86400 (24 hours).`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, queries, transactionId, total }) =>
-        parse(await (await getTablesDBClient()).listRows(databaseId, tableId, queries, transactionId, total)),
+      async ({ databaseId, tableId, queries, transactionId, total, ttl }) =>
+        parse(await (await getTablesDBClient()).listRows(databaseId, tableId, queries, transactionId, total, ttl)),
     ),
   );
 
