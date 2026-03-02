@@ -65,6 +65,19 @@ health
   );
 
 health
+  .command(`get-console-pausing`)
+  .description(`Get console pausing health status. Monitors projects approaching the pause threshold to detect potential issues with console access tracking.
+`)
+  .option(`--threshold <threshold>`, `Percentage threshold of projects approaching pause. When hit (equal or higher), endpoint returns server error. Default value is 10.`, parseInteger)
+  .option(`--inactivity-days <inactivity-days>`, `Number of days of inactivity before a project is paused. Should match the plan's projectInactivityDays setting. Default value is 7.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold, inactivityDays }) =>
+        parse(await (await getHealthClient()).getConsolePausing(threshold, inactivityDays)),
+    ),
+  );
+
+health
   .command(`get-db`)
   .description(`Check the Appwrite database servers are up and connection is successful.`)
   .action(
@@ -94,6 +107,28 @@ health
   );
 
 health
+  .command(`get-queue-billing-project-aggregation`)
+  .description(`Get billing project aggregation queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueBillingProjectAggregation(threshold)),
+    ),
+  );
+
+health
+  .command(`get-queue-billing-team-aggregation`)
+  .description(`Get billing team aggregation queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueBillingTeamAggregation(threshold)),
+    ),
+  );
+
+health
   .command(`get-queue-builds`)
   .description(`Get the number of builds that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -101,6 +136,17 @@ health
     actionRunner(
       async ({ threshold }) =>
         parse(await (await getHealthClient()).getQueueBuilds(threshold)),
+    ),
+  );
+
+health
+  .command(`get-queue-priority-builds`)
+  .description(`Get the priority builds queue size.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 500.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueuePriorityBuilds(threshold)),
     ),
   );
 
@@ -207,6 +253,17 @@ health
   );
 
 health
+  .command(`get-queue-region-manager`)
+  .description(`Get region manager queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 100.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueRegionManager(threshold)),
+    ),
+  );
+
+health
   .command(`get-queue-stats-resources`)
   .description(`Get the number of metrics that are waiting to be processed in the Appwrite stats resources queue.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -225,6 +282,17 @@ health
     actionRunner(
       async ({ threshold }) =>
         parse(await (await getHealthClient()).getQueueUsage(threshold)),
+    ),
+  );
+
+health
+  .command(`get-queue-threats`)
+  .description(`Get threats queue.`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 100.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueThreats(threshold)),
     ),
   );
 
