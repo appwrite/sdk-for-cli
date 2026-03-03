@@ -52,11 +52,10 @@ jobs:
         with:
           bun-version: "latest"
 
-      - name: Setup binfmt and QEMU
-        run: |
-          sudo apt update
-          sudo apt install -y qemu binfmt-support qemu-user-static
-          update-binfmts --display
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: amd64,arm64
 
       - name: Setup ldid
         run: |
