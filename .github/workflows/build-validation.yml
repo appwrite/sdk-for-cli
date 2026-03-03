@@ -6,6 +6,8 @@ concurrency:
 
 on:
   pull_request:
+  push:
+  workflow_dispatch:
 
 jobs:
   verify-node-build:
