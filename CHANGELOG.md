@@ -1,5 +1,23 @@
 # Change Log
 
+## 15.0.0
+
+* Breaking: Removed legacy `account` commands (billing, keys, invoices)
+* Breaking: Replaced `activities`/`backups` with `console` service
+* Added: `list-schedules`, `create-schedule`, and `get-schedule` for projects
+* Added: `console get-resource` usage example
+* Added: `console variables` usage example
+* Updated: Docs to reflect new `console` service
+
+## 14.0.0
+
+* Breaking: Removed legacy `account` commands (billing, keys, invoices)
+* Breaking: Replaced `activities`/`backups` with `console` service
+* Added `list-schedules`, `create-schedule`, and `get-schedule` for projects
+* Added `console get-resource` usage example
+* Added `console variables` usage example
+* Updated docs to reflect new `console` service
+
 ## 13.5.0
 
 * New: Added CLI commands under projects: `list-schedules`, `create-schedule`, and `get-schedule` for managing project schedules.
