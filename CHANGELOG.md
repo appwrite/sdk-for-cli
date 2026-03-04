@@ -1,5 +1,11 @@
 # Change Log
 
+## 16.0.0
+
+* Breaking: Removed legacy `account` commands and replaced `activities`/`backups` with `console` service
+* Added `console get-resource` and `console variables` usage examples
+* Updated docs to reflect new `console` service
+
 ## 15.0.0
 
 * Breaking: Removed legacy `account` commands (billing, keys, invoices)
