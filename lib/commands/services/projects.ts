@@ -271,18 +271,6 @@ projects
   );
 
 projects
-  .command(`update-console-access`)
-  .description(`Record console access to a project. This endpoint updates the last accessed timestamp for the project to track console activity.
-`)
-  .requiredOption(`--project-id <project-id>`, `Project ID`)
-  .action(
-    actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getProjectsClient()).updateConsoleAccess(projectId)),
-    ),
-  );
-
-projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -557,7 +545,7 @@ projects
   .command(`create-schedule`)
   .description(`Create a new schedule for a resource.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--resource-type <resource-type>`, `The resource type for the schedule. Possible values: function, execution, message, backup.`)
+  .requiredOption(`--resource-type <resource-type>`, `The resource type for the schedule. Possible values: function, execution, message.`)
   .requiredOption(`--resource-id <resource-id>`, `The resource ID to associate with this schedule.`)
   .requiredOption(`--schedule <schedule>`, `Schedule CRON expression.`)
   .option(
@@ -648,19 +636,6 @@ projects
     actionRunner(
       async ({ projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure }) =>
         parse(await (await getProjectsClient()).createSmtpTest(projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure)),
-    ),
-  );
-
-projects
-  .command(`update-status`)
-  .description(`Update the status of a project. Can be used to archive/restore projects, and to restore paused projects. When restoring a paused project, the console fingerprint header must be provided and the project must not be blocked for any reason other than inactivity.
-`)
-  .requiredOption(`--project-id <project-id>`, `Project ID`)
-  .requiredOption(`--status <status>`, `New status for the project`)
-  .action(
-    actionRunner(
-      async ({ projectId, status }) =>
-        parse(await (await getProjectsClient()).updateStatus(projectId, status)),
     ),
   );
 

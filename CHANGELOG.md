@@ -1,28 +1,5 @@
 # Change Log
 
-## 14.0.0
-
-* Breaking: Changed createDeployment signature; activate option now optional with default true; parameter order updated
-* Added TTL option for cached query results in listDocuments and listRows
-* Added get-console-pausing health status command
-* Added project management commands: update-console-access and update-status
-* Updated site deployment docs to reflect new activate option
-* Updated role length limit for teams to 81 characters
-* Added appwriteImportSource and importExtension options to code generator
-
-## 13.6.1
-
-* Fix ESLind warnings in generated files with `appwrite generate` command.
-
-## 13.6.0
-
-* Fix large double values (e.g. `1.7976931348623157e+308`) being expanded into huge integer literals.
-* Added `activities` command with `list-events` and `get-event`.
-* Added `backups` command with full support for archives, policies, and restorations.
-* Added account billing commands (addresses, coupons, invoices).
-* Added account API key management commands.
-* Added account payment method management commands (including provider and mandate updates).
-
 ## 13.5.0
 
 * New: Added CLI commands under projects: `list-schedules`, `create-schedule`, and `get-schedule` for managing project schedules.
@@ -32,7 +9,6 @@
 
 * Add `--queries` option to `list-keys` command
 * Add `--key-id` option to `create-key` command
-* Add support for the new `Backups` service
 * Add `encrypt` param support to new string type attributes
 * Fix `bignumber.js` bundler conflict by removing direct dependency in favor of transitive dependency from `json-bigint`
 * Fix missing region in console failUrl for failed deployments

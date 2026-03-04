@@ -63,7 +63,7 @@ storage
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 5GB.`, parseInteger)
+  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 30MB.`, parseInteger)
   .option(`--allowed-file-extensions [allowed-file-extensions...]`, `Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.`)
   .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none,  [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
   .option(
@@ -120,7 +120,7 @@ storage
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 5GB.`, parseInteger)
+  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 30MB.`, parseInteger)
   .option(`--allowed-file-extensions [allowed-file-extensions...]`, `Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.`)
   .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none, [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
   .option(
