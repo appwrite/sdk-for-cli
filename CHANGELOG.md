@@ -1,5 +1,11 @@
 # Change Log
 
+## 14.1.0
+
+* Fix: Pass encrypt parameter for varchar, text, mediumtext, and longtext string types in push command
+* Fix: Update tar to v7.4.3 and use named imports
+* Fix: Add NVM installation path detection for update command
+
 ## 14.0.0
 
 * Breaking: Changed createDeployment signature; activate option now optional with default true; parameter order updated
