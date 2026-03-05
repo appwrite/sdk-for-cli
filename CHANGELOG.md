@@ -2,9 +2,9 @@
 
 ## 14.1.0
 
-* Fix: Pass encrypt parameter for varchar, text, mediumtext, and longtext string types in push command
-* Fix: Update tar to v7.4.3 and use named imports
-* Fix: Add NVM installation path detection for update command
+* Fixed `push tables` not passing `encrypt` parameter for varchar, text, mediumtext, and longtext string types
+* Fixed NVM installation path not being detected by `update` command
+* Updated `tar` dependency to v7.4.3
 
 ## 14.0.0
 
