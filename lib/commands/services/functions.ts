@@ -80,11 +80,13 @@ functions
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to function code in the linked repo.`)
-  .option(`--specification <specification>`, `Runtime specification for the function and builds.`)
+  .option(`--build-specification <build-specification>`, `Build specification for the function deployments.`)
+  .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the function executions.`)
+  .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 
@@ -194,11 +196,13 @@ functions
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to function code in the linked repo.`)
-  .option(`--specification <specification>`, `Runtime specification for the function and builds.`)
+  .option(`--build-specification <build-specification>`, `Build specification for the function deployments.`)
+  .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the function executions.`)
+  .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getFunctionsClient()).update(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getFunctionsClient()).update(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 

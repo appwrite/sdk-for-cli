@@ -1,11 +1,5 @@
 # Change Log
 
-## 14.0.1
-
-* Fixed `push tables` not passing `encrypt` parameter for varchar, text, mediumtext, and longtext string types
-* Fixed NVM installation path not being detected by `update` command
-* Updated `tar` dependency to v7.4.3
-
 ## 14.0.0
 
 * Breaking: Changed createDeployment signature; activate option now optional with default true; parameter order updated
