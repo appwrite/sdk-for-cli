@@ -2,11 +2,10 @@
 
 ## 15.0.0
 
-* Breaking: Replaced `specification` with `buildSpecification` and `runtimeSpecification`; added `deploymentRetention`
+* Breaking: Separated `specification` with `buildSpecification` and `runtimeSpecification`; added `deploymentRetention` to both functions and sites
 * Added `startCommand` option for sites
-* Updated `@appwrite.io/console` to `^5.0.0`
-* Updated prompts to select `buildSpecification` and `runtimeSpecification`
-* Fixed unauthorized guests error message to prompt login
+* Updated `init sites` prompts to select `buildSpecification` and `runtimeSpecification`
+* Improved unauthorized error messages
 
 ## 14.0.0
 
