@@ -67,6 +67,7 @@ sites
   .option(`--timeout <timeout>`, `Maximum request time in seconds.`, parseInteger)
   .option(`--install-command <install-command>`, `Install Command.`)
   .option(`--build-command <build-command>`, `Build Command.`)
+  .option(`--start-command <start-command>`, `Custom start command. Leave empty to use default.`)
   .option(`--output-directory <output-directory>`, `Output Directory for site.`)
   .option(`--adapter <adapter>`, `Framework adapter defining rendering strategy. Allowed values are: static, ssr`)
   .option(`--installation-id <installation-id>`, `Appwrite Installation ID for VCS (Version Control System) deployment.`)
@@ -80,11 +81,13 @@ sites
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to site code in the linked repo.`)
-  .option(`--specification <specification>`, `Framework specification for the site and builds.`)
+  .option(`--build-specification <build-specification>`, `Build specification for the site deployments.`)
+  .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the SSR executions.`)
+  .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getSitesClient()).create(siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+      async ({ siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getSitesClient()).create(siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 
@@ -174,6 +177,7 @@ sites
   .option(`--timeout <timeout>`, `Maximum request time in seconds.`, parseInteger)
   .option(`--install-command <install-command>`, `Install Command.`)
   .option(`--build-command <build-command>`, `Build Command.`)
+  .option(`--start-command <start-command>`, `Custom start command. Leave empty to use default.`)
   .option(`--output-directory <output-directory>`, `Output Directory for site.`)
   .option(`--build-runtime <build-runtime>`, `Runtime to use during build step.`)
   .option(`--adapter <adapter>`, `Framework adapter defining rendering strategy. Allowed values are: static, ssr`)
@@ -188,11 +192,13 @@ sites
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to site code in the linked repo.`)
-  .option(`--specification <specification>`, `Framework specification for the site and builds.`)
+  .option(`--build-specification <build-specification>`, `Build specification for the site deployments.`)
+  .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the SSR executions.`)
+  .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification }) =>
-        parse(await (await getSitesClient()).update(siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, specification)),
+      async ({ siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getSitesClient()).update(siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 
