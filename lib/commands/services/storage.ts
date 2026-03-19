@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import fs from "fs";
+import { resolveFileParam } from "../utils/deployment.js";
 import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
@@ -195,7 +196,7 @@ If you're creating a new file using one of the Appwrite SDKs, all the chunking l
   .action(
     actionRunner(
       async ({ bucketId, fileId, file, permissions }) =>
-        parse(await (await getStorageClient()).createFile(bucketId, fileId, file, permissions)),
+        parse(await (await getStorageClient()).createFile(bucketId, fileId, file !== undefined ? await resolveFileParam(file) : undefined, permissions)),
     ),
   );
 

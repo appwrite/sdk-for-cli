@@ -1,11 +1,21 @@
 # Change Log
 
+## 15.1.0
+
+* Added `resolveFileParam` to convert file or directory paths into `File` objects and tar.gz packages
+
 ## 15.0.0
 
 * Breaking: Separated `specification` with `buildSpecification` and `runtimeSpecification`; added `deploymentRetention` to both functions and sites
 * Added `startCommand` option for sites
 * Updated `init sites` prompts to select `buildSpecification` and `runtimeSpecification`
 * Improved unauthorized error messages
+
+## 14.0.1
+
+* Fixed `push tables` not passing `encrypt` parameter for varchar, text, mediumtext, and longtext string types
+* Fixed NVM installation path not being detected by `update` command
+* Updated `tar` dependency to v7.4.3
 
 ## 14.0.0
 

@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import fs from "fs";
+import { resolveFileParam } from "../utils/deployment.js";
 import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
@@ -261,7 +262,7 @@ sites
   .action(
     actionRunner(
       async ({ siteId, code, installCommand, buildCommand, outputDirectory, activate }) =>
-        parse(await (await getSitesClient()).createDeployment(siteId, code, installCommand, buildCommand, outputDirectory, activate)),
+        parse(await (await getSitesClient()).createDeployment(siteId, code !== undefined ? await resolveFileParam(code) : undefined, installCommand, buildCommand, outputDirectory, activate)),
     ),
   );
 

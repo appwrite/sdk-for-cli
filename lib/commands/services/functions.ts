@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import fs from "fs";
+import { resolveFileParam } from "../utils/deployment.js";
 import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
@@ -263,7 +264,7 @@ Use the "command" param to set the entrypoint used to execute your code.`)
   .action(
     actionRunner(
       async ({ functionId, code, activate, entrypoint, commands }) =>
-        parse(await (await getFunctionsClient()).createDeployment(functionId, code, activate, entrypoint, commands)),
+        parse(await (await getFunctionsClient()).createDeployment(functionId, code !== undefined ? await resolveFileParam(code) : undefined, activate, entrypoint, commands)),
     ),
   );
 
