@@ -1,5 +1,10 @@
 # Change Log
 
+## 15.2.0
+
+* Added `webhooks` CLI commands: `list`, `create`, `get`, `update`, `delete`, `update-signature`
+* Updated docs with webhooks usage examples
+
 ## 15.1.0
 
 * Added `resolveFileParam` to convert file or directory paths into `File` objects and tar.gz packages
