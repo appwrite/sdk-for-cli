@@ -1,5 +1,9 @@
 # Change Log
 
+## 16.0.0
+
+* Breaking: Moved webhook commands from `projects` to new `webhooks` service.
+
 ## 15.1.0
 
 * Added `resolveFileParam` to convert file or directory paths into `File` objects and tar.gz packages
