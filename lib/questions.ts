@@ -342,7 +342,10 @@ export const questionsPullFunctions: Question[] = [
     validate: (value: any) => validateRequired("function", value),
     choices: async () => {
       const { functions } = await paginate(
-        async () => (await getFunctionsService()).list(),
+        async (args) =>
+          (await getFunctionsService()).list({
+            queries: args.queries as string[],
+          }),
         { parseOutput: false },
         100,
         "functions",
@@ -351,12 +354,14 @@ export const questionsPullFunctions: Question[] = [
       if (functions.length === 0) {
         throw `We couldn't find any functions in your ${SDK_TITLE} project`;
       }
-      return functions.map((func: any) => {
-        return {
-          name: `${func.name} (${func.$id})`,
-          value: { ...func },
-        };
-      });
+      return functions
+        .sort((a: any, b: any) => a.name.localeCompare(b.name))
+        .map((func: any) => {
+          return {
+            name: `${func.name} (${func.$id})`,
+            value: { ...func },
+          };
+        });
     },
   },
 ];

@@ -267,7 +267,9 @@ export class Pull {
 
       const { functions: allFunctions } = await paginate(
         async (args) =>
-          new Functions(this.projectClient).list(args.queries as string[]),
+          new Functions(this.projectClient).list({
+            queries: args.queries as string[],
+          }),
         {},
         100,
         "functions",
@@ -333,6 +335,8 @@ export class Pull {
     if (options.code === false) {
       this.warn("Source code download skipped.");
     }
+
+    result.sort((a, b) => a.name.localeCompare(b.name));
 
     this.success(`Successfully pulled ${chalk.bold(result.length)} functions.`);
     return result;
@@ -780,7 +784,9 @@ const pullFunctions = async ({
     ? (
         await paginate(
           async (args) =>
-            (await getFunctionsService()).list(args.queries as string[]),
+            (await getFunctionsService()).list({
+              queries: args.queries as string[],
+            }),
           {},
           100,
           "functions",
