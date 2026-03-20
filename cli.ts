@@ -44,6 +44,7 @@ import { teams } from './lib/commands/services/teams.js';
 import { tokens } from './lib/commands/services/tokens.js';
 import { users } from './lib/commands/services/users.js';
 import { vcs } from './lib/commands/services/vcs.js';
+import { webhooks } from './lib/commands/services/webhooks.js';
 
 const { version } = packageJson;
 inquirer.registerPrompt('search-list', inquirerSearchList);
@@ -154,6 +155,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(tokens)
         .addCommand(users)
         .addCommand(vcs)
+        .addCommand(webhooks)
         .addCommand(client)
         .parse(process.argv);
 
