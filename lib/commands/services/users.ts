@@ -29,7 +29,7 @@ export const users = new Command("users")
 users
   .command(`list`)
   .description(`Get a list of all the project's users. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, labels`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, labels, impersonator`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -238,6 +238,19 @@ users
     actionRunner(
       async ({ userId, email }) =>
         parse(await (await getUsersClient()).updateEmail(userId, email)),
+    ),
+  );
+
+users
+  .command(`update-impersonator`)
+  .description(`Enable or disable whether a user can impersonate other users. When impersonation headers are used, the request runs as the target user for API behavior, while internal audit logs still attribute the action to the original impersonator and store the impersonated target details only in internal audit payload data.
+`)
+  .requiredOption(`--user-id <user-id>`, `User ID.`)
+  .requiredOption(`--impersonator <impersonator>`, `Whether the user can impersonate other users. When true, the user can browse project users to choose a target and can pass impersonation headers to act as that user. Internal audit logs still attribute impersonated actions to the original impersonator and store the target user details only in internal audit payload data.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ userId, impersonator }) =>
+        parse(await (await getUsersClient()).updateImpersonator(userId, impersonator)),
     ),
   );
 

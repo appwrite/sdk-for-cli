@@ -1,5 +1,14 @@
 # Change Log
 
+## 17.0.0
+
+* Breaking: Removed `--key` option from `appwrite project update-variable`
+* Added `documents-db` commands to CLI
+* Added `vectors-db` commands to CLI
+* Added docs examples for `documents-db` and `vectors-db`
+* Added `--variable-id` to `appwrite project create-variable`
+* Updated API version badge to 1.9.0
+
 ## 16.0.0
 
 * Breaking: Moved webhook commands from `projects` to new `webhooks` service.
