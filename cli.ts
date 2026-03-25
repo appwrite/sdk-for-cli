@@ -28,7 +28,6 @@ import { account } from './lib/commands/services/account.js';
 import { activities } from './lib/commands/services/activities.js';
 import { backups } from './lib/commands/services/backups.js';
 import { databases } from './lib/commands/services/databases.js';
-import { documentsDB } from './lib/commands/services/documents-db.js';
 import { functions } from './lib/commands/services/functions.js';
 import { graphql } from './lib/commands/services/graphql.js';
 import { health } from './lib/commands/services/health.js';
@@ -45,7 +44,6 @@ import { teams } from './lib/commands/services/teams.js';
 import { tokens } from './lib/commands/services/tokens.js';
 import { users } from './lib/commands/services/users.js';
 import { vcs } from './lib/commands/services/vcs.js';
-import { vectorsDB } from './lib/commands/services/vectors-db.js';
 import { webhooks } from './lib/commands/services/webhooks.js';
 
 const { version } = packageJson;
@@ -141,7 +139,6 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(activities)
         .addCommand(backups)
         .addCommand(databases)
-        .addCommand(documentsDB)
         .addCommand(functions)
         .addCommand(graphql)
         .addCommand(health)
@@ -158,7 +155,6 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(tokens)
         .addCommand(users)
         .addCommand(vcs)
-        .addCommand(vectorsDB)
         .addCommand(webhooks)
         .addCommand(client)
         .parse(process.argv);
