@@ -271,18 +271,6 @@ projects
   );
 
 projects
-  .command(`update-console-access`)
-  .description(`Record console access to a project. This endpoint updates the last accessed timestamp for the project to track console activity.
-`)
-  .requiredOption(`--project-id <project-id>`, `Project ID`)
-  .action(
-    actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getProjectsClient()).updateConsoleAccess(projectId)),
-    ),
-  );
-
-projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)

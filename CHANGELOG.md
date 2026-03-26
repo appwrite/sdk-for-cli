@@ -1,5 +1,18 @@
 # Change Log
 
+## 17.0.0
+
+* [BREAKING] Changed `$sequence` type from `int` to `string` for rows and documents
+* [BREAKING] Removed `--key` required option from `appwrite project update-variable` (now optional)
+* [BREAKING] Removed billing/payment commands from `appwrite account`: `list-billing-addresses`, `create-billing-address`, `get-billing-address`, `update-billing-address`, `delete-billing-address`, `get-coupon`, `list-invoices`, `list-payment-methods`, `create-payment-method`, `get-payment-method`, `update-payment-method`, `delete-payment-method`, `update-payment-method-provider`, `update-payment-method-mandate-options`
+* [BREAKING] Removed cloud-specific health commands: `get-console-pausing`, `get-queue-billing-project-aggregation`, `get-queue-billing-team-aggregation`, `get-queue-priority-builds`, `get-queue-region-manager`, `get-queue-threats`
+* [BREAKING] Removed `appwrite projects update-console-access` command
+* Added `--variable-id` required parameter to `appwrite project create-variable`
+* Added `--queries` and `--total` optional parameters to `appwrite project list-variables`
+* Added new `appwrite users update-impersonator` command
+* Added `impersonator` as a filterable attribute in `appwrite users list`
+* Updated API version badge to `1.9.0` and compatibility to server version `1.9.x`
+
 ## 16.0.0
 
 * Breaking: Moved webhook commands from `projects` to new `webhooks` service.

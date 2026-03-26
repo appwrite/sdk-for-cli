@@ -59,83 +59,6 @@ account
   );
 
 account
-  .command(`list-billing-addresses`)
-  .description(`List all billing addresses for a user.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, expired, failed`)
-  .action(
-    actionRunner(
-      async ({ queries }) =>
-        parse(await (await getAccountClient()).listBillingAddresses(queries)),
-    ),
-  );
-
-account
-  .command(`create-billing-address`)
-  .description(`Add a new billing address to a user's account.`)
-  .requiredOption(`--country <country>`, `Country`)
-  .requiredOption(`--city <city>`, `City`)
-  .requiredOption(`--street-address <street-address>`, `Street address`)
-  .option(`--address-line-2 <address-line-2>`, `Address line 2`)
-  .option(`--state <state>`, `State or province`)
-  .option(`--postal-code <postal-code>`, `Postal code`)
-  .action(
-    actionRunner(
-      async ({ country, city, streetAddress, addressLine2, state, postalCode }) =>
-        parse(await (await getAccountClient()).createBillingAddress(country, city, streetAddress, addressLine2, state, postalCode)),
-    ),
-  );
-
-account
-  .command(`get-billing-address`)
-  .description(`Get a specific billing address for a user using it's ID.`)
-  .requiredOption(`--billing-address-id <billing-address-id>`, `Unique ID of billing address`)
-  .action(
-    actionRunner(
-      async ({ billingAddressId }) =>
-        parse(await (await getAccountClient()).getBillingAddress(billingAddressId)),
-    ),
-  );
-
-account
-  .command(`update-billing-address`)
-  .description(`Update a specific billing address using it's ID.`)
-  .requiredOption(`--billing-address-id <billing-address-id>`, `Unique ID of billing address`)
-  .requiredOption(`--country <country>`, `Country`)
-  .requiredOption(`--city <city>`, `City`)
-  .requiredOption(`--street-address <street-address>`, `Street address`)
-  .option(`--address-line-2 <address-line-2>`, `Address line 2`)
-  .option(`--state <state>`, `State or province`)
-  .option(`--postal-code <postal-code>`, `Postal code`)
-  .action(
-    actionRunner(
-      async ({ billingAddressId, country, city, streetAddress, addressLine2, state, postalCode }) =>
-        parse(await (await getAccountClient()).updateBillingAddress(billingAddressId, country, city, streetAddress, addressLine2, state, postalCode)),
-    ),
-  );
-
-account
-  .command(`delete-billing-address`)
-  .description(`Delete a specific billing address using it's ID.`)
-  .requiredOption(`--billing-address-id <billing-address-id>`, `Billing address unique ID`)
-  .action(
-    actionRunner(
-      async ({ billingAddressId }) =>
-        parse(await (await getAccountClient()).deleteBillingAddress(billingAddressId)),
-    ),
-  );
-
-account
-  .command(`get-coupon`)
-  .description(`Get coupon details for an account.`)
-  .requiredOption(`--coupon-id <coupon-id>`, `ID of the coupon`)
-  .action(
-    actionRunner(
-      async ({ couponId }) =>
-        parse(await (await getAccountClient()).getCoupon(couponId)),
-    ),
-  );
-
-account
   .command(`update-email`)
   .description(`Update currently logged in user account email address. After changing user address, the user confirmation status will get reset. A new confirmation email is not sent automatically however you can use the send confirmation email endpoint again to send the confirmation email. For security measures, user password is required to complete this request.
 This endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.
@@ -174,17 +97,6 @@ account
     actionRunner(
       async ({ identityId }) =>
         parse(await (await getAccountClient()).deleteIdentity(identityId)),
-    ),
-  );
-
-account
-  .command(`list-invoices`)
-  .description(`List all invoices tied to an account.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, aggregationId, type, amount, currency, from, to, dueAt, attempts, status, grossAmount`)
-  .action(
-    actionRunner(
-      async ({ queries }) =>
-        parse(await (await getAccountClient()).listInvoices(queries)),
     ),
   );
 
@@ -405,87 +317,6 @@ account
     actionRunner(
       async ({ password, oldPassword }) =>
         parse(await (await getAccountClient()).updatePassword(password, oldPassword)),
-    ),
-  );
-
-account
-  .command(`list-payment-methods`)
-  .description(`List payment methods for this account.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, expired, failed`)
-  .action(
-    actionRunner(
-      async ({ queries }) =>
-        parse(await (await getAccountClient()).listPaymentMethods(queries)),
-    ),
-  );
-
-account
-  .command(`create-payment-method`)
-  .description(`Create a new payment method for the current user account.`)
-  .action(
-    actionRunner(
-      async () => parse(await (await getAccountClient()).createPaymentMethod()),
-    ),
-  );
-
-account
-  .command(`get-payment-method`)
-  .description(`Get a specific payment method for the user.`)
-  .requiredOption(`--payment-method-id <payment-method-id>`, `Unique ID of payment method`)
-  .action(
-    actionRunner(
-      async ({ paymentMethodId }) =>
-        parse(await (await getAccountClient()).getPaymentMethod(paymentMethodId)),
-    ),
-  );
-
-account
-  .command(`update-payment-method`)
-  .description(`Update a new payment method for the current user account.`)
-  .requiredOption(`--payment-method-id <payment-method-id>`, `Unique ID of payment method`)
-  .requiredOption(`--expiry-month <expiry-month>`, `Payment expiry month`, parseInteger)
-  .requiredOption(`--expiry-year <expiry-year>`, `Expiry year`, parseInteger)
-  .option(`--state <state>`, `State of the payment method country`)
-  .action(
-    actionRunner(
-      async ({ paymentMethodId, expiryMonth, expiryYear, state }) =>
-        parse(await (await getAccountClient()).updatePaymentMethod(paymentMethodId, expiryMonth, expiryYear, state)),
-    ),
-  );
-
-account
-  .command(`delete-payment-method`)
-  .description(`Delete a specific payment method from a user's account.`)
-  .requiredOption(`--payment-method-id <payment-method-id>`, `Unique ID of payment method`)
-  .action(
-    actionRunner(
-      async ({ paymentMethodId }) =>
-        parse(await (await getAccountClient()).deletePaymentMethod(paymentMethodId)),
-    ),
-  );
-
-account
-  .command(`update-payment-method-provider`)
-  .description(`Update payment method provider.`)
-  .requiredOption(`--payment-method-id <payment-method-id>`, `Unique ID of payment method`)
-  .requiredOption(`--provider-method-id <provider-method-id>`, `Payment method ID from the payment provider`)
-  .requiredOption(`--name <name>`, `Name in the payment method`)
-  .option(`--state <state>`, `State of the payment method country`)
-  .action(
-    actionRunner(
-      async ({ paymentMethodId, providerMethodId, name, state }) =>
-        parse(await (await getAccountClient()).updatePaymentMethodProvider(paymentMethodId, providerMethodId, name, state)),
-    ),
-  );
-
-account
-  .command(`update-payment-method-mandate-options`)
-  .description(`Update payment method mandate options.`)
-  .requiredOption(`--payment-method-id <payment-method-id>`, `Unique ID of payment method`)
-  .action(
-    actionRunner(
-      async ({ paymentMethodId }) =>
-        parse(await (await getAccountClient()).updatePaymentMethodMandateOptions(paymentMethodId)),
     ),
   );
 
