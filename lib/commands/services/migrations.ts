@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { sdkForProject } from "../../sdks.js";
+import { sdkForConsole } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -14,7 +14,7 @@ let migrationsClient: Migrations | null = null;
 
 const getMigrationsClient = async (): Promise<Migrations> => {
   if (!migrationsClient) {
-    const sdkClient = await sdkForProject();
+    const sdkClient = await sdkForConsole();
     migrationsClient = new Migrations(sdkClient);
   }
   return migrationsClient;

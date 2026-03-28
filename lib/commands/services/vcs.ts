@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { sdkForProject } from "../../sdks.js";
+import { sdkForConsole } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -14,7 +14,7 @@ let vcsClient: Vcs | null = null;
 
 const getVcsClient = async (): Promise<Vcs> => {
   if (!vcsClient) {
-    const sdkClient = await sdkForProject();
+    const sdkClient = await sdkForConsole();
     vcsClient = new Vcs(sdkClient);
   }
   return vcsClient;

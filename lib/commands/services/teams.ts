@@ -7,6 +7,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  hint,
 } from "../../parser.js";
 import { Teams } from "@appwrite.io/console";
 
@@ -14,7 +15,15 @@ let teamsClient: Teams | null = null;
 
 const getTeamsClient = async (): Promise<Teams> => {
   if (!teamsClient) {
-    const sdkClient = await sdkForProject();
+    let sdkClient;
+    try {
+      sdkClient = await sdkForProject();
+    } catch (e) {
+      if (e instanceof Error && e.message.includes("Project is not set")) {
+        hint(`To manage console-level teams, use the 'organizations' command instead.`);
+      }
+      throw e;
+    }
     teamsClient = new Teams(sdkClient);
   }
   return teamsClient;

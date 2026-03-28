@@ -34,6 +34,7 @@ import { health } from './lib/commands/services/health.js';
 import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
+import { organizations } from './lib/commands/services/organizations.js';
 import { project } from './lib/commands/services/project.js';
 import { projects } from './lib/commands/services/projects.js';
 import { proxy } from './lib/commands/services/proxy.js';
@@ -98,6 +99,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .version(version, '-v, --version', 'Output the version number')
         .option('-V, --verbose', 'Show complete error log')
         .option('-j, --json', 'Output in JSON format')
+        .option('-R, --raw', 'Output full raw JSON (no filtering)')
         .hook('preAction', migrate)
         .option('-f,--force', 'Flag to confirm all warnings')
         .option('-a,--all', 'Flag to push all resources')
@@ -105,6 +107,9 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .option('--report', 'Enable reporting in case of CLI errors')
         .on('option:json', () => {
             cliConfig.json = true;
+        })
+        .on('option:raw', () => {
+            cliConfig.raw = true;
         })
         .on('option:verbose', () => {
             cliConfig.verbose = true;
@@ -145,6 +150,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         .addCommand(locale)
         .addCommand(messaging)
         .addCommand(migrations)
+        .addCommand(organizations)
         .addCommand(project)
         .addCommand(projects)
         .addCommand(proxy)

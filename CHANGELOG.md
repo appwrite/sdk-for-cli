@@ -1,5 +1,11 @@
 # Change Log
 
+## 17.1.0
+
+* Added `organizations` command group with multiple subcommands
+* Added `--raw` option for full raw JSON output in version command
+* Updated docs for `organizations` commands with new examples
+
 ## 17.0.0
 
 * [BREAKING] Changed `$sequence` type from `int` to `string` for rows and documents
