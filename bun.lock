@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "PLACEHOLDER",
+      "name": "appwrite-cli",
       "dependencies": {
         "@appwrite.io/console": "*",
         "chalk": "4.1.2",
