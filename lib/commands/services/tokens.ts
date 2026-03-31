@@ -26,7 +26,7 @@ export const tokens = new Command("tokens")
     helpWidth: process.stdout.columns || 80,
   });
 
-tokens
+const tokensListCommand = tokens
   .command(`list`)
   .description(`List all the tokens created for a specific file or bucket. You can use the query params to filter your results.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -45,7 +45,8 @@ tokens
     ),
   );
 
-tokens
+
+const tokensCreateFileTokenCommand = tokens
   .command(`create-file-token`)
   .description(`Create a new token. A token is linked to a file. Token can be passed as a request URL search parameter.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -58,7 +59,8 @@ tokens
     ),
   );
 
-tokens
+
+const tokensGetCommand = tokens
   .command(`get`)
   .description(`Get a token by its unique ID.`)
   .requiredOption(`--token-id <token-id>`, `Token ID.`)
@@ -69,7 +71,8 @@ tokens
     ),
   );
 
-tokens
+
+const tokensUpdateCommand = tokens
   .command(`update`)
   .description(`Update a token by its unique ID. Use this endpoint to update a token's expiry date.`)
   .requiredOption(`--token-id <token-id>`, `Token unique ID.`)
@@ -81,7 +84,8 @@ tokens
     ),
   );
 
-tokens
+
+const tokensDeleteCommand = tokens
   .command(`delete`)
   .description(`Delete a token by its unique ID.`)
   .requiredOption(`--token-id <token-id>`, `Token ID.`)
@@ -91,4 +95,5 @@ tokens
         parse(await (await getTokensClient()).delete(tokenId)),
     ),
   );
+
 

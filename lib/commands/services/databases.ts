@@ -26,7 +26,7 @@ export const databases = new Command("databases")
     helpWidth: process.stdout.columns || 80,
   });
 
-databases
+const databasesListCommand = databases
   .command(`list`)
   .description(`Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name`)
@@ -44,7 +44,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateCommand = databases
   .command(`create`)
   .description(`Create a new Database.
 `)
@@ -63,7 +64,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListTransactionsCommand = databases
   .command(`list-transactions`)
   .description(`List transactions across all databases.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries).`)
@@ -74,7 +76,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateTransactionCommand = databases
   .command(`create-transaction`)
   .description(`Create a new transaction.`)
   .option(`--ttl <ttl>`, `Seconds before the transaction expires.`, parseInteger)
@@ -85,7 +88,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetTransactionCommand = databases
   .command(`get-transaction`)
   .description(`Get a transaction by its unique ID.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -96,7 +100,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateTransactionCommand = databases
   .command(`update-transaction`)
   .description(`Update a transaction, to either commit or roll back its operations.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -119,7 +124,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteTransactionCommand = databases
   .command(`delete-transaction`)
   .description(`Delete a transaction by its unique ID.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -130,7 +136,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateOperationsCommand = databases
   .command(`create-operations`)
   .description(`Create multiple operations in a single transaction.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -142,7 +149,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListUsageCommand = databases
   .command(`list-usage`)
   .description(`List usage metrics and statistics for all databases in the project. You can view the total number of databases, collections, documents, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
   .option(`--range <range>`, `Date range.`)
@@ -153,7 +161,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetCommand = databases
   .command(`get`)
   .description(`Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -164,7 +173,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateCommand = databases
   .command(`update`)
   .description(`Update a database by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -182,7 +192,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteCommand = databases
   .command(`delete`)
   .description(`Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -193,7 +204,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListCollectionsCommand = databases
   .command(`list-collections`)
   .description(`Get a list of all collections that belong to the provided databaseId. You can use the search parameter to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -212,7 +224,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateCollectionCommand = databases
   .command(`create-collection`)
   .description(`Create a new Collection. Before using this route, you should create a new database resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -240,7 +253,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetCollectionCommand = databases
   .command(`get-collection`)
   .description(`Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -252,7 +266,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateCollectionCommand = databases
   .command(`update-collection`)
   .description(`Update a collection by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -278,7 +293,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteCollectionCommand = databases
   .command(`delete-collection`)
   .description(`Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -290,7 +306,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListAttributesCommand = databases
   .command(`list-attributes`)
   .description(`List attributes in the collection.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -309,7 +326,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateBooleanAttributeCommand = databases
   .command(`create-boolean-attribute`)
   .description(`Create a boolean attribute.
 `)
@@ -336,7 +354,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateBooleanAttributeCommand = databases
   .command(`update-boolean-attribute`)
   .description(`Update a boolean attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -352,7 +371,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateDatetimeAttributeCommand = databases
   .command(`create-datetime-attribute`)
   .description(`Create a date time attribute according to the ISO 8601 standard.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -373,7 +393,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateDatetimeAttributeCommand = databases
   .command(`update-datetime-attribute`)
   .description(`Update a date time attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -389,7 +410,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateEmailAttributeCommand = databases
   .command(`create-email-attribute`)
   .description(`Create an email attribute.
 `)
@@ -411,7 +433,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateEmailAttributeCommand = databases
   .command(`update-email-attribute`)
   .description(`Update an email attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -428,7 +451,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateEnumAttributeCommand = databases
   .command(`create-enum-attribute`)
   .description(`Create an enum attribute. The \`elements\` param acts as a white-list of accepted values for this attribute. 
 `)
@@ -451,7 +475,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateEnumAttributeCommand = databases
   .command(`update-enum-attribute`)
   .description(`Update an enum attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -469,7 +494,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateFloatAttributeCommand = databases
   .command(`create-float-attribute`)
   .description(`Create a float attribute. Optionally, minimum and maximum values can be provided.
 `)
@@ -493,7 +519,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateFloatAttributeCommand = databases
   .command(`update-float-attribute`)
   .description(`Update a float attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -512,7 +539,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateIntegerAttributeCommand = databases
   .command(`create-integer-attribute`)
   .description(`Create an integer attribute. Optionally, minimum and maximum values can be provided.
 `)
@@ -536,7 +564,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateIntegerAttributeCommand = databases
   .command(`update-integer-attribute`)
   .description(`Update an integer attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -555,7 +584,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateIpAttributeCommand = databases
   .command(`create-ip-attribute`)
   .description(`Create IP address attribute.
 `)
@@ -577,7 +607,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateIpAttributeCommand = databases
   .command(`update-ip-attribute`)
   .description(`Update an ip attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -594,7 +625,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateLineAttributeCommand = databases
   .command(`create-line-attribute`)
   .description(`Create a geometric line attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -609,7 +641,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateLineAttributeCommand = databases
   .command(`update-line-attribute`)
   .description(`Update a line attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -625,7 +658,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateLongtextAttributeCommand = databases
   .command(`create-longtext-attribute`)
   .description(`Create a longtext attribute.
 `)
@@ -653,7 +687,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateLongtextAttributeCommand = databases
   .command(`update-longtext-attribute`)
   .description(`Update a longtext attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -670,7 +705,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateMediumtextAttributeCommand = databases
   .command(`create-mediumtext-attribute`)
   .description(`Create a mediumtext attribute.
 `)
@@ -698,7 +734,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateMediumtextAttributeCommand = databases
   .command(`update-mediumtext-attribute`)
   .description(`Update a mediumtext attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -715,7 +752,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreatePointAttributeCommand = databases
   .command(`create-point-attribute`)
   .description(`Create a geometric point attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -730,7 +768,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdatePointAttributeCommand = databases
   .command(`update-point-attribute`)
   .description(`Update a point attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -746,7 +785,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreatePolygonAttributeCommand = databases
   .command(`create-polygon-attribute`)
   .description(`Create a geometric polygon attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -761,7 +801,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdatePolygonAttributeCommand = databases
   .command(`update-polygon-attribute`)
   .description(`Update a polygon attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -777,7 +818,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateRelationshipAttributeCommand = databases
   .command(`create-relationship-attribute`)
   .description(`Create relationship attribute. [Learn more about relationship attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
 `)
@@ -801,7 +843,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateRelationshipAttributeCommand = databases
   .command(`update-relationship-attribute`)
   .description(`Update relationship attribute. [Learn more about relationship attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
 `)
@@ -817,7 +860,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateStringAttributeCommand = databases
   .command(`create-string-attribute`)
   .description(`Create a string attribute.
 `)
@@ -846,7 +890,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateStringAttributeCommand = databases
   .command(`update-string-attribute`)
   .description(`Update a string attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -864,7 +909,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateTextAttributeCommand = databases
   .command(`create-text-attribute`)
   .description(`Create a text attribute.
 `)
@@ -892,7 +938,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateTextAttributeCommand = databases
   .command(`update-text-attribute`)
   .description(`Update a text attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -909,7 +956,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateUrlAttributeCommand = databases
   .command(`create-url-attribute`)
   .description(`Create a URL attribute.
 `)
@@ -931,7 +979,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateUrlAttributeCommand = databases
   .command(`update-url-attribute`)
   .description(`Update an url attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -948,7 +997,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateVarcharAttributeCommand = databases
   .command(`create-varchar-attribute`)
   .description(`Create a varchar attribute.
 `)
@@ -977,7 +1027,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateVarcharAttributeCommand = databases
   .command(`update-varchar-attribute`)
   .description(`Update a varchar attribute. Changing the \`default\` value will not update already existing documents.
 `)
@@ -995,7 +1046,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetAttributeCommand = databases
   .command(`get-attribute`)
   .description(`Get attribute by ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1008,7 +1060,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteAttributeCommand = databases
   .command(`delete-attribute`)
   .description(`Deletes an attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1021,7 +1074,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListDocumentsCommand = databases
   .command(`list-documents`)
   .description(`Get a list of all the user's documents in a given collection. You can use the query params to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1042,7 +1096,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateDocumentCommand = databases
   .command(`create-document`)
   .description(`Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1058,7 +1113,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateDocumentsCommand = databases
   .command(`create-documents`)
   .description(`Create new Documents. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1072,7 +1128,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpsertDocumentsCommand = databases
   .command(`upsert-documents`)
   .description(`Create or update Documents. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
 `)
@@ -1087,7 +1144,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateDocumentsCommand = databases
   .command(`update-documents`)
   .description(`Update all documents that match your queries, if no queries are submitted then all documents are updated. You can pass only specific fields to be updated.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1102,7 +1160,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteDocumentsCommand = databases
   .command(`delete-documents`)
   .description(`Bulk delete documents using queries, if no queries are passed then all documents are deleted.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1116,7 +1175,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetDocumentCommand = databases
   .command(`get-document`)
   .description(`Get a document by its unique ID. This endpoint response returns a JSON object with the document data.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1131,7 +1191,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpsertDocumentCommand = databases
   .command(`upsert-document`)
   .description(`Create or update a Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1147,7 +1208,8 @@ databases
     ),
   );
 
-databases
+
+const databasesUpdateDocumentCommand = databases
   .command(`update-document`)
   .description(`Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1163,7 +1225,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteDocumentCommand = databases
   .command(`delete-document`)
   .description(`Delete a document by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1177,7 +1240,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListDocumentLogsCommand = databases
   .command(`list-document-logs`)
   .description(`Get the document activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1191,7 +1255,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDecrementDocumentAttributeCommand = databases
   .command(`decrement-document-attribute`)
   .description(`Decrement a specific attribute of a document by a given value.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1208,7 +1273,8 @@ databases
     ),
   );
 
-databases
+
+const databasesIncrementDocumentAttributeCommand = databases
   .command(`increment-document-attribute`)
   .description(`Increment a specific attribute of a document by a given value.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1225,7 +1291,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListIndexesCommand = databases
   .command(`list-indexes`)
   .description(`List indexes in the collection.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1244,7 +1311,8 @@ databases
     ),
   );
 
-databases
+
+const databasesCreateIndexCommand = databases
   .command(`create-index`)
   .description(`Creates an index on the attributes listed. Your index should include all the attributes you will query in a single request.
 Attributes can be \`key\`, \`fulltext\`, and \`unique\`.`)
@@ -1262,7 +1330,8 @@ Attributes can be \`key\`, \`fulltext\`, and \`unique\`.`)
     ),
   );
 
-databases
+
+const databasesGetIndexCommand = databases
   .command(`get-index`)
   .description(`Get an index by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1275,7 +1344,8 @@ databases
     ),
   );
 
-databases
+
+const databasesDeleteIndexCommand = databases
   .command(`delete-index`)
   .description(`Delete an index.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1288,7 +1358,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListCollectionLogsCommand = databases
   .command(`list-collection-logs`)
   .description(`Get the collection activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1301,7 +1372,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetCollectionUsageCommand = databases
   .command(`get-collection-usage`)
   .description(`Get usage metrics and statistics for a collection. Returning the total number of documents. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1314,7 +1386,8 @@ databases
     ),
   );
 
-databases
+
+const databasesListLogsCommand = databases
   .command(`list-logs`)
   .description(`Get the database activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1326,7 +1399,8 @@ databases
     ),
   );
 
-databases
+
+const databasesGetUsageCommand = databases
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for a database. You can view the total number of collections, documents, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1337,4 +1411,5 @@ databases
         parse(await (await getDatabasesClient()).getUsage(databaseId, range)),
     ),
   );
+
 

@@ -26,7 +26,7 @@ export const messaging = new Command("messaging")
     helpWidth: process.stdout.columns || 80,
   });
 
-messaging
+const messagingListMessagesCommand = messaging
   .command(`list-messages`)
   .description(`Get a list of all messages from the current Appwrite project.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType`)
@@ -44,7 +44,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateEmailCommand = messaging
   .command(`create-email`)
   .description(`Create a new email message.`)
   .requiredOption(`--message-id <message-id>`, `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -76,7 +77,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateEmailCommand = messaging
   .command(`update-email`)
   .description(`Update an email message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
 `)
@@ -109,7 +111,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreatePushCommand = messaging
   .command(`create-push`)
   .description(`Create a new push notification.`)
   .requiredOption(`--message-id <message-id>`, `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -153,7 +156,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdatePushCommand = messaging
   .command(`update-push`)
   .description(`Update a push notification by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
 `)
@@ -198,7 +202,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateSmsCommand = messaging
   .command(`create-sms`)
   .description(`Create a new SMS message.`)
   .requiredOption(`--message-id <message-id>`, `Message ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -220,7 +225,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateSmsCommand = messaging
   .command(`update-sms`)
   .description(`Update an SMS message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.
 `)
@@ -243,7 +249,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingGetMessageCommand = messaging
   .command(`get-message`)
   .description(`Get a message by its unique ID.
 `)
@@ -255,7 +262,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingDeleteCommand = messaging
   .command(`delete`)
   .description(`Delete a message. If the message is not a draft or scheduled, but has been sent, this will not recall the message.`)
   .requiredOption(`--message-id <message-id>`, `Message ID.`)
@@ -266,7 +274,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListMessageLogsCommand = messaging
   .command(`list-message-logs`)
   .description(`Get the message activity logs listed by its unique ID.`)
   .requiredOption(`--message-id <message-id>`, `Message ID.`)
@@ -284,7 +293,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListTargetsCommand = messaging
   .command(`list-targets`)
   .description(`Get a list of the targets associated with a message.`)
   .requiredOption(`--message-id <message-id>`, `Message ID.`)
@@ -302,7 +312,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListProvidersCommand = messaging
   .command(`list-providers`)
   .description(`Get a list of all providers from the current Appwrite project.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`)
@@ -320,7 +331,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateApnsProviderCommand = messaging
   .command(`create-apns-provider`)
   .description(`Create a new Apple Push Notification service provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -348,7 +360,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateApnsProviderCommand = messaging
   .command(`update-apns-provider`)
   .description(`Update a Apple Push Notification service provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -376,7 +389,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateFcmProviderCommand = messaging
   .command(`create-fcm-provider`)
   .description(`Create a new Firebase Cloud Messaging provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -395,7 +409,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateFcmProviderCommand = messaging
   .command(`update-fcm-provider`)
   .description(`Update a Firebase Cloud Messaging provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -414,7 +429,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateMailgunProviderCommand = messaging
   .command(`create-mailgun-provider`)
   .description(`Create a new Mailgun provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -444,7 +460,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateMailgunProviderCommand = messaging
   .command(`update-mailgun-provider`)
   .description(`Update a Mailgun provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -474,7 +491,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateMsg91ProviderCommand = messaging
   .command(`create-msg-91-provider`)
   .description(`Create a new MSG91 provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -495,7 +513,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateMsg91ProviderCommand = messaging
   .command(`update-msg-91-provider`)
   .description(`Update a MSG91 provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -516,7 +535,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateResendProviderCommand = messaging
   .command(`create-resend-provider`)
   .description(`Create a new Resend provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -539,7 +559,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateResendProviderCommand = messaging
   .command(`update-resend-provider`)
   .description(`Update a Resend provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -562,7 +583,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateSendgridProviderCommand = messaging
   .command(`create-sendgrid-provider`)
   .description(`Create a new Sendgrid provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -585,7 +607,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateSendgridProviderCommand = messaging
   .command(`update-sendgrid-provider`)
   .description(`Update a Sendgrid provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -608,7 +631,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateSmtpProviderCommand = messaging
   .command(`create-smtp-provider`)
   .description(`Create a new SMTP provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -642,7 +666,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateSmtpProviderCommand = messaging
   .command(`update-smtp-provider`)
   .description(`Update a SMTP provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -676,7 +701,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateTelesignProviderCommand = messaging
   .command(`create-telesign-provider`)
   .description(`Create a new Telesign provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -697,7 +723,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateTelesignProviderCommand = messaging
   .command(`update-telesign-provider`)
   .description(`Update a Telesign provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -718,7 +745,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateTextmagicProviderCommand = messaging
   .command(`create-textmagic-provider`)
   .description(`Create a new Textmagic provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -739,7 +767,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateTextmagicProviderCommand = messaging
   .command(`update-textmagic-provider`)
   .description(`Update a Textmagic provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -760,7 +789,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateTwilioProviderCommand = messaging
   .command(`create-twilio-provider`)
   .description(`Create a new Twilio provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -781,7 +811,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateTwilioProviderCommand = messaging
   .command(`update-twilio-provider`)
   .description(`Update a Twilio provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -802,7 +833,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateVonageProviderCommand = messaging
   .command(`create-vonage-provider`)
   .description(`Create a new Vonage provider.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -823,7 +855,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateVonageProviderCommand = messaging
   .command(`update-vonage-provider`)
   .description(`Update a Vonage provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -844,7 +877,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingGetProviderCommand = messaging
   .command(`get-provider`)
   .description(`Get a provider by its unique ID.
 `)
@@ -856,7 +890,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingDeleteProviderCommand = messaging
   .command(`delete-provider`)
   .description(`Delete a provider by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -867,7 +902,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListProviderLogsCommand = messaging
   .command(`list-provider-logs`)
   .description(`Get the provider activity logs listed by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
@@ -885,7 +921,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListSubscriberLogsCommand = messaging
   .command(`list-subscriber-logs`)
   .description(`Get the subscriber activity logs listed by its unique ID.`)
   .requiredOption(`--subscriber-id <subscriber-id>`, `Subscriber ID.`)
@@ -903,7 +940,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListTopicsCommand = messaging
   .command(`list-topics`)
   .description(`Get a list of all topics from the current Appwrite project.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal`)
@@ -921,7 +959,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateTopicCommand = messaging
   .command(`create-topic`)
   .description(`Create a new topic.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID. Choose a custom Topic ID or a new Topic ID.`)
@@ -934,7 +973,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingGetTopicCommand = messaging
   .command(`get-topic`)
   .description(`Get a topic by its unique ID.
 `)
@@ -946,7 +986,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingUpdateTopicCommand = messaging
   .command(`update-topic`)
   .description(`Update a topic by its unique ID.
 `)
@@ -960,7 +1001,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingDeleteTopicCommand = messaging
   .command(`delete-topic`)
   .description(`Delete a topic by its unique ID.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
@@ -971,7 +1013,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListTopicLogsCommand = messaging
   .command(`list-topic-logs`)
   .description(`Get the topic activity logs listed by its unique ID.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
@@ -989,7 +1032,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingListSubscribersCommand = messaging
   .command(`list-subscribers`)
   .description(`Get a list of all subscribers from the current Appwrite project.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID. The topic ID subscribed to.`)
@@ -1008,7 +1052,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingCreateSubscriberCommand = messaging
   .command(`create-subscriber`)
   .description(`Create a new subscriber.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID. The topic ID to subscribe to.`)
@@ -1021,7 +1066,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingGetSubscriberCommand = messaging
   .command(`get-subscriber`)
   .description(`Get a subscriber by its unique ID.
 `)
@@ -1034,7 +1080,8 @@ messaging
     ),
   );
 
-messaging
+
+const messagingDeleteSubscriberCommand = messaging
   .command(`delete-subscriber`)
   .description(`Delete a subscriber by its unique ID.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID. The topic ID subscribed to.`)
@@ -1045,4 +1092,5 @@ messaging
         parse(await (await getMessagingClient()).deleteSubscriber(topicId, subscriberId)),
     ),
   );
+
 

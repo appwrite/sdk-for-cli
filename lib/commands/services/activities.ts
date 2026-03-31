@@ -26,7 +26,7 @@ export const activities = new Command("activities")
     helpWidth: process.stdout.columns || 80,
   });
 
-activities
+const activitiesListEventsCommand = activities
   .command(`list-events`)
   .description(`List all events for selected filters.`)
   .option(`--queries <queries>`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on attributes such as userId, teamId, etc.`)
@@ -37,7 +37,8 @@ activities
     ),
   );
 
-activities
+
+const activitiesGetEventCommand = activities
   .command(`get-event`)
   .description(`Get event by ID.
 `)
@@ -48,4 +49,5 @@ activities
         parse(await (await getActivitiesClient()).getEvent(eventId)),
     ),
   );
+
 

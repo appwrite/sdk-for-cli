@@ -28,7 +28,7 @@ export const storage = new Command("storage")
     helpWidth: process.stdout.columns || 80,
   });
 
-storage
+const storageListBucketsCommand = storage
   .command(`list-buckets`)
   .description(`Get a list of all the storage buckets. You can use the query params to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations`)
@@ -46,7 +46,8 @@ storage
     ),
   );
 
-storage
+
+const storageCreateBucketCommand = storage
   .command(`create-bucket`)
   .description(`Create a new storage bucket.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -92,7 +93,8 @@ storage
     ),
   );
 
-storage
+
+const storageGetBucketCommand = storage
   .command(`get-bucket`)
   .description(`Get a storage bucket by its unique ID. This endpoint response returns a JSON object with the storage bucket metadata.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Bucket unique ID.`)
@@ -103,7 +105,8 @@ storage
     ),
   );
 
-storage
+
+const storageUpdateBucketCommand = storage
   .command(`update-bucket`)
   .description(`Update a storage bucket by its unique ID.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Bucket unique ID.`)
@@ -149,7 +152,8 @@ storage
     ),
   );
 
-storage
+
+const storageDeleteBucketCommand = storage
   .command(`delete-bucket`)
   .description(`Delete a storage bucket by its unique ID.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Bucket unique ID.`)
@@ -160,7 +164,8 @@ storage
     ),
   );
 
-storage
+
+const storageListFilesCommand = storage
   .command(`list-files`)
   .description(`Get a list of all the user files. You can use the query params to filter your results.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -179,7 +184,8 @@ storage
     ),
   );
 
-storage
+
+const storageCreateFileCommand = storage
   .command(`create-file`)
   .description(`Create a new file. Before using this route, you should create a new bucket resource using either a [server integration](https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.
 
@@ -200,7 +206,8 @@ If you're creating a new file using one of the Appwrite SDKs, all the chunking l
     ),
   );
 
-storage
+
+const storageGetFileCommand = storage
   .command(`get-file`)
   .description(`Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -212,7 +219,8 @@ storage
     ),
   );
 
-storage
+
+const storageUpdateFileCommand = storage
   .command(`update-file`)
   .description(`Update a file by its unique ID. Only users with write permissions have access to update this resource.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Bucket unique ID.`)
@@ -226,7 +234,8 @@ storage
     ),
   );
 
-storage
+
+const storageDeleteFileCommand = storage
   .command(`delete-file`)
   .description(`Delete a file by its unique ID. Only users with write permissions have access to delete this resource.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -238,7 +247,8 @@ storage
     ),
   );
 
-storage
+
+const storageGetFileDownloadCommand = storage
   .command(`get-file-download`)
   .description(`Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -257,7 +267,8 @@ storage
     ),
   );
 
-storage
+
+const storageGetFilePreviewCommand = storage
   .command(`get-file-preview`)
   .description(`Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -287,7 +298,8 @@ storage
     ),
   );
 
-storage
+
+const storageGetFileViewCommand = storage
   .command(`get-file-view`)
   .description(`Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
@@ -306,7 +318,8 @@ storage
     ),
   );
 
-storage
+
+const storageGetUsageCommand = storage
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for all buckets in the project. You can view the total number of buckets, files, storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.
 `)
@@ -318,7 +331,8 @@ storage
     ),
   );
 
-storage
+
+const storageGetBucketUsageCommand = storage
   .command(`get-bucket-usage`)
   .description(`Get usage metrics and statistics a specific bucket in the project. You can view the total number of files, storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.
 `)
@@ -330,4 +344,5 @@ storage
         parse(await (await getStorageClient()).getBucketUsage(bucketId, range)),
     ),
   );
+
 

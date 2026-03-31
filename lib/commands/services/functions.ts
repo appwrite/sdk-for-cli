@@ -28,7 +28,7 @@ export const functions = new Command("functions")
     helpWidth: process.stdout.columns || 80,
   });
 
-functions
+const functionsListCommand = functions
   .command(`list`)
   .description(`Get a list of all the project's functions. You can use the query params to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId`)
@@ -46,7 +46,8 @@ functions
     ),
   );
 
-functions
+
+const functionsCreateCommand = functions
   .command(`create`)
   .description(`Create a new function. You can pass a list of [permissions](https://appwrite.io/docs/permissions) to allow different project users or team with access to execute the function using the client API.`)
   .requiredOption(`--function-id <function-id>`, `Function ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -91,7 +92,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListRuntimesCommand = functions
   .command(`list-runtimes`)
   .description(`Get a list of all runtimes that are currently active on your instance.`)
   .action(
@@ -100,7 +102,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListSpecificationsCommand = functions
   .command(`list-specifications`)
   .description(`List allowed function specifications for this instance.`)
   .action(
@@ -109,7 +112,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListTemplatesCommand = functions
   .command(`list-templates`)
   .description(`List available function templates. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.`)
   .option(`--runtimes [runtimes...]`, `List of runtimes allowed for filtering function templates. Maximum of 100 runtimes are allowed.`)
@@ -129,7 +133,8 @@ functions
     ),
   );
 
-functions
+
+const functionsGetTemplateCommand = functions
   .command(`get-template`)
   .description(`Get a function template using ID. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.`)
   .requiredOption(`--template-id <template-id>`, `Template ID.`)
@@ -140,7 +145,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListUsageCommand = functions
   .command(`list-usage`)
   .description(`Get usage metrics and statistics for all functions in the project. View statistics including total deployments, builds, logs, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
   .option(`--range <range>`, `Date range.`)
@@ -151,7 +157,8 @@ functions
     ),
   );
 
-functions
+
+const functionsGetCommand = functions
   .command(`get`)
   .description(`Get a function by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -162,7 +169,8 @@ functions
     ),
   );
 
-functions
+
+const functionsUpdateCommand = functions
   .command(`update`)
   .description(`Update function by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -207,7 +215,8 @@ functions
     ),
   );
 
-functions
+
+const functionsDeleteCommand = functions
   .command(`delete`)
   .description(`Delete a function by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -218,7 +227,8 @@ functions
     ),
   );
 
-functions
+
+const functionsUpdateFunctionDeploymentCommand = functions
   .command(`update-function-deployment`)
   .description(`Update the function active deployment. Use this endpoint to switch the code deployment that should be used when visitor opens your function.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -230,7 +240,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListDeploymentsCommand = functions
   .command(`list-deployments`)
   .description(`Get a list of all the function's code deployments. You can use the query params to filter your results.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -249,7 +260,8 @@ functions
     ),
   );
 
-functions
+
+const functionsCreateDeploymentCommand = functions
   .command(`create-deployment`)
   .description(`Create a new function code deployment. Use this endpoint to upload a new version of your code function. To execute your newly uploaded code, you'll need to update the function's deployment to use your new deployment UID.
 
@@ -268,7 +280,8 @@ Use the "command" param to set the entrypoint used to execute your code.`)
     ),
   );
 
-functions
+
+const functionsCreateDuplicateDeploymentCommand = functions
   .command(`create-duplicate-deployment`)
   .description(`Create a new build for an existing function deployment. This endpoint allows you to rebuild a deployment with the updated function configuration, including its entrypoint and build commands if they have been modified. The build process will be queued and executed asynchronously. The original deployment's code will be preserved and used for the new build.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -281,7 +294,8 @@ functions
     ),
   );
 
-functions
+
+const functionsCreateTemplateDeploymentCommand = functions
   .command(`create-template-deployment`)
   .description(`Create a deployment based on a template.
 
@@ -305,7 +319,8 @@ Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/p
     ),
   );
 
-functions
+
+const functionsCreateVcsDeploymentCommand = functions
   .command(`create-vcs-deployment`)
   .description(`Create a deployment when a function is connected to VCS.
 
@@ -326,7 +341,8 @@ This endpoint lets you create deployment from a branch, commit, or a tag.`)
     ),
   );
 
-functions
+
+const functionsGetDeploymentCommand = functions
   .command(`get-deployment`)
   .description(`Get a function deployment by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -338,7 +354,8 @@ functions
     ),
   );
 
-functions
+
+const functionsDeleteDeploymentCommand = functions
   .command(`delete-deployment`)
   .description(`Delete a code deployment by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -350,7 +367,8 @@ functions
     ),
   );
 
-functions
+
+const functionsGetDeploymentDownloadCommand = functions
   .command(`get-deployment-download`)
   .description(`Get a function deployment content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -369,7 +387,8 @@ functions
     ),
   );
 
-functions
+
+const functionsUpdateDeploymentStatusCommand = functions
   .command(`update-deployment-status`)
   .description(`Cancel an ongoing function deployment build. If the build is already in progress, it will be stopped and marked as canceled. If the build hasn't started yet, it will be marked as canceled without executing. You cannot cancel builds that have already completed (status 'ready') or failed. The response includes the final build status and details.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -381,7 +400,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListExecutionsCommand = functions
   .command(`list-executions`)
   .description(`Get a list of all the current user function execution logs. You can use the query params to filter your results.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -399,7 +419,8 @@ functions
     ),
   );
 
-functions
+
+const functionsCreateExecutionCommand = functions
   .command(`create-execution`)
   .description(`Trigger a function execution. The returned object will return you the current execution status. You can ping the \`Get Execution\` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -421,7 +442,8 @@ functions
     ),
   );
 
-functions
+
+const functionsGetExecutionCommand = functions
   .command(`get-execution`)
   .description(`Get a function execution log by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -433,7 +455,8 @@ functions
     ),
   );
 
-functions
+
+const functionsDeleteExecutionCommand = functions
   .command(`delete-execution`)
   .description(`Delete a function execution by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -445,7 +468,8 @@ functions
     ),
   );
 
-functions
+
+const functionsGetUsageCommand = functions
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for a for a specific function. View statistics including total deployments, builds, executions, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -457,7 +481,8 @@ functions
     ),
   );
 
-functions
+
+const functionsListVariablesCommand = functions
   .command(`list-variables`)
   .description(`Get a list of all variables of a specific function.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
@@ -468,7 +493,8 @@ functions
     ),
   );
 
-functions
+
+const functionsCreateVariableCommand = functions
   .command(`create-variable`)
   .description(`Create a new function environment variable. These variables can be accessed in the function at runtime as environment variables.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
@@ -487,7 +513,8 @@ functions
     ),
   );
 
-functions
+
+const functionsGetVariableCommand = functions
   .command(`get-variable`)
   .description(`Get a variable by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
@@ -499,7 +526,8 @@ functions
     ),
   );
 
-functions
+
+const functionsUpdateVariableCommand = functions
   .command(`update-variable`)
   .description(`Update variable by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
@@ -519,7 +547,8 @@ functions
     ),
   );
 
-functions
+
+const functionsDeleteVariableCommand = functions
   .command(`delete-variable`)
   .description(`Delete a variable by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
@@ -530,4 +559,5 @@ functions
         parse(await (await getFunctionsClient()).deleteVariable(functionId, variableId)),
     ),
   );
+
 

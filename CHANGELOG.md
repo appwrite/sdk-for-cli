@@ -1,5 +1,15 @@
 # Change Log
 
+## 17.2.0
+
+* Added `--show-secrets` flag to control display of sensitive values in output
+* Added automatic redaction of secrets, API keys, tokens, and passwords in CLI output
+* Added `init skill` command for installing Appwrite agent skills for AI coding agents
+* Added automatic agent skills detection and installation during project initialization
+* Added `OPEN_RUNTIMES_ENTRYPOINT` environment variable to function emulation
+* Updated `-j` and `-R` output flag descriptions for clarity
+* Fixed project init to gracefully handle override decline instead of exiting
+
 ## 17.1.0
 
 * Added `organizations` command group with multiple subcommands

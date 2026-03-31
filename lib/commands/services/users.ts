@@ -26,7 +26,7 @@ export const users = new Command("users")
     helpWidth: process.stdout.columns || 80,
   });
 
-users
+const usersListCommand = users
   .command(`list`)
   .description(`Get a list of all the project's users. You can use the query params to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, labels, impersonator`)
@@ -44,7 +44,8 @@ users
     ),
   );
 
-users
+
+const usersCreateCommand = users
   .command(`create`)
   .description(`Create a new user.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -59,7 +60,8 @@ users
     ),
   );
 
-users
+
+const usersCreateArgon2UserCommand = users
   .command(`create-argon-2-user`)
   .description(`Create a new user. Password provided must be hashed with the [Argon2](https://en.wikipedia.org/wiki/Argon2) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -73,7 +75,8 @@ users
     ),
   );
 
-users
+
+const usersCreateBcryptUserCommand = users
   .command(`create-bcrypt-user`)
   .description(`Create a new user. Password provided must be hashed with the [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -87,7 +90,8 @@ users
     ),
   );
 
-users
+
+const usersListIdentitiesCommand = users
   .command(`list-identities`)
   .description(`Get identities for all users.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry`)
@@ -105,7 +109,8 @@ users
     ),
   );
 
-users
+
+const usersDeleteIdentityCommand = users
   .command(`delete-identity`)
   .description(`Delete an identity by its unique ID.`)
   .requiredOption(`--identity-id <identity-id>`, `Identity ID.`)
@@ -116,7 +121,8 @@ users
     ),
   );
 
-users
+
+const usersCreateMD5UserCommand = users
   .command(`create-md-5-user`)
   .description(`Create a new user. Password provided must be hashed with the [MD5](https://en.wikipedia.org/wiki/MD5) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -130,7 +136,8 @@ users
     ),
   );
 
-users
+
+const usersCreatePHPassUserCommand = users
   .command(`create-ph-pass-user`)
   .description(`Create a new user. Password provided must be hashed with the [PHPass](https://www.openwall.com/phpass/) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or pass the string \`ID.unique()\`to auto generate it. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -144,7 +151,8 @@ users
     ),
   );
 
-users
+
+const usersCreateScryptUserCommand = users
   .command(`create-scrypt-user`)
   .description(`Create a new user. Password provided must be hashed with the [Scrypt](https://github.com/Tarsnap/scrypt) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -163,7 +171,8 @@ users
     ),
   );
 
-users
+
+const usersCreateScryptModifiedUserCommand = users
   .command(`create-scrypt-modified-user`)
   .description(`Create a new user. Password provided must be hashed with the [Scrypt Modified](https://gist.github.com/Meldiron/eecf84a0225eccb5a378d45bb27462cc) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -180,7 +189,8 @@ users
     ),
   );
 
-users
+
+const usersCreateSHAUserCommand = users
   .command(`create-sha-user`)
   .description(`Create a new user. Password provided must be hashed with the [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -195,7 +205,8 @@ users
     ),
   );
 
-users
+
+const usersGetUsageCommand = users
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for all users in the project. You can view the total number of users and sessions. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.
 `)
@@ -207,7 +218,8 @@ users
     ),
   );
 
-users
+
+const usersGetCommand = users
   .command(`get`)
   .description(`Get a user by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -218,7 +230,8 @@ users
     ),
   );
 
-users
+
+const usersDeleteCommand = users
   .command(`delete`)
   .description(`Delete a user by its unique ID, thereby releasing it's ID. Since ID is released and can be reused, all user-related resources like documents or storage files should be deleted before user deletion. If you want to keep ID reserved, use the [updateStatus](https://appwrite.io/docs/server/users#usersUpdateStatus) endpoint instead.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -229,7 +242,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateEmailCommand = users
   .command(`update-email`)
   .description(`Update the user email by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -241,7 +255,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateImpersonatorCommand = users
   .command(`update-impersonator`)
   .description(`Enable or disable whether a user can impersonate other users. When impersonation headers are used, the request runs as the target user for API behavior, while internal audit logs still attribute the action to the original impersonator and store the impersonated target details only in internal audit payload data.
 `)
@@ -254,7 +269,8 @@ users
     ),
   );
 
-users
+
+const usersCreateJWTCommand = users
   .command(`create-jwt`)
   .description(`Use this endpoint to create a JSON Web Token for user by its unique ID. You can use the resulting JWT to authenticate on behalf of the user. The JWT secret will become invalid if the session it uses gets deleted.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -267,7 +283,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateLabelsCommand = users
   .command(`update-labels`)
   .description(`Update the user labels by its unique ID. 
 
@@ -281,7 +298,8 @@ Labels can be used to grant access to resources. While teams are a way for user'
     ),
   );
 
-users
+
+const usersListLogsCommand = users
   .command(`list-logs`)
   .description(`Get the user activity logs list by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -299,7 +317,8 @@ users
     ),
   );
 
-users
+
+const usersListMembershipsCommand = users
   .command(`list-memberships`)
   .description(`Get the user membership list by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -318,7 +337,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateMfaCommand = users
   .command(`update-mfa`)
   .description(`Enable or disable MFA on a user account.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -330,7 +350,8 @@ users
     ),
   );
 
-users
+
+const usersDeleteMfaAuthenticatorCommand = users
   .command(`delete-mfa-authenticator`)
   .description(`Delete an authenticator app.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -342,7 +363,8 @@ users
     ),
   );
 
-users
+
+const usersListMfaFactorsCommand = users
   .command(`list-mfa-factors`)
   .description(`List the factors available on the account to be used as a MFA challange.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -353,7 +375,8 @@ users
     ),
   );
 
-users
+
+const usersGetMfaRecoveryCodesCommand = users
   .command(`get-mfa-recovery-codes`)
   .description(`Get recovery codes that can be used as backup for MFA flow by User ID. Before getting codes, they must be generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -364,7 +387,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateMfaRecoveryCodesCommand = users
   .command(`update-mfa-recovery-codes`)
   .description(`Regenerate recovery codes that can be used as backup for MFA flow by User ID. Before regenerating codes, they must be first generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -375,7 +399,8 @@ users
     ),
   );
 
-users
+
+const usersCreateMfaRecoveryCodesCommand = users
   .command(`create-mfa-recovery-codes`)
   .description(`Generate recovery codes used as backup for MFA flow for User ID. Recovery codes can be used as a MFA verification type in [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge) method by client SDK.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -386,7 +411,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateNameCommand = users
   .command(`update-name`)
   .description(`Update the user name by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -398,7 +424,8 @@ users
     ),
   );
 
-users
+
+const usersUpdatePasswordCommand = users
   .command(`update-password`)
   .description(`Update the user password by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -410,7 +437,8 @@ users
     ),
   );
 
-users
+
+const usersUpdatePhoneCommand = users
   .command(`update-phone`)
   .description(`Update the user phone by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -422,7 +450,8 @@ users
     ),
   );
 
-users
+
+const usersGetPrefsCommand = users
   .command(`get-prefs`)
   .description(`Get the user preferences by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -433,7 +462,8 @@ users
     ),
   );
 
-users
+
+const usersUpdatePrefsCommand = users
   .command(`update-prefs`)
   .description(`Update the user preferences by its unique ID. The object you pass is stored as is, and replaces any previous value. The maximum allowed prefs size is 64kB and throws error if exceeded.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -445,7 +475,8 @@ users
     ),
   );
 
-users
+
+const usersListSessionsCommand = users
   .command(`list-sessions`)
   .description(`Get the user sessions list by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -462,7 +493,8 @@ users
     ),
   );
 
-users
+
+const usersCreateSessionCommand = users
   .command(`create-session`)
   .description(`Creates a session for a user. Returns an immediately usable session object.
 
@@ -475,7 +507,8 @@ If you want to generate a token for a custom authentication flow, use the [POST 
     ),
   );
 
-users
+
+const usersDeleteSessionsCommand = users
   .command(`delete-sessions`)
   .description(`Delete all user's sessions by using the user's unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -486,7 +519,8 @@ users
     ),
   );
 
-users
+
+const usersDeleteSessionCommand = users
   .command(`delete-session`)
   .description(`Delete a user sessions by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -498,7 +532,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateStatusCommand = users
   .command(`update-status`)
   .description(`Update the user status by its unique ID. Use this endpoint as an alternative to deleting a user if you want to keep user's ID reserved.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -510,7 +545,8 @@ users
     ),
   );
 
-users
+
+const usersListTargetsCommand = users
   .command(`list-targets`)
   .description(`List the messaging targets that are associated with a user.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -528,7 +564,8 @@ users
     ),
   );
 
-users
+
+const usersCreateTargetCommand = users
   .command(`create-target`)
   .description(`Create a messaging target.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -544,7 +581,8 @@ users
     ),
   );
 
-users
+
+const usersGetTargetCommand = users
   .command(`get-target`)
   .description(`Get a user's push notification target by ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -556,7 +594,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateTargetCommand = users
   .command(`update-target`)
   .description(`Update a messaging target.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -571,7 +610,8 @@ users
     ),
   );
 
-users
+
+const usersDeleteTargetCommand = users
   .command(`delete-target`)
   .description(`Delete a messaging target.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -583,7 +623,8 @@ users
     ),
   );
 
-users
+
+const usersCreateTokenCommand = users
   .command(`create-token`)
   .description(`Returns a token with a secret key for creating a session. Use the user ID and secret and submit a request to the [PUT /account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process.
 `)
@@ -597,7 +638,8 @@ users
     ),
   );
 
-users
+
+const usersUpdateEmailVerificationCommand = users
   .command(`update-email-verification`)
   .description(`Update the user email verification status by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -609,7 +651,8 @@ users
     ),
   );
 
-users
+
+const usersUpdatePhoneVerificationCommand = users
   .command(`update-phone-verification`)
   .description(`Update the user phone verification status by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -620,4 +663,5 @@ users
         parse(await (await getUsersClient()).updatePhoneVerification(userId, phoneVerification)),
     ),
   );
+
 

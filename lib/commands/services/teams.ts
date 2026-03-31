@@ -35,7 +35,7 @@ export const teams = new Command("teams")
     helpWidth: process.stdout.columns || 80,
   });
 
-teams
+const teamsListCommand = teams
   .command(`list`)
   .description(`Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan`)
@@ -53,7 +53,8 @@ teams
     ),
   );
 
-teams
+
+const teamsCreateCommand = teams
   .command(`create`)
   .description(`Create a new team. The user who creates the team will automatically be assigned as the owner of the team. Only the users with the owner role can invite new members, add new owners and delete or update the team.`)
   .requiredOption(`--team-id <team-id>`, `Team ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -66,7 +67,8 @@ teams
     ),
   );
 
-teams
+
+const teamsGetCommand = teams
   .command(`get`)
   .description(`Get a team by its ID. All team members have read access for this resource.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -77,7 +79,8 @@ teams
     ),
   );
 
-teams
+
+const teamsUpdateNameCommand = teams
   .command(`update-name`)
   .description(`Update the team's name by its unique ID.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -89,7 +92,8 @@ teams
     ),
   );
 
-teams
+
+const teamsDeleteCommand = teams
   .command(`delete`)
   .description(`Delete a team using its ID. Only team members with the owner role can delete the team.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -100,7 +104,8 @@ teams
     ),
   );
 
-teams
+
+const teamsListLogsCommand = teams
   .command(`list-logs`)
   .description(`Get the team activity logs list by its unique ID.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -118,7 +123,8 @@ teams
     ),
   );
 
-teams
+
+const teamsListMembershipsCommand = teams
   .command(`list-memberships`)
   .description(`Use this endpoint to list a team's members using the team's ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -137,7 +143,8 @@ teams
     ),
   );
 
-teams
+
+const teamsCreateMembershipCommand = teams
   .command(`create-membership`)
   .description(`Invite a new member to join your team. Provide an ID for existing users, or invite unregistered users using an email or phone number. If initiated from a Client SDK, Appwrite will send an email or sms with a link to join the team to the invited user, and an account will be created for them if one doesn't exist. If initiated from a Server SDK, the new member will be added automatically to the team.
 
@@ -161,7 +168,8 @@ Please note that to avoid a [Redirect Attack](https://github.com/OWASP/CheatShee
     ),
   );
 
-teams
+
+const teamsGetMembershipCommand = teams
   .command(`get-membership`)
   .description(`Get a team member by the membership unique id. All team members have read access for this resource. Hide sensitive attributes from the response by toggling membership privacy in the Console.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -173,7 +181,8 @@ teams
     ),
   );
 
-teams
+
+const teamsUpdateMembershipCommand = teams
   .command(`update-membership`)
   .description(`Modify the roles of a team member. Only team members with the owner role have access to this endpoint. Learn more about [roles and permissions](https://appwrite.io/docs/permissions).
 `)
@@ -187,7 +196,8 @@ teams
     ),
   );
 
-teams
+
+const teamsDeleteMembershipCommand = teams
   .command(`delete-membership`)
   .description(`This endpoint allows a user to leave a team or for a team owner to delete the membership of any other team member. You can also use this endpoint to delete a user membership even if it is not accepted.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -199,7 +209,8 @@ teams
     ),
   );
 
-teams
+
+const teamsUpdateMembershipStatusCommand = teams
   .command(`update-membership-status`)
   .description(`Use this endpoint to allow a user to accept an invitation to join a team after being redirected back to your app from the invitation email received by the user.
 
@@ -216,7 +227,8 @@ If the request is successful, a session for the user is automatically created.
     ),
   );
 
-teams
+
+const teamsGetPrefsCommand = teams
   .command(`get-prefs`)
   .description(`Get the team's shared preferences by its unique ID. If a preference doesn't need to be shared by all team members, prefer storing them in [user preferences](https://appwrite.io/docs/references/cloud/client-web/account#getPrefs).`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -227,7 +239,8 @@ teams
     ),
   );
 
-teams
+
+const teamsUpdatePrefsCommand = teams
   .command(`update-prefs`)
   .description(`Update the team's preferences by its unique ID. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.`)
   .requiredOption(`--team-id <team-id>`, `Team ID.`)
@@ -238,4 +251,5 @@ teams
         parse(await (await getTeamsClient()).updatePrefs(teamId, JSON.parse(prefs))),
     ),
   );
+
 

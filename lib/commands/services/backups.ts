@@ -26,7 +26,7 @@ export const backups = new Command("backups")
     helpWidth: process.stdout.columns || 80,
   });
 
-backups
+const backupsListArchivesCommand = backups
   .command(`list-archives`)
   .description(`List all archives for a project.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
@@ -37,7 +37,8 @@ backups
     ),
   );
 
-backups
+
+const backupsCreateArchiveCommand = backups
   .command(`create-archive`)
   .description(`Create a new archive asynchronously for a project.`)
   .requiredOption(`--services [services...]`, `Array of services to backup`)
@@ -49,7 +50,8 @@ backups
     ),
   );
 
-backups
+
+const backupsGetArchiveCommand = backups
   .command(`get-archive`)
   .description(`Get a backup archive using it's ID.`)
   .requiredOption(`--archive-id <archive-id>`, `Archive ID. Choose a custom ID\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -60,7 +62,8 @@ backups
     ),
   );
 
-backups
+
+const backupsDeleteArchiveCommand = backups
   .command(`delete-archive`)
   .description(`Delete an existing archive for a project.`)
   .requiredOption(`--archive-id <archive-id>`, `Policy ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -71,7 +74,8 @@ backups
     ),
   );
 
-backups
+
+const backupsListPoliciesCommand = backups
   .command(`list-policies`)
   .description(`List all policies for a project.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
@@ -82,7 +86,8 @@ backups
     ),
   );
 
-backups
+
+const backupsCreatePolicyCommand = backups
   .command(`create-policy`)
   .description(`Create a new backup policy.`)
   .requiredOption(`--policy-id <policy-id>`, `Policy ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -104,7 +109,8 @@ backups
     ),
   );
 
-backups
+
+const backupsGetPolicyCommand = backups
   .command(`get-policy`)
   .description(`Get a backup policy using it's ID.`)
   .requiredOption(`--policy-id <policy-id>`, `Policy ID. Choose a custom ID\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -115,7 +121,8 @@ backups
     ),
   );
 
-backups
+
+const backupsUpdatePolicyCommand = backups
   .command(`update-policy`)
   .description(`Update an existing policy using it's ID.`)
   .requiredOption(`--policy-id <policy-id>`, `Policy ID. Choose a custom ID\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -135,7 +142,8 @@ backups
     ),
   );
 
-backups
+
+const backupsDeletePolicyCommand = backups
   .command(`delete-policy`)
   .description(`Delete a policy using it's ID.`)
   .requiredOption(`--policy-id <policy-id>`, `Policy ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -146,7 +154,8 @@ backups
     ),
   );
 
-backups
+
+const backupsCreateRestorationCommand = backups
   .command(`create-restoration`)
   .description(`Create and trigger a new restoration for a backup on a project.`)
   .requiredOption(`--archive-id <archive-id>`, `Backup archive ID to restore`)
@@ -160,7 +169,8 @@ backups
     ),
   );
 
-backups
+
+const backupsListRestorationsCommand = backups
   .command(`list-restorations`)
   .description(`List all backup restorations for a project.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
@@ -171,7 +181,8 @@ backups
     ),
   );
 
-backups
+
+const backupsGetRestorationCommand = backups
   .command(`get-restoration`)
   .description(`Get the current status of a backup restoration.`)
   .requiredOption(`--restoration-id <restoration-id>`, `Restoration ID. Choose a custom ID\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -181,4 +192,5 @@ backups
         parse(await (await getBackupsClient()).getRestoration(restorationId)),
     ),
   );
+
 

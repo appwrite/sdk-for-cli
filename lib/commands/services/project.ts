@@ -26,7 +26,7 @@ export const project = new Command("project")
     helpWidth: process.stdout.columns || 80,
   });
 
-project
+const projectGetUsageCommand = project
   .command(`get-usage`)
   .description(`Get comprehensive usage statistics for your project. View metrics including network requests, bandwidth, storage, function executions, database usage, and user activity. Specify a time range with startDate and endDate, and optionally set the data granularity with period (1h or 1d). The response includes both total counts and detailed breakdowns by resource, along with historical data over the specified period.`)
   .requiredOption(`--start-date <start-date>`, `Starting date for the usage`)
@@ -39,7 +39,8 @@ project
     ),
   );
 
-project
+
+const projectListVariablesCommand = project
   .command(`list-variables`)
   .description(`Get a list of all project environment variables.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret`)
@@ -56,7 +57,8 @@ project
     ),
   );
 
-project
+
+const projectCreateVariableCommand = project
   .command(`create-variable`)
   .description(`Create a new project environment variable. These variables can be accessed by all functions and sites in the project.`)
   .requiredOption(`--variable-id <variable-id>`, `Variable ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -75,7 +77,8 @@ project
     ),
   );
 
-project
+
+const projectGetVariableCommand = project
   .command(`get-variable`)
   .description(`Get a variable by its unique ID. `)
   .requiredOption(`--variable-id <variable-id>`, `Variable ID.`)
@@ -86,7 +89,8 @@ project
     ),
   );
 
-project
+
+const projectUpdateVariableCommand = project
   .command(`update-variable`)
   .description(`Update variable by its unique ID.`)
   .requiredOption(`--variable-id <variable-id>`, `Variable ID.`)
@@ -105,7 +109,8 @@ project
     ),
   );
 
-project
+
+const projectDeleteVariableCommand = project
   .command(`delete-variable`)
   .description(`Delete a variable by its unique ID. `)
   .requiredOption(`--variable-id <variable-id>`, `Variable ID.`)
@@ -115,4 +120,5 @@ project
         parse(await (await getProjectClient()).deleteVariable(variableId)),
     ),
   );
+
 

@@ -26,7 +26,7 @@ export const tablesDB = new Command("tables-db")
     helpWidth: process.stdout.columns || 80,
   });
 
-tablesDB
+const tablesDBListCommand = tablesDB
   .command(`list`)
   .description(`Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name`)
@@ -44,7 +44,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateCommand = tablesDB
   .command(`create`)
   .description(`Create a new Database.
 `)
@@ -63,7 +64,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListTransactionsCommand = tablesDB
   .command(`list-transactions`)
   .description(`List transactions across all databases.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries).`)
@@ -74,7 +76,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateTransactionCommand = tablesDB
   .command(`create-transaction`)
   .description(`Create a new transaction.`)
   .option(`--ttl <ttl>`, `Seconds before the transaction expires.`, parseInteger)
@@ -85,7 +88,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetTransactionCommand = tablesDB
   .command(`get-transaction`)
   .description(`Get a transaction by its unique ID.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -96,7 +100,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateTransactionCommand = tablesDB
   .command(`update-transaction`)
   .description(`Update a transaction, to either commit or roll back its operations.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -119,7 +124,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteTransactionCommand = tablesDB
   .command(`delete-transaction`)
   .description(`Delete a transaction by its unique ID.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -130,7 +136,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateOperationsCommand = tablesDB
   .command(`create-operations`)
   .description(`Create multiple operations in a single transaction.`)
   .requiredOption(`--transaction-id <transaction-id>`, `Transaction ID.`)
@@ -142,7 +149,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListUsageCommand = tablesDB
   .command(`list-usage`)
   .description(`List usage metrics and statistics for all databases in the project. You can view the total number of databases, tables, rows, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
   .option(`--range <range>`, `Date range.`)
@@ -153,7 +161,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetCommand = tablesDB
   .command(`get`)
   .description(`Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -164,7 +173,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateCommand = tablesDB
   .command(`update`)
   .description(`Update a database by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -182,7 +192,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteCommand = tablesDB
   .command(`delete`)
   .description(`Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -193,7 +204,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListTablesCommand = tablesDB
   .command(`list-tables`)
   .description(`Get a list of all tables that belong to the provided databaseId. You can use the search parameter to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -212,7 +224,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateTableCommand = tablesDB
   .command(`create-table`)
   .description(`Create a new Table. Before using this route, you should create a new database resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -240,7 +253,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetTableCommand = tablesDB
   .command(`get-table`)
   .description(`Get a table by its unique ID. This endpoint response returns a JSON object with the table metadata.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -252,7 +266,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateTableCommand = tablesDB
   .command(`update-table`)
   .description(`Update a table by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -278,7 +293,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteTableCommand = tablesDB
   .command(`delete-table`)
   .description(`Delete a table by its unique ID. Only users with write permissions have access to delete this resource.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -290,7 +306,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListColumnsCommand = tablesDB
   .command(`list-columns`)
   .description(`List columns in the table.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -309,7 +326,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateBooleanColumnCommand = tablesDB
   .command(`create-boolean-column`)
   .description(`Create a boolean column.
 `)
@@ -336,7 +354,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateBooleanColumnCommand = tablesDB
   .command(`update-boolean-column`)
   .description(`Update a boolean column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -352,7 +371,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateDatetimeColumnCommand = tablesDB
   .command(`create-datetime-column`)
   .description(`Create a date time column according to the ISO 8601 standard.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -373,7 +393,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateDatetimeColumnCommand = tablesDB
   .command(`update-datetime-column`)
   .description(`Update a date time column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -389,7 +410,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateEmailColumnCommand = tablesDB
   .command(`create-email-column`)
   .description(`Create an email column.
 `)
@@ -411,7 +433,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateEmailColumnCommand = tablesDB
   .command(`update-email-column`)
   .description(`Update an email column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -428,7 +451,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateEnumColumnCommand = tablesDB
   .command(`create-enum-column`)
   .description(`Create an enumeration column. The \`elements\` param acts as a white-list of accepted values for this column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -450,7 +474,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateEnumColumnCommand = tablesDB
   .command(`update-enum-column`)
   .description(`Update an enum column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -468,7 +493,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateFloatColumnCommand = tablesDB
   .command(`create-float-column`)
   .description(`Create a float column. Optionally, minimum and maximum values can be provided.
 `)
@@ -492,7 +518,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateFloatColumnCommand = tablesDB
   .command(`update-float-column`)
   .description(`Update a float column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -511,7 +538,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateIntegerColumnCommand = tablesDB
   .command(`create-integer-column`)
   .description(`Create an integer column. Optionally, minimum and maximum values can be provided.
 `)
@@ -535,7 +563,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateIntegerColumnCommand = tablesDB
   .command(`update-integer-column`)
   .description(`Update an integer column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -554,7 +583,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateIpColumnCommand = tablesDB
   .command(`create-ip-column`)
   .description(`Create IP address column.
 `)
@@ -576,7 +606,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateIpColumnCommand = tablesDB
   .command(`update-ip-column`)
   .description(`Update an ip column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -593,7 +624,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateLineColumnCommand = tablesDB
   .command(`create-line-column`)
   .description(`Create a geometric line column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -608,7 +640,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateLineColumnCommand = tablesDB
   .command(`update-line-column`)
   .description(`Update a line column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -624,7 +657,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateLongtextColumnCommand = tablesDB
   .command(`create-longtext-column`)
   .description(`Create a longtext column.
 `)
@@ -652,7 +686,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateLongtextColumnCommand = tablesDB
   .command(`update-longtext-column`)
   .description(`Update a longtext column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -669,7 +704,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateMediumtextColumnCommand = tablesDB
   .command(`create-mediumtext-column`)
   .description(`Create a mediumtext column.
 `)
@@ -697,7 +733,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateMediumtextColumnCommand = tablesDB
   .command(`update-mediumtext-column`)
   .description(`Update a mediumtext column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -714,7 +751,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreatePointColumnCommand = tablesDB
   .command(`create-point-column`)
   .description(`Create a geometric point column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -729,7 +767,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdatePointColumnCommand = tablesDB
   .command(`update-point-column`)
   .description(`Update a point column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -745,7 +784,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreatePolygonColumnCommand = tablesDB
   .command(`create-polygon-column`)
   .description(`Create a geometric polygon column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -760,7 +800,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdatePolygonColumnCommand = tablesDB
   .command(`update-polygon-column`)
   .description(`Update a polygon column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -776,7 +817,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateRelationshipColumnCommand = tablesDB
   .command(`create-relationship-column`)
   .description(`Create relationship column. [Learn more about relationship columns](https://appwrite.io/docs/databases-relationships#relationship-columns).
 `)
@@ -800,7 +842,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateStringColumnCommand = tablesDB
   .command(`create-string-column`)
   .description(`Create a string column.
 `)
@@ -829,7 +872,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateStringColumnCommand = tablesDB
   .command(`update-string-column`)
   .description(`Update a string column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -847,7 +891,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateTextColumnCommand = tablesDB
   .command(`create-text-column`)
   .description(`Create a text column.
 `)
@@ -875,7 +920,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateTextColumnCommand = tablesDB
   .command(`update-text-column`)
   .description(`Update a text column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -892,7 +938,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateUrlColumnCommand = tablesDB
   .command(`create-url-column`)
   .description(`Create a URL column.
 `)
@@ -914,7 +961,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateUrlColumnCommand = tablesDB
   .command(`update-url-column`)
   .description(`Update an url column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -931,7 +979,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateVarcharColumnCommand = tablesDB
   .command(`create-varchar-column`)
   .description(`Create a varchar column.
 `)
@@ -960,7 +1009,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateVarcharColumnCommand = tablesDB
   .command(`update-varchar-column`)
   .description(`Update a varchar column. Changing the \`default\` value will not update already existing rows.
 `)
@@ -978,7 +1028,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetColumnCommand = tablesDB
   .command(`get-column`)
   .description(`Get column by ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -991,7 +1042,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteColumnCommand = tablesDB
   .command(`delete-column`)
   .description(`Deletes a column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1004,7 +1056,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateRelationshipColumnCommand = tablesDB
   .command(`update-relationship-column`)
   .description(`Update relationship column. [Learn more about relationship columns](https://appwrite.io/docs/databases-relationships#relationship-columns).
 `)
@@ -1020,7 +1073,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListIndexesCommand = tablesDB
   .command(`list-indexes`)
   .description(`List indexes on the table.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1039,7 +1093,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateIndexCommand = tablesDB
   .command(`create-index`)
   .description(`Creates an index on the columns listed. Your index should include all the columns you will query in a single request.
 Type can be \`key\`, \`fulltext\`, or \`unique\`.`)
@@ -1057,7 +1112,8 @@ Type can be \`key\`, \`fulltext\`, or \`unique\`.`)
     ),
   );
 
-tablesDB
+
+const tablesDBGetIndexCommand = tablesDB
   .command(`get-index`)
   .description(`Get index by ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1070,7 +1126,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteIndexCommand = tablesDB
   .command(`delete-index`)
   .description(`Delete an index.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1083,7 +1140,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListTableLogsCommand = tablesDB
   .command(`list-table-logs`)
   .description(`Get the table activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1096,7 +1154,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListRowsCommand = tablesDB
   .command(`list-rows`)
   .description(`Get a list of all the user's rows in a given table. You can use the query params to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1117,7 +1176,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateRowCommand = tablesDB
   .command(`create-row`)
   .description(`Create a new Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1133,7 +1193,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBCreateRowsCommand = tablesDB
   .command(`create-rows`)
   .description(`Create new Rows. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1147,7 +1208,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpsertRowsCommand = tablesDB
   .command(`upsert-rows`)
   .description(`Create or update Rows. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
 `)
@@ -1162,7 +1224,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateRowsCommand = tablesDB
   .command(`update-rows`)
   .description(`Update all rows that match your queries, if no queries are submitted then all rows are updated. You can pass only specific fields to be updated.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1177,7 +1240,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteRowsCommand = tablesDB
   .command(`delete-rows`)
   .description(`Bulk delete rows using queries, if no queries are passed then all rows are deleted.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1191,7 +1255,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetRowCommand = tablesDB
   .command(`get-row`)
   .description(`Get a row by its unique ID. This endpoint response returns a JSON object with the row data.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1206,7 +1271,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpsertRowCommand = tablesDB
   .command(`upsert-row`)
   .description(`Create or update a Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1222,7 +1288,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBUpdateRowCommand = tablesDB
   .command(`update-row`)
   .description(`Update a row by its unique ID. Using the patch method you can pass only specific fields that will get updated.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1238,7 +1305,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDeleteRowCommand = tablesDB
   .command(`delete-row`)
   .description(`Delete a row by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1252,7 +1320,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBListRowLogsCommand = tablesDB
   .command(`list-row-logs`)
   .description(`Get the row activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1266,7 +1335,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBDecrementRowColumnCommand = tablesDB
   .command(`decrement-row-column`)
   .description(`Decrement a specific column of a row by a given value.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1283,7 +1353,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBIncrementRowColumnCommand = tablesDB
   .command(`increment-row-column`)
   .description(`Increment a specific column of a row by a given value.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1300,7 +1371,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetTableUsageCommand = tablesDB
   .command(`get-table-usage`)
   .description(`Get usage metrics and statistics for a table. Returning the total number of rows. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1313,7 +1385,8 @@ tablesDB
     ),
   );
 
-tablesDB
+
+const tablesDBGetUsageCommand = tablesDB
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for a database. You can view the total number of tables, rows, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
@@ -1324,4 +1397,5 @@ tablesDB
         parse(await (await getTablesDBClient()).getUsage(databaseId, range)),
     ),
   );
+
 
