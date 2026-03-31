@@ -1,5 +1,9 @@
 # Change Log
 
+## 17.2.1
+
+* Fixed: Removed `bun.lock` from `.gitignore` so lockfile is tracked in version control
+
 ## 17.2.0
 
 * Added `--show-secrets` flag to control display of sensitive values in output
