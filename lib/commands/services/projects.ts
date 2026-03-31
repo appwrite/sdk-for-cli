@@ -26,7 +26,7 @@ export const projects = new Command("projects")
     helpWidth: process.stdout.columns || 80,
   });
 
-projects
+const projectsListCommand = projects
   .command(`list`)
   .description(`Get a list of all projects. You can use the query params to filter your results. `)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search`)
@@ -44,7 +44,9 @@ projects
     ),
   );
 
-projects
+(projectsListCommand as Command & { outputFields?: string[] }).outputFields = ["name", "$id", "region", "status"];
+
+const projectsCreateCommand = projects
   .command(`create`)
   .description(`Create a new project. You can create a maximum of 100 projects per account. `)
   .requiredOption(`--project-id <project-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, and hyphen. Can't start with a special char. Max length is 36 chars.`)
@@ -67,7 +69,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetCommand = projects
   .command(`get`)
   .description(`Get a project by its unique ID. This endpoint allows you to retrieve the project's details, including its name, description, team, region, and other metadata. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -78,7 +81,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateCommand = projects
   .command(`update`)
   .description(`Update a project by its unique ID.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -99,7 +103,8 @@ projects
     ),
   );
 
-projects
+
+const projectsDeleteCommand = projects
   .command(`delete`)
   .description(`Delete a project by its unique ID.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -110,7 +115,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateApiStatusCommand = projects
   .command(`update-api-status`)
   .description(`Update the status of a specific API type. Use this endpoint to enable or disable API types such as REST, GraphQL and Realtime.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -123,7 +129,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateApiStatusAllCommand = projects
   .command(`update-api-status-all`)
   .description(`Update the status of all API types. Use this endpoint to enable or disable API types such as REST, GraphQL and Realtime all at once.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -135,7 +142,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateAuthDurationCommand = projects
   .command(`update-auth-duration`)
   .description(`Update how long sessions created within a project should stay active for.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -147,7 +155,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateAuthLimitCommand = projects
   .command(`update-auth-limit`)
   .description(`Update the maximum number of users allowed in this project. Set to 0 for unlimited users. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -159,7 +168,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateAuthSessionsLimitCommand = projects
   .command(`update-auth-sessions-limit`)
   .description(`Update the maximum number of sessions allowed per user within the project, if the limit is hit the oldest session will be deleted to make room for new sessions.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -171,7 +181,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateMembershipsPrivacyCommand = projects
   .command(`update-memberships-privacy`)
   .description(`Update project membership privacy settings. Use this endpoint to control what user information is visible to other team members, such as user name, email, and MFA status. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -185,7 +196,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateMockNumbersCommand = projects
   .command(`update-mock-numbers`)
   .description(`Update the list of mock phone numbers for testing. Use these numbers to bypass SMS verification in development. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -197,7 +209,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateAuthPasswordDictionaryCommand = projects
   .command(`update-auth-password-dictionary`)
   .description(`Enable or disable checking user passwords against common passwords dictionary. This helps ensure users don't use common and insecure passwords. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -209,7 +222,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateAuthPasswordHistoryCommand = projects
   .command(`update-auth-password-history`)
   .description(`Update the authentication password history requirement. Use this endpoint to require new passwords to be different than the last X amount of previously used ones.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -221,7 +235,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdatePersonalDataCheckCommand = projects
   .command(`update-personal-data-check`)
   .description(`Enable or disable checking user passwords against their personal data. This helps prevent users from using personal information in their passwords. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -233,7 +248,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateSessionAlertsCommand = projects
   .command(`update-session-alerts`)
   .description(`Enable or disable session email alerts. When enabled, users will receive email notifications when new sessions are created.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -245,7 +261,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateSessionInvalidationCommand = projects
   .command(`update-session-invalidation`)
   .description(`Invalidate all existing sessions. An optional auth security setting for projects, and enabled by default for console project.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -257,7 +274,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateAuthStatusCommand = projects
   .command(`update-auth-status`)
   .description(`Update the status of a specific authentication method. Use this endpoint to enable or disable different authentication methods such as email, magic urls or sms in your project. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -270,7 +288,8 @@ projects
     ),
   );
 
-projects
+
+const projectsListDevKeysCommand = projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -282,7 +301,8 @@ projects
     ),
   );
 
-projects
+
+const projectsCreateDevKeyCommand = projects
   .command(`create-dev-key`)
   .description(`Create a new project dev key. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development. Strictly meant for development purposes only.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -295,7 +315,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetDevKeyCommand = projects
   .command(`get-dev-key`)
   .description(`Get a project\'s dev key by its unique ID. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -307,7 +328,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateDevKeyCommand = projects
   .command(`update-dev-key`)
   .description(`Update a project\'s dev key by its unique ID. Use this endpoint to update a project\'s dev key name or expiration time.'`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -321,7 +343,8 @@ projects
     ),
   );
 
-projects
+
+const projectsDeleteDevKeyCommand = projects
   .command(`delete-dev-key`)
   .description(`Delete a project\'s dev key by its unique ID. Once deleted, the key will no longer allow bypassing of rate limits and better logging of errors.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -333,7 +356,8 @@ projects
     ),
   );
 
-projects
+
+const projectsCreateJWTCommand = projects
   .command(`create-jwt`)
   .description(`Create a new JWT token. This token can be used to authenticate users with custom scopes and expiration time. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -346,7 +370,8 @@ projects
     ),
   );
 
-projects
+
+const projectsListKeysCommand = projects
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current project. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -364,7 +389,8 @@ projects
     ),
   );
 
-projects
+
+const projectsCreateKeyCommand = projects
   .command(`create-key`)
   .description(`Create a new API key. It's recommended to have multiple API keys with strict scopes for separate functions within your project.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -379,7 +405,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetKeyCommand = projects
   .command(`get-key`)
   .description(`Get a key by its unique ID. This endpoint returns details about a specific API key in your project including it's scopes.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -391,7 +418,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateKeyCommand = projects
   .command(`update-key`)
   .description(`Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -406,7 +434,8 @@ projects
     ),
   );
 
-projects
+
+const projectsDeleteKeyCommand = projects
   .command(`delete-key`)
   .description(`Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -418,7 +447,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateLabelsCommand = projects
   .command(`update-labels`)
   .description(`Update the project labels by its unique ID. Labels can be used to easily filter projects in an organization.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -430,7 +460,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateOAuth2Command = projects
   .command(`update-o-auth-2`)
   .description(`Update the OAuth2 provider configurations. Use this endpoint to set up or update the OAuth2 provider credentials or enable/disable providers. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -450,7 +481,8 @@ projects
     ),
   );
 
-projects
+
+const projectsListPlatformsCommand = projects
   .command(`list-platforms`)
   .description(`Get a list of all platforms in the project. This endpoint returns an array of all platforms and their configurations. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -467,7 +499,8 @@ projects
     ),
   );
 
-projects
+
+const projectsCreatePlatformCommand = projects
   .command(`create-platform`)
   .description(`Create a new platform for your project. Use this endpoint to register a new platform where your users will run your application which will interact with the Appwrite API.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -483,7 +516,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetPlatformCommand = projects
   .command(`get-platform`)
   .description(`Get a platform by its unique ID. This endpoint returns the platform's details, including its name, type, and key configurations. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -495,7 +529,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdatePlatformCommand = projects
   .command(`update-platform`)
   .description(`Update a platform by its unique ID. Use this endpoint to update the platform's name, key, platform store ID, or hostname. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -511,7 +546,8 @@ projects
     ),
   );
 
-projects
+
+const projectsDeletePlatformCommand = projects
   .command(`delete-platform`)
   .description(`Delete a platform by its unique ID. This endpoint removes the platform and all its configurations from the project. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -523,7 +559,8 @@ projects
     ),
   );
 
-projects
+
+const projectsListSchedulesCommand = projects
   .command(`list-schedules`)
   .description(`Get a list of all the project's schedules. You can use the query params to filter your results.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -541,7 +578,8 @@ projects
     ),
   );
 
-projects
+
+const projectsCreateScheduleCommand = projects
   .command(`create-schedule`)
   .description(`Create a new schedule for a resource.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -562,7 +600,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetScheduleCommand = projects
   .command(`get-schedule`)
   .description(`Get a schedule by its unique ID.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -574,7 +613,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateServiceStatusCommand = projects
   .command(`update-service-status`)
   .description(`Update the status of a specific service. Use this endpoint to enable or disable a service in your project. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -587,7 +627,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateServiceStatusAllCommand = projects
   .command(`update-service-status-all`)
   .description(`Update the status of all services. Use this endpoint to enable or disable all optional services at once. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -599,7 +640,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateSmtpCommand = projects
   .command(`update-smtp`)
   .description(`Update the SMTP configuration for your project. Use this endpoint to configure your project's SMTP provider with your custom settings for sending transactional emails. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -619,7 +661,8 @@ projects
     ),
   );
 
-projects
+
+const projectsCreateSmtpTestCommand = projects
   .command(`create-smtp-test`)
   .description(`Send a test email to verify SMTP configuration. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -639,7 +682,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateStatusCommand = projects
   .command(`update-status`)
   .description(`Update the status of a project. Can be used to archive/restore projects, and to restore paused projects. When restoring a paused project, the console fingerprint header must be provided and the project must not be blocked for any reason other than inactivity.
 `)
@@ -652,7 +696,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateTeamCommand = projects
   .command(`update-team`)
   .description(`Update the team ID of a project allowing for it to be transferred to another team.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -664,7 +709,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetEmailTemplateCommand = projects
   .command(`get-email-template`)
   .description(`Get a custom email template for the specified locale and type. This endpoint returns the template content, subject, and other configuration details. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -677,7 +723,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateEmailTemplateCommand = projects
   .command(`update-email-template`)
   .description(`Update a custom email template for the specified locale and type. Use this endpoint to modify the content of your email templates.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -695,7 +742,8 @@ projects
     ),
   );
 
-projects
+
+const projectsDeleteEmailTemplateCommand = projects
   .command(`delete-email-template`)
   .description(`Reset a custom email template to its default value. This endpoint removes any custom content and restores the template to its original state. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -708,7 +756,8 @@ projects
     ),
   );
 
-projects
+
+const projectsGetSmsTemplateCommand = projects
   .command(`get-sms-template`)
   .description(`Get a custom SMS template for the specified locale and type returning it's contents.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -721,7 +770,8 @@ projects
     ),
   );
 
-projects
+
+const projectsUpdateSmsTemplateCommand = projects
   .command(`update-sms-template`)
   .description(`Update a custom SMS template for the specified locale and type. Use this endpoint to modify the content of your SMS templates. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -735,7 +785,8 @@ projects
     ),
   );
 
-projects
+
+const projectsDeleteSmsTemplateCommand = projects
   .command(`delete-sms-template`)
   .description(`Reset a custom SMS template to its default value. This endpoint removes any custom message and restores the template to its original state. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
@@ -747,4 +798,5 @@ projects
         parse(await (await getProjectsClient()).deleteSmsTemplate(projectId, type, locale)),
     ),
   );
+
 

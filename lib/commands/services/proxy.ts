@@ -26,7 +26,7 @@ export const proxy = new Command("proxy")
     helpWidth: process.stdout.columns || 80,
   });
 
-proxy
+const proxyListRulesCommand = proxy
   .command(`list-rules`)
   .description(`Get a list of all the proxy rules. You can use the query params to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: domain, type, trigger, deploymentResourceType, deploymentResourceId, deploymentId, deploymentVcsProviderBranch`)
@@ -44,7 +44,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyCreateAPIRuleCommand = proxy
   .command(`create-api-rule`)
   .description(`Create a new proxy rule for serving Appwrite's API on custom domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
@@ -55,7 +56,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyCreateFunctionRuleCommand = proxy
   .command(`create-function-rule`)
   .description(`Create a new proxy rule for executing Appwrite Function on custom domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
@@ -68,7 +70,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyCreateRedirectRuleCommand = proxy
   .command(`create-redirect-rule`)
   .description(`Create a new proxy rule for to redirect from custom domain to another domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
@@ -83,7 +86,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyCreateSiteRuleCommand = proxy
   .command(`create-site-rule`)
   .description(`Create a new proxy rule for serving Appwrite Site on custom domain.`)
   .requiredOption(`--domain <domain>`, `Domain name.`)
@@ -96,7 +100,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyGetRuleCommand = proxy
   .command(`get-rule`)
   .description(`Get a proxy rule by its unique ID.`)
   .requiredOption(`--rule-id <rule-id>`, `Rule ID.`)
@@ -107,7 +112,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyDeleteRuleCommand = proxy
   .command(`delete-rule`)
   .description(`Delete a proxy rule by its unique ID.`)
   .requiredOption(`--rule-id <rule-id>`, `Rule ID.`)
@@ -118,7 +124,8 @@ proxy
     ),
   );
 
-proxy
+
+const proxyUpdateRuleVerificationCommand = proxy
   .command(`update-rule-verification`)
   .description(`Retry getting verification process of a proxy rule. This endpoint triggers domain verification by checking DNS records (CNAME) against the configured target domain. If verification is successful, a TLS certificate will be automatically provisioned for the domain.`)
   .requiredOption(`--rule-id <rule-id>`, `Rule ID.`)
@@ -128,4 +135,5 @@ proxy
         parse(await (await getProxyClient()).updateRuleVerification(ruleId)),
     ),
   );
+
 

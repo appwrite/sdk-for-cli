@@ -26,7 +26,7 @@ export const graphql = new Command("graphql")
     helpWidth: process.stdout.columns || 80,
   });
 
-graphql
+const graphqlQueryCommand = graphql
   .command(`query`)
   .description(`Execute a GraphQL mutation.`)
   .requiredOption(`--query <query>`, `The query or queries to execute.`)
@@ -37,7 +37,8 @@ graphql
     ),
   );
 
-graphql
+
+const graphqlMutationCommand = graphql
   .command(`mutation`)
   .description(`Execute a GraphQL mutation.`)
   .requiredOption(`--query <query>`, `The query or queries to execute.`)
@@ -47,4 +48,5 @@ graphql
         parse(await (await getGraphqlClient()).mutation(JSON.parse(query))),
     ),
   );
+
 

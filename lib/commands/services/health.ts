@@ -26,7 +26,7 @@ export const health = new Command("health")
     helpWidth: process.stdout.columns || 80,
   });
 
-health
+const healthGetCommand = health
   .command(`get`)
   .description(`Check the Appwrite HTTP server is up and responsive.`)
   .action(
@@ -35,7 +35,8 @@ health
     ),
   );
 
-health
+
+const healthGetAntivirusCommand = health
   .command(`get-antivirus`)
   .description(`Check the Appwrite Antivirus server is up and connection is successful.`)
   .action(
@@ -44,7 +45,8 @@ health
     ),
   );
 
-health
+
+const healthGetCacheCommand = health
   .command(`get-cache`)
   .description(`Check the Appwrite in-memory cache servers are up and connection is successful.`)
   .action(
@@ -53,7 +55,8 @@ health
     ),
   );
 
-health
+
+const healthGetCertificateCommand = health
   .command(`get-certificate`)
   .description(`Get the SSL certificate for a domain`)
   .option(`--domain <domain>`, `string`)
@@ -64,7 +67,8 @@ health
     ),
   );
 
-health
+
+const healthGetDBCommand = health
   .command(`get-db`)
   .description(`Check the Appwrite database servers are up and connection is successful.`)
   .action(
@@ -73,7 +77,8 @@ health
     ),
   );
 
-health
+
+const healthGetPubSubCommand = health
   .command(`get-pub-sub`)
   .description(`Check the Appwrite pub-sub servers are up and connection is successful.`)
   .action(
@@ -82,7 +87,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueAuditsCommand = health
   .command(`get-queue-audits`)
   .description(`Get the number of audit logs that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -93,7 +99,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueBuildsCommand = health
   .command(`get-queue-builds`)
   .description(`Get the number of builds that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -104,7 +111,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueCertificatesCommand = health
   .command(`get-queue-certificates`)
   .description(`Get the number of certificates that are waiting to be issued against [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -115,7 +123,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueDatabasesCommand = health
   .command(`get-queue-databases`)
   .description(`Get the number of database changes that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--name <name>`, `Queue name for which to check the queue size`)
@@ -127,7 +136,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueDeletesCommand = health
   .command(`get-queue-deletes`)
   .description(`Get the number of background destructive changes that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -138,7 +148,8 @@ health
     ),
   );
 
-health
+
+const healthGetFailedJobsCommand = health
   .command(`get-failed-jobs`)
   .description(`Returns the amount of failed jobs in a given queue.
 `)
@@ -151,7 +162,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueFunctionsCommand = health
   .command(`get-queue-functions`)
   .description(`Get the number of function executions that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -162,7 +174,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueLogsCommand = health
   .command(`get-queue-logs`)
   .description(`Get the number of logs that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -173,7 +186,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueMailsCommand = health
   .command(`get-queue-mails`)
   .description(`Get the number of mails that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -184,7 +198,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueMessagingCommand = health
   .command(`get-queue-messaging`)
   .description(`Get the number of messages that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -195,7 +210,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueMigrationsCommand = health
   .command(`get-queue-migrations`)
   .description(`Get the number of migrations that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -206,7 +222,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueStatsResourcesCommand = health
   .command(`get-queue-stats-resources`)
   .description(`Get the number of metrics that are waiting to be processed in the Appwrite stats resources queue.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -217,7 +234,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueUsageCommand = health
   .command(`get-queue-usage`)
   .description(`Get the number of metrics that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -228,7 +246,8 @@ health
     ),
   );
 
-health
+
+const healthGetQueueWebhooksCommand = health
   .command(`get-queue-webhooks`)
   .description(`Get the number of webhooks that are waiting to be processed in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
@@ -239,7 +258,8 @@ health
     ),
   );
 
-health
+
+const healthGetStorageCommand = health
   .command(`get-storage`)
   .description(`Check the Appwrite storage device is up and connection is successful.`)
   .action(
@@ -248,7 +268,8 @@ health
     ),
   );
 
-health
+
+const healthGetStorageLocalCommand = health
   .command(`get-storage-local`)
   .description(`Check the Appwrite local storage device is up and connection is successful.`)
   .action(
@@ -257,7 +278,8 @@ health
     ),
   );
 
-health
+
+const healthGetTimeCommand = health
   .command(`get-time`)
   .description(`Check the Appwrite server time is synced with Google remote NTP server. We use this technology to smoothly handle leap seconds with no disruptive events. The [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used by hundreds of millions of computers and devices to synchronize their clocks over the Internet. If your computer sets its own clock, it likely uses NTP.`)
   .action(
@@ -265,4 +287,5 @@ health
       async () => parse(await (await getHealthClient()).getTime()),
     ),
   );
+
 

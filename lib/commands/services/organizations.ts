@@ -26,7 +26,7 @@ export const organizations = new Command("organizations")
     helpWidth: process.stdout.columns || 80,
   });
 
-organizations
+const organizationsListCommand = organizations
   .command(`list`)
   .description(`Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan, paymentMethodId, backupPaymentMethodId, platform`)
@@ -38,7 +38,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsCreateCommand = organizations
   .command(`create`)
   .description(`Create a new organization.
 `)
@@ -59,7 +60,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsEstimationCreateOrganizationCommand = organizations
   .command(`estimation-create-organization`)
   .description(`Get estimation for creating an organization.`)
   .requiredOption(`--billing-plan <billing-plan>`, `Organization billing plan chosen`)
@@ -74,7 +76,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsDeleteCommand = organizations
   .command(`delete`)
   .description(`Delete an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Team ID.`)
@@ -85,7 +88,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsListAggregationsCommand = organizations
   .command(`list-aggregations`)
   .description(`Get a list of all aggregations for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -97,7 +101,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetAggregationCommand = organizations
   .command(`get-aggregation`)
   .description(`Get a specific aggregation using it's aggregation ID.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -111,7 +116,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsSetBillingAddressCommand = organizations
   .command(`set-billing-address`)
   .description(`Set a billing address for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -123,7 +129,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsSetBillingEmailCommand = organizations
   .command(`set-billing-email`)
   .description(`Set the current billing email for the organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -135,7 +142,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsUpdateBudgetCommand = organizations
   .command(`update-budget`)
   .description(`Update the budget limit for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -148,7 +156,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsListCreditsCommand = organizations
   .command(`list-credits`)
   .description(`List all credits for an organization.
 `)
@@ -161,7 +170,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsAddCreditCommand = organizations
   .command(`add-credit`)
   .description(`Add credit to an organization using a coupon.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -173,7 +183,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetAvailableCreditsCommand = organizations
   .command(`get-available-credits`)
   .description(`Get total available valid credits for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -184,7 +195,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetCreditCommand = organizations
   .command(`get-credit`)
   .description(`Get credit details.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -196,7 +208,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsEstimationDeleteOrganizationCommand = organizations
   .command(`estimation-delete-organization`)
   .description(`Get estimation for deleting an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Team ID.`)
@@ -207,7 +220,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsEstimationUpdatePlanCommand = organizations
   .command(`estimation-update-plan`)
   .description(`Get estimation for updating the organization plan.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -221,7 +235,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsCreateDowngradeFeedbackCommand = organizations
   .command(`create-downgrade-feedback`)
   .description(`Submit feedback about downgrading from a paid plan to a lower tier. This helps the team understand user experience and improve the platform.
 `)
@@ -237,7 +252,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetInvoiceCommand = organizations
   .command(`get-invoice`)
   .description(`Get an invoice by its unique ID.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -249,7 +265,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetInvoiceDownloadCommand = organizations
   .command(`get-invoice-download`)
   .description(`Download invoice in PDF`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -261,7 +278,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsCreateInvoicePaymentCommand = organizations
   .command(`create-invoice-payment`)
   .description(`Initiate payment for failed invoice to pay live from console`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -274,7 +292,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsValidateInvoiceCommand = organizations
   .command(`validate-invoice`)
   .description(`Validates the payment linked with the invoice and updates the invoice status if the payment status is changed.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -286,7 +305,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetInvoiceViewCommand = organizations
   .command(`get-invoice-view`)
   .description(`View invoice in PDF`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -298,7 +318,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsListKeysCommand = organizations
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current organization. `)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -315,7 +336,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsCreateKeyCommand = organizations
   .command(`create-key`)
   .description(`Create a new organization API key.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -329,7 +351,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetKeyCommand = organizations
   .command(`get-key`)
   .description(`Get a key by its unique ID. This endpoint returns details about a specific API key in your organization including it's scopes.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -341,7 +364,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsUpdateKeyCommand = organizations
   .command(`update-key`)
   .description(`Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -356,7 +380,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsDeleteKeyCommand = organizations
   .command(`delete-key`)
   .description(`Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -368,7 +393,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsSetDefaultPaymentMethodCommand = organizations
   .command(`set-default-payment-method`)
   .description(`Set a organization's default payment method.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -380,7 +406,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsDeleteDefaultPaymentMethodCommand = organizations
   .command(`delete-default-payment-method`)
   .description(`Delete the default payment method for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -391,7 +418,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsSetBackupPaymentMethodCommand = organizations
   .command(`set-backup-payment-method`)
   .description(`Set an organization's backup payment method.
 `)
@@ -404,7 +432,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsDeleteBackupPaymentMethodCommand = organizations
   .command(`delete-backup-payment-method`)
   .description(`Delete a backup payment method for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -415,7 +444,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetPlanCommand = organizations
   .command(`get-plan`)
   .description(`Get the details of the current billing plan for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -426,7 +456,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsUpdatePlanCommand = organizations
   .command(`update-plan`)
   .description(`Update the billing plan for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -444,7 +475,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsCancelDowngradeCommand = organizations
   .command(`cancel-downgrade`)
   .description(`Cancel the downgrade initiated for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
@@ -455,7 +487,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsListRegionsCommand = organizations
   .command(`list-regions`)
   .description(`Get all available regions for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Team ID.`)
@@ -466,7 +499,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetScopesCommand = organizations
   .command(`get-scopes`)
   .description(`Get Scopes`)
   .requiredOption(`--organization-id <organization-id>`, `Organization id`)
@@ -478,7 +512,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsSetBillingTaxIdCommand = organizations
   .command(`set-billing-tax-id`)
   .description(`Set an organization's billing tax ID.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -490,7 +525,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsGetUsageCommand = organizations
   .command(`get-usage`)
   .description(`Get the usage data for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -503,7 +539,8 @@ organizations
     ),
   );
 
-organizations
+
+const organizationsValidatePaymentCommand = organizations
   .command(`validate-payment`)
   .description(`Validate payment for team after creation or upgrade.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
@@ -514,4 +551,5 @@ organizations
         parse(await (await getOrganizationsClient()).validatePayment(organizationId, invites)),
     ),
   );
+
 

@@ -28,7 +28,7 @@ export const sites = new Command("sites")
     helpWidth: process.stdout.columns || 80,
   });
 
-sites
+const sitesListCommand = sites
   .command(`list`)
   .description(`Get a list of all the project's sites. You can use the query params to filter your results.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId`)
@@ -46,7 +46,8 @@ sites
     ),
   );
 
-sites
+
+const sitesCreateCommand = sites
   .command(`create`)
   .description(`Create a new site.`)
   .requiredOption(`--site-id <site-id>`, `Site ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -92,7 +93,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListFrameworksCommand = sites
   .command(`list-frameworks`)
   .description(`Get a list of all frameworks that are currently available on the server instance.`)
   .action(
@@ -101,7 +103,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListSpecificationsCommand = sites
   .command(`list-specifications`)
   .description(`List allowed site specifications for this instance.`)
   .action(
@@ -110,7 +113,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListTemplatesCommand = sites
   .command(`list-templates`)
   .description(`List available site templates. You can use template details in [createSite](/docs/references/cloud/server-nodejs/sites#create) method.`)
   .option(`--frameworks [frameworks...]`, `List of frameworks allowed for filtering site templates. Maximum of 100 frameworks are allowed.`)
@@ -124,7 +128,8 @@ sites
     ),
   );
 
-sites
+
+const sitesGetTemplateCommand = sites
   .command(`get-template`)
   .description(`Get a site template using ID. You can use template details in [createSite](/docs/references/cloud/server-nodejs/sites#create) method.`)
   .requiredOption(`--template-id <template-id>`, `Template ID.`)
@@ -135,7 +140,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListUsageCommand = sites
   .command(`list-usage`)
   .description(`Get usage metrics and statistics for all sites in the project. View statistics including total deployments, builds, logs, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
   .option(`--range <range>`, `Date range.`)
@@ -146,7 +152,8 @@ sites
     ),
   );
 
-sites
+
+const sitesGetCommand = sites
   .command(`get`)
   .description(`Get a site by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -157,7 +164,8 @@ sites
     ),
   );
 
-sites
+
+const sitesUpdateCommand = sites
   .command(`update`)
   .description(`Update site by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -203,7 +211,8 @@ sites
     ),
   );
 
-sites
+
+const sitesDeleteCommand = sites
   .command(`delete`)
   .description(`Delete a site by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -214,7 +223,8 @@ sites
     ),
   );
 
-sites
+
+const sitesUpdateSiteDeploymentCommand = sites
   .command(`update-site-deployment`)
   .description(`Update the site active deployment. Use this endpoint to switch the code deployment that should be used when visitor opens your site.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -226,7 +236,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListDeploymentsCommand = sites
   .command(`list-deployments`)
   .description(`Get a list of all the site's code deployments. You can use the query params to filter your results.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -245,7 +256,8 @@ sites
     ),
   );
 
-sites
+
+const sitesCreateDeploymentCommand = sites
   .command(`create-deployment`)
   .description(`Create a new site code deployment. Use this endpoint to upload a new version of your site code. To activate your newly uploaded code, you'll need to update the site's deployment to use your new deployment ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -266,7 +278,8 @@ sites
     ),
   );
 
-sites
+
+const sitesCreateDuplicateDeploymentCommand = sites
   .command(`create-duplicate-deployment`)
   .description(`Create a new build for an existing site deployment. This endpoint allows you to rebuild a deployment with the updated site configuration, including its commands and output directory if they have been modified. The build process will be queued and executed asynchronously. The original deployment's code will be preserved and used for the new build.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -278,7 +291,8 @@ sites
     ),
   );
 
-sites
+
+const sitesCreateTemplateDeploymentCommand = sites
   .command(`create-template-deployment`)
   .description(`Create a deployment based on a template.
 
@@ -302,7 +316,8 @@ Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/p
     ),
   );
 
-sites
+
+const sitesCreateVcsDeploymentCommand = sites
   .command(`create-vcs-deployment`)
   .description(`Create a deployment when a site is connected to VCS.
 
@@ -323,7 +338,8 @@ This endpoint lets you create deployment from a branch, commit, or a tag.`)
     ),
   );
 
-sites
+
+const sitesGetDeploymentCommand = sites
   .command(`get-deployment`)
   .description(`Get a site deployment by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -335,7 +351,8 @@ sites
     ),
   );
 
-sites
+
+const sitesDeleteDeploymentCommand = sites
   .command(`delete-deployment`)
   .description(`Delete a site deployment by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -347,7 +364,8 @@ sites
     ),
   );
 
-sites
+
+const sitesGetDeploymentDownloadCommand = sites
   .command(`get-deployment-download`)
   .description(`Get a site deployment content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -366,7 +384,8 @@ sites
     ),
   );
 
-sites
+
+const sitesUpdateDeploymentStatusCommand = sites
   .command(`update-deployment-status`)
   .description(`Cancel an ongoing site deployment build. If the build is already in progress, it will be stopped and marked as canceled. If the build hasn't started yet, it will be marked as canceled without executing. You cannot cancel builds that have already completed (status 'ready') or failed. The response includes the final build status and details.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -378,7 +397,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListLogsCommand = sites
   .command(`list-logs`)
   .description(`Get a list of all site logs. You can use the query params to filter your results.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -396,7 +416,8 @@ sites
     ),
   );
 
-sites
+
+const sitesGetLogCommand = sites
   .command(`get-log`)
   .description(`Get a site request log by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -408,7 +429,8 @@ sites
     ),
   );
 
-sites
+
+const sitesDeleteLogCommand = sites
   .command(`delete-log`)
   .description(`Delete a site log by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -420,7 +442,8 @@ sites
     ),
   );
 
-sites
+
+const sitesGetUsageCommand = sites
   .command(`get-usage`)
   .description(`Get usage metrics and statistics for a for a specific site. View statistics including total deployments, builds, executions, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
@@ -432,7 +455,8 @@ sites
     ),
   );
 
-sites
+
+const sitesListVariablesCommand = sites
   .command(`list-variables`)
   .description(`Get a list of all variables of a specific site.`)
   .requiredOption(`--site-id <site-id>`, `Site unique ID.`)
@@ -443,7 +467,8 @@ sites
     ),
   );
 
-sites
+
+const sitesCreateVariableCommand = sites
   .command(`create-variable`)
   .description(`Create a new site variable. These variables can be accessed during build and runtime (server-side rendering) as environment variables.`)
   .requiredOption(`--site-id <site-id>`, `Site unique ID.`)
@@ -462,7 +487,8 @@ sites
     ),
   );
 
-sites
+
+const sitesGetVariableCommand = sites
   .command(`get-variable`)
   .description(`Get a variable by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site unique ID.`)
@@ -474,7 +500,8 @@ sites
     ),
   );
 
-sites
+
+const sitesUpdateVariableCommand = sites
   .command(`update-variable`)
   .description(`Update variable by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site unique ID.`)
@@ -494,7 +521,8 @@ sites
     ),
   );
 
-sites
+
+const sitesDeleteVariableCommand = sites
   .command(`delete-variable`)
   .description(`Delete a variable by its unique ID.`)
   .requiredOption(`--site-id <site-id>`, `Site unique ID.`)
@@ -505,4 +533,5 @@ sites
         parse(await (await getSitesClient()).deleteVariable(siteId, variableId)),
     ),
   );
+
 

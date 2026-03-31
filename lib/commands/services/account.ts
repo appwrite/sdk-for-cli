@@ -26,7 +26,7 @@ export const account = new Command("account")
     helpWidth: process.stdout.columns || 80,
   });
 
-account
+const accountGetCommand = account
   .command(`get`)
   .description(`Get the currently logged in user.`)
   .action(
@@ -35,7 +35,8 @@ account
     ),
   );
 
-account
+
+const accountCreateCommand = account
   .command(`create`)
   .description(`Use this endpoint to allow a new user to register a new account in your project. After the user registration completes successfully, you can use the [/account/verfication](https://appwrite.io/docs/references/cloud/client-web/account#createVerification) route to start verifying the user email address. To allow the new user to login to their new account, you need to create a new [account session](https://appwrite.io/docs/references/cloud/client-web/account#createEmailSession).`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -49,7 +50,8 @@ account
     ),
   );
 
-account
+
+const accountDeleteCommand = account
   .command(`delete`)
   .description(`Delete the currently logged in user.`)
   .action(
@@ -58,7 +60,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateEmailCommand = account
   .command(`update-email`)
   .description(`Update currently logged in user account email address. After changing user address, the user confirmation status will get reset. A new confirmation email is not sent automatically however you can use the send confirmation email endpoint again to send the confirmation email. For security measures, user password is required to complete this request.
 This endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.
@@ -72,7 +75,8 @@ This endpoint can also be used to convert an anonymous account to a normal one, 
     ),
   );
 
-account
+
+const accountListIdentitiesCommand = account
   .command(`list-identities`)
   .description(`Get the list of identities for the currently logged in user.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry`)
@@ -89,7 +93,8 @@ account
     ),
   );
 
-account
+
+const accountDeleteIdentityCommand = account
   .command(`delete-identity`)
   .description(`Delete an identity by its unique ID.`)
   .requiredOption(`--identity-id <identity-id>`, `Identity ID.`)
@@ -100,7 +105,8 @@ account
     ),
   );
 
-account
+
+const accountCreateJWTCommand = account
   .command(`create-jwt`)
   .description(`Use this endpoint to create a JSON Web Token. You can use the resulting JWT to authenticate on behalf of the current user when working with the Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes from its creation and will be invalid if the user will logout in that time frame.`)
   .option(`--duration <duration>`, `Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.`, parseInteger)
@@ -111,7 +117,8 @@ account
     ),
   );
 
-account
+
+const accountListKeysCommand = account
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current account.`)
   .option(
@@ -127,7 +134,8 @@ account
     ),
   );
 
-account
+
+const accountCreateKeyCommand = account
   .command(`create-key`)
   .description(`Create a new account API key.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
@@ -140,7 +148,8 @@ account
     ),
   );
 
-account
+
+const accountGetKeyCommand = account
   .command(`get-key`)
   .description(`Get a key by its unique ID. This endpoint returns details about a specific API key in your account including it's scopes.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
@@ -151,7 +160,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateKeyCommand = account
   .command(`update-key`)
   .description(`Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
@@ -165,7 +175,8 @@ account
     ),
   );
 
-account
+
+const accountDeleteKeyCommand = account
   .command(`delete-key`)
   .description(`Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
@@ -176,7 +187,8 @@ account
     ),
   );
 
-account
+
+const accountListLogsCommand = account
   .command(`list-logs`)
   .description(`Get the list of latest security activity logs for the currently logged in user. Each log returns user IP address, location and date and time of log.`)
   .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
@@ -193,7 +205,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateMFACommand = account
   .command(`update-mfa`)
   .description(`Enable or disable MFA on an account.`)
   .requiredOption(`--mfa <mfa>`, `Enable or disable MFA.`, parseBool)
@@ -204,7 +217,8 @@ account
     ),
   );
 
-account
+
+const accountCreateMfaAuthenticatorCommand = account
   .command(`create-mfa-authenticator`)
   .description(`Add an authenticator app to be used as an MFA factor. Verify the authenticator using the [verify authenticator](/docs/references/cloud/client-web/account#updateMfaAuthenticator) method.`)
   .requiredOption(`--type <type>`, `Type of authenticator. Must be \`totp\``)
@@ -215,7 +229,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateMfaAuthenticatorCommand = account
   .command(`update-mfa-authenticator`)
   .description(`Verify an authenticator app after adding it using the [add authenticator](/docs/references/cloud/client-web/account#createMfaAuthenticator) method.`)
   .requiredOption(`--type <type>`, `Type of authenticator.`)
@@ -227,7 +242,8 @@ account
     ),
   );
 
-account
+
+const accountDeleteMfaAuthenticatorCommand = account
   .command(`delete-mfa-authenticator`)
   .description(`Delete an authenticator for a user by ID.`)
   .requiredOption(`--type <type>`, `Type of authenticator.`)
@@ -238,7 +254,8 @@ account
     ),
   );
 
-account
+
+const accountCreateMfaChallengeCommand = account
   .command(`create-mfa-challenge`)
   .description(`Begin the process of MFA verification after sign-in. Finish the flow with [updateMfaChallenge](/docs/references/cloud/client-web/account#updateMfaChallenge) method.`)
   .requiredOption(`--factor <factor>`, `Factor used for verification. Must be one of following: \`email\`, \`phone\`, \`totp\`, \`recoveryCode\`.`)
@@ -249,7 +266,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateMfaChallengeCommand = account
   .command(`update-mfa-challenge`)
   .description(`Complete the MFA challenge by providing the one-time password. Finish the process of MFA verification by providing the one-time password. To begin the flow, use [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge) method.`)
   .requiredOption(`--challenge-id <challenge-id>`, `ID of the challenge.`)
@@ -261,7 +279,8 @@ account
     ),
   );
 
-account
+
+const accountListMfaFactorsCommand = account
   .command(`list-mfa-factors`)
   .description(`List the factors available on the account to be used as a MFA challange.`)
   .action(
@@ -270,7 +289,8 @@ account
     ),
   );
 
-account
+
+const accountGetMfaRecoveryCodesCommand = account
   .command(`get-mfa-recovery-codes`)
   .description(`Get recovery codes that can be used as backup for MFA flow. Before getting codes, they must be generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method. An OTP challenge is required to read recovery codes.`)
   .action(
@@ -279,7 +299,8 @@ account
     ),
   );
 
-account
+
+const accountCreateMfaRecoveryCodesCommand = account
   .command(`create-mfa-recovery-codes`)
   .description(`Generate recovery codes as backup for MFA flow. It's recommended to generate and show then immediately after user successfully adds their authehticator. Recovery codes can be used as a MFA verification type in [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge) method.`)
   .action(
@@ -288,7 +309,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateMfaRecoveryCodesCommand = account
   .command(`update-mfa-recovery-codes`)
   .description(`Regenerate recovery codes that can be used as backup for MFA flow. Before regenerating codes, they must be first generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method. An OTP challenge is required to regenreate recovery codes.`)
   .action(
@@ -297,7 +319,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateNameCommand = account
   .command(`update-name`)
   .description(`Update currently logged in user account name.`)
   .requiredOption(`--name <name>`, `User name. Max length: 128 chars.`)
@@ -308,7 +331,8 @@ account
     ),
   );
 
-account
+
+const accountUpdatePasswordCommand = account
   .command(`update-password`)
   .description(`Update currently logged in user password. For validation, user is required to pass in the new password, and the old password. For users created with OAuth, Team Invites and Magic URL, oldPassword is optional.`)
   .requiredOption(`--password <password>`, `New user password. Must be at least 8 chars.`)
@@ -320,7 +344,8 @@ account
     ),
   );
 
-account
+
+const accountUpdatePhoneCommand = account
   .command(`update-phone`)
   .description(`Update the currently logged in user's phone number. After updating the phone number, the phone verification status will be reset. A confirmation SMS is not sent automatically, however you can use the [POST /account/verification/phone](https://appwrite.io/docs/references/cloud/client-web/account#createPhoneVerification) endpoint to send a confirmation SMS.`)
   .requiredOption(`--phone <phone>`, `Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
@@ -332,7 +357,8 @@ account
     ),
   );
 
-account
+
+const accountGetPrefsCommand = account
   .command(`get-prefs`)
   .description(`Get the preferences as a key-value object for the currently logged in user.`)
   .action(
@@ -341,7 +367,8 @@ account
     ),
   );
 
-account
+
+const accountUpdatePrefsCommand = account
   .command(`update-prefs`)
   .description(`Update currently logged in user account preferences. The object you pass is stored as is, and replaces any previous value. The maximum allowed prefs size is 64kB and throws error if exceeded.`)
   .requiredOption(`--prefs <prefs>`, `Prefs key-value JSON object.`)
@@ -352,7 +379,8 @@ account
     ),
   );
 
-account
+
+const accountCreateRecoveryCommand = account
   .command(`create-recovery`)
   .description(`Sends the user an email with a temporary secret key for password reset. When the user clicks the confirmation link he is redirected back to your app password reset URL with the secret key and email address values attached to the URL query string. Use the query string params to submit a request to the [PUT /account/recovery](https://appwrite.io/docs/references/cloud/client-web/account#updateRecovery) endpoint to complete the process. The verification link sent to the user's email address is valid for 1 hour.`)
   .requiredOption(`--email <email>`, `User email.`)
@@ -364,7 +392,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateRecoveryCommand = account
   .command(`update-recovery`)
   .description(`Use this endpoint to complete the user account password reset. Both the **userId** and **secret** arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the [POST /account/recovery](https://appwrite.io/docs/references/cloud/client-web/account#createRecovery) endpoint.
 
@@ -379,7 +408,8 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
     ),
   );
 
-account
+
+const accountListSessionsCommand = account
   .command(`list-sessions`)
   .description(`Get the list of active sessions across different devices for the currently logged in user.`)
   .action(
@@ -388,7 +418,8 @@ account
     ),
   );
 
-account
+
+const accountDeleteSessionsCommand = account
   .command(`delete-sessions`)
   .description(`Delete all sessions from the user account and remove any sessions cookies from the end client.`)
   .action(
@@ -397,7 +428,8 @@ account
     ),
   );
 
-account
+
+const accountCreateAnonymousSessionCommand = account
   .command(`create-anonymous-session`)
   .description(`Use this endpoint to allow a new user to register an anonymous account in your project. This route will also create a new session for the user. To allow the new user to convert an anonymous account to a normal account, you need to update its [email and password](https://appwrite.io/docs/references/cloud/client-web/account#updateEmail) or create an [OAuth2 session](https://appwrite.io/docs/references/cloud/client-web/account#CreateOAuth2Session).`)
   .action(
@@ -406,7 +438,8 @@ account
     ),
   );
 
-account
+
+const accountCreateEmailPasswordSessionCommand = account
   .command(`create-email-password-session`)
   .description(`Allow the user to login into their account by providing a valid email and password combination. This route will create a new session for the user.
 
@@ -420,7 +453,8 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
     ),
   );
 
-account
+
+const accountUpdateMagicURLSessionCommand = account
   .command(`update-magic-url-session`)
   .description(`Use this endpoint to create a session from token. Provide the **userId** and **secret** parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -432,7 +466,8 @@ account
     ),
   );
 
-account
+
+const accountCreateOAuth2SessionCommand = account
   .command(`create-o-auth-2-session`)
   .description(`Allow the user to login to their account using the OAuth2 provider of their choice. Each OAuth2 provider should be enabled from the Appwrite console first. Use the success and failure arguments to provide a redirect URL's back to your app when login is completed.
 
@@ -453,7 +488,8 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
     ),
   );
 
-account
+
+const accountUpdatePhoneSessionCommand = account
   .command(`update-phone-session`)
   .description(`Use this endpoint to create a session from token. Provide the **userId** and **secret** parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -465,7 +501,8 @@ account
     ),
   );
 
-account
+
+const accountCreateSessionCommand = account
   .command(`create-session`)
   .description(`Use this endpoint to create a session from token. Provide the **userId** and **secret** parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -477,7 +514,8 @@ account
     ),
   );
 
-account
+
+const accountGetSessionCommand = account
   .command(`get-session`)
   .description(`Use this endpoint to get a logged in user's session using a Session ID. Inputting 'current' will return the current session being used.`)
   .requiredOption(`--session-id <session-id>`, `Session ID. Use the string 'current' to get the current device session.`)
@@ -488,7 +526,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateSessionCommand = account
   .command(`update-session`)
   .description(`Use this endpoint to extend a session's length. Extending a session is useful when session expiry is short. If the session was created using an OAuth provider, this endpoint refreshes the access token from the provider.`)
   .requiredOption(`--session-id <session-id>`, `Session ID. Use the string 'current' to update the current device session.`)
@@ -499,7 +538,8 @@ account
     ),
   );
 
-account
+
+const accountDeleteSessionCommand = account
   .command(`delete-session`)
   .description(`Logout the user. Use 'current' as the session ID to logout on this device, use a session ID to logout on another device. If you're looking to logout the user on all devices, use [Delete Sessions](https://appwrite.io/docs/references/cloud/client-web/account#deleteSessions) instead.`)
   .requiredOption(`--session-id <session-id>`, `Session ID. Use the string 'current' to delete the current device session.`)
@@ -510,7 +550,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateStatusCommand = account
   .command(`update-status`)
   .description(`Block the currently logged in user account. Behind the scene, the user record is not deleted but permanently blocked from any access. To completely delete a user, use the Users API instead.`)
   .action(
@@ -519,7 +560,8 @@ account
     ),
   );
 
-account
+
+const accountCreatePushTargetCommand = account
   .command(`create-push-target`)
   .description(`Use this endpoint to register a device for push notifications. Provide a target ID (custom or generated using ID.unique()), a device identifier (usually a device token), and optionally specify which provider should send notifications to this target. The target is automatically linked to the current session and includes device information like brand and model.`)
   .requiredOption(`--target-id <target-id>`, `Target ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
@@ -532,7 +574,8 @@ account
     ),
   );
 
-account
+
+const accountUpdatePushTargetCommand = account
   .command(`update-push-target`)
   .description(`Update the currently logged in user's push notification target. You can modify the target's identifier (device token) and provider ID (token, email, phone etc.). The target must exist and belong to the current user. If you change the provider ID, notifications will be sent through the new messaging provider instead.`)
   .requiredOption(`--target-id <target-id>`, `Target ID.`)
@@ -544,7 +587,8 @@ account
     ),
   );
 
-account
+
+const accountDeletePushTargetCommand = account
   .command(`delete-push-target`)
   .description(`Delete a push notification target for the currently logged in user. After deletion, the device will no longer receive push notifications. The target must exist and belong to the current user.`)
   .requiredOption(`--target-id <target-id>`, `Target ID.`)
@@ -555,7 +599,8 @@ account
     ),
   );
 
-account
+
+const accountCreateEmailTokenCommand = account
   .command(`create-email-token`)
   .description(`Sends the user an email with a secret key for creating a session. If the email address has never been used, a **new account is created** using the provided \`userId\`. Otherwise, if the email address is already attached to an account, the **user ID is ignored**. Then, the user will receive an email with the one-time password. Use the returned user ID and secret and submit a request to the [POST /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The secret sent to the user's email is valid for 15 minutes.
 
@@ -576,7 +621,8 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
     ),
   );
 
-account
+
+const accountCreateMagicURLTokenCommand = account
   .command(`create-magic-url-token`)
   .description(`Sends the user an email with a secret key for creating a session. If the provided user ID has not been registered, a new user will be created. When the user clicks the link in the email, the user is redirected back to the URL you provided with the secret key and userId values attached to the URL query string. Use the query string parameters to submit a request to the [POST /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The link sent to the user's email address is valid for 1 hour.
 
@@ -598,7 +644,8 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
     ),
   );
 
-account
+
+const accountCreateOAuth2TokenCommand = account
   .command(`create-o-auth-2-token`)
   .description(`Allow the user to login to their account using the OAuth2 provider of their choice. Each OAuth2 provider should be enabled from the Appwrite console first. Use the success and failure arguments to provide a redirect URL's back to your app when login is completed. 
 
@@ -618,7 +665,8 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
     ),
   );
 
-account
+
+const accountCreatePhoneTokenCommand = account
   .command(`create-phone-token`)
   .description(`Sends the user an SMS with a secret key for creating a session. If the provided user ID has not be registered, a new user will be created. Use the returned user ID and secret and submit a request to the [POST /v1/account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The secret sent to the user's phone is valid for 15 minutes.
 
@@ -632,7 +680,8 @@ A user is limited to 10 active sessions at a time by default. [Learn more about 
     ),
   );
 
-account
+
+const accountCreateEmailVerificationCommand = account
   .command(`create-email-verification`)
   .description(`Use this endpoint to send a verification message to your user email address to confirm they are the valid owners of that address. Both the **userId** and **secret** arguments will be passed as query parameters to the URL you have provided to be attached to the verification email. The provided URL should redirect the user back to your app and allow you to complete the verification process by verifying both the **userId** and **secret** parameters. Learn more about how to [complete the verification process](https://appwrite.io/docs/references/cloud/client-web/account#updateVerification). The verification link sent to the user's email address is valid for 7 days.
 
@@ -646,7 +695,8 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
     ),
   );
 
-account
+
+const accountCreateVerificationCommand = account
   .command(`create-verification`)
   .description(`Use this endpoint to send a verification message to your user email address to confirm they are the valid owners of that address. Both the **userId** and **secret** arguments will be passed as query parameters to the URL you have provided to be attached to the verification email. The provided URL should redirect the user back to your app and allow you to complete the verification process by verifying both the **userId** and **secret** parameters. Learn more about how to [complete the verification process](https://appwrite.io/docs/references/cloud/client-web/account#updateVerification). The verification link sent to the user's email address is valid for 7 days.
 
@@ -660,7 +710,8 @@ Please note that in order to avoid a [Redirect Attack](https://github.com/OWASP/
     ),
   );
 
-account
+
+const accountUpdateEmailVerificationCommand = account
   .command(`update-email-verification`)
   .description(`Use this endpoint to complete the user email verification process. Use both the **userId** and **secret** parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -672,7 +723,8 @@ account
     ),
   );
 
-account
+
+const accountUpdateVerificationCommand = account
   .command(`update-verification`)
   .description(`Use this endpoint to complete the user email verification process. Use both the **userId** and **secret** parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -684,7 +736,8 @@ account
     ),
   );
 
-account
+
+const accountCreatePhoneVerificationCommand = account
   .command(`create-phone-verification`)
   .description(`Use this endpoint to send a verification SMS to the currently logged in user. This endpoint is meant for use after updating a user's phone number using the [accountUpdatePhone](https://appwrite.io/docs/references/cloud/client-web/account#updatePhone) endpoint. Learn more about how to [complete the verification process](https://appwrite.io/docs/references/cloud/client-web/account#updatePhoneVerification). The verification code sent to the user's phone number is valid for 15 minutes.`)
   .action(
@@ -693,7 +746,8 @@ account
     ),
   );
 
-account
+
+const accountUpdatePhoneVerificationCommand = account
   .command(`update-phone-verification`)
   .description(`Use this endpoint to complete the user phone verification process. Use the **userId** and **secret** that were sent to your user's phone number to verify the user email ownership. If confirmed this route will return a 200 status code.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
@@ -704,4 +758,5 @@ account
         parse(await (await getAccountClient()).updatePhoneVerification(userId, secret)),
     ),
   );
+
 
