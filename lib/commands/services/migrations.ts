@@ -151,6 +151,47 @@ const migrationsGetFirebaseReportCommand = migrations
   );
 
 
+const migrationsCreateJSONExportCommand = migrations
+  .command(`create-json-export`)
+  .description(``)
+  .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database to export.`)
+  .requiredOption(`--filename <filename>`, `The name of the file to be created for the export, excluding the .json extension.`)
+  .option(`--columns [columns...]`, `List of attributes to export. If empty, all attributes will be exported. You can use the \`*\` wildcard to export all attributes from the collection.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK to filter documents to export. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(
+    `--notify [value]`,
+    `Set to true to receive an email when the export is complete. Default is true.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ resourceId, filename, columns, queries, notify }) =>
+        parse(await (await getMigrationsClient()).createJSONExport(resourceId, filename, columns, queries, notify)),
+    ),
+  );
+
+
+const migrationsCreateJSONImportCommand = migrations
+  .command(`create-json-import`)
+  .description(``)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--file-id <file-id>`, `File ID.`)
+  .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database.`)
+  .option(
+    `--internal-file [value]`,
+    `Is the file stored in an internal bucket?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ bucketId, fileId, resourceId, internalFile }) =>
+        parse(await (await getMigrationsClient()).createJSONImport(bucketId, fileId, resourceId, internalFile)),
+    ),
+  );
+
+
 const migrationsCreateNHostMigrationCommand = migrations
   .command(`create-n-host-migration`)
   .description(`Migrate data from an NHost project to your Appwrite project. This endpoint allows you to migrate resources like authentication, databases, and other supported services from an NHost project. `)
