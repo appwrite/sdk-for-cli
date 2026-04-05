@@ -2,13 +2,14 @@
 
 ## 17.3.0
 
+* Added: Automatic update notifications with cached version checks
 * Added: `create-json-export` and `create-json-import` migration commands
 * Added: `--activate` flag for site push to control deployment activation
 * Added: Deployment retention prompt during site initialization
 * Updated: Improved `.gitignore` handling with hierarchical ignore support
 * Updated: Function and site init now use safe directory names
 * Updated: Config writer prunes empty resource arrays and deprecated site fields
-* Fixed: Pinned `@appwrite.io/console` dependency to `~8.0.0`
+* Fixed: Pinned `@appwrite.io/console` dependency to `~8.2.0`
 
 ## 17.2.1
 
