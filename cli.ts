@@ -11,7 +11,12 @@ import inquirer from 'inquirer';
 
 import packageJson from './package.json' with { type: 'json' };
 import { commandDescriptions, cliConfig } from './lib/parser.js';
-import { getLatestVersion, compareVersions } from './lib/utils.js';
+import {
+    getLatestVersion,
+    compareVersions,
+    getCachedUpdateNotification,
+    syncVersionCheckCache,
+} from './lib/utils.js';
 import inquirerSearchList from 'inquirer-search-list';
 
 import { client } from './lib/commands/generic.js';
@@ -49,6 +54,42 @@ import { webhooks } from './lib/commands/services/webhooks.js';
 
 const { version } = packageJson;
 inquirer.registerPrompt('search-list', inquirerSearchList);
+const VERSION_CHECK_TIMEOUT_MS = 5000;
+
+function writeUpdateAvailableNotice(currentVersion: string, latestVersion: string, toStderr: boolean = false): void {
+    const stream = toStderr ? process.stderr : process.stdout;
+
+    stream.write(
+        chalk.yellow(
+            `\n⚠️  A newer version is available: ${chalk.bold(currentVersion)} ${chalk.bold('→')} ${chalk.bold(
+                latestVersion
+            )}`
+        ) + '\n'
+    );
+    stream.write(
+        chalk.cyan(
+            `💡 Run '${chalk.bold('appwrite update')}' to update to the latest version.`
+        ) + '\n'
+    );
+}
+
+function shouldWriteUpdateNoticeToStderr(): boolean {
+    return process.argv.some((arg) => ['-j', '--json', '-R', '--raw'].includes(arg));
+}
+
+async function maybeShowUpdateNotice(): Promise<void> {
+    try {
+        const latestVersion = await getCachedUpdateNotification(version);
+
+        if (!latestVersion) {
+            return;
+        }
+
+        writeUpdateAvailableNotice(version, latestVersion, shouldWriteUpdateNoticeToStderr());
+    } catch (_error) {
+        // Update checks should never affect command execution.
+    }
+}
 
 /**
  * Check for updates and show version information
@@ -57,19 +98,12 @@ async function checkVersion(): Promise<void> {
     process.stdout.write(chalk.bold(`appwrite version ${version}`) + '\n');
 
     try {
-        const latestVersion = await getLatestVersion();
+        const latestVersion = await getLatestVersion({ timeoutMs: VERSION_CHECK_TIMEOUT_MS });
+        syncVersionCheckCache(version, latestVersion);
         const comparison = compareVersions(version, latestVersion);
 
         if (comparison > 0) {
-            // Current version is older than latest
-            process.stdout.write(
-                chalk.yellow(`\n⚠️  A newer version is available: ${chalk.bold(latestVersion)}`) + '\n'
-            );
-            process.stdout.write(
-                chalk.cyan(
-                    `💡 Run '${chalk.bold('appwrite update')}' to update to the latest version.`
-                ) + '\n'
-            );
+            writeUpdateAvailableNotice(version, latestVersion);
         } else if (comparison === 0) {
             process.stdout.write(chalk.green('\n✅ You are running the latest version!') + '\n');
         } else {
@@ -89,93 +123,97 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         process.exit(0);
     })();
 } else {
-    program
-        .description(commandDescriptions['main'])
-        .configureHelp({
-            helpWidth: process.stdout.columns || 80,
-            sortSubcommands: true,
-        })
-        .helpOption('-h, --help', 'Display help for command')
-        .version(version, '-v, --version', 'Output the version number')
-        .option('-V, --verbose', 'Show complete error log')
-        .option('-j, --json', 'Output filtered JSON without empty values')
-        .option('-R, --raw', 'Output full JSON response (secrets still redacted unless --show-secrets is set)')
-        .option('--show-secrets', 'Display sensitive values like secrets and tokens in output')
-        .hook('preAction', migrate)
-        .option('-f,--force', 'Flag to confirm all warnings')
-        .option('-a,--all', 'Flag to push all resources')
-        .option('--id [id...]', 'Flag to pass a list of ids for a given action')
-        .option('--report', 'Enable reporting in case of CLI errors')
-        .hook('preAction', (_thisCommand, actionCommand) => {
-            const commandConfig = actionCommand as typeof actionCommand & {
-                outputFields?: string[];
-            };
-            cliConfig.displayFields = Array.isArray(commandConfig.outputFields)
-                ? commandConfig.outputFields
-                : [];
-        })
-        .on('option:json', () => {
-            cliConfig.json = true;
-        })
-        .on('option:raw', () => {
-            cliConfig.raw = true;
-        })
-        .on('option:show-secrets', () => {
-            cliConfig.showSecrets = true;
-        })
-        .on('option:verbose', () => {
-            cliConfig.verbose = true;
-        })
-        .on('option:report', function () {
-            cliConfig.report = true;
-            cliConfig.reportData = { data: this };
-        })
-        .on('option:force', () => {
-            cliConfig.force = true;
-        })
-        .on('option:all', () => {
-            cliConfig.all = true;
-        })
-        .on('option:id', function () {
-            cliConfig.ids = (this.opts().id as string[]);
-        })
-        .showSuggestionAfterError()
-        .addCommand(whoami)
-        .addCommand(register)
-        .addCommand(login)
-        .addCommand(init)
-        .addCommand(pull)
-        .addCommand(push)
-        .addCommand(types)
-        .addCommand(deploy)
-        .addCommand(run)
-        .addCommand(update)
-        .addCommand(generate)
-        .addCommand(logout)
-        .addCommand(account)
-        .addCommand(activities)
-        .addCommand(backups)
-        .addCommand(databases)
-        .addCommand(functions)
-        .addCommand(graphql)
-        .addCommand(health)
-        .addCommand(locale)
-        .addCommand(messaging)
-        .addCommand(migrations)
-        .addCommand(organizations)
-        .addCommand(project)
-        .addCommand(projects)
-        .addCommand(proxy)
-        .addCommand(sites)
-        .addCommand(storage)
-        .addCommand(tablesDB)
-        .addCommand(teams)
-        .addCommand(tokens)
-        .addCommand(users)
-        .addCommand(vcs)
-        .addCommand(webhooks)
-        .addCommand(client)
-        .parse(process.argv);
+    void (async () => {
+        await maybeShowUpdateNotice();
 
-    process.stdout.columns = oldWidth;
+        program
+            .description(commandDescriptions['main'])
+            .configureHelp({
+                helpWidth: process.stdout.columns || 80,
+                sortSubcommands: true,
+            })
+            .helpOption('-h, --help', 'Display help for command')
+            .version(version, '-v, --version', 'Output the version number')
+            .option('-V, --verbose', 'Show complete error log')
+            .option('-j, --json', 'Output filtered JSON without empty values')
+            .option('-R, --raw', 'Output full JSON response (secrets still redacted unless --show-secrets is set)')
+            .option('--show-secrets', 'Display sensitive values like secrets and tokens in output')
+            .hook('preAction', migrate)
+            .option('-f,--force', 'Flag to confirm all warnings')
+            .option('-a,--all', 'Flag to push all resources')
+            .option('--id [id...]', 'Flag to pass a list of ids for a given action')
+            .option('--report', 'Enable reporting in case of CLI errors')
+            .hook('preAction', (_thisCommand, actionCommand) => {
+                const commandConfig = actionCommand as typeof actionCommand & {
+                    outputFields?: string[];
+                };
+                cliConfig.displayFields = Array.isArray(commandConfig.outputFields)
+                    ? commandConfig.outputFields
+                    : [];
+            })
+            .on('option:json', () => {
+                cliConfig.json = true;
+            })
+            .on('option:raw', () => {
+                cliConfig.raw = true;
+            })
+            .on('option:show-secrets', () => {
+                cliConfig.showSecrets = true;
+            })
+            .on('option:verbose', () => {
+                cliConfig.verbose = true;
+            })
+            .on('option:report', function () {
+                cliConfig.report = true;
+                cliConfig.reportData = { data: this };
+            })
+            .on('option:force', () => {
+                cliConfig.force = true;
+            })
+            .on('option:all', () => {
+                cliConfig.all = true;
+            })
+            .on('option:id', function () {
+                cliConfig.ids = (this.opts().id as string[]);
+            })
+            .showSuggestionAfterError()
+            .addCommand(whoami)
+            .addCommand(register)
+            .addCommand(login)
+            .addCommand(init)
+            .addCommand(pull)
+            .addCommand(push)
+            .addCommand(types)
+            .addCommand(deploy)
+            .addCommand(run)
+            .addCommand(update)
+            .addCommand(generate)
+            .addCommand(logout)
+            .addCommand(account)
+            .addCommand(activities)
+            .addCommand(backups)
+            .addCommand(databases)
+            .addCommand(functions)
+            .addCommand(graphql)
+            .addCommand(health)
+            .addCommand(locale)
+            .addCommand(messaging)
+            .addCommand(migrations)
+            .addCommand(organizations)
+            .addCommand(project)
+            .addCommand(projects)
+            .addCommand(proxy)
+            .addCommand(sites)
+            .addCommand(storage)
+            .addCommand(tablesDB)
+            .addCommand(teams)
+            .addCommand(tokens)
+            .addCommand(users)
+            .addCommand(vcs)
+            .addCommand(webhooks)
+            .addCommand(client)
+            .parse(process.argv);
+
+        process.stdout.columns = oldWidth;
+    })();
 }
