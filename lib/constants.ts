@@ -1,7 +1,7 @@
 // SDK
 export const SDK_TITLE = 'Appwrite';
 export const SDK_TITLE_LOWER = 'appwrite';
-export const SDK_VERSION = '17.2.1';
+export const SDK_VERSION = '17.3.0';
 export const SDK_NAME = 'Command Line';
 export const SDK_PLATFORM = 'console';
 export const SDK_LANGUAGE = 'cli';
@@ -9,6 +9,8 @@ export const SDK_LOGO = "\n    _                            _ _           ___   
 
 // CLI
 export const EXECUTABLE_NAME = 'appwrite';
+// 1 day
+export const UPDATE_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 
 // NPM
 export const NPM_PACKAGE_NAME = 'appwrite-cli';
@@ -20,3 +22,21 @@ export const GITHUB_RELEASES_URL = `https://github.com/${GITHUB_REPO}/releases`;
 
 // API
 export const DEFAULT_ENDPOINT = 'https://cloud.appwrite.io/v1';
+
+// Config resources
+export const CONFIG_RESOURCE_KEYS = [
+  "databases",
+  "functions",
+  "topics",
+  "messages",
+  "sites",
+  "buckets",
+  "tablesDB",
+  "tables",
+  "teams",
+  "collections",
+] as const;
+
+export const TOP_LEVEL_RESOURCE_ARRAY_KEYS = new Set<string>(
+  CONFIG_RESOURCE_KEYS,
+);
