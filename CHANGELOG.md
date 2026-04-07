@@ -1,6 +1,6 @@
 # Change Log
 
-## 17.3.0
+## 17.3.1
 
 * Added: Automatic update notifications with cached version checks
 * Added: `create-json-export` and `create-json-import` migration commands
