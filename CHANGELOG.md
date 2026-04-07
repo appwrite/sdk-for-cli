@@ -2,6 +2,10 @@
 
 ## 17.3.1
 
+* Fixed: proxy CLI using console SDK instead of project SDK
+
+## 17.3.0
+
 * Added: Automatic update notifications with cached version checks
 * Added: `create-json-export` and `create-json-import` migration commands
 * Added: `--activate` flag for site push to control deployment activation
