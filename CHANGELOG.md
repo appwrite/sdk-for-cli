@@ -1,5 +1,9 @@
 # Change Log
 
+## 17.3.1
+
+* Fixed: proxy CLI using console SDK instead of project SDK
+
 ## 17.3.0
 
 * Added: Automatic update notifications with cached version checks
