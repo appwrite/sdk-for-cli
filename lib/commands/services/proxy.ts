@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { sdkForConsole } from "../../sdks.js";
+import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -14,7 +14,7 @@ let proxyClient: Proxy | null = null;
 
 const getProxyClient = async (): Promise<Proxy> => {
   if (!proxyClient) {
-    const sdkClient = await sdkForConsole();
+    const sdkClient = await sdkForProject();
     proxyClient = new Proxy(sdkClient);
   }
   return proxyClient;
