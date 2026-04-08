@@ -54,12 +54,73 @@ export const createSettingsObject = (project: Models.Project): SettingsType => {
   };
 };
 
+export const getSafeDirectoryName = (
+  value: string,
+  fallback: string,
+): string => {
+  const normalized = value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return normalized || fallback;
+};
+
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
   }
 
   return String(error);
+};
+
+export const getConsoleBaseUrl = (endpoint: string): string => {
+  return endpoint.replace(/\/v1\/?$/, "");
+};
+
+export const getConsoleProjectSlug = (
+  endpoint: string,
+  projectId: string,
+): string => {
+  try {
+    const hostname = new URL(endpoint).hostname;
+    const isCloudHostname =
+      hostname === "cloud.appwrite.io" ||
+      hostname.endsWith(".cloud.appwrite.io");
+
+    if (!isCloudHostname) {
+      return `project-${projectId}`;
+    }
+
+    const firstSubdomain = hostname.split(".")[0];
+    return firstSubdomain.length === 3
+      ? `project-${firstSubdomain}-${projectId}`
+      : `project-${projectId}`;
+  } catch {
+    return `project-${projectId}`;
+  }
+};
+
+export const getFunctionDeploymentConsoleUrl = (
+  endpoint: string,
+  projectId: string,
+  functionId: string,
+  deploymentId: string,
+): string => {
+  const projectSlug = getConsoleProjectSlug(endpoint, projectId);
+  return `${getConsoleBaseUrl(endpoint)}/console/${projectSlug}/functions/function-${functionId}/deployment-${deploymentId}`;
+};
+
+export const getSiteDeploymentConsoleUrl = (
+  endpoint: string,
+  projectId: string,
+  siteId: string,
+  deploymentId: string,
+): string => {
+  const projectSlug = getConsoleProjectSlug(endpoint, projectId);
+  return `${getConsoleBaseUrl(endpoint)}/console/${projectSlug}/sites/site-${siteId}/deployments/deployment-${deploymentId}`;
 };
 
 type UpdateCheckCache = {

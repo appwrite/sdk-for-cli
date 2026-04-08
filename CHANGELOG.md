@@ -1,5 +1,21 @@
 # Change Log
 
+## 17.4.0
+
+* Added `--activate` flag for `push function` to control deployment activation
+* Added deployment logs with URLs and elapsed time after successful push
+* Added explicit deployment activation step after function build completes
+* Added `deploymentRetention` field to function initialization config
+* Added `--template-repository`, `--template-owner`, `--template-root-directory`, `--template-version` options to `functions create`
+* Added structured collection rendering for improved CLI output formatting
+* Fixed console URL generation to properly strip `/v1` suffix
+* Fixed force mode to always prompt for code pull confirmation
+* Fixed sensitive key detection to match suffix-based patterns
+* Fixed redaction hint display for JSON and raw output modes
+* Fixed SDK client initialization for account, locale, migrations, proxy, and vcs services
+* Moved `getSafeDirectoryName` to shared utils for pull commands
+* Updated `.gitignore` rule handling to add rules individually
+
 ## 17.3.1
 
 * Fixed: proxy CLI using console SDK instead of project SDK

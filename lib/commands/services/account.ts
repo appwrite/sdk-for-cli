@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { sdkForProject } from "../../sdks.js";
+import { sdkForConsole } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -14,7 +14,7 @@ let accountClient: Account | null = null;
 
 const getAccountClient = async (): Promise<Account> => {
   if (!accountClient) {
-    const sdkClient = await sdkForProject();
+    const sdkClient = await sdkForConsole();
     accountClient = new Account(sdkClient);
   }
   return accountClient;
