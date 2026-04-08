@@ -448,19 +448,6 @@ const projectsDeleteKeyCommand = projects
   );
 
 
-const projectsUpdateLabelsCommand = projects
-  .command(`update-labels`)
-  .description(`Update the project labels by its unique ID. Labels can be used to easily filter projects in an organization.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--labels [labels...]`, `Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.`)
-  .action(
-    actionRunner(
-      async ({ projectId, labels }) =>
-        parse(await (await getProjectsClient()).updateLabels(projectId, labels)),
-    ),
-  );
-
-
 const projectsUpdateOAuth2Command = projects
   .command(`update-o-auth-2`)
   .description(`Update the OAuth2 provider configurations. Use this endpoint to set up or update the OAuth2 provider credentials or enable/disable providers. `)

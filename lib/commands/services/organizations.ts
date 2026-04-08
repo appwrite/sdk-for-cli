@@ -89,6 +89,88 @@ const organizationsDeleteCommand = organizations
   );
 
 
+const organizationsListAddonsCommand = organizations
+  .command(`list-addons`)
+  .description(`List all billing addons for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .action(
+    actionRunner(
+      async ({ organizationId }) =>
+        parse(await (await getOrganizationsClient()).listAddons(organizationId)),
+    ),
+  );
+
+
+const organizationsCreateBaaAddonCommand = organizations
+  .command(`create-baa-addon`)
+  .description(`Create the BAA billing addon for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .action(
+    actionRunner(
+      async ({ organizationId }) =>
+        parse(await (await getOrganizationsClient()).createBaaAddon(organizationId)),
+    ),
+  );
+
+
+const organizationsGetAddonCommand = organizations
+  .command(`get-addon`)
+  .description(`Get the details of a billing addon for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .requiredOption(`--addon-id <addon-id>`, `Addon ID`)
+  .action(
+    actionRunner(
+      async ({ organizationId, addonId }) =>
+        parse(await (await getOrganizationsClient()).getAddon(organizationId, addonId)),
+    ),
+  );
+
+
+const organizationsDeleteAddonCommand = organizations
+  .command(`delete-addon`)
+  .description(`Delete a billing addon for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .requiredOption(`--addon-id <addon-id>`, `Addon ID`)
+  .action(
+    actionRunner(
+      async ({ organizationId, addonId }) =>
+        parse(await (await getOrganizationsClient()).deleteAddon(organizationId, addonId)),
+    ),
+  );
+
+
+const organizationsConfirmAddonPaymentCommand = organizations
+  .command(`confirm-addon-payment`)
+  .description(`Confirm payment for a billing addon for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .requiredOption(`--addon-id <addon-id>`, `Addon ID`)
+  .action(
+    actionRunner(
+      async ({ organizationId, addonId }) =>
+        parse(await (await getOrganizationsClient()).confirmAddonPayment(organizationId, addonId)),
+    ),
+  );
+
+
+const organizationsGetAddonPriceCommand = organizations
+  .command(`get-addon-price`)
+  .description(`Get the price details for a billing addon for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .requiredOption(`--addon <addon>`, `Addon key identifier (e.g. baa).`)
+  .action(
+    actionRunner(
+      async ({ organizationId, addon }) =>
+        parse(await (await getOrganizationsClient()).getAddonPrice(organizationId, addon)),
+    ),
+  );
+
+
 const organizationsListAggregationsCommand = organizations
   .command(`list-aggregations`)
   .description(`Get a list of all aggregations for an organization.`)
