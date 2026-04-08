@@ -69,7 +69,7 @@ function writeUpdateAvailableNotice(currentVersion: string, latestVersion: strin
     stream.write(
         chalk.cyan(
             `💡 Run '${chalk.bold('appwrite update')}' to update to the latest version.`
-        ) + '\n'
+        ) + '\n\n'
     );
 }
 
