@@ -84,11 +84,15 @@ const functionsCreateCommand = functions
   .option(`--provider-root-directory <provider-root-directory>`, `Path to function code in the linked repo.`)
   .option(`--build-specification <build-specification>`, `Build specification for the function deployments.`)
   .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the function executions.`)
+  .option(`--template-repository <template-repository>`, `Repository name of the template.`)
+  .option(`--template-owner <template-owner>`, `The name of the owner of the template.`)
+  .option(`--template-root-directory <template-root-directory>`, `Path to function code in the template repo.`)
+  .option(`--template-version <template-version>`, `Version (tag) for the repo linked to the function template.`)
   .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
-        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
+      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, templateRepository, templateOwner, templateRootDirectory, templateVersion, deploymentRetention }) =>
+        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, templateRepository, templateOwner, templateRootDirectory, templateVersion, deploymentRetention)),
     ),
   );
 

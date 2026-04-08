@@ -153,7 +153,8 @@ const migrationsGetFirebaseReportCommand = migrations
 
 const migrationsCreateJSONExportCommand = migrations
   .command(`create-json-export`)
-  .description(``)
+  .description(`Export documents to a JSON file from your Appwrite database. This endpoint allows you to export documents to a JSON file stored in a secure internal bucket. You'll receive an email with a download link when the export is complete.
+`)
   .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database to export.`)
   .requiredOption(`--filename <filename>`, `The name of the file to be created for the export, excluding the .json extension.`)
   .option(`--columns [columns...]`, `List of attributes to export. If empty, all attributes will be exported. You can use the \`*\` wildcard to export all attributes from the collection.`)
@@ -174,7 +175,8 @@ const migrationsCreateJSONExportCommand = migrations
 
 const migrationsCreateJSONImportCommand = migrations
   .command(`create-json-import`)
-  .description(``)
+  .description(`Import documents from a JSON file into your Appwrite database. This endpoint allows you to import documents from a JSON file uploaded to Appwrite Storage bucket.
+`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database.`)

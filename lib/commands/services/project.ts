@@ -26,6 +26,18 @@ export const project = new Command("project")
     helpWidth: process.stdout.columns || 80,
   });
 
+const projectUpdateLabelsCommand = project
+  .command(`update-labels`)
+  .description(`Update the project labels. Labels can be used to easily filter projects in an organization.`)
+  .requiredOption(`--labels [labels...]`, `Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.`)
+  .action(
+    actionRunner(
+      async ({ labels }) =>
+        parse(await (await getProjectClient()).updateLabels(labels)),
+    ),
+  );
+
+
 const projectGetUsageCommand = project
   .command(`get-usage`)
   .description(`Get comprehensive usage statistics for your project. View metrics including network requests, bandwidth, storage, function executions, database usage, and user activity. Specify a time range with startDate and endDate, and optionally set the data granularity with period (1h or 1d). The response includes both total counts and detailed breakdowns by resource, along with historical data over the specified period.`)
