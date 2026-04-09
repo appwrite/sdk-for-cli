@@ -14,7 +14,7 @@ Appwrite is an open-source backend as a service server that abstracts and simpli
 
 ## Installation
 
-The Appwrite CLI is a Node based command line tool to help you interact with the Appwrite API. The CLI is distributed both as an [`npm package`](https://www.npmjs.com/package/appwrite-cli) as well as [pre built binaries](https://github.com/appwrite/sdk-for-cli/releases/latest) for specific operating systems and architectures.
+The Appwrite CLI is a command line tool to help you interact with the Appwrite API. The CLI is distributed both as an [`npm package`](https://www.npmjs.com/package/appwrite-cli) as well as [native binaries](https://github.com/appwrite/sdk-for-cli/releases/latest) for specific operating systems and architectures.
 
 ### Install using NPM
 ---
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-17.4.0
+18.0.0
 ```
 
 ### Install using prebuilt binaries
@@ -47,6 +47,8 @@ $ wget -q https://appwrite.io/cli/install.sh  -O - | /bin/bash
 $ brew install appwrite 
 ```
 
+Homebrew installs the native binary for your platform.
+
 ### Windows
 Via Powershell
 ```powershell
@@ -60,7 +62,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-17.4.0
+18.0.0
 ```
 
 ## Getting Started 
