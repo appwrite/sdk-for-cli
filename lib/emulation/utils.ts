@@ -4,7 +4,7 @@ import { log } from "../parser.js";
 import { sdkForConsole, sdkForProject } from "../sdks.js";
 import { Projects, Scopes, Users } from "@appwrite.io/console";
 
-export const openRuntimesVersion = "v4";
+export const openRuntimesVersion = "v5";
 
 export const runtimeNames: Record<string, string> = {
   node: "Node.js",
