@@ -1,5 +1,9 @@
 # Change Log
 
+## 18.0.1
+
+* Fixed Homebrew checksum regex matcher in publish workflow
+
 ## 18.0.0
 
 * Breaking: Moved `keys` commands from `projects` to `project` service. They no longer require `--project-id`, but `create-key` now requires `--key-id`
