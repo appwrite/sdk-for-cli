@@ -29,7 +29,7 @@ export const webhooks = new Command("webhooks")
 const webhooksListCommand = webhooks
   .command(`list`)
   .description(`Get a list of all webhooks belonging to the project. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, url, httpUser, security, events, enabled, logs, attempts`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, url, authUsername, tls, events, enabled, logs, attempts`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -58,17 +58,18 @@ const webhooksCreateCommand = webhooks
       value === undefined ? true : parseBool(value),
   )
   .option(
-    `--security [value]`,
+    `--tls [value]`,
     `Certificate verification, false for disabled or true for enabled.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--http-user <http-user>`, `Webhook HTTP user. Max length: 256 chars.`)
-  .option(`--http-pass <http-pass>`, `Webhook HTTP password. Max length: 256 chars.`)
+  .option(`--auth-username <auth-username>`, `Webhook HTTP user. Max length: 256 chars.`)
+  .option(`--auth-password <auth-password>`, `Webhook HTTP password. Max length: 256 chars.`)
+  .option(`--secret <secret>`, `Webhook secret key. If not provided, a new key will be generated automatically. Key must be at least 8 characters long, and at max 256 characters.`)
   .action(
     actionRunner(
-      async ({ webhookId, url, name, events, enabled, security, httpUser, httpPass }) =>
-        parse(await (await getWebhooksClient()).create(webhookId, url, name, events, enabled, security, httpUser, httpPass)),
+      async ({ webhookId, url, name, events, enabled, tls, authUsername, authPassword, secret }) =>
+        parse(await (await getWebhooksClient()).create(webhookId, url, name, events, enabled, tls, authUsername, authPassword, secret)),
     ),
   );
 
@@ -99,17 +100,17 @@ const webhooksUpdateCommand = webhooks
       value === undefined ? true : parseBool(value),
   )
   .option(
-    `--security [value]`,
+    `--tls [value]`,
     `Certificate verification, false for disabled or true for enabled.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--http-user <http-user>`, `Webhook HTTP user. Max length: 256 chars.`)
-  .option(`--http-pass <http-pass>`, `Webhook HTTP password. Max length: 256 chars.`)
+  .option(`--auth-username <auth-username>`, `Webhook HTTP user. Max length: 256 chars.`)
+  .option(`--auth-password <auth-password>`, `Webhook HTTP password. Max length: 256 chars.`)
   .action(
     actionRunner(
-      async ({ webhookId, name, url, events, enabled, security, httpUser, httpPass }) =>
-        parse(await (await getWebhooksClient()).update(webhookId, name, url, events, enabled, security, httpUser, httpPass)),
+      async ({ webhookId, name, url, events, enabled, tls, authUsername, authPassword }) =>
+        parse(await (await getWebhooksClient()).update(webhookId, name, url, events, enabled, tls, authUsername, authPassword)),
     ),
   );
 
@@ -126,14 +127,15 @@ const webhooksDeleteCommand = webhooks
   );
 
 
-const webhooksUpdateSignatureCommand = webhooks
-  .command(`update-signature`)
-  .description(`Update the webhook signature key. This endpoint can be used to regenerate the signature key used to sign and validate payload deliveries for a specific webhook.`)
+const webhooksUpdateSecretCommand = webhooks
+  .command(`update-secret`)
+  .description(`Update the webhook signing key. This endpoint can be used to regenerate the signing key used to sign and validate payload deliveries for a specific webhook.`)
   .requiredOption(`--webhook-id <webhook-id>`, `Webhook ID.`)
+  .option(`--secret <secret>`, `Webhook secret key. If not provided, a new key will be generated automatically. Key must be at least 8 characters long, and at max 256 characters.`)
   .action(
     actionRunner(
-      async ({ webhookId }) =>
-        parse(await (await getWebhooksClient()).updateSignature(webhookId)),
+      async ({ webhookId, secret }) =>
+        parse(await (await getWebhooksClient()).updateSecret(webhookId, secret)),
     ),
   );
 

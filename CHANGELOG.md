@@ -1,5 +1,17 @@
 # Change Log
 
+## 18.0.0
+
+* Breaking: Moved `keys` commands from `projects` to `project` service. They no longer require `--project-id`, but `create-key` now requires `--key-id`
+* Breaking: Moved `update-labels` from `projects` to `project` service
+* Breaking: Moved platform commands from `projects` to `project` service and split generic `create-platform`/`update-platform` into platform-specific commands: `create-android-platform`, `create-apple-platform`, `create-linux-platform`, `create-web-platform`, `create-windows-platform` (and corresponding update variants). New methods no longer require `--project-id`, but require `--platform-id`, and `key` parameter was renamed to platform-specific terminology, such as `--bundle-identifier` or `--package-name`
+* Added `update-canonical-emails`, `update-disposable-emails`, `update-free-emails` commands to `project` service
+* Added `--purge` option to `databases update-collection` and `tables-db update-table` commands
+* Added `x` (Twitter/X) as supported OAuth2 provider
+* Updated `--ttl` description for `databases list-documents` and `tables-db list-rows` with detailed caching behaviour
+* Fixed console URL generation to normalize cloud.appwrite.io subdomains
+* Fixed Linuxbrew path detection in update command
+
 ## 17.4.0
 
 * Added `--activate` flag for `push function` to control deployment activation

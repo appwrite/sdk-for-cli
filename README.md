@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-cli.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-1.9.0-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-1.9.1-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
@@ -14,7 +14,7 @@ Appwrite is an open-source backend as a service server that abstracts and simpli
 
 ## Installation
 
-The Appwrite CLI is a Node based command line tool to help you interact with the Appwrite API. The CLI is distributed both as an [`npm package`](https://www.npmjs.com/package/appwrite-cli) as well as [pre built binaries](https://github.com/appwrite/sdk-for-cli/releases/latest) for specific operating systems and architectures.
+The Appwrite CLI is a command line tool to help you interact with the Appwrite API. The CLI is distributed both as an [`npm package`](https://www.npmjs.com/package/appwrite-cli) as well as [native binaries](https://github.com/appwrite/sdk-for-cli/releases/latest) for specific operating systems and architectures.
 
 ### Install using NPM
 ---
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-17.4.0
+18.0.0
 ```
 
 ### Install using prebuilt binaries
@@ -47,6 +47,8 @@ $ wget -q https://appwrite.io/cli/install.sh  -O - | /bin/bash
 $ brew install appwrite 
 ```
 
+Homebrew installs the native binary for your platform.
+
 ### Windows
 Via Powershell
 ```powershell
@@ -60,7 +62,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-17.4.0
+18.0.0
 ```
 
 ## Getting Started 

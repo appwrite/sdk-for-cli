@@ -1,4 +1,4 @@
 ```bash
-appwrite webhooks update-signature \
+appwrite webhooks update-secret \
     --webhook-id <WEBHOOK_ID>
 ```
