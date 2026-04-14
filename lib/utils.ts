@@ -30,6 +30,11 @@ export const createSettingsObject = (project: Models.Project): SettingsType => {
       graphql: project.serviceStatusForGraphql,
       messaging: project.serviceStatusForMessaging,
     },
+    protocols: {
+      rest: project.protocolStatusForRest,
+      graphql: project.protocolStatusForGraphql,
+      websocket: project.protocolStatusForWebsocket,
+    },
     auth: {
       methods: {
         jwt: project.authJWT,
@@ -68,6 +73,15 @@ export const getSafeDirectoryName = (
   return normalized || fallback;
 };
 
+type SiteBuildConfig = {
+  framework?: string;
+  adapter?: string;
+};
+
+export const siteRequiresBuildCommand = (site: SiteBuildConfig): boolean => {
+  return !(site.framework === "other" && site.adapter === "static");
+};
+
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
@@ -76,8 +90,25 @@ export const getErrorMessage = (error: unknown): string => {
   return String(error);
 };
 
+const isCloudHostname = (hostname: string): boolean =>
+  hostname === "cloud.appwrite.io" || hostname.endsWith(".cloud.appwrite.io");
+
 export const getConsoleBaseUrl = (endpoint: string): string => {
-  return endpoint.replace(/\/v1\/?$/, "");
+  try {
+    const url = new URL(endpoint);
+
+    if (isCloudHostname(url.hostname)) {
+      url.hostname = "cloud.appwrite.io";
+    }
+
+    url.pathname = url.pathname.replace(/\/v1\/?$/, "");
+    url.search = "";
+    url.hash = "";
+
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return endpoint.replace(/\/v1\/?$/, "");
+  }
 };
 
 export const getConsoleProjectSlug = (
@@ -86,11 +117,8 @@ export const getConsoleProjectSlug = (
 ): string => {
   try {
     const hostname = new URL(endpoint).hostname;
-    const isCloudHostname =
-      hostname === "cloud.appwrite.io" ||
-      hostname.endsWith(".cloud.appwrite.io");
 
-    if (!isCloudHostname) {
+    if (!isCloudHostname(hostname)) {
       return `project-${projectId}`;
     }
 

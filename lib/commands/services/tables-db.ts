@@ -286,10 +286,16 @@ const tablesDBUpdateTableCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--purge [value]`,
+    `When true, purge all cached list responses for this table as part of the update. Use this to force readers to see fresh data immediately instead of waiting for the cache TTL to expire.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ databaseId, tableId, name, permissions, rowSecurity, enabled }) =>
-        parse(await (await getTablesDBClient()).updateTable(databaseId, tableId, name, permissions, rowSecurity, enabled)),
+      async ({ databaseId, tableId, name, permissions, rowSecurity, enabled, purge }) =>
+        parse(await (await getTablesDBClient()).updateTable(databaseId, tableId, name, permissions, rowSecurity, enabled, purge)),
     ),
   );
 
@@ -1168,7 +1174,7 @@ const tablesDBListRowsCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--ttl <ttl>`, `TTL (seconds) for cached responses when caching is enabled for select queries. Must be between 0 and 86400 (24 hours).`, parseInteger)
+  .option(`--ttl <ttl>`, `TTL (seconds) for caching list responses. Responses are stored in an in-memory key-value cache, keyed per project, table, schema version (columns and indexes), caller authorization roles, and the exact query — so users with different permissions never share cached entries. Schema changes invalidate cached entries automatically; row writes do not, so choose a TTL you are comfortable serving as stale data. Set to 0 to disable caching. Must be between 0 and 86400 (24 hours).`, parseInteger)
   .action(
     actionRunner(
       async ({ databaseId, tableId, queries, transactionId, total, ttl }) =>
