@@ -1,8 +1,12 @@
 # Change Log
 
-## 18.0.1
+## 18.1.0
 
-* Fixed Homebrew checksum regex matcher in publish workflow
+* Added site screenshot terminal preview after `push site` deployments
+* Added standalone binary self-update support in `update` command
+* Added installation method detection for smarter version checks (npm, Homebrew, standalone)
+* Updated TypeScript query types to use `QueryableFieldValue` for improved type inference
+* Fixed indentation in deployment error handling blocks
 
 ## 18.0.0
 

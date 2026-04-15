@@ -12,7 +12,7 @@ import inquirer from 'inquirer';
 import packageJson from './package.json' with { type: 'json' };
 import { commandDescriptions, cliConfig } from './lib/parser.js';
 import {
-    getLatestVersion,
+    getLatestVersionForCurrentInstallation,
     compareVersions,
     getCachedUpdateNotification,
     syncVersionCheckCache,
@@ -98,7 +98,9 @@ async function checkVersion(): Promise<void> {
     process.stdout.write(chalk.bold(`appwrite version ${version}`) + '\n');
 
     try {
-        const latestVersion = await getLatestVersion({ timeoutMs: VERSION_CHECK_TIMEOUT_MS });
+        const latestVersion = await getLatestVersionForCurrentInstallation({
+            timeoutMs: VERSION_CHECK_TIMEOUT_MS,
+        });
         syncVersionCheckCache(version, latestVersion);
         const comparison = compareVersions(version, latestVersion);
 
