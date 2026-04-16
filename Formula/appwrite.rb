@@ -2,7 +2,7 @@ class Appwrite < Formula
   desc "Command-line tool for interacting with the Appwrite API"
   homepage "https://appwrite.io"
   license "BSD-3-Clause"
-  version "18.1.0"
+  version "18.2.0"
 
   def self.binary_arch
     Hardware::CPU.arm? ? "arm64" : "x64"

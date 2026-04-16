@@ -1,5 +1,17 @@
 # Change Log
 
+## 18.2.0
+
+* Added source code and entrypoint validation before local function execution
+* Added macOS code signature verification for standalone binary installs
+* Added `webhooks` to the list of supported resource types
+* Updated Open Runtimes version from v4 to v5
+* Updated runtime start commands from `sh` to `bash` for improved compatibility
+* Updated project init flow with contextual next steps and improved prompts
+* Fixed Docker process error handling to report exit codes and signals
+* Fixed function container startup to detect early exits before port open
+* Fixed stderr output in Docker start to write to stderr instead of stdout
+
 ## 18.1.0
 
 * Added site screenshot terminal preview after `push site` deployments
