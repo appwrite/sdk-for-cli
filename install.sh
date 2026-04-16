@@ -93,10 +93,29 @@ printSuccess() {
     printf "${GREEN}✅ Done ... ${NC}\n\n"
 }
 
+verifyMacOSCodeSignature() {
+    if [ "$OS" != "darwin" ]; then
+        return
+    fi
+
+    if ! command -v codesign >/dev/null 2>&1; then
+        return
+    fi
+
+    printf "${GREEN}🔏 Verifying macOS code signature ${NC}\n"
+    if ! codesign -dv $APPWRITE_TEMP_NAME >/dev/null 2>&1; then
+        printf "${RED}❌ Downloaded macOS binary is missing an embedded code signature. macOS will kill it on launch. ${NC}\n"
+        printf "${RED}❌ Please retry once the release artifact is refreshed, or use Homebrew/npm as a temporary workaround. ${NC}\n"
+        rm -f $APPWRITE_TEMP_NAME
+        exit 1
+    fi
+    printSuccess
+}
+
 downloadBinary() {
     echo "[2/4] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="18.1.0"
+    GITHUB_LATEST_VERSION="18.2.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -120,6 +139,8 @@ install() {
         exit 1
     fi
     printSuccess
+
+    verifyMacOSCodeSignature
 
     printf "${GREEN}📝 Copying temporary file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
     runAsRoot cp $APPWRITE_TEMP_NAME $APPWRITE_EXECUTABLE_FILEPATH

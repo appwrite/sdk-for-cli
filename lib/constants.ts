@@ -1,7 +1,7 @@
 // SDK
 export const SDK_TITLE = 'Appwrite';
 export const SDK_TITLE_LOWER = 'appwrite';
-export const SDK_VERSION = '18.1.0';
+export const SDK_VERSION = '18.2.0';
 export const SDK_NAME = 'Command Line';
 export const SDK_PLATFORM = 'console';
 export const SDK_LANGUAGE = 'cli';
@@ -34,6 +34,7 @@ export const CONFIG_RESOURCE_KEYS = [
   "tablesDB",
   "tables",
   "teams",
+  "webhooks",
   "collections",
 ] as const;
 
