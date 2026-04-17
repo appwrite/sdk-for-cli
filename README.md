@@ -42,12 +42,12 @@ If you do not have `npm` installed, you can always install the prebuilt binaries
 $ wget -q https://appwrite.io/cli/install.sh  -O - | /bin/bash
 ```
 
-### MacOS via [Homebrew](https://brew.sh)
+### MacOS / Linux via [Homebrew](https://brew.sh)
 ```bash
-$ brew install appwrite 
+$ brew install appwrite/appwrite/appwrite
 ```
 
-Homebrew installs the native binary for your platform.
+Homebrew pulls the formula from the [`appwrite/homebrew-appwrite`](https://github.com/appwrite/homebrew-appwrite) tap and downloads the native binary for your platform.
 
 ### Windows
 Via Powershell
