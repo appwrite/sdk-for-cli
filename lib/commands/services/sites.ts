@@ -31,7 +31,7 @@ export const sites = new Command("sites")
 const sitesListCommand = sites
   .command(`list`)
   .description(`Get a list of all the project's sites. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -116,7 +116,7 @@ const sitesListSpecificationsCommand = sites
 
 const sitesListTemplatesCommand = sites
   .command(`list-templates`)
-  .description(`List available site templates. You can use template details in [createSite](/docs/references/cloud/server-nodejs/sites#create) method.`)
+  .description(`List available site templates. You can use template details in createSite method.`)
   .option(`--frameworks [frameworks...]`, `List of frameworks allowed for filtering site templates. Maximum of 100 frameworks are allowed.`)
   .option(`--use-cases [use-cases...]`, `List of use cases allowed for filtering site templates. Maximum of 100 use cases are allowed.`)
   .option(`--limit <limit>`, `Limit the number of templates returned in the response. Default limit is 25, and maximum limit is 5000.`, parseInteger)
@@ -131,7 +131,7 @@ const sitesListTemplatesCommand = sites
 
 const sitesGetTemplateCommand = sites
   .command(`get-template`)
-  .description(`Get a site template using ID. You can use template details in [createSite](/docs/references/cloud/server-nodejs/sites#create) method.`)
+  .description(`Get a site template using ID. You can use template details in createSite method.`)
   .requiredOption(`--template-id <template-id>`, `Template ID.`)
   .action(
     actionRunner(
@@ -241,7 +241,7 @@ const sitesListDeploymentsCommand = sites
   .command(`list-deployments`)
   .description(`Get a list of all the site's code deployments. You can use the query params to filter your results.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -296,7 +296,7 @@ const sitesCreateTemplateDeploymentCommand = sites
   .command(`create-template-deployment`)
   .description(`Create a deployment based on a template.
 
-Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/products/sites/templates) to find the template details.`)
+Use this endpoint with combination of listTemplates (https://appwrite.io/docs/products/sites/templates) to find the template details.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
   .requiredOption(`--repository <repository>`, `Repository name of the template.`)
   .requiredOption(`--owner <owner>`, `The name of the owner of the template.`)
@@ -402,7 +402,7 @@ const sitesListLogsCommand = sites
   .command(`list-logs`)
   .description(`Get a list of all site logs. You can use the query params to filter your results.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,

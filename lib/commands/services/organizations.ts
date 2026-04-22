@@ -29,7 +29,7 @@ export const organizations = new Command("organizations")
 const organizationsListCommand = organizations
   .command(`list`)
   .description(`Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan, paymentMethodId, backupPaymentMethodId, platform`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan, paymentMethodId, backupPaymentMethodId, platform`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .action(
     actionRunner(
@@ -175,7 +175,7 @@ const organizationsListAggregationsCommand = organizations
   .command(`list-aggregations`)
   .description(`Get a list of all aggregations for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, aggregationId, from, to`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, aggregationId, from, to`)
   .action(
     actionRunner(
       async ({ organizationId, queries }) =>
@@ -244,7 +244,7 @@ const organizationsListCreditsCommand = organizations
   .description(`List all credits for an organization.
 `)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, couponId, credits, expiration, status`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, couponId, credits, expiration, status`)
   .action(
     actionRunner(
       async ({ organizationId, queries }) =>
@@ -425,7 +425,7 @@ const organizationsCreateKeyCommand = organizations
   .requiredOption(`--organization-id <organization-id>`, `Organization Unique ID`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
-  .option(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
       async ({ organizationId, name, scopes, expire }) =>
@@ -454,7 +454,7 @@ const organizationsUpdateKeyCommand = organizations
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
-  .option(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
       async ({ organizationId, keyId, name, scopes, expire }) =>

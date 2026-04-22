@@ -115,7 +115,7 @@ const healthGetQueueBuildsCommand = health
 
 const healthGetQueueCertificatesCommand = health
   .command(`get-queue-certificates`)
-  .description(`Get the number of certificates that are waiting to be issued against [Letsencrypt](https://letsencrypt.org/) in the Appwrite internal queue server.`)
+  .description(`Get the number of certificates that are waiting to be issued against Letsencrypt (https://letsencrypt.org/) in the Appwrite internal queue server.`)
   .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
   .action(
     actionRunner(
@@ -282,7 +282,7 @@ const healthGetStorageLocalCommand = health
 
 const healthGetTimeCommand = health
   .command(`get-time`)
-  .description(`Check the Appwrite server time is synced with Google remote NTP server. We use this technology to smoothly handle leap seconds with no disruptive events. The [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used by hundreds of millions of computers and devices to synchronize their clocks over the Internet. If your computer sets its own clock, it likely uses NTP.`)
+  .description(`Check the Appwrite server time is synced with Google remote NTP server. We use this technology to smoothly handle leap seconds with no disruptive events. The Network Time Protocol (https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used by hundreds of millions of computers and devices to synchronize their clocks over the Internet. If your computer sets its own clock, it likely uses NTP.`)
   .action(
     actionRunner(
       async () => parse(await (await getHealthClient()).getTime()),

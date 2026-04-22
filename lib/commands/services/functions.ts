@@ -31,7 +31,7 @@ export const functions = new Command("functions")
 const functionsListCommand = functions
   .command(`list`)
   .description(`Get a list of all the project's functions. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -49,11 +49,11 @@ const functionsListCommand = functions
 
 const functionsCreateCommand = functions
   .command(`create`)
-  .description(`Create a new function. You can pass a list of [permissions](https://appwrite.io/docs/permissions) to allow different project users or team with access to execute the function using the client API.`)
+  .description(`Create a new function. You can pass a list of permissions (https://appwrite.io/docs/permissions) to allow different project users or team with access to execute the function using the client API.`)
   .requiredOption(`--function-id <function-id>`, `Function ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Function name. Max length: 128 chars.`)
   .requiredOption(`--runtime <runtime>`, `Execution runtime.`)
-  .option(`--execute [execute...]`, `An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
+  .option(`--execute [execute...]`, `An array of role strings with execution permissions. By default no user is granted with any execute permissions. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
   .option(`--events [events...]`, `Events list. Maximum of 100 events are allowed.`)
   .option(`--schedule <schedule>`, `Schedule CRON syntax.`)
   .option(`--timeout <timeout>`, `Function maximum execution time in seconds.`, parseInteger)
@@ -115,7 +115,7 @@ const functionsListSpecificationsCommand = functions
 
 const functionsListTemplatesCommand = functions
   .command(`list-templates`)
-  .description(`List available function templates. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.`)
+  .description(`List available function templates. You can use template details in createFunction method.`)
   .option(`--runtimes [runtimes...]`, `List of runtimes allowed for filtering function templates. Maximum of 100 runtimes are allowed.`)
   .option(`--use-cases [use-cases...]`, `List of use cases allowed for filtering function templates. Maximum of 100 use cases are allowed.`)
   .option(`--limit <limit>`, `Limit the number of templates returned in the response. Default limit is 25, and maximum limit is 5000.`, parseInteger)
@@ -136,7 +136,7 @@ const functionsListTemplatesCommand = functions
 
 const functionsGetTemplateCommand = functions
   .command(`get-template`)
-  .description(`Get a function template using ID. You can use template details in [createFunction](/docs/references/cloud/server-nodejs/functions#create) method.`)
+  .description(`Get a function template using ID. You can use template details in createFunction method.`)
   .requiredOption(`--template-id <template-id>`, `Template ID.`)
   .action(
     actionRunner(
@@ -176,7 +176,7 @@ const functionsUpdateCommand = functions
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
   .requiredOption(`--name <name>`, `Function name. Max length: 128 chars.`)
   .option(`--runtime <runtime>`, `Execution runtime.`)
-  .option(`--execute [execute...]`, `An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
+  .option(`--execute [execute...]`, `An array of role strings with execution permissions. By default no user is granted with any execute permissions. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
   .option(`--events [events...]`, `Events list. Maximum of 100 events are allowed.`)
   .option(`--schedule <schedule>`, `Schedule CRON syntax.`)
   .option(`--timeout <timeout>`, `Maximum execution time in seconds.`, parseInteger)
@@ -245,7 +245,7 @@ const functionsListDeploymentsCommand = functions
   .command(`list-deployments`)
   .description(`Get a list of all the function's code deployments. You can use the query params to filter your results.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -265,7 +265,7 @@ const functionsCreateDeploymentCommand = functions
   .command(`create-deployment`)
   .description(`Create a new function code deployment. Use this endpoint to upload a new version of your code function. To execute your newly uploaded code, you'll need to update the function's deployment to use your new deployment UID.
 
-This endpoint accepts a tar.gz file compressed with your code. Make sure to include any dependencies your code has within the compressed file. You can learn more about code packaging in the [Appwrite Cloud Functions tutorial](https://appwrite.io/docs/functions).
+This endpoint accepts a tar.gz file compressed with your code. Make sure to include any dependencies your code has within the compressed file. You can learn more about code packaging in the Appwrite Cloud Functions tutorial (https://appwrite.io/docs/functions).
 
 Use the "command" param to set the entrypoint used to execute your code.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
@@ -299,7 +299,7 @@ const functionsCreateTemplateDeploymentCommand = functions
   .command(`create-template-deployment`)
   .description(`Create a deployment based on a template.
 
-Use this endpoint with combination of [listTemplates](https://appwrite.io/docs/products/functions/templates) to find the template details.`)
+Use this endpoint with combination of listTemplates (https://appwrite.io/docs/products/functions/templates) to find the template details.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
   .requiredOption(`--repository <repository>`, `Repository name of the template.`)
   .requiredOption(`--owner <owner>`, `The name of the owner of the template.`)
@@ -405,7 +405,7 @@ const functionsListExecutionsCommand = functions
   .command(`list-executions`)
   .description(`Get a list of all the current user function execution logs. You can use the query params to filter your results.`)
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -434,7 +434,7 @@ const functionsCreateExecutionCommand = functions
   .option(`--path <path>`, `HTTP path of execution. Path can include query params. Default value is /`)
   .option(`--method <method>`, `HTTP method of execution. Default value is POST.`)
   .option(`--headers <headers>`, `HTTP headers of execution. Defaults to empty.`)
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled execution time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled execution time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future with precision in minutes.`)
   .action(
     actionRunner(
       async ({ functionId, body, async, path, method, headers, scheduledAt }) =>

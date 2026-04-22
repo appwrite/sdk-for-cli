@@ -31,7 +31,7 @@ export const storage = new Command("storage")
 const storageListBucketsCommand = storage
   .command(`list-buckets`)
   .description(`Get a list of all the storage buckets. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -52,10 +52,10 @@ const storageCreateBucketCommand = storage
   .description(`Create a new storage bucket.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Bucket name`)
-  .option(`--permissions [permissions...]`, `An array of permission strings. By default, no user is granted with any permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permission strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(
     `--file-security [value]`,
-    `Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
+    `Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. Learn more about permissions (https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
@@ -67,7 +67,7 @@ const storageCreateBucketCommand = storage
   )
   .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 5GB.`, parseInteger)
   .option(`--allowed-file-extensions [allowed-file-extensions...]`, `Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.`)
-  .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none,  [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
+  .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none,  gzip (https://en.wikipedia.org/wiki/Gzip), or zstd (https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
   .option(
     `--encryption [value]`,
     `Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled`,
@@ -111,10 +111,10 @@ const storageUpdateBucketCommand = storage
   .description(`Update a storage bucket by its unique ID.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Bucket unique ID.`)
   .requiredOption(`--name <name>`, `Bucket name`)
-  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(
     `--file-security [value]`,
-    `Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
+    `Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. Learn more about permissions (https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
@@ -126,7 +126,7 @@ const storageUpdateBucketCommand = storage
   )
   .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 5GB.`, parseInteger)
   .option(`--allowed-file-extensions [allowed-file-extensions...]`, `Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.`)
-  .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none, [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
+  .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none, gzip (https://en.wikipedia.org/wiki/Gzip), or zstd (https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
   .option(
     `--encryption [value]`,
     `Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled`,
@@ -168,8 +168,8 @@ const storageDeleteBucketCommand = storage
 const storageListFilesCommand = storage
   .command(`list-files`)
   .description(`Get a list of all the user files. You can use the query params to filter your results.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -187,18 +187,18 @@ const storageListFilesCommand = storage
 
 const storageCreateFileCommand = storage
   .command(`create-file`)
-  .description(`Create a new file. Before using this route, you should create a new bucket resource using either a [server integration](https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.
+  .description(`Create a new file. Before using this route, you should create a new bucket resource using either a server integration (https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.
 
-Larger files should be uploaded using multiple requests with the [content-range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of \`5MB\`. The \`content-range\` header values should always be in bytes.
+Larger files should be uploaded using multiple requests with the content-range (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of \`5MB\`. The \`content-range\` header values should always be in bytes.
 
-When the first request is sent, the server will return the **File** object, and the subsequent part request must include the file's **id** in \`x-appwrite-id\` header to allow the server to know that the partial upload is for the existing file and not for a new one.
+When the first request is sent, the server will return the File object, and the subsequent part request must include the file's id in \`x-appwrite-id\` header to allow the server to know that the partial upload is for the existing file and not for a new one.
 
 If you're creating a new file using one of the Appwrite SDKs, all the chunking logic will be managed by the SDK internally.
 `)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
-  .requiredOption(`--file <file>`, `Binary file. Appwrite SDKs provide helpers to handle file input. [Learn about file input](https://appwrite.io/docs/products/storage/upload-download#input-file).`)
-  .option(`--permissions [permissions...]`, `An array of permission strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .requiredOption(`--file <file>`, `Binary file. Appwrite SDKs provide helpers to handle file input. Learn about file input (https://appwrite.io/docs/products/storage/upload-download#input-file).`)
+  .option(`--permissions [permissions...]`, `An array of permission strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .action(
     actionRunner(
       async ({ bucketId, fileId, file, permissions }) =>
@@ -210,7 +210,7 @@ If you're creating a new file using one of the Appwrite SDKs, all the chunking l
 const storageGetFileCommand = storage
   .command(`get-file`)
   .description(`Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .action(
     actionRunner(
@@ -226,7 +226,7 @@ const storageUpdateFileCommand = storage
   .requiredOption(`--bucket-id <bucket-id>`, `Bucket unique ID.`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .option(`--name <name>`, `File name.`)
-  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .action(
     actionRunner(
       async ({ bucketId, fileId, name, permissions }) =>
@@ -238,7 +238,7 @@ const storageUpdateFileCommand = storage
 const storageDeleteFileCommand = storage
   .command(`delete-file`)
   .description(`Delete a file by its unique ID. Only users with write permissions have access to delete this resource.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .action(
     actionRunner(
@@ -251,7 +251,7 @@ const storageDeleteFileCommand = storage
 const storageGetFileDownloadCommand = storage
   .command(`get-file-download`)
   .description(`Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .option(`--token <token>`, `File token for accessing this file.`)
   .requiredOption(`--destination <destination>`, `Path to save the file to.`)
@@ -271,7 +271,7 @@ const storageGetFileDownloadCommand = storage
 const storageGetFilePreviewCommand = storage
   .command(`get-file-preview`)
   .description(`Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID`)
   .option(`--width <width>`, `Resize preview image width, Pass an integer between 0 to 4000.`, parseInteger)
   .option(`--height <height>`, `Resize preview image height, Pass an integer between 0 to 4000.`, parseInteger)
@@ -302,7 +302,7 @@ const storageGetFilePreviewCommand = storage
 const storageGetFileViewCommand = storage
   .command(`get-file-view`)
   .description(`Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .option(`--token <token>`, `File token for accessing this file.`)
   .requiredOption(`--destination <destination>`, `Path to save the file to.`)

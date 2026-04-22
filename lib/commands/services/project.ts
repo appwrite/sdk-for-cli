@@ -65,7 +65,7 @@ const projectUpdateFreeEmailsCommand = project
 const projectListKeysCommand = project
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -86,7 +86,7 @@ const projectCreateKeyCommand = project
   .requiredOption(`--key-id <key-id>`, `Key ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
-  .option(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
       async ({ keyId, name, scopes, expire }) =>
@@ -113,7 +113,7 @@ const projectUpdateKeyCommand = project
   .requiredOption(`--key-id <key-id>`, `Key ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
-  .option(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
       async ({ keyId, name, scopes, expire }) =>
@@ -149,7 +149,7 @@ const projectUpdateLabelsCommand = project
 const projectListPlatformsCommand = project
   .command(`list-platforms`)
   .description(`Get a list of all platforms in the project. This endpoint returns an array of all platforms and their configurations.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: type, name, hostname, bundleIdentifier, applicationId, packageIdentifierName, packageName`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: type, name, hostname, bundleIdentifier, applicationId, packageIdentifierName, packageName`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -328,28 +328,28 @@ const projectDeletePlatformCommand = project
   );
 
 
-const projectUpdateProtocolStatusCommand = project
-  .command(`update-protocol-status`)
-  .description(`Update the status of a specific protocol. Use this endpoint to enable or disable a protocol in your project. `)
+const projectUpdateProtocolCommand = project
+  .command(`update-protocol`)
+  .description(`Update properties of a specific protocol. Use this endpoint to enable or disable a protocol in your project. `)
   .requiredOption(`--protocol-id <protocol-id>`, `Protocol name. Can be one of: rest, graphql, websocket`)
   .requiredOption(`--enabled <enabled>`, `Protocol status.`, parseBool)
   .action(
     actionRunner(
       async ({ protocolId, enabled }) =>
-        parse(await (await getProjectClient()).updateProtocolStatus(protocolId, enabled)),
+        parse(await (await getProjectClient()).updateProtocol(protocolId, enabled)),
     ),
   );
 
 
-const projectUpdateServiceStatusCommand = project
-  .command(`update-service-status`)
-  .description(`Update the status of a specific service. Use this endpoint to enable or disable a service in your project. `)
+const projectUpdateServiceCommand = project
+  .command(`update-service`)
+  .description(`Update properties of a specific service. Use this endpoint to enable or disable a service in your project. `)
   .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging`)
   .requiredOption(`--enabled <enabled>`, `Service status.`, parseBool)
   .action(
     actionRunner(
       async ({ serviceId, enabled }) =>
-        parse(await (await getProjectClient()).updateServiceStatus(serviceId, enabled)),
+        parse(await (await getProjectClient()).updateService(serviceId, enabled)),
     ),
   );
 
@@ -371,7 +371,7 @@ const projectGetUsageCommand = project
 const projectListVariablesCommand = project
   .command(`list-variables`)
   .description(`Get a list of all project environment variables.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,

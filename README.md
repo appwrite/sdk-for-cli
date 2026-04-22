@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-18.2.0
+19.0.0
 ```
 
 ### Install using prebuilt binaries
@@ -42,12 +42,12 @@ If you do not have `npm` installed, you can always install the prebuilt binaries
 $ wget -q https://appwrite.io/cli/install.sh  -O - | /bin/bash
 ```
 
-### MacOS via [Homebrew](https://brew.sh)
+### MacOS / Linux via [Homebrew](https://brew.sh)
 ```bash
-$ brew install appwrite 
+$ brew install appwrite/appwrite/appwrite
 ```
 
-Homebrew installs the native binary for your platform.
+Homebrew pulls the formula from the [`appwrite/homebrew-appwrite`](https://github.com/appwrite/homebrew-appwrite) tap and downloads the native binary for your platform.
 
 ### Windows
 Via Powershell
@@ -62,7 +62,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-18.2.0
+19.0.0
 ```
 
 ## Getting Started 

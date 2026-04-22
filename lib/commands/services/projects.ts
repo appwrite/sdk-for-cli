@@ -29,7 +29,7 @@ export const projects = new Command("projects")
 const projectsListCommand = projects
   .command(`list`)
   .description(`Get a list of all projects. You can use the query params to filter your results. `)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -266,7 +266,7 @@ const projectsListDevKeysCommand = projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: accessedAt, expire`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: accessedAt, expire`)
   .action(
     actionRunner(
       async ({ projectId, queries }) =>
@@ -280,7 +280,7 @@ const projectsCreateDevKeyCommand = projects
   .description(`Create a new project dev key. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development. Strictly meant for development purposes only.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
-  .requiredOption(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format.`)
+  .requiredOption(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format.`)
   .action(
     actionRunner(
       async ({ projectId, name, expire }) =>
@@ -308,7 +308,7 @@ const projectsUpdateDevKeyCommand = projects
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
-  .requiredOption(`--expire <expire>`, `Expiration time in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format.`)
+  .requiredOption(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format.`)
   .action(
     actionRunner(
       async ({ projectId, keyId, name, expire }) =>
@@ -369,7 +369,7 @@ const projectsListSchedulesCommand = projects
   .command(`list-schedules`)
   .description(`Get a list of all the project's schedules. You can use the query params to filter your results.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: resourceType, resourceId, projectId, schedule, active, region`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: resourceType, resourceId, projectId, schedule, active, region`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -493,7 +493,7 @@ const projectsGetEmailTemplateCommand = projects
   .description(`Get a custom email template for the specified locale and type. This endpoint returns the template content, subject, and other configuration details. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--locale <locale>`, `Template locale`)
+  .option(`--locale <locale>`, `Template locale`)
   .action(
     actionRunner(
       async ({ projectId, type, locale }) =>
@@ -507,16 +507,16 @@ const projectsUpdateEmailTemplateCommand = projects
   .description(`Update a custom email template for the specified locale and type. Use this endpoint to modify the content of your email templates.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--locale <locale>`, `Template locale`)
   .requiredOption(`--subject <subject>`, `Email Subject`)
   .requiredOption(`--message <message>`, `Template message`)
+  .option(`--locale <locale>`, `Template locale`)
   .option(`--sender-name <sender-name>`, `Name of the email sender`)
   .option(`--sender-email <sender-email>`, `Email of the sender`)
   .option(`--reply-to <reply-to>`, `Reply to email`)
   .action(
     actionRunner(
-      async ({ projectId, type, locale, subject, message, senderName, senderEmail, replyTo }) =>
-        parse(await (await getProjectsClient()).updateEmailTemplate(projectId, type, locale, subject, message, senderName, senderEmail, replyTo)),
+      async ({ projectId, type, subject, message, locale, senderName, senderEmail, replyTo }) =>
+        parse(await (await getProjectsClient()).updateEmailTemplate(projectId, type, subject, message, locale, senderName, senderEmail, replyTo)),
     ),
   );
 
@@ -526,54 +526,11 @@ const projectsDeleteEmailTemplateCommand = projects
   .description(`Reset a custom email template to its default value. This endpoint removes any custom content and restores the template to its original state. `)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--locale <locale>`, `Template locale`)
+  .option(`--locale <locale>`, `Template locale`)
   .action(
     actionRunner(
       async ({ projectId, type, locale }) =>
         parse(await (await getProjectsClient()).deleteEmailTemplate(projectId, type, locale)),
-    ),
-  );
-
-
-const projectsGetSmsTemplateCommand = projects
-  .command(`get-sms-template`)
-  .description(`Get a custom SMS template for the specified locale and type returning it's contents.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--locale <locale>`, `Template locale`)
-  .action(
-    actionRunner(
-      async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).getSmsTemplate(projectId, type, locale)),
-    ),
-  );
-
-
-const projectsUpdateSmsTemplateCommand = projects
-  .command(`update-sms-template`)
-  .description(`Update a custom SMS template for the specified locale and type. Use this endpoint to modify the content of your SMS templates. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--locale <locale>`, `Template locale`)
-  .requiredOption(`--message <message>`, `Template message`)
-  .action(
-    actionRunner(
-      async ({ projectId, type, locale, message }) =>
-        parse(await (await getProjectsClient()).updateSmsTemplate(projectId, type, locale, message)),
-    ),
-  );
-
-
-const projectsDeleteSmsTemplateCommand = projects
-  .command(`delete-sms-template`)
-  .description(`Reset a custom SMS template to its default value. This endpoint removes any custom message and restores the template to its original state. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--locale <locale>`, `Template locale`)
-  .action(
-    actionRunner(
-      async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).deleteSmsTemplate(projectId, type, locale)),
     ),
   );
 

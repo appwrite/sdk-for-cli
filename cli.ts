@@ -129,6 +129,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
         await maybeShowUpdateNotice();
 
         program
+            .name('appwrite')
             .description(commandDescriptions['main'])
             .configureHelp({
                 helpWidth: process.stdout.columns || 80,

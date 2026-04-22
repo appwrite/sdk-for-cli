@@ -1,7 +1,7 @@
 // SDK
 export const SDK_TITLE = 'Appwrite';
 export const SDK_TITLE_LOWER = 'appwrite';
-export const SDK_VERSION = '18.2.0';
+export const SDK_VERSION = '19.0.0';
 export const SDK_NAME = 'Command Line';
 export const SDK_PLATFORM = 'console';
 export const SDK_LANGUAGE = 'cli';
@@ -11,6 +11,10 @@ export const SDK_LOGO = "\n    _                            _ _           ___   
 export const EXECUTABLE_NAME = 'appwrite';
 // 1 day
 export const UPDATE_CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+// Homebrew — fully-qualified `<owner>/<tap>/<formula>` reference
+export const HOMEBREW_TAP = 'appwrite/appwrite';
+export const HOMEBREW_FORMULA = `${HOMEBREW_TAP}/appwrite`;
 
 // NPM
 export const NPM_PACKAGE_NAME = 'appwrite-cli';

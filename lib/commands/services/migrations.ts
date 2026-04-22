@@ -29,7 +29,7 @@ export const migrations = new Command("migrations")
 const migrationsListCommand = migrations
   .command(`list`)
   .description(`List all migrations in the current project. This endpoint returns a list of all migrations including their status, progress, and any errors that occurred during the migration process.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, stage, source, destination, resources, resourceId, resourceType, statusCounters, resourceData, errors`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, stage, source, destination, resources, resourceId, resourceType, statusCounters, resourceData, errors`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -81,7 +81,7 @@ const migrationsCreateCSVExportCommand = migrations
   .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database to export.`)
   .requiredOption(`--filename <filename>`, `The name of the file to be created for the export, excluding the .csv extension.`)
   .option(`--columns [columns...]`, `List of attributes to export. If empty, all attributes will be exported. You can use the \`*\` wildcard to export all attributes from the collection.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK to filter documents to export. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--delimiter <delimiter>`, `The character that separates each column value. Default is comma.`)
   .option(`--enclosure <enclosure>`, `The character that encloses each column value. Default is double quotes.`)
   .option(`--escape <escape>`, `The escape character for the enclosure character. Default is double quotes.`)
@@ -108,7 +108,7 @@ const migrationsCreateCSVExportCommand = migrations
 const migrationsCreateCSVImportCommand = migrations
   .command(`create-csv-import`)
   .description(`Import documents from a CSV file into your Appwrite database. This endpoint allows you to import documents from a CSV file uploaded to Appwrite Storage bucket.`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database.`)
   .option(
@@ -158,7 +158,7 @@ const migrationsCreateJSONExportCommand = migrations
   .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database to export.`)
   .requiredOption(`--filename <filename>`, `The name of the file to be created for the export, excluding the .json extension.`)
   .option(`--columns [columns...]`, `List of attributes to export. If empty, all attributes will be exported. You can use the \`*\` wildcard to export all attributes from the collection.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK to filter documents to export. [Learn more about queries](https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(
     `--notify [value]`,
     `Set to true to receive an email when the export is complete. Default is true.`,
@@ -177,7 +177,7 @@ const migrationsCreateJSONImportCommand = migrations
   .command(`create-json-import`)
   .description(`Import documents from a JSON file into your Appwrite database. This endpoint allows you to import documents from a JSON file uploaded to Appwrite Storage bucket.
 `)
-  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).`)
+  .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
   .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database.`)
   .option(

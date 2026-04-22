@@ -29,7 +29,7 @@ export const backups = new Command("backups")
 const backupsListArchivesCommand = backups
   .command(`list-archives`)
   .description(`List all archives for a project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .action(
     actionRunner(
       async ({ queries }) =>
@@ -78,7 +78,7 @@ const backupsDeleteArchiveCommand = backups
 const backupsListPoliciesCommand = backups
   .command(`list-policies`)
   .description(`List all policies for a project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .action(
     actionRunner(
       async ({ queries }) =>
@@ -173,7 +173,7 @@ const backupsCreateRestorationCommand = backups
 const backupsListRestorationsCommand = backups
   .command(`list-restorations`)
   .description(`List all backup restorations for a project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .action(
     actionRunner(
       async ({ queries }) =>

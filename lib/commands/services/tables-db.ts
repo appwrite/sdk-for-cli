@@ -29,7 +29,7 @@ export const tablesDB = new Command("tables-db")
 const tablesDBListCommand = tablesDB
   .command(`list`)
   .description(`Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -68,7 +68,7 @@ const tablesDBCreateCommand = tablesDB
 const tablesDBListTransactionsCommand = tablesDB
   .command(`list-transactions`)
   .description(`List transactions across all databases.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).`)
   .action(
     actionRunner(
       async ({ queries }) =>
@@ -209,7 +209,7 @@ const tablesDBListTablesCommand = tablesDB
   .command(`list-tables`)
   .description(`Get a list of all tables that belong to the provided databaseId. You can use the search parameter to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -227,14 +227,14 @@ const tablesDBListTablesCommand = tablesDB
 
 const tablesDBCreateTableCommand = tablesDB
   .command(`create-table`)
-  .description(`Create a new Table. Before using this route, you should create a new database resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
+  .description(`Create a new Table. Before using this route, you should create a new database resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Table name. Max length: 128 chars.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, no user is granted with any permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(
     `--row-security [value]`,
-    `Enables configuring permissions for individual rows. A user needs one of row or table level permissions to access a row. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
+    `Enables configuring permissions for individual rows. A user needs one of row or table level permissions to access a row. Learn more about permissions (https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
@@ -273,10 +273,10 @@ const tablesDBUpdateTableCommand = tablesDB
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--name <name>`, `Table name. Max length: 128 chars.`)
-  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(
     `--row-security [value]`,
-    `Enables configuring permissions for individual rows. A user needs one of row or table-level permissions to access a row. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
+    `Enables configuring permissions for individual rows. A user needs one of row or table-level permissions to access a row. Learn more about permissions (https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
@@ -318,7 +318,7 @@ const tablesDBListColumnsCommand = tablesDB
   .description(`List columns in the table.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -338,7 +338,7 @@ const tablesDBCreateBooleanColumnCommand = tablesDB
   .description(`Create a boolean column.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(
@@ -365,7 +365,7 @@ const tablesDBUpdateBooleanColumnCommand = tablesDB
   .command(`update-boolean-column`)
   .description(`Update a boolean column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`, parseBool)
@@ -385,7 +385,7 @@ const tablesDBCreateDatetimeColumnCommand = tablesDB
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
-  .option(`--xdefault <xdefault>`, `Default value for the column in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when column is required.`)
+  .option(`--xdefault <xdefault>`, `Default value for the column in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when column is required.`)
   .option(
     `--array [value]`,
     `Is column an array?`,
@@ -635,7 +635,7 @@ const tablesDBCreateLineColumnCommand = tablesDB
   .command(`create-line-column`)
   .description(`Create a geometric line column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.`)
@@ -651,7 +651,7 @@ const tablesDBUpdateLineColumnCommand = tablesDB
   .command(`update-line-column`)
   .description(`Update a line column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.`)
@@ -669,7 +669,7 @@ const tablesDBCreateLongtextColumnCommand = tablesDB
   .description(`Create a longtext column.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -698,7 +698,7 @@ const tablesDBUpdateLongtextColumnCommand = tablesDB
   .description(`Update a longtext column. Changing the \`default\` value will not update already existing rows.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -716,7 +716,7 @@ const tablesDBCreateMediumtextColumnCommand = tablesDB
   .description(`Create a mediumtext column.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -745,7 +745,7 @@ const tablesDBUpdateMediumtextColumnCommand = tablesDB
   .description(`Update a mediumtext column. Changing the \`default\` value will not update already existing rows.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -762,7 +762,7 @@ const tablesDBCreatePointColumnCommand = tablesDB
   .command(`create-point-column`)
   .description(`Create a geometric point column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.`)
@@ -778,7 +778,7 @@ const tablesDBUpdatePointColumnCommand = tablesDB
   .command(`update-point-column`)
   .description(`Update a point column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.`)
@@ -795,7 +795,7 @@ const tablesDBCreatePolygonColumnCommand = tablesDB
   .command(`create-polygon-column`)
   .description(`Create a geometric polygon column.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.`)
@@ -811,7 +811,7 @@ const tablesDBUpdatePolygonColumnCommand = tablesDB
   .command(`update-polygon-column`)
   .description(`Update a polygon column. Changing the \`default\` value will not update already existing rows.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.`)
@@ -826,7 +826,7 @@ const tablesDBUpdatePolygonColumnCommand = tablesDB
 
 const tablesDBCreateRelationshipColumnCommand = tablesDB
   .command(`create-relationship-column`)
-  .description(`Create relationship column. [Learn more about relationship columns](https://appwrite.io/docs/databases-relationships#relationship-columns).
+  .description(`Create relationship column. Learn more about relationship columns (https://appwrite.io/docs/databases-relationships#relationship-columns).
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
@@ -854,7 +854,7 @@ const tablesDBCreateStringColumnCommand = tablesDB
   .description(`Create a string column.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--size <size>`, `Column size for text columns, in number of characters.`, parseInteger)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
@@ -884,7 +884,7 @@ const tablesDBUpdateStringColumnCommand = tablesDB
   .description(`Update a string column. Changing the \`default\` value will not update already existing rows.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -903,7 +903,7 @@ const tablesDBCreateTextColumnCommand = tablesDB
   .description(`Create a text column.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -932,7 +932,7 @@ const tablesDBUpdateTextColumnCommand = tablesDB
   .description(`Update a text column. Changing the \`default\` value will not update already existing rows.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -991,7 +991,7 @@ const tablesDBCreateVarcharColumnCommand = tablesDB
   .description(`Create a varchar column.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--size <size>`, `Column size for varchar columns, in number of characters. Maximum size is 16381.`, parseInteger)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
@@ -1021,7 +1021,7 @@ const tablesDBUpdateVarcharColumnCommand = tablesDB
   .description(`Update a varchar column. Changing the \`default\` value will not update already existing rows.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Column Key.`)
   .requiredOption(`--required <required>`, `Is column required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for column when not provided. Cannot be set when column is required.`)
@@ -1065,7 +1065,7 @@ const tablesDBDeleteColumnCommand = tablesDB
 
 const tablesDBUpdateRelationshipColumnCommand = tablesDB
   .command(`update-relationship-column`)
-  .description(`Update relationship column. [Learn more about relationship columns](https://appwrite.io/docs/databases-relationships#relationship-columns).
+  .description(`Update relationship column. Learn more about relationship columns (https://appwrite.io/docs/databases-relationships#relationship-columns).
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
@@ -1084,8 +1084,8 @@ const tablesDBListIndexesCommand = tablesDB
   .command(`list-indexes`)
   .description(`List indexes on the table.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1105,7 +1105,7 @@ const tablesDBCreateIndexCommand = tablesDB
   .description(`Creates an index on the columns listed. Your index should include all the columns you will query in a single request.
 Type can be \`key\`, \`fulltext\`, or \`unique\`.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .requiredOption(`--type <type>`, `Index type.`)
   .requiredOption(`--columns [columns...]`, `Array of columns to index. Maximum of 100 columns are allowed, each 32 characters long.`)
@@ -1123,7 +1123,7 @@ const tablesDBGetIndexCommand = tablesDB
   .command(`get-index`)
   .description(`Get index by ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .action(
     actionRunner(
@@ -1137,7 +1137,7 @@ const tablesDBDeleteIndexCommand = tablesDB
   .command(`delete-index`)
   .description(`Delete an index.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .action(
     actionRunner(
@@ -1152,7 +1152,7 @@ const tablesDBListTableLogsCommand = tablesDB
   .description(`Get the table activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, queries }) =>
@@ -1165,8 +1165,8 @@ const tablesDBListRowsCommand = tablesDB
   .command(`list-rows`)
   .description(`Get a list of all the user's rows in a given table. You can use the query params to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service [server integration](https://appwrite.io/docs/products/databases/tables#create-table).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/products/databases/tables#create-table).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .option(
     `--total [value]`,
@@ -1185,12 +1185,12 @@ const tablesDBListRowsCommand = tablesDB
 
 const tablesDBCreateRowCommand = tablesDB
   .command(`create-row`)
-  .description(`Create a new Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
+  .description(`Create a new Row. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
   .requiredOption(`--row-id <row-id>`, `Row ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--data <data>`, `Row data as JSON object.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1202,9 +1202,9 @@ const tablesDBCreateRowCommand = tablesDB
 
 const tablesDBCreateRowsCommand = tablesDB
   .command(`create-rows`)
-  .description(`Create new Rows. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
+  .description(`Create new Rows. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.`)
   .requiredOption(`--rows [rows...]`, `Array of rows data as JSON objects.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
@@ -1217,7 +1217,7 @@ const tablesDBCreateRowsCommand = tablesDB
 
 const tablesDBUpsertRowsCommand = tablesDB
   .command(`upsert-rows`)
-  .description(`Create or update Rows. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
+  .description(`Create or update Rows. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
@@ -1237,7 +1237,7 @@ const tablesDBUpdateRowsCommand = tablesDB
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include only column and value pairs to be updated.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1251,8 +1251,8 @@ const tablesDBDeleteRowsCommand = tablesDB
   .command(`delete-rows`)
   .description(`Bulk delete rows using queries, if no queries are passed then all rows are deleted.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1266,9 +1266,9 @@ const tablesDBGetRowCommand = tablesDB
   .command(`get-row`)
   .description(`Get a row by its unique ID. This endpoint response returns a JSON object with the row data.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .action(
     actionRunner(
@@ -1280,12 +1280,12 @@ const tablesDBGetRowCommand = tablesDB
 
 const tablesDBUpsertRowCommand = tablesDB
   .command(`upsert-row`)
-  .description(`Create or update a Row. Before using this route, you should create a new table resource using either a [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
+  .description(`Create or update a Row. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include all required columns of the row to be created or updated.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1302,7 +1302,7 @@ const tablesDBUpdateRowCommand = tablesDB
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include only columns and value pairs to be updated.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1316,7 +1316,7 @@ const tablesDBDeleteRowCommand = tablesDB
   .command(`delete-row`)
   .description(`Delete a row by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
+  .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
@@ -1333,7 +1333,7 @@ const tablesDBListRowLogsCommand = tablesDB
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, queries }) =>
