@@ -116,60 +116,6 @@ const projectsDeleteCommand = projects
   );
 
 
-const projectsUpdateAuthDurationCommand = projects
-  .command(`update-auth-duration`)
-  .description(`Update how long sessions created within a project should stay active for.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--duration <duration>`, `Project session length in seconds. Max length: 31536000 seconds.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ projectId, duration }) =>
-        parse(await (await getProjectsClient()).updateAuthDuration(projectId, duration)),
-    ),
-  );
-
-
-const projectsUpdateAuthLimitCommand = projects
-  .command(`update-auth-limit`)
-  .description(`Update the maximum number of users allowed in this project. Set to 0 for unlimited users. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--limit <limit>`, `Set the max number of users allowed in this project. Use 0 for unlimited.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ projectId, limit }) =>
-        parse(await (await getProjectsClient()).updateAuthLimit(projectId, limit)),
-    ),
-  );
-
-
-const projectsUpdateAuthSessionsLimitCommand = projects
-  .command(`update-auth-sessions-limit`)
-  .description(`Update the maximum number of sessions allowed per user within the project, if the limit is hit the oldest session will be deleted to make room for new sessions.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--limit <limit>`, `Set the max number of users allowed in this project. Value allowed is between 1-100. Default is 10`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ projectId, limit }) =>
-        parse(await (await getProjectsClient()).updateAuthSessionsLimit(projectId, limit)),
-    ),
-  );
-
-
-const projectsUpdateMembershipsPrivacyCommand = projects
-  .command(`update-memberships-privacy`)
-  .description(`Update project membership privacy settings. Use this endpoint to control what user information is visible to other team members, such as user name, email, and MFA status. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--user-name <user-name>`, `Set to true to show userName to members of a team.`, parseBool)
-  .requiredOption(`--user-email <user-email>`, `Set to true to show email to members of a team.`, parseBool)
-  .requiredOption(`--mfa <mfa>`, `Set to true to show mfa to members of a team.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ projectId, userName, userEmail, mfa }) =>
-        parse(await (await getProjectsClient()).updateMembershipsPrivacy(projectId, userName, userEmail, mfa)),
-    ),
-  );
-
-
 const projectsUpdateMockNumbersCommand = projects
   .command(`update-mock-numbers`)
   .description(`Update the list of mock phone numbers for testing. Use these numbers to bypass SMS verification in development. `)
@@ -179,71 +125,6 @@ const projectsUpdateMockNumbersCommand = projects
     actionRunner(
       async ({ projectId, numbers }) =>
         parse(await (await getProjectsClient()).updateMockNumbers(projectId, numbers)),
-    ),
-  );
-
-
-const projectsUpdateAuthPasswordDictionaryCommand = projects
-  .command(`update-auth-password-dictionary`)
-  .description(`Enable or disable checking user passwords against common passwords dictionary. This helps ensure users don't use common and insecure passwords. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to enable checking user's password against most commonly used passwords. Default is false.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ projectId, enabled }) =>
-        parse(await (await getProjectsClient()).updateAuthPasswordDictionary(projectId, enabled)),
-    ),
-  );
-
-
-const projectsUpdateAuthPasswordHistoryCommand = projects
-  .command(`update-auth-password-history`)
-  .description(`Update the authentication password history requirement. Use this endpoint to require new passwords to be different than the last X amount of previously used ones.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--limit <limit>`, `Set the max number of passwords to store in user history. User can't choose a new password that is already stored in the password history list.  Max number of passwords allowed in history is20. Default value is 0`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ projectId, limit }) =>
-        parse(await (await getProjectsClient()).updateAuthPasswordHistory(projectId, limit)),
-    ),
-  );
-
-
-const projectsUpdatePersonalDataCheckCommand = projects
-  .command(`update-personal-data-check`)
-  .description(`Enable or disable checking user passwords against their personal data. This helps prevent users from using personal information in their passwords. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to check a password for similarity with personal data. Default is false.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ projectId, enabled }) =>
-        parse(await (await getProjectsClient()).updatePersonalDataCheck(projectId, enabled)),
-    ),
-  );
-
-
-const projectsUpdateSessionAlertsCommand = projects
-  .command(`update-session-alerts`)
-  .description(`Enable or disable session email alerts. When enabled, users will receive email notifications when new sessions are created.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--alerts <alerts>`, `Set to true to enable session emails.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ projectId, alerts }) =>
-        parse(await (await getProjectsClient()).updateSessionAlerts(projectId, alerts)),
-    ),
-  );
-
-
-const projectsUpdateSessionInvalidationCommand = projects
-  .command(`update-session-invalidation`)
-  .description(`Invalidate all existing sessions. An optional auth security setting for projects, and enabled by default for console project.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--enabled <enabled>`, `Update authentication session invalidation status. Use this endpoint to enable or disable session invalidation on password change`, parseBool)
-  .action(
-    actionRunner(
-      async ({ projectId, enabled }) =>
-        parse(await (await getProjectsClient()).updateSessionInvalidation(projectId, enabled)),
     ),
   );
 
@@ -419,48 +300,6 @@ const projectsGetScheduleCommand = projects
   );
 
 
-const projectsUpdateSmtpCommand = projects
-  .command(`update-smtp`)
-  .description(`Update the SMTP configuration for your project. Use this endpoint to configure your project's SMTP provider with your custom settings for sending transactional emails. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--enabled <enabled>`, `Enable custom SMTP service`, parseBool)
-  .option(`--sender-name <sender-name>`, `Name of the email sender`)
-  .option(`--sender-email <sender-email>`, `Email of the sender`)
-  .option(`--reply-to <reply-to>`, `Reply to email`)
-  .option(`--host <host>`, `SMTP server host name`)
-  .option(`--port <port>`, `SMTP server port`, parseInteger)
-  .option(`--username <username>`, `SMTP server username`)
-  .option(`--password <password>`, `SMTP server password`)
-  .option(`--secure <secure>`, `Does SMTP server use secure connection`)
-  .action(
-    actionRunner(
-      async ({ projectId, enabled, senderName, senderEmail, replyTo, host, port, username, password, secure }) =>
-        parse(await (await getProjectsClient()).updateSmtp(projectId, enabled, senderName, senderEmail, replyTo, host, port, username, password, secure)),
-    ),
-  );
-
-
-const projectsCreateSmtpTestCommand = projects
-  .command(`create-smtp-test`)
-  .description(`Send a test email to verify SMTP configuration. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--emails [emails...]`, `Array of emails to send test email to. Maximum of 10 emails are allowed.`)
-  .requiredOption(`--sender-name <sender-name>`, `Name of the email sender`)
-  .requiredOption(`--sender-email <sender-email>`, `Email of the sender`)
-  .requiredOption(`--host <host>`, `SMTP server host name`)
-  .option(`--reply-to <reply-to>`, `Reply to email`)
-  .option(`--port <port>`, `SMTP server port`, parseInteger)
-  .option(`--username <username>`, `SMTP server username`)
-  .option(`--password <password>`, `SMTP server password`)
-  .option(`--secure <secure>`, `Does SMTP server use secure connection`)
-  .action(
-    actionRunner(
-      async ({ projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure }) =>
-        parse(await (await getProjectsClient()).createSmtpTest(projectId, emails, senderName, senderEmail, host, replyTo, port, username, password, secure)),
-    ),
-  );
-
-
 const projectsUpdateStatusCommand = projects
   .command(`update-status`)
   .description(`Update the status of a project. Can be used to archive/restore projects, and to restore paused projects. When restoring a paused project, the console fingerprint header must be provided and the project must not be blocked for any reason other than inactivity.
@@ -484,53 +323,6 @@ const projectsUpdateTeamCommand = projects
     actionRunner(
       async ({ projectId, teamId }) =>
         parse(await (await getProjectsClient()).updateTeam(projectId, teamId)),
-    ),
-  );
-
-
-const projectsGetEmailTemplateCommand = projects
-  .command(`get-email-template`)
-  .description(`Get a custom email template for the specified locale and type. This endpoint returns the template content, subject, and other configuration details. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--type <type>`, `Template type`)
-  .option(`--locale <locale>`, `Template locale`)
-  .action(
-    actionRunner(
-      async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).getEmailTemplate(projectId, type, locale)),
-    ),
-  );
-
-
-const projectsUpdateEmailTemplateCommand = projects
-  .command(`update-email-template`)
-  .description(`Update a custom email template for the specified locale and type. Use this endpoint to modify the content of your email templates.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--type <type>`, `Template type`)
-  .requiredOption(`--subject <subject>`, `Email Subject`)
-  .requiredOption(`--message <message>`, `Template message`)
-  .option(`--locale <locale>`, `Template locale`)
-  .option(`--sender-name <sender-name>`, `Name of the email sender`)
-  .option(`--sender-email <sender-email>`, `Email of the sender`)
-  .option(`--reply-to <reply-to>`, `Reply to email`)
-  .action(
-    actionRunner(
-      async ({ projectId, type, subject, message, locale, senderName, senderEmail, replyTo }) =>
-        parse(await (await getProjectsClient()).updateEmailTemplate(projectId, type, subject, message, locale, senderName, senderEmail, replyTo)),
-    ),
-  );
-
-
-const projectsDeleteEmailTemplateCommand = projects
-  .command(`delete-email-template`)
-  .description(`Reset a custom email template to its default value. This endpoint removes any custom content and restores the template to its original state. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--type <type>`, `Template type`)
-  .option(`--locale <locale>`, `Template locale`)
-  .action(
-    actionRunner(
-      async ({ projectId, type, locale }) =>
-        parse(await (await getProjectsClient()).deleteEmailTemplate(projectId, type, locale)),
     ),
   );
 

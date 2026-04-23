@@ -328,6 +328,145 @@ const projectDeletePlatformCommand = project
   );
 
 
+const projectUpdateMembershipPrivacyPolicyCommand = project
+  .command(`update-membership-privacy-policy`)
+  .description(`Updating this policy allows you to control if team members can see other members information. When enabled, all team members can see ID, name, email, phone number, and MFA status of other members..`)
+  .option(
+    `--user-id [value]`,
+    `Set to true if you want make user ID visible to all team members, or false to hide it.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--user-email [value]`,
+    `Set to true if you want make user email visible to all team members, or false to hide it.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--user-phone [value]`,
+    `Set to true if you want make user phone number visible to all team members, or false to hide it.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--user-name [value]`,
+    `Set to true if you want make user name visible to all team members, or false to hide it.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--user-mfa [value]`,
+    `Set to true if you want make user MFA status visible to all team members, or false to hide it.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ userId, userEmail, userPhone, userName, userMfa }) =>
+        parse(await (await getProjectClient()).updateMembershipPrivacyPolicy(userId, userEmail, userPhone, userName, userMfa)),
+    ),
+  );
+
+
+const projectUpdatePasswordDictionaryPolicyCommand = project
+  .command(`update-password-dictionary-policy`)
+  .description(`Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.`)
+  .requiredOption(`--enabled <enabled>`, `Toggle password dictionary policy. Set to true if you want password change to block passwords in the dictionary, or false to allow them. When changing this policy, existing passwords remain valid.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updatePasswordDictionaryPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdatePasswordHistoryPolicyCommand = project
+  .command(`update-password-history-policy`)
+  .description(`Updates one of password strength policies. Based on total length configured, previous password hashes are stored, and users cannot choose a new password that is already stored in the passwird history list, when updating an user password, or setting new one through password recovery.
+
+Keep in mind, while password history policy is disabled, the history is not being stored. Enabling the policy will not have any history on existing users, and it will only start to collect and enforce the policy on password changes since the policy is enabled.`)
+  .requiredOption(`--total <total>`, `Set the password history length per user. Value can be between 1 and 5000, or null to disable the limit.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ total }) =>
+        parse(await (await getProjectClient()).updatePasswordHistoryPolicy(total)),
+    ),
+  );
+
+
+const projectUpdatePasswordPersonalDataPolicyCommand = project
+  .command(`update-password-personal-data-policy`)
+  .description(`Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.`)
+  .requiredOption(`--enabled <enabled>`, `Toggle password personal data policy. Set to true if you want to block passwords including user's personal data, or false to allow it. When changing this policy, existing passwords remain valid.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updatePasswordPersonalDataPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdateSessionAlertPolicyCommand = project
+  .command(`update-session-alert-policy`)
+  .description(`Updating this policy allows you to control if email alert is sent upon session creation. When enabled, and user signs into their account, they will be sent an email notification. There is an exception, the first session after a new sign up does not trigger an alert, even if the policy is enabled.`)
+  .requiredOption(`--enabled <enabled>`, `Toggle session alert policy. Set to true if you want users to receive email notifications when a sessions are created for their users, or false to not send email alerts.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updateSessionAlertPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdateSessionDurationPolicyCommand = project
+  .command(`update-session-duration-policy`)
+  .description(`Update maximum duration how long sessions created within a project should stay active for.`)
+  .requiredOption(`--duration <duration>`, `Maximum session length in seconds. Minium allowed value is 5 second, and maximum is 1 year, which is 31536000 seconds.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ duration }) =>
+        parse(await (await getProjectClient()).updateSessionDurationPolicy(duration)),
+    ),
+  );
+
+
+const projectUpdateSessionInvalidationPolicyCommand = project
+  .command(`update-session-invalidation-policy`)
+  .description(`Updating this policy allows you to control if existing sessions should be invalidated when a password of a user is changed. When enabled, and user changes their password, they will be logged out of all their devices.`)
+  .requiredOption(`--enabled <enabled>`, `Toggle session invalidation policy. Set to true if you want password change to invalidate all sessions of an user, or false to keep sessions active.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updateSessionInvalidationPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdateSessionLimitPolicyCommand = project
+  .command(`update-session-limit-policy`)
+  .description(`Update the maximum number of sessions allowed per user. When the limit is hit, the oldest session will be deleted to make room for new one.`)
+  .requiredOption(`--total <total>`, `Set the maximum number of sessions allowed per user. Value can be between 1 and 5000, or null to disable the limit.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ total }) =>
+        parse(await (await getProjectClient()).updateSessionLimitPolicy(total)),
+    ),
+  );
+
+
+const projectUpdateUserLimitPolicyCommand = project
+  .command(`update-user-limit-policy`)
+  .description(`Update the maximum number of users in the project. When the limit is hit or amount of existing users already exceeded the limit, all users remain active, but new user sign up will be prohibited.`)
+  .requiredOption(`--total <total>`, `Set the maximum number of users allowed in the project. Value can be between 1 and 5000, or null to disable the limit.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ total }) =>
+        parse(await (await getProjectClient()).updateUserLimitPolicy(total)),
+    ),
+  );
+
+
 const projectUpdateProtocolCommand = project
   .command(`update-protocol`)
   .description(`Update properties of a specific protocol. Use this endpoint to enable or disable a protocol in your project. `)
@@ -350,6 +489,76 @@ const projectUpdateServiceCommand = project
     actionRunner(
       async ({ serviceId, enabled }) =>
         parse(await (await getProjectClient()).updateService(serviceId, enabled)),
+    ),
+  );
+
+
+const projectUpdateSMTPCommand = project
+  .command(`update-smtp`)
+  .description(`Update the SMTP configuration for your project. Use this endpoint to configure your project's SMTP provider with your custom settings for sending transactional emails.`)
+  .option(`--host <host>`, `SMTP server hostname (domain)`)
+  .option(`--port <port>`, `SMTP server port`, parseInteger)
+  .option(`--username <username>`, `SMTP server username. Leave empty for no authorization.`)
+  .option(`--password <password>`, `SMTP server password. Leave empty for no authorization. This property is stored securely and cannot be read in future (write-only).`)
+  .option(`--sender-email <sender-email>`, `Email address shown in inbox as the sender of the email.`)
+  .option(`--sender-name <sender-name>`, `Name shown in inbox as the sender of the email.`)
+  .option(`--reply-to-email <reply-to-email>`, `Email used when user replies to the email.`)
+  .option(`--reply-to-name <reply-to-name>`, `Name used when user replies to the email.`)
+  .option(`--secure <secure>`, `Configures if communication with SMTP server is encrypted. Allowed values are: tls, ssl. Leave empty for no encryption.`)
+  .option(
+    `--enabled [value]`,
+    `Enable or disable custom SMTP. Custom SMTP is useful for branding purposes, but also allows use of custom email templates.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ host, port, username, password, senderEmail, senderName, replyToEmail, replyToName, secure, enabled }) =>
+        parse(await (await getProjectClient()).updateSMTP(host, port, username, password, senderEmail, senderName, replyToEmail, replyToName, secure, enabled)),
+    ),
+  );
+
+
+const projectCreateSMTPTestCommand = project
+  .command(`create-smtp-test`)
+  .description(`Send a test email to verify SMTP configuration. `)
+  .requiredOption(`--emails [emails...]`, `Array of emails to send test email to. Maximum of 10 emails are allowed.`)
+  .action(
+    actionRunner(
+      async ({ emails }) =>
+        parse(await (await getProjectClient()).createSMTPTest(emails)),
+    ),
+  );
+
+
+const projectUpdateEmailTemplateCommand = project
+  .command(`update-email-template`)
+  .description(`Update a custom email template for the specified locale and type. Use this endpoint to modify the content of your email templates.`)
+  .requiredOption(`--template-id <template-id>`, `Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession`)
+  .option(`--locale <locale>`, `Custom email template locale. If left empty, the fallback locale (en) will be used.`)
+  .option(`--subject <subject>`, `Subject of the email template. Can be up to 255 characters.`)
+  .option(`--message <message>`, `Plain or HTML body of the email template message. Can be up to 10MB of content.`)
+  .option(`--sender-name <sender-name>`, `Name of the email sender.`)
+  .option(`--sender-email <sender-email>`, `Email of the sender.`)
+  .option(`--reply-to-email <reply-to-email>`, `Reply to email.`)
+  .option(`--reply-to-name <reply-to-name>`, `Reply to name.`)
+  .action(
+    actionRunner(
+      async ({ templateId, locale, subject, message, senderName, senderEmail, replyToEmail, replyToName }) =>
+        parse(await (await getProjectClient()).updateEmailTemplate(templateId, locale, subject, message, senderName, senderEmail, replyToEmail, replyToName)),
+    ),
+  );
+
+
+const projectGetEmailTemplateCommand = project
+  .command(`get-email-template`)
+  .description(`Get a custom email template for the specified locale and type. This endpoint returns the template content, subject, and other configuration details.`)
+  .requiredOption(`--template-id <template-id>`, `Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession`)
+  .option(`--locale <locale>`, `Custom email template locale. If left empty, the fallback locale (en) will be used.`)
+  .action(
+    actionRunner(
+      async ({ templateId, locale }) =>
+        parse(await (await getProjectClient()).getEmailTemplate(templateId, locale)),
     ),
   );
 
