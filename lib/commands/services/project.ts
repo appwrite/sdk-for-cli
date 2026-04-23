@@ -26,19 +26,6 @@ export const project = new Command("project")
     helpWidth: process.stdout.columns || 80,
   });
 
-const projectUpdateAuthMethodCommand = project
-  .command(`update-auth-method`)
-  .description(`Update properties of a specific auth method. Use this endpoint to enable or disable a method in your project. `)
-  .requiredOption(`--method-id <method-id>`, `Auth Method ID. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone`)
-  .requiredOption(`--enabled <enabled>`, `Auth method status.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ methodId, enabled }) =>
-        parse(await (await getProjectClient()).updateAuthMethod(methodId, enabled)),
-    ),
-  );
-
-
 const projectUpdateCanonicalEmailsCommand = project
   .command(`update-canonical-emails`)
   .description(`Configure if canonical emails (alias subaddresses and emails with suffixes) are allowed during new users sign-ups in this project.`)
@@ -155,73 +142,6 @@ const projectUpdateLabelsCommand = project
     actionRunner(
       async ({ labels }) =>
         parse(await (await getProjectClient()).updateLabels(labels)),
-    ),
-  );
-
-
-const projectListMockPhonesCommand = project
-  .command(`list-mock-phones`)
-  .description(`Get a list of all mock phones in the project. This endpoint returns an array of all mock phones and their OTPs.`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .action(
-    actionRunner(
-      async ({ total }) =>
-        parse(await (await getProjectClient()).listMockPhones(total)),
-    ),
-  );
-
-
-const projectCreateMockPhoneCommand = project
-  .command(`create-mock-phone`)
-  .description(`Create a new mock phone for your project. Use this endpoint to register a mock phone number and its sign-in OTP for your testers.`)
-  .requiredOption(`--number <number>`, `Phone number to associate with the mock phone. Must be a valid E.164 formatted phone number.`)
-  .requiredOption(`--otp <otp>`, `One-time password (OTP) to associate with the mock phone. Must be a 6-digit numeric code.`)
-  .action(
-    actionRunner(
-      async ({ number, otp }) =>
-        parse(await (await getProjectClient()).createMockPhone(number, otp)),
-    ),
-  );
-
-
-const projectGetMockPhoneCommand = project
-  .command(`get-mock-phone`)
-  .description(`Get a mock phone by its unique number. This endpoint returns the mock phone's OTP.`)
-  .requiredOption(`--number <number>`, `Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.`)
-  .action(
-    actionRunner(
-      async ({ number }) =>
-        parse(await (await getProjectClient()).getMockPhone(number)),
-    ),
-  );
-
-
-const projectUpdateMockPhoneCommand = project
-  .command(`update-mock-phone`)
-  .description(`Update a mock phone by its unique number. Use this endpoint to update the mock phone's OTP.`)
-  .requiredOption(`--number <number>`, `Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.`)
-  .requiredOption(`--otp <otp>`, `One-time password (OTP) to associate with the mock phone. Must be a 6-digit numeric code.`)
-  .action(
-    actionRunner(
-      async ({ number, otp }) =>
-        parse(await (await getProjectClient()).updateMockPhone(number, otp)),
-    ),
-  );
-
-
-const projectDeleteMockPhoneCommand = project
-  .command(`delete-mock-phone`)
-  .description(`Delete a mock phone by its unique number. This endpoint removes the mock phone and its OTP configuration from the project.`)
-  .requiredOption(`--number <number>`, `Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.`)
-  .action(
-    actionRunner(
-      async ({ number }) =>
-        parse(await (await getProjectClient()).deleteMockPhone(number)),
     ),
   );
 
@@ -607,23 +527,6 @@ const projectCreateSMTPTestCommand = project
     actionRunner(
       async ({ emails }) =>
         parse(await (await getProjectClient()).createSMTPTest(emails)),
-    ),
-  );
-
-
-const projectListEmailTemplatesCommand = project
-  .command(`list-email-templates`)
-  .description(`Get a list of all custom email templates configured for the project. This endpoint returns an array of all configured email templates and their locales.`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .action(
-    actionRunner(
-      async ({ total }) =>
-        parse(await (await getProjectClient()).listEmailTemplates(total)),
     ),
   );
 

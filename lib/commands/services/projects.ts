@@ -116,6 +116,33 @@ const projectsDeleteCommand = projects
   );
 
 
+const projectsUpdateMockNumbersCommand = projects
+  .command(`update-mock-numbers`)
+  .description(`Update the list of mock phone numbers for testing. Use these numbers to bypass SMS verification in development. `)
+  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .requiredOption(`--numbers [numbers...]`, `An array of mock numbers and their corresponding verification codes (OTPs). Each number should be a valid E.164 formatted phone number. Maximum of 10 numbers are allowed.`)
+  .action(
+    actionRunner(
+      async ({ projectId, numbers }) =>
+        parse(await (await getProjectsClient()).updateMockNumbers(projectId, numbers)),
+    ),
+  );
+
+
+const projectsUpdateAuthStatusCommand = projects
+  .command(`update-auth-status`)
+  .description(`Update the status of a specific authentication method. Use this endpoint to enable or disable different authentication methods such as email, magic urls or sms in your project. `)
+  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .requiredOption(`--method <method>`, `Auth Method. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone`)
+  .requiredOption(`--status <status>`, `Set the status of this auth method.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ projectId, method, status }) =>
+        parse(await (await getProjectsClient()).updateAuthStatus(projectId, method, status)),
+    ),
+  );
+
+
 const projectsListDevKeysCommand = projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)
