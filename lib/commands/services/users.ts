@@ -29,7 +29,7 @@ export const users = new Command("users")
 const usersListCommand = users
   .command(`list`)
   .description(`Get a list of all the project's users. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, labels, impersonator`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, labels, impersonator`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -63,7 +63,7 @@ const usersCreateCommand = users
 
 const usersCreateArgon2UserCommand = users
   .command(`create-argon-2-user`)
-  .description(`Create a new user. Password provided must be hashed with the [Argon2](https://en.wikipedia.org/wiki/Argon2) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the Argon2 (https://en.wikipedia.org/wiki/Argon2) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using Argon2.`)
@@ -78,7 +78,7 @@ const usersCreateArgon2UserCommand = users
 
 const usersCreateBcryptUserCommand = users
   .command(`create-bcrypt-user`)
-  .description(`Create a new user. Password provided must be hashed with the [Bcrypt](https://en.wikipedia.org/wiki/Bcrypt) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the Bcrypt (https://en.wikipedia.org/wiki/Bcrypt) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using Bcrypt.`)
@@ -94,7 +94,7 @@ const usersCreateBcryptUserCommand = users
 const usersListIdentitiesCommand = users
   .command(`list-identities`)
   .description(`Get identities for all users.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -124,7 +124,7 @@ const usersDeleteIdentityCommand = users
 
 const usersCreateMD5UserCommand = users
   .command(`create-md-5-user`)
-  .description(`Create a new user. Password provided must be hashed with the [MD5](https://en.wikipedia.org/wiki/MD5) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the MD5 (https://en.wikipedia.org/wiki/MD5) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using MD5.`)
@@ -139,7 +139,7 @@ const usersCreateMD5UserCommand = users
 
 const usersCreatePHPassUserCommand = users
   .command(`create-ph-pass-user`)
-  .description(`Create a new user. Password provided must be hashed with the [PHPass](https://www.openwall.com/phpass/) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the PHPass (https://www.openwall.com/phpass/) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or pass the string \`ID.unique()\`to auto generate it. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using PHPass.`)
@@ -154,7 +154,7 @@ const usersCreatePHPassUserCommand = users
 
 const usersCreateScryptUserCommand = users
   .command(`create-scrypt-user`)
-  .description(`Create a new user. Password provided must be hashed with the [Scrypt](https://github.com/Tarsnap/scrypt) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the Scrypt (https://github.com/Tarsnap/scrypt) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using Scrypt.`)
@@ -174,7 +174,7 @@ const usersCreateScryptUserCommand = users
 
 const usersCreateScryptModifiedUserCommand = users
   .command(`create-scrypt-modified-user`)
-  .description(`Create a new user. Password provided must be hashed with the [Scrypt Modified](https://gist.github.com/Meldiron/eecf84a0225eccb5a378d45bb27462cc) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the Scrypt Modified (https://gist.github.com/Meldiron/eecf84a0225eccb5a378d45bb27462cc) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using Scrypt Modified.`)
@@ -192,7 +192,7 @@ const usersCreateScryptModifiedUserCommand = users
 
 const usersCreateSHAUserCommand = users
   .command(`create-sha-user`)
-  .description(`Create a new user. Password provided must be hashed with the [SHA](https://en.wikipedia.org/wiki/Secure_Hash_Algorithm) algorithm. Use the [POST /users](https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
+  .description(`Create a new user. Password provided must be hashed with the SHA (https://en.wikipedia.org/wiki/Secure_Hash_Algorithm) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--email <email>`, `User email.`)
   .requiredOption(`--password <password>`, `User password hashed using SHA.`)
@@ -233,7 +233,7 @@ const usersGetCommand = users
 
 const usersDeleteCommand = users
   .command(`delete`)
-  .description(`Delete a user by its unique ID, thereby releasing it's ID. Since ID is released and can be reused, all user-related resources like documents or storage files should be deleted before user deletion. If you want to keep ID reserved, use the [updateStatus](https://appwrite.io/docs/server/users#usersUpdateStatus) endpoint instead.`)
+  .description(`Delete a user by its unique ID, thereby releasing it's ID. Since ID is released and can be reused, all user-related resources like documents or storage files should be deleted before user deletion. If you want to keep ID reserved, use the updateStatus (https://appwrite.io/docs/server/users#usersUpdateStatus) endpoint instead.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
   .action(
     actionRunner(
@@ -288,7 +288,7 @@ const usersUpdateLabelsCommand = users
   .command(`update-labels`)
   .description(`Update the user labels by its unique ID. 
 
-Labels can be used to grant access to resources. While teams are a way for user's to share access to a resource, labels can be defined by the developer to grant access without an invitation. See the [Permissions docs](https://appwrite.io/docs/permissions) for more info.`)
+Labels can be used to grant access to resources. While teams are a way for user's to share access to a resource, labels can be defined by the developer to grant access without an invitation. See the Permissions docs (https://appwrite.io/docs/permissions) for more info.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
   .requiredOption(`--labels [labels...]`, `Array of user labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.`)
   .action(
@@ -303,7 +303,7 @@ const usersListLogsCommand = users
   .command(`list-logs`)
   .description(`Get the user activity logs list by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -322,7 +322,7 @@ const usersListMembershipsCommand = users
   .command(`list-memberships`)
   .description(`Get the user membership list by its unique ID.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -378,7 +378,7 @@ const usersListMfaFactorsCommand = users
 
 const usersGetMfaRecoveryCodesCommand = users
   .command(`get-mfa-recovery-codes`)
-  .description(`Get recovery codes that can be used as backup for MFA flow by User ID. Before getting codes, they must be generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method.`)
+  .description(`Get recovery codes that can be used as backup for MFA flow by User ID. Before getting codes, they must be generated using createMfaRecoveryCodes method.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
   .action(
     actionRunner(
@@ -390,7 +390,7 @@ const usersGetMfaRecoveryCodesCommand = users
 
 const usersUpdateMfaRecoveryCodesCommand = users
   .command(`update-mfa-recovery-codes`)
-  .description(`Regenerate recovery codes that can be used as backup for MFA flow by User ID. Before regenerating codes, they must be first generated using [createMfaRecoveryCodes](/docs/references/cloud/client-web/account#createMfaRecoveryCodes) method.`)
+  .description(`Regenerate recovery codes that can be used as backup for MFA flow by User ID. Before regenerating codes, they must be first generated using createMfaRecoveryCodes method.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
   .action(
     actionRunner(
@@ -402,7 +402,7 @@ const usersUpdateMfaRecoveryCodesCommand = users
 
 const usersCreateMfaRecoveryCodesCommand = users
   .command(`create-mfa-recovery-codes`)
-  .description(`Generate recovery codes used as backup for MFA flow for User ID. Recovery codes can be used as a MFA verification type in [createMfaChallenge](/docs/references/cloud/client-web/account#createMfaChallenge) method by client SDK.`)
+  .description(`Generate recovery codes used as backup for MFA flow for User ID. Recovery codes can be used as a MFA verification type in createMfaChallenge method by client SDK.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
   .action(
     actionRunner(
@@ -498,7 +498,7 @@ const usersCreateSessionCommand = users
   .command(`create-session`)
   .description(`Creates a session for a user. Returns an immediately usable session object.
 
-If you want to generate a token for a custom authentication flow, use the [POST /users/{userId}/tokens](https://appwrite.io/docs/server/users#createToken) endpoint.`)
+If you want to generate a token for a custom authentication flow, use the POST /users/{userId}/tokens (https://appwrite.io/docs/server/users#createToken) endpoint.`)
   .requiredOption(`--user-id <user-id>`, `User ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .action(
     actionRunner(
@@ -550,7 +550,7 @@ const usersListTargetsCommand = users
   .command(`list-targets`)
   .description(`List the messaging targets that are associated with a user.`)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -626,7 +626,7 @@ const usersDeleteTargetCommand = users
 
 const usersCreateTokenCommand = users
   .command(`create-token`)
-  .description(`Returns a token with a secret key for creating a session. Use the user ID and secret and submit a request to the [PUT /account/sessions/token](https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process.
+  .description(`Returns a token with a secret key for creating a session. Use the user ID and secret and submit a request to the PUT /account/sessions/token (https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process.
 `)
   .requiredOption(`--user-id <user-id>`, `User ID.`)
   .option(`--length <length>`, `Token length in characters. The default length is 6 characters`, parseInteger)

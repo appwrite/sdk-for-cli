@@ -47,7 +47,7 @@ const vcsListRepositoriesCommand = vcs
   .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--type <type>`, `Detector type. Must be one of the following: runtime, framework`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
       async ({ installationId, type, search, queries }) =>
@@ -130,7 +130,7 @@ const vcsListInstallationsCommand = vcs
   .command(`list-installations`)
   .description(`List all VCS installations configured for the current project. This endpoint returns a list of installations including their provider, organization, and other configuration details.
 `)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: provider, organization`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: provider, organization`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,

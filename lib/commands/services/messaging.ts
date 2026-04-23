@@ -29,7 +29,7 @@ export const messaging = new Command("messaging")
 const messagingListMessagesCommand = messaging
   .command(`list-messages`)
   .description(`Get a list of all messages from the current Appwrite project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -69,7 +69,7 @@ const messagingCreateEmailCommand = messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .action(
     actionRunner(
       async ({ messageId, subject, content, topics, users, targets, cc, bcc, attachments, draft, html, scheduledAt }) =>
@@ -102,7 +102,7 @@ const messagingUpdateEmailCommand = messaging
   )
   .option(`--cc [cc...]`, `Array of target IDs to be added as CC.`)
   .option(`--bcc [bcc...]`, `Array of target IDs to be added as BCC.`)
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .option(`--attachments [attachments...]`, `Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.`)
   .action(
     actionRunner(
@@ -135,7 +135,7 @@ const messagingCreatePushCommand = messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .option(
     `--content-available [value]`,
     `If set to true, the notification will be delivered in the background. Available only for iOS Platform.`,
@@ -181,7 +181,7 @@ const messagingUpdatePushCommand = messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .option(
     `--content-available [value]`,
     `If set to true, the notification will be delivered in the background. Available only for iOS Platform.`,
@@ -217,7 +217,7 @@ const messagingCreateSmsCommand = messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .action(
     actionRunner(
       async ({ messageId, content, topics, users, targets, draft, scheduledAt }) =>
@@ -241,7 +241,7 @@ const messagingUpdateSmsCommand = messaging
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
+  .option(`--scheduled-at <scheduled-at>`, `Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.`)
   .action(
     actionRunner(
       async ({ messageId, topics, users, targets, content, draft, scheduledAt }) =>
@@ -279,7 +279,7 @@ const messagingListMessageLogsCommand = messaging
   .command(`list-message-logs`)
   .description(`Get the message activity logs listed by its unique ID.`)
   .requiredOption(`--message-id <message-id>`, `Message ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -298,7 +298,7 @@ const messagingListTargetsCommand = messaging
   .command(`list-targets`)
   .description(`Get a list of the targets associated with a message.`)
   .requiredOption(`--message-id <message-id>`, `Message ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -316,7 +316,7 @@ const messagingListTargetsCommand = messaging
 const messagingListProvidersCommand = messaging
   .command(`list-providers`)
   .description(`Get a list of all providers from the current Appwrite project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -907,7 +907,7 @@ const messagingListProviderLogsCommand = messaging
   .command(`list-provider-logs`)
   .description(`Get the provider activity logs listed by its unique ID.`)
   .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -926,7 +926,7 @@ const messagingListSubscriberLogsCommand = messaging
   .command(`list-subscriber-logs`)
   .description(`Get the subscriber activity logs listed by its unique ID.`)
   .requiredOption(`--subscriber-id <subscriber-id>`, `Subscriber ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -944,7 +944,7 @@ const messagingListSubscriberLogsCommand = messaging
 const messagingListTopicsCommand = messaging
   .command(`list-topics`)
   .description(`Get a list of all topics from the current Appwrite project.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -965,7 +965,7 @@ const messagingCreateTopicCommand = messaging
   .description(`Create a new topic.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID. Choose a custom Topic ID or a new Topic ID.`)
   .requiredOption(`--name <name>`, `Topic Name.`)
-  .option(`--subscribe [subscribe...]`, `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
+  .option(`--subscribe [subscribe...]`, `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
   .action(
     actionRunner(
       async ({ topicId, name, subscribe }) =>
@@ -993,7 +993,7 @@ const messagingUpdateTopicCommand = messaging
 `)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
   .option(`--name <name>`, `Topic Name.`)
-  .option(`--subscribe [subscribe...]`, `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
+  .option(`--subscribe [subscribe...]`, `An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.`)
   .action(
     actionRunner(
       async ({ topicId, name, subscribe }) =>
@@ -1018,7 +1018,7 @@ const messagingListTopicLogsCommand = messaging
   .command(`list-topic-logs`)
   .description(`Get the topic activity logs listed by its unique ID.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1037,7 +1037,7 @@ const messagingListSubscribersCommand = messaging
   .command(`list-subscribers`)
   .description(`Get a list of all subscribers from the current Appwrite project.`)
   .requiredOption(`--topic-id <topic-id>`, `Topic ID. The topic ID subscribed to.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: targetId, topicId, userId, providerType`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: targetId, topicId, userId, providerType`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,

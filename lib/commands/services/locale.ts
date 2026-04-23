@@ -30,7 +30,7 @@ const localeGetCommand = locale
   .command(`get`)
   .description(`Get the current user location based on IP. Returns an object with user country code, country name, continent name, continent code, ip address and suggested currency. You can use the locale header to get the data in a supported language.
 
-([IP Geolocation by DB-IP](https://db-ip.com))`)
+(IP Geolocation by DB-IP (https://db-ip.com))`)
   .action(
     actionRunner(
       async () => parse(await (await getLocaleClient()).get()),
@@ -40,7 +40,7 @@ const localeGetCommand = locale
 
 const localeListCodesCommand = locale
   .command(`list-codes`)
-  .description(`List of all locale codes in [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).`)
+  .description(`List of all locale codes in ISO 639-1 (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).`)
   .action(
     actionRunner(
       async () => parse(await (await getLocaleClient()).listCodes()),

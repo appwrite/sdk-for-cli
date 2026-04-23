@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-cli.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-1.9.1-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-1.9.2-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-18.2.0
+19.0.0
 ```
 
 ### Install using prebuilt binaries
@@ -42,12 +42,12 @@ If you do not have `npm` installed, you can always install the prebuilt binaries
 $ wget -q https://appwrite.io/cli/install.sh  -O - | /bin/bash
 ```
 
-### MacOS via [Homebrew](https://brew.sh)
+### MacOS / Linux via [Homebrew](https://brew.sh)
 ```bash
-$ brew install appwrite 
+$ brew install appwrite/appwrite/appwrite
 ```
 
-Homebrew installs the native binary for your platform.
+Homebrew pulls the formula from the [`appwrite/homebrew-appwrite`](https://github.com/appwrite/homebrew-appwrite) tap and downloads the native binary for your platform.
 
 ### Windows
 Via Powershell
@@ -62,7 +62,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-18.2.0
+19.0.0
 ```
 
 ## Getting Started 

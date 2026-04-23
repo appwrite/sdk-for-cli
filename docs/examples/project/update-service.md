@@ -1,5 +1,5 @@
 ```bash
-appwrite project update-service-status \
+appwrite project update-service \
     --service-id account \
     --enabled false
 ```

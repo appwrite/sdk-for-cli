@@ -29,7 +29,7 @@ export const databases = new Command("databases")
 const databasesListCommand = databases
   .command(`list`)
   .description(`Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -68,7 +68,7 @@ const databasesCreateCommand = databases
 const databasesListTransactionsCommand = databases
   .command(`list-transactions`)
   .description(`List transactions across all databases.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).`)
   .action(
     actionRunner(
       async ({ queries }) =>
@@ -209,7 +209,7 @@ const databasesListCollectionsCommand = databases
   .command(`list-collections`)
   .description(`Get a list of all collections that belong to the provided databaseId. You can use the search parameter to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, documentSecurity`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, documentSecurity`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -227,14 +227,14 @@ const databasesListCollectionsCommand = databases
 
 const databasesCreateCollectionCommand = databases
   .command(`create-collection`)
-  .description(`Create a new Collection. Before using this route, you should create a new database resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
+  .description(`Create a new Collection. Before using this route, you should create a new database resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Collection name. Max length: 128 chars.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, no user is granted with any permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(
     `--document-security [value]`,
-    `Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
+    `Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. Learn more about permissions (https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
@@ -273,10 +273,10 @@ const databasesUpdateCollectionCommand = databases
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
   .option(`--name <name>`, `Collection name. Max length: 128 chars.`)
-  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(
     `--document-security [value]`,
-    `Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. [Learn more about permissions](https://appwrite.io/docs/permissions).`,
+    `Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. Learn more about permissions (https://appwrite.io/docs/permissions).`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
@@ -318,7 +318,7 @@ const databasesListAttributesCommand = databases
   .description(`List attributes in the collection.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, size, required, array, status, error`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, size, required, array, status, error`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -338,7 +338,7 @@ const databasesCreateBooleanAttributeCommand = databases
   .description(`Create a boolean attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(
@@ -365,7 +365,7 @@ const databasesUpdateBooleanAttributeCommand = databases
   .command(`update-boolean-attribute`)
   .description(`Update a boolean attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#createCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#createCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`, parseBool)
@@ -382,10 +382,10 @@ const databasesCreateDatetimeAttributeCommand = databases
   .command(`create-datetime-attribute`)
   .description(`Create a date time attribute according to the ISO 8601 standard.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#createCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#createCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
-  .option(`--xdefault <xdefault>`, `Default value for the attribute in [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when attribute is required.`)
+  .option(`--xdefault <xdefault>`, `Default value for the attribute in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when attribute is required.`)
   .option(
     `--array [value]`,
     `Is attribute an array?`,
@@ -636,7 +636,7 @@ const databasesCreateLineAttributeCommand = databases
   .command(`create-line-attribute`)
   .description(`Create a geometric line attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.`)
@@ -652,7 +652,7 @@ const databasesUpdateLineAttributeCommand = databases
   .command(`update-line-attribute`)
   .description(`Update a line attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#createCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#createCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.`)
@@ -670,7 +670,7 @@ const databasesCreateLongtextAttributeCommand = databases
   .description(`Create a longtext attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -699,7 +699,7 @@ const databasesUpdateLongtextAttributeCommand = databases
   .description(`Update a longtext attribute. Changing the \`default\` value will not update already existing documents.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -717,7 +717,7 @@ const databasesCreateMediumtextAttributeCommand = databases
   .description(`Create a mediumtext attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -746,7 +746,7 @@ const databasesUpdateMediumtextAttributeCommand = databases
   .description(`Update a mediumtext attribute. Changing the \`default\` value will not update already existing documents.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -763,7 +763,7 @@ const databasesCreatePointAttributeCommand = databases
   .command(`create-point-attribute`)
   .description(`Create a geometric point attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.`)
@@ -779,7 +779,7 @@ const databasesUpdatePointAttributeCommand = databases
   .command(`update-point-attribute`)
   .description(`Update a point attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#createCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#createCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.`)
@@ -796,7 +796,7 @@ const databasesCreatePolygonAttributeCommand = databases
   .command(`create-polygon-attribute`)
   .description(`Create a geometric polygon attribute.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.`)
@@ -812,7 +812,7 @@ const databasesUpdatePolygonAttributeCommand = databases
   .command(`update-polygon-attribute`)
   .description(`Update a polygon attribute. Changing the \`default\` value will not update already existing documents.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#createCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#createCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault [xdefault...]`, `Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.`)
@@ -827,7 +827,7 @@ const databasesUpdatePolygonAttributeCommand = databases
 
 const databasesCreateRelationshipAttributeCommand = databases
   .command(`create-relationship-attribute`)
-  .description(`Create relationship attribute. [Learn more about relationship attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
+  .description(`Create relationship attribute. Learn more about relationship attributes (https://appwrite.io/docs/databases-relationships#relationship-attributes).
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
@@ -852,7 +852,7 @@ const databasesCreateRelationshipAttributeCommand = databases
 
 const databasesUpdateRelationshipAttributeCommand = databases
   .command(`update-relationship-attribute`)
-  .description(`Update relationship attribute. [Learn more about relationship attributes](https://appwrite.io/docs/databases-relationships#relationship-attributes).
+  .description(`Update relationship attribute. Learn more about relationship attributes (https://appwrite.io/docs/databases-relationships#relationship-attributes).
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
@@ -872,7 +872,7 @@ const databasesCreateStringAttributeCommand = databases
   .description(`Create a string attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--size <size>`, `Attribute size for text attributes, in number of characters.`, parseInteger)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
@@ -902,7 +902,7 @@ const databasesUpdateStringAttributeCommand = databases
   .description(`Update a string attribute. Changing the \`default\` value will not update already existing documents.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new table using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -921,7 +921,7 @@ const databasesCreateTextAttributeCommand = databases
   .description(`Create a text attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .option(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -950,7 +950,7 @@ const databasesUpdateTextAttributeCommand = databases
   .description(`Update a text attribute. Changing the \`default\` value will not update already existing documents.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -1009,7 +1009,7 @@ const databasesCreateVarcharAttributeCommand = databases
   .description(`Create a varchar attribute.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--size <size>`, `Attribute size for varchar attributes, in number of characters. Maximum size is 16381.`, parseInteger)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
@@ -1039,7 +1039,7 @@ const databasesUpdateVarcharAttributeCommand = databases
   .description(`Update a varchar attribute. Changing the \`default\` value will not update already existing documents.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Attribute Key.`)
   .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
   .requiredOption(`--xdefault <xdefault>`, `Default value for attribute when not provided. Cannot be set when attribute is required.`)
@@ -1085,8 +1085,8 @@ const databasesListDocumentsCommand = databases
   .command(`list-documents`)
   .description(`Get a list of all the user's documents in a given collection. You can use the query params to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .option(
     `--total [value]`,
@@ -1105,12 +1105,12 @@ const databasesListDocumentsCommand = databases
 
 const databasesCreateDocumentCommand = databases
   .command(`create-document`)
-  .description(`Create a new Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
+  .description(`Create a new Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.`)
   .requiredOption(`--document-id <document-id>`, `Document ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--data <data>`, `Document data as JSON object.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1122,9 +1122,9 @@ const databasesCreateDocumentCommand = databases
 
 const databasesCreateDocumentsCommand = databases
   .command(`create-documents`)
-  .description(`Create new Documents. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
+  .description(`Create new Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.`)
   .requiredOption(`--documents [documents...]`, `Array of documents data as JSON objects.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
@@ -1137,7 +1137,7 @@ const databasesCreateDocumentsCommand = databases
 
 const databasesUpsertDocumentsCommand = databases
   .command(`upsert-documents`)
-  .description(`Create or update Documents. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
+  .description(`Create or update Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.
 `)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
@@ -1157,7 +1157,7 @@ const databasesUpdateDocumentsCommand = databases
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
   .option(`--data <data>`, `Document data as JSON object. Include only attribute and value pairs to be updated.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1171,8 +1171,8 @@ const databasesDeleteDocumentsCommand = databases
   .command(`delete-documents`)
   .description(`Bulk delete documents using queries, if no queries are passed then all documents are deleted.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1186,9 +1186,9 @@ const databasesGetDocumentCommand = databases
   .command(`get-document`)
   .description(`Get a document by its unique ID. This endpoint response returns a JSON object with the document data.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--document-id <document-id>`, `Document ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .action(
     actionRunner(
@@ -1200,12 +1200,12 @@ const databasesGetDocumentCommand = databases
 
 const databasesUpsertDocumentCommand = databases
   .command(`upsert-document`)
-  .description(`Create or update a Document. Before using this route, you should create a new collection resource using either a [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
+  .description(`Create or update a Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
   .requiredOption(`--document-id <document-id>`, `Document ID.`)
   .option(`--data <data>`, `Document data as JSON object. Include all required attributes of the document to be created or updated.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1222,7 +1222,7 @@ const databasesUpdateDocumentCommand = databases
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
   .requiredOption(`--document-id <document-id>`, `Document ID.`)
   .option(`--data <data>`, `Document data as JSON object. Include only attribute and value pairs to be updated.`)
-  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).`)
+  .option(`--permissions [permissions...]`, `An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
     actionRunner(
@@ -1236,7 +1236,7 @@ const databasesDeleteDocumentCommand = databases
   .command(`delete-document`)
   .description(`Delete a document by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--document-id <document-id>`, `Document ID.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
   .action(
@@ -1253,7 +1253,7 @@ const databasesListDocumentLogsCommand = databases
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
   .requiredOption(`--document-id <document-id>`, `Document ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
       async ({ databaseId, collectionId, documentId, queries }) =>
@@ -1302,8 +1302,8 @@ const databasesListIndexesCommand = databases
   .command(`list-indexes`)
   .description(`List indexes in the collection.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, status, attributes, error`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, status, attributes, error`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
@@ -1323,7 +1323,7 @@ const databasesCreateIndexCommand = databases
   .description(`Creates an index on the attributes listed. Your index should include all the attributes you will query in a single request.
 Attributes can be \`key\`, \`fulltext\`, and \`unique\`.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .requiredOption(`--type <type>`, `Index type.`)
   .requiredOption(`--attributes [attributes...]`, `Array of attributes to index. Maximum of 100 attributes are allowed, each 32 characters long.`)
@@ -1341,7 +1341,7 @@ const databasesGetIndexCommand = databases
   .command(`get-index`)
   .description(`Get an index by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .action(
     actionRunner(
@@ -1355,7 +1355,7 @@ const databasesDeleteIndexCommand = databases
   .command(`delete-index`)
   .description(`Delete an index.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service [server integration](https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).`)
   .requiredOption(`--key <key>`, `Index Key.`)
   .action(
     actionRunner(
@@ -1370,7 +1370,7 @@ const databasesListCollectionLogsCommand = databases
   .description(`Get the collection activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
       async ({ databaseId, collectionId, queries }) =>
@@ -1397,7 +1397,7 @@ const databasesListLogsCommand = databases
   .command(`list-logs`)
   .description(`Get the database activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
   .action(
     actionRunner(
       async ({ databaseId, queries }) =>
