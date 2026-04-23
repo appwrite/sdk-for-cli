@@ -2,11 +2,20 @@
 
 ## 19.0.0
 
-* Breaking: Updated project command mappings and examples to singular `project` endpoints.
-* Breaking: Changed local init site path handling and template download behavior.
-* Added: Added explicit CLI program name registration for command output consistency.
-* Updated: Updated Homebrew install instructions to use the Appwrite tap formula.
-* Updated: Updated `X-Appwrite-Response-Format` header to `1.9.2`.
+* Breaking: Renamed `project update-protocol-status` to `project update-protocol`
+* Breaking: Renamed `project update-service-status` to `project update-service`
+* Breaking: Removed `projects get-sms-template`, `projects update-sms-template`, and `projects delete-sms-template` commands
+* Breaking: Made `--locale` optional on `projects get-email-template`, `projects update-email-template`, and `projects delete-email-template`
+* Breaking: Reordered `projects update-email-template` parameters — `--locale` is now optional and placed after `--message`
+* Added `--path` prompt during `init site` to choose the local site directory
+* Added support for initializing sites into existing non-empty directories without a starter template
+* Added structured column renderer for `runtimes` listings
+* Added activity-based deployment timeout tracking so healthy long builds in `push function` and `push site` no longer time out prematurely
+* Updated `brew install`/`brew upgrade` to use the fully-qualified `appwrite/appwrite/appwrite` formula from the `appwrite/homebrew-appwrite` tap
+* Updated `deploymentRetention` prompt to clarify it counts days of non-active deployments
+* Updated CLI help and error output to display the correct program name `appwrite`
+* Removed `enabled` field from site entries in `appwrite.config.json`
+* Fixed command help text to render links inline without markdown brackets
 
 ## 18.2.0
 
