@@ -1,5 +1,6 @@
 ```bash
 appwrite vcs list-repositories \
     --installation-id <INSTALLATION_ID> \
-    --type runtime
+    --type runtime \
+    --limit 25
 ```

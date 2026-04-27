@@ -1,3 +1,4 @@
 ```bash
-appwrite migrations list
+appwrite migrations list \
+    --limit 25
 ```

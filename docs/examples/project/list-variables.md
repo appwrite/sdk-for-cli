@@ -1,3 +1,4 @@
 ```bash
-appwrite project list-variables
+appwrite project list-variables \
+    --limit 25
 ```

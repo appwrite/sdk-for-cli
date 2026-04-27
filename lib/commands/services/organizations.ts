@@ -1,4 +1,9 @@
 import { Command } from "commander";
+import {
+  buildQueries,
+  collectQueryValue,
+  parseWhereQuery,
+} from "../utils/query.js";
 import { sdkForConsole } from "../../sdks.js";
 import {
   actionRunner,
@@ -29,12 +34,19 @@ export const organizations = new Command("organizations")
 const organizationsListCommand = organizations
   .command(`list`)
   .description(`Get a list of all the teams in which the current user is a member. You can use the parameters to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan, paymentMethodId, backupPaymentMethodId, platform`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, total, billingPlan, paymentMethodId, backupPaymentMethodId, platform`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ queries, search }) =>
-        parse(await (await getOrganizationsClient()).list(queries, search)),
+      async ({ queries, search, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getOrganizationsClient()).list(buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search)),
     ),
   );
 
@@ -175,11 +187,18 @@ const organizationsListAggregationsCommand = organizations
   .command(`list-aggregations`)
   .description(`Get a list of all aggregations for an organization.`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, aggregationId, from, to`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, aggregationId, from, to`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ organizationId, queries }) =>
-        parse(await (await getOrganizationsClient()).listAggregations(organizationId, queries)),
+      async ({ organizationId, queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getOrganizationsClient()).listAggregations(organizationId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }))),
     ),
   );
 
@@ -244,11 +263,18 @@ const organizationsListCreditsCommand = organizations
   .description(`List all credits for an organization.
 `)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, couponId, credits, expiration, status`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: teamId, couponId, credits, expiration, status`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ organizationId, queries }) =>
-        parse(await (await getOrganizationsClient()).listCredits(organizationId, queries)),
+      async ({ organizationId, queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getOrganizationsClient()).listCredits(organizationId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }))),
     ),
   );
 

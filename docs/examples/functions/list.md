@@ -1,3 +1,4 @@
 ```bash
-appwrite functions list
+appwrite functions list \
+    --limit 25
 ```

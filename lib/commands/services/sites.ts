@@ -1,6 +1,11 @@
 import { Command } from "commander";
 import fs from "fs";
 import { resolveFileParam } from "../utils/deployment.js";
+import {
+  buildQueries,
+  collectQueryValue,
+  parseWhereQuery,
+} from "../utils/query.js";
 import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
@@ -31,7 +36,7 @@ export const sites = new Command("sites")
 const sitesListCommand = sites
   .command(`list`)
   .description(`Get a list of all the project's sites. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -39,10 +44,17 @@ const sitesListCommand = sites
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ queries, search, total }) =>
-        parse(await (await getSitesClient()).list(queries, search, total)),
+      async ({ queries, search, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getSitesClient()).list(buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 
@@ -241,7 +253,7 @@ const sitesListDeploymentsCommand = sites
   .command(`list-deployments`)
   .description(`Get a list of all the site's code deployments. You can use the query params to filter your results.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -249,10 +261,17 @@ const sitesListDeploymentsCommand = sites
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ siteId, queries, search, total }) =>
-        parse(await (await getSitesClient()).listDeployments(siteId, queries, search, total)),
+      async ({ siteId, queries, search, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getSitesClient()).listDeployments(siteId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 
@@ -402,17 +421,24 @@ const sitesListLogsCommand = sites
   .command(`list-logs`)
   .description(`Get a list of all site logs. You can use the query params to filter your results.`)
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ siteId, queries, total }) =>
-        parse(await (await getSitesClient()).listLogs(siteId, queries, total)),
+      async ({ siteId, queries, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getSitesClient()).listLogs(siteId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 

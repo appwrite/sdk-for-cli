@@ -1,3 +1,4 @@
 ```bash
-appwrite teams list
+appwrite teams list \
+    --limit 25
 ```

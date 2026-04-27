@@ -1,4 +1,5 @@
 ```bash
 appwrite sites list-logs \
-    --site-id <SITE_ID>
+    --site-id <SITE_ID> \
+    --limit 25
 ```

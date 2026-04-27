@@ -1,4 +1,9 @@
 import { Command } from "commander";
+import {
+  buildQueries,
+  collectQueryValue,
+  parseWhereQuery,
+} from "../utils/query.js";
 import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
@@ -47,11 +52,13 @@ const vcsListRepositoriesCommand = vcs
   .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--type <type>`, `Detector type. Must be one of the following: runtime, framework`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .action(
     actionRunner(
-      async ({ installationId, type, search, queries }) =>
-        parse(await (await getVcsClient()).listRepositories(installationId, type, search, queries)),
+      async ({ installationId, type, search, queries, limit, offset }) =>
+        parse(await (await getVcsClient()).listRepositories(installationId, type, search, buildQueries({ queries, limit, offset }))),
     ),
   );
 
@@ -130,7 +137,7 @@ const vcsListInstallationsCommand = vcs
   .command(`list-installations`)
   .description(`List all VCS installations configured for the current project. This endpoint returns a list of installations including their provider, organization, and other configuration details.
 `)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: provider, organization`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: provider, organization`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -138,10 +145,17 @@ const vcsListInstallationsCommand = vcs
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ queries, search, total }) =>
-        parse(await (await getVcsClient()).listInstallations(queries, search, total)),
+      async ({ queries, search, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getVcsClient()).listInstallations(buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 

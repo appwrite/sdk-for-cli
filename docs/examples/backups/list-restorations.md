@@ -1,3 +1,4 @@
 ```bash
-appwrite backups list-restorations
+appwrite backups list-restorations \
+    --limit 25
 ```

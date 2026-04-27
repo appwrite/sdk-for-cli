@@ -1,4 +1,9 @@
 import { Command } from "commander";
+import {
+  buildQueries,
+  collectQueryValue,
+  parseWhereQuery,
+} from "../utils/query.js";
 import { sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
@@ -29,7 +34,7 @@ export const tablesDB = new Command("tables-db")
 const tablesDBListCommand = tablesDB
   .command(`list`)
   .description(`Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -37,10 +42,17 @@ const tablesDBListCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ queries, search, total }) =>
-        parse(await (await getTablesDBClient()).list(queries, search, total)),
+      async ({ queries, search, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).list(buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 
@@ -68,11 +80,18 @@ const tablesDBCreateCommand = tablesDB
 const tablesDBListTransactionsCommand = tablesDB
   .command(`list-transactions`)
   .description(`List transactions across all databases.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ queries }) =>
-        parse(await (await getTablesDBClient()).listTransactions(queries)),
+      async ({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listTransactions(buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }))),
     ),
   );
 
@@ -209,7 +228,7 @@ const tablesDBListTablesCommand = tablesDB
   .command(`list-tables`)
   .description(`Get a list of all tables that belong to the provided databaseId. You can use the search parameter to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -217,10 +236,17 @@ const tablesDBListTablesCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ databaseId, queries, search, total }) =>
-        parse(await (await getTablesDBClient()).listTables(databaseId, queries, search, total)),
+      async ({ databaseId, queries, search, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listTables(databaseId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 
@@ -318,17 +344,24 @@ const tablesDBListColumnsCommand = tablesDB
   .description(`List columns in the table.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, queries, total }) =>
-        parse(await (await getTablesDBClient()).listColumns(databaseId, tableId, queries, total)),
+      async ({ databaseId, tableId, queries, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listColumns(databaseId, tableId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -1085,17 +1118,24 @@ const tablesDBListIndexesCommand = tablesDB
   .description(`List indexes on the table.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error`)
   .option(
     `--total [value]`,
     `When set to false, the total count returned will be 0 and will not be calculated.`,
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, queries, total }) =>
-        parse(await (await getTablesDBClient()).listIndexes(databaseId, tableId, queries, total)),
+      async ({ databaseId, tableId, queries, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listIndexes(databaseId, tableId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -1152,11 +1192,13 @@ const tablesDBListTableLogsCommand = tablesDB
   .description(`Get the table activity logs list by its unique ID.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, queries }) =>
-        parse(await (await getTablesDBClient()).listTableLogs(databaseId, tableId, queries)),
+      async ({ databaseId, tableId, queries, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listTableLogs(databaseId, tableId, buildQueries({ queries, limit, offset }))),
     ),
   );
 
@@ -1166,7 +1208,7 @@ const tablesDBListRowsCommand = tablesDB
   .description(`Get a list of all the user's rows in a given table. You can use the query params to filter your results.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/products/databases/tables#create-table).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, pagination, and selection prefer --where, --sort-asc, --sort-desc, --limit, --offset, and --select. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
   .option(
     `--total [value]`,
@@ -1175,10 +1217,18 @@ const tablesDBListRowsCommand = tablesDB
       value === undefined ? true : parseBool(value),
   )
   .option(`--ttl <ttl>`, `TTL (seconds) for caching list responses. Responses are stored in an in-memory key-value cache, keyed per project, table, schema version (columns and indexes), caller authorization roles, and the exact query — so users with different permissions never share cached entries. Schema changes invalidate cached entries automatically; row writes do not, so choose a TTL you are comfortable serving as stale data. Set to 0 to disable caching. Must be between 0 and 86400 (24 hours).`, parseInteger)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--select <attribute>`, `Attribute to include in the response. Repeat for multiple attributes.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
   .action(
     actionRunner(
-      async ({ databaseId, tableId, queries, transactionId, total, ttl }) =>
-        parse(await (await getTablesDBClient()).listRows(databaseId, tableId, queries, transactionId, total, ttl)),
+      async ({ databaseId, tableId, queries, transactionId, total, ttl, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, select }) =>
+        parse(await (await getTablesDBClient()).listRows(databaseId, tableId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, select }), transactionId, total, ttl)),
     ),
   );
 
@@ -1237,12 +1287,19 @@ const tablesDBUpdateRowsCommand = tablesDB
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .option(`--data <data>`, `Row data as JSON object. Include only column and value pairs to be updated.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, data, queries, transactionId }) =>
-        parse(await (await getTablesDBClient()).updateRows(databaseId, tableId, JSON.parse(data), queries, transactionId)),
+      async ({ databaseId, tableId, data, queries, transactionId, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).updateRows(databaseId, tableId, JSON.parse(data), buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), transactionId)),
     ),
   );
 
@@ -1252,12 +1309,19 @@ const tablesDBDeleteRowsCommand = tablesDB
   .description(`Bulk delete rows using queries, if no queries are passed then all rows are deleted.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID for staging the operation.`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, queries, transactionId }) =>
-        parse(await (await getTablesDBClient()).deleteRows(databaseId, tableId, queries, transactionId)),
+      async ({ databaseId, tableId, queries, transactionId, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getTablesDBClient()).deleteRows(databaseId, tableId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), transactionId)),
     ),
   );
 
@@ -1268,12 +1332,13 @@ const tablesDBGetRowCommand = tablesDB
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for selecting returned attributes prefer --select. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
   .option(`--transaction-id <transaction-id>`, `Transaction ID to read uncommitted changes within the transaction.`)
+  .option(`--select <attribute>`, `Attribute to include in the response. Repeat for multiple attributes.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
   .action(
     actionRunner(
-      async ({ databaseId, tableId, rowId, queries, transactionId }) =>
-        parse(await (await getTablesDBClient()).getRow(databaseId, tableId, rowId, queries, transactionId)),
+      async ({ databaseId, tableId, rowId, queries, transactionId, select }) =>
+        parse(await (await getTablesDBClient()).getRow(databaseId, tableId, rowId, buildQueries({ queries, select }), transactionId)),
     ),
   );
 
@@ -1333,11 +1398,13 @@ const tablesDBListRowLogsCommand = tablesDB
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .requiredOption(`--table-id <table-id>`, `Table ID.`)
   .requiredOption(`--row-id <row-id>`, `Row ID.`)
-  .option(`--queries [queries...]`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, tableId, rowId, queries }) =>
-        parse(await (await getTablesDBClient()).listRowLogs(databaseId, tableId, rowId, queries)),
+      async ({ databaseId, tableId, rowId, queries, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listRowLogs(databaseId, tableId, rowId, buildQueries({ queries, limit, offset }))),
     ),
   );
 

@@ -1,3 +1,4 @@
 ```bash
-appwrite vcs list-installations
+appwrite vcs list-installations \
+    --limit 25
 ```

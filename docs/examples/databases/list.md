@@ -1,3 +1,4 @@
 ```bash
-appwrite databases list
+appwrite databases list \
+    --limit 25
 ```
