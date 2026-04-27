@@ -1,5 +1,13 @@
 # Change Log
 
+## 19.1.0
+
+* Added `--where`, `--sort-asc`, `--sort-desc`, `--limit`, `--offset`, `--cursor-after`, and `--cursor-before` flags on list commands across services
+* Added `--select` flag on `databases list-documents`, `tablesdb list-rows`, and other row/document list commands
+* Added a hint after query-related errors that points to the new flag-based filters
+* Updated `--queries` description to mark it as the legacy raw-JSON option, recommending the new flag-based filters for common cases
+* Updated bundled examples to demonstrate `--limit` on list commands
+
 ## 19.0.0
 
 * Breaking: Renamed `project update-protocol-status` to `project update-protocol`

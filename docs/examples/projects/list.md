@@ -1,3 +1,4 @@
 ```bash
-appwrite projects list
+appwrite projects list \
+    --limit 25
 ```

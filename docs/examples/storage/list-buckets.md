@@ -1,3 +1,4 @@
 ```bash
-appwrite storage list-buckets
+appwrite storage list-buckets \
+    --limit 25
 ```

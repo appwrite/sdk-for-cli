@@ -1,3 +1,4 @@
 ```bash
-appwrite organizations list
+appwrite organizations list \
+    --limit 25
 ```

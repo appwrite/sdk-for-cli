@@ -1,3 +1,4 @@
 ```bash
-appwrite users list
+appwrite users list \
+    --limit 25
 ```

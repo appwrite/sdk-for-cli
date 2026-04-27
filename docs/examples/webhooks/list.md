@@ -1,3 +1,4 @@
 ```bash
-appwrite webhooks list
+appwrite webhooks list \
+    --limit 25
 ```

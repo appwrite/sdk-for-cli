@@ -1,3 +1,4 @@
 ```bash
-appwrite project list-platforms
+appwrite project list-platforms \
+    --limit 25
 ```

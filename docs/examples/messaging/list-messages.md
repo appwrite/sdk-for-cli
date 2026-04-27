@@ -1,3 +1,4 @@
 ```bash
-appwrite messaging list-messages
+appwrite messaging list-messages \
+    --limit 25
 ```

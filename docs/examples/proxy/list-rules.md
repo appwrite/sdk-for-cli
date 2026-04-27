@@ -1,3 +1,4 @@
 ```bash
-appwrite proxy list-rules
+appwrite proxy list-rules \
+    --limit 25
 ```

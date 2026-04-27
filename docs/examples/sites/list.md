@@ -1,3 +1,4 @@
 ```bash
-appwrite sites list
+appwrite sites list \
+    --limit 25
 ```

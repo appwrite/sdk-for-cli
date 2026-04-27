@@ -1,3 +1,4 @@
 ```bash
-appwrite users list-identities
+appwrite users list-identities \
+    --limit 25
 ```
