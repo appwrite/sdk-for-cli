@@ -1,5 +1,12 @@
 # Change Log
 
+## 19.2.0
+
+* Added `completion install` command with completion scripts for zsh, bash, and fish
+* Added automatic shell-completion install step to the `install.sh` standalone installer
+* Updated Homebrew install and update flow to detect the installed formula and recommend the official `appwrite/appwrite/appwrite` tap when a different one is in use
+* Fixed standalone update check to point at the `appwrite/sdk-for-cli` releases feed instead of the legacy `appwrite/appwrite-cli` repo
+
 ## 19.1.0
 
 * Added `--where`, `--sort-asc`, `--sort-desc`, `--limit`, `--offset`, `--cursor-after`, and `--cursor-before` flags on list commands across services

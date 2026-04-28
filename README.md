@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-19.1.0
+19.2.0
 ```
 
 ### Install using prebuilt binaries
@@ -49,6 +49,27 @@ $ brew install appwrite/appwrite/appwrite
 
 Homebrew pulls the formula from the [`appwrite/homebrew-appwrite`](https://github.com/appwrite/homebrew-appwrite) tap and downloads the native binary for your platform.
 
+### Shell completion
+
+Install completion for your current shell:
+
+```bash
+appwrite completion install
+```
+
+You can also generate or install completion scripts manually:
+
+```bash
+# zsh
+appwrite completion install zsh
+# bash
+appwrite completion install bash
+# fish
+appwrite completion install fish
+```
+
+For zsh, ensure `~/.zfunc` is in your `fpath` and `compinit` is loaded from your shell config.
+
 ### Windows
 Via Powershell
 ```powershell
@@ -62,7 +83,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-19.1.0
+19.2.0
 ```
 
 ## Getting Started 

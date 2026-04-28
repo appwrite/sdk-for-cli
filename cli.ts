@@ -18,6 +18,11 @@ import {
     syncVersionCheckCache,
 } from './lib/utils.js';
 import inquirerSearchList from 'inquirer-search-list';
+import {
+    createCompletionCommand,
+    isCompletionCommand,
+    isCompletionInvocation,
+} from './lib/completions.js';
 
 import { client } from './lib/commands/generic.js';
 import { login, logout, whoami, migrate, register } from './lib/commands/generic.js';
@@ -55,7 +60,6 @@ import { webhooks } from './lib/commands/services/webhooks.js';
 const { version } = packageJson;
 inquirer.registerPrompt('search-list', inquirerSearchList);
 const VERSION_CHECK_TIMEOUT_MS = 5000;
-
 function writeUpdateAvailableNotice(currentVersion: string, latestVersion: string, toStderr: boolean = false): void {
     const stream = toStderr ? process.stderr : process.stdout;
 
@@ -126,7 +130,9 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
     })();
 } else {
     void (async () => {
-        await maybeShowUpdateNotice();
+        if (!isCompletionInvocation()) {
+            await maybeShowUpdateNotice();
+        }
 
         program
             .name('appwrite')
@@ -141,7 +147,13 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .option('-j, --json', 'Output filtered JSON without empty values')
             .option('-R, --raw', 'Output full JSON response (secrets still redacted unless --show-secrets is set)')
             .option('--show-secrets', 'Display sensitive values like secrets and tokens in output')
-            .hook('preAction', migrate)
+            .hook('preAction', async (_thisCommand, actionCommand) => {
+                if (isCompletionCommand(actionCommand)) {
+                    return;
+                }
+
+                await migrate();
+            })
             .option('-f,--force', 'Flag to confirm all warnings')
             .option('-a,--all', 'Flag to push all resources')
             .option('--id [id...]', 'Flag to pass a list of ids for a given action')
@@ -214,6 +226,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(users)
             .addCommand(vcs)
             .addCommand(webhooks)
+            .addCommand(createCompletionCommand(program))
             .addCommand(client)
             .parse(process.argv);
 
