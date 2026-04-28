@@ -37,6 +37,7 @@ ARCH=""
 # Add some color to life
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 greeting() {
@@ -55,7 +56,7 @@ EOF
 }
 
 getSystemInfo() {
-    echo "[1/4] Getting System Info ..."
+    echo "[1/5] Getting System Info ..."
     
     ARCH=$(uname -m)
     case $ARCH in
@@ -93,6 +94,10 @@ printSuccess() {
     printf "${GREEN}✅ Done ... ${NC}\n\n"
 }
 
+printSkipped() {
+    printf "${YELLOW}ℹ️  $1 ${NC}\n"
+}
+
 verifyMacOSCodeSignature() {
     if [ "$OS" != "darwin" ]; then
         return
@@ -113,9 +118,9 @@ verifyMacOSCodeSignature() {
 }
 
 downloadBinary() {
-    echo "[2/4] Downloading executable for $OS ($ARCH) ..."
+    echo "[2/5] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="19.1.0"
+    GITHUB_LATEST_VERSION="19.2.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -130,7 +135,7 @@ downloadBinary() {
 }
 
 install() {
-    echo "[3/4] Installing ..."
+    echo "[3/5] Installing ..."
 
     printf "${GREEN}🚧 Setting Permissions ${NC}\n"
     chmod +x $APPWRITE_TEMP_NAME
@@ -151,6 +156,22 @@ install() {
     printSuccess
 }
 
+installCompletions() {
+    echo "[4/5] Installing shell completions ..."
+
+    if $APPWRITE_EXECUTABLE_FILEPATH completion install; then
+        printSuccess
+        return
+    fi
+
+    printSkipped "Skipped shell completion installation. To install manually, run:"
+    echo "  $APPWRITE_EXECUTABLE_NAME completion install"
+    echo "  $APPWRITE_EXECUTABLE_NAME completion install zsh"
+    echo "  $APPWRITE_EXECUTABLE_NAME completion install bash"
+    echo "  $APPWRITE_EXECUTABLE_NAME completion install fish"
+    echo ""
+}
+
 cleanup() {
     printf "${GREEN}🧹 Cleaning up mess ... ${NC}\n"
     rm $APPWRITE_TEMP_NAME 
@@ -163,7 +184,7 @@ cleanup() {
 }
 
 installCompleted() {
-    echo "[4/4] Wrapping up installation ... "
+    echo "[5/5] Wrapping up installation ... "
     cleanup
     echo "🚀 To get started with Appwrite CLI, please visit https://appwrite.io/docs/command-line"
     echo "As first step, you can login to your Appwrite account using 'appwrite login'"
@@ -174,4 +195,5 @@ greeting
 getSystemInfo
 downloadBinary
 install
+installCompletions
 installCompleted
