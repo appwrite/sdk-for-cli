@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Users } from "@appwrite.io/console";
 
@@ -499,7 +500,7 @@ const usersUpdatePrefsCommand = users
   .action(
     actionRunner(
       async ({ userId, prefs }) =>
-        parse(await (await getUsersClient()).updatePrefs(userId, JSON.parse(prefs))),
+        parse(await (await getUsersClient()).updatePrefs(userId, parseJsonObject(prefs, "--prefs"))),
     ),
   );
 

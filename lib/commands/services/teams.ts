@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
   hint,
 } from "../../parser.js";
 import { Teams } from "@appwrite.io/console";
@@ -269,7 +270,7 @@ const teamsUpdatePrefsCommand = teams
   .action(
     actionRunner(
       async ({ teamId, prefs }) =>
-        parse(await (await getTeamsClient()).updatePrefs(teamId, JSON.parse(prefs))),
+        parse(await (await getTeamsClient()).updatePrefs(teamId, parseJsonObject(prefs, "--prefs"))),
     ),
   );
 

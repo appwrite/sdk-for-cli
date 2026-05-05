@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Messaging } from "@appwrite.io/console";
 
@@ -164,7 +165,7 @@ const messagingCreatePushCommand = messaging
   .action(
     actionRunner(
       async ({ messageId, title, body, topics, users, targets, data, action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority }) =>
-        parse(await (await getMessagingClient()).createPush(messageId, title, body, topics, users, targets, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority)),
+        parse(await (await getMessagingClient()).createPush(messageId, title, body, topics, users, targets, parseJsonObject(data, "--data"), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority)),
     ),
   );
 
@@ -210,7 +211,7 @@ const messagingUpdatePushCommand = messaging
   .action(
     actionRunner(
       async ({ messageId, topics, users, targets, title, body, data, action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority }) =>
-        parse(await (await getMessagingClient()).updatePush(messageId, topics, users, targets, title, body, JSON.parse(data), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority)),
+        parse(await (await getMessagingClient()).updatePush(messageId, topics, users, targets, title, body, parseJsonObject(data, "--data"), action, image, icon, sound, color, tag, badge, draft, scheduledAt, contentAvailable, critical, priority)),
     ),
   );
 
@@ -433,7 +434,7 @@ const messagingCreateFcmProviderCommand = messaging
   .action(
     actionRunner(
       async ({ providerId, name, serviceAccountJson, enabled }) =>
-        parse(await (await getMessagingClient()).createFcmProvider(providerId, name, JSON.parse(serviceAccountJson), enabled)),
+        parse(await (await getMessagingClient()).createFcmProvider(providerId, name, parseJsonObject(serviceAccountJson, "--service-account-json"), enabled)),
     ),
   );
 
@@ -453,7 +454,7 @@ const messagingUpdateFcmProviderCommand = messaging
   .action(
     actionRunner(
       async ({ providerId, name, enabled, serviceAccountJson }) =>
-        parse(await (await getMessagingClient()).updateFcmProvider(providerId, name, enabled, JSON.parse(serviceAccountJson))),
+        parse(await (await getMessagingClient()).updateFcmProvider(providerId, name, enabled, parseJsonObject(serviceAccountJson, "--service-account-json"))),
     ),
   );
 

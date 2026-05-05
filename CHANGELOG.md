@@ -1,5 +1,16 @@
 # Change Log
 
+## 20.0.0
+
+* Breaking: Removed `projects delete`. Use `project delete` instead
+* Breaking: Replaced `projects update-mock-numbers` with `project create-mock-phone`, `list-mock-phones`, `get-mock-phone`, `update-mock-phone`, and `delete-mock-phone`
+* Breaking: Renamed `projects update-auth-status` to `project update-auth-method` with `--method-id` and `--enabled` flags
+* Breaking: Replaced `projects update-o-auth-2` with per-provider `project update-o-auth-2-<provider>` commands
+* Breaking: Replaced `projects create-jwt` with `project create-ephemeral-key` for short-lived API keys
+* Added `project list-o-auth-2-providers`, `get-o-auth-2-provider`, `list-policies`, `get-policy`, and `list-email-templates` commands
+* Added `fusionauth`, `keycloak`, and `kick` to supported OAuth2 providers in `account` session commands
+* Added `includes` field in `appwrite.config.json` to split resource arrays into separate JSON files; `init`, `pull`, and `push` resolve resource paths relative to each include
+
 ## 19.2.0
 
 * Added `completion install` command with completion scripts for zsh, bash, and fish

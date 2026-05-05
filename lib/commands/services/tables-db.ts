@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { TablesDB } from "@appwrite.io/console";
 
@@ -1245,7 +1246,7 @@ const tablesDBCreateRowCommand = tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, data, permissions, transactionId }) =>
-        parse(await (await getTablesDBClient()).createRow(databaseId, tableId, rowId, JSON.parse(data), permissions, transactionId)),
+        parse(await (await getTablesDBClient()).createRow(databaseId, tableId, rowId, parseJsonObject(data, "--data"), permissions, transactionId)),
     ),
   );
 
@@ -1299,7 +1300,7 @@ const tablesDBUpdateRowsCommand = tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, data, queries, transactionId, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getTablesDBClient()).updateRows(databaseId, tableId, JSON.parse(data), buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), transactionId)),
+        parse(await (await getTablesDBClient()).updateRows(databaseId, tableId, parseJsonObject(data, "--data"), buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), transactionId)),
     ),
   );
 
@@ -1355,7 +1356,7 @@ const tablesDBUpsertRowCommand = tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, data, permissions, transactionId }) =>
-        parse(await (await getTablesDBClient()).upsertRow(databaseId, tableId, rowId, JSON.parse(data), permissions, transactionId)),
+        parse(await (await getTablesDBClient()).upsertRow(databaseId, tableId, rowId, parseJsonObject(data, "--data"), permissions, transactionId)),
     ),
   );
 
@@ -1372,7 +1373,7 @@ const tablesDBUpdateRowCommand = tablesDB
   .action(
     actionRunner(
       async ({ databaseId, tableId, rowId, data, permissions, transactionId }) =>
-        parse(await (await getTablesDBClient()).updateRow(databaseId, tableId, rowId, JSON.parse(data), permissions, transactionId)),
+        parse(await (await getTablesDBClient()).updateRow(databaseId, tableId, rowId, parseJsonObject(data, "--data"), permissions, transactionId)),
     ),
   );
 

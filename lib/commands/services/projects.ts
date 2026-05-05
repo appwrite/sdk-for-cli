@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Projects } from "@appwrite.io/console";
 
@@ -116,45 +117,6 @@ const projectsUpdateCommand = projects
   );
 
 
-const projectsDeleteCommand = projects
-  .command(`delete`)
-  .description(`Delete a project by its unique ID.`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .action(
-    actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getProjectsClient()).delete(projectId)),
-    ),
-  );
-
-
-const projectsUpdateMockNumbersCommand = projects
-  .command(`update-mock-numbers`)
-  .description(`Update the list of mock phone numbers for testing. Use these numbers to bypass SMS verification in development. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--numbers [numbers...]`, `An array of mock numbers and their corresponding verification codes (OTPs). Each number should be a valid E.164 formatted phone number. Maximum of 10 numbers are allowed.`)
-  .action(
-    actionRunner(
-      async ({ projectId, numbers }) =>
-        parse(await (await getProjectsClient()).updateMockNumbers(projectId, numbers)),
-    ),
-  );
-
-
-const projectsUpdateAuthStatusCommand = projects
-  .command(`update-auth-status`)
-  .description(`Update the status of a specific authentication method. Use this endpoint to enable or disable different authentication methods such as email, magic urls or sms in your project. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--method <method>`, `Auth Method. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone`)
-  .requiredOption(`--status <status>`, `Set the status of this auth method.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ projectId, method, status }) =>
-        parse(await (await getProjectsClient()).updateAuthStatus(projectId, method, status)),
-    ),
-  );
-
-
 const projectsListDevKeysCommand = projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)
@@ -230,41 +192,6 @@ const projectsDeleteDevKeyCommand = projects
   );
 
 
-const projectsCreateJWTCommand = projects
-  .command(`create-jwt`)
-  .description(`Create a new JWT token. This token can be used to authenticate users with custom scopes and expiration time. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--scopes [scopes...]`, `List of scopes allowed for JWT key. Maximum of 100 scopes are allowed.`)
-  .option(`--duration <duration>`, `Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ projectId, scopes, duration }) =>
-        parse(await (await getProjectsClient()).createJWT(projectId, scopes, duration)),
-    ),
-  );
-
-
-const projectsUpdateOAuth2Command = projects
-  .command(`update-o-auth-2`)
-  .description(`Update the OAuth2 provider configurations. Use this endpoint to set up or update the OAuth2 provider credentials or enable/disable providers. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--provider <provider>`, `Provider Name`)
-  .option(`--app-id <app-id>`, `Provider app ID. Max length: 256 chars.`)
-  .option(`--secret <secret>`, `Provider secret key. Max length: 512 chars.`)
-  .option(
-    `--enabled [value]`,
-    `Provider status. Set to 'false' to disable new session creation.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .action(
-    actionRunner(
-      async ({ projectId, provider, appId, secret, enabled }) =>
-        parse(await (await getProjectsClient()).updateOAuth2(projectId, provider, appId, secret, enabled)),
-    ),
-  );
-
-
 const projectsListSchedulesCommand = projects
   .command(`list-schedules`)
   .description(`Get a list of all the project's schedules. You can use the query params to filter your results.`)
@@ -308,7 +235,7 @@ const projectsCreateScheduleCommand = projects
   .action(
     actionRunner(
       async ({ projectId, resourceType, resourceId, schedule, active, data }) =>
-        parse(await (await getProjectsClient()).createSchedule(projectId, resourceType, resourceId, schedule, active, JSON.parse(data))),
+        parse(await (await getProjectsClient()).createSchedule(projectId, resourceType, resourceId, schedule, active, parseJsonObject(data, "--data"))),
     ),
   );
 

@@ -7,6 +7,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Graphql } from "@appwrite.io/console";
 
@@ -33,7 +34,7 @@ const graphqlQueryCommand = graphql
   .action(
     actionRunner(
       async ({ query }) =>
-        parse(await (await getGraphqlClient()).query(JSON.parse(query))),
+        parse(await (await getGraphqlClient()).query(parseJsonObject(query, "--query"))),
     ),
   );
 
@@ -45,7 +46,7 @@ const graphqlMutationCommand = graphql
   .action(
     actionRunner(
       async ({ query }) =>
-        parse(await (await getGraphqlClient()).mutation(JSON.parse(query))),
+        parse(await (await getGraphqlClient()).mutation(parseJsonObject(query, "--query"))),
     ),
   );
 
