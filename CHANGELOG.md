@@ -1,5 +1,11 @@
 # Change Log
 
+## 20.1.0
+
+* Added `--switch` and `--new` flags on `appwrite login` to explicitly manage multiple saved accounts
+* Fixed `appwrite login` to verify the current session via the API and clean up stale guest/unauthorized sessions instead of trusting local metadata
+* Updated Cloud account login to normalize endpoints to `https://cloud.appwrite.io/v1` and reject regional Cloud endpoints
+
 ## 20.0.0
 
 * Breaking: Removed `projects delete`. Use `project delete` instead
