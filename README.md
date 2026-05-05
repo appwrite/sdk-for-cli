@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-20.0.0
+20.1.0
 ```
 
 ### Install using prebuilt binaries
@@ -83,7 +83,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-20.0.0
+20.1.0
 ```
 
 ## Getting Started 
