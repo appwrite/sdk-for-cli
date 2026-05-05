@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Projects } from "@appwrite.io/console";
 
@@ -234,7 +235,7 @@ const projectsCreateScheduleCommand = projects
   .action(
     actionRunner(
       async ({ projectId, resourceType, resourceId, schedule, active, data }) =>
-        parse(await (await getProjectsClient()).createSchedule(projectId, resourceType, resourceId, schedule, active, JSON.parse(data))),
+        parse(await (await getProjectsClient()).createSchedule(projectId, resourceType, resourceId, schedule, active, parseJsonObject(data, "--data"))),
     ),
   );
 

@@ -14,6 +14,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Functions } from "@appwrite.io/console";
 
@@ -464,7 +465,7 @@ const functionsCreateExecutionCommand = functions
   .action(
     actionRunner(
       async ({ functionId, body, async, path, method, headers, scheduledAt }) =>
-        parse(await (await getFunctionsClient()).createExecution(functionId, body, async, path, method, JSON.parse(headers), scheduledAt)),
+        parse(await (await getFunctionsClient()).createExecution(functionId, body, async, path, method, parseJsonObject(headers, "--headers"), scheduledAt)),
     ),
   );
 

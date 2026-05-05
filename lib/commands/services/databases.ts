@@ -12,6 +12,7 @@ import {
   parse,
   parseBool,
   parseInteger,
+  parseJsonObject,
 } from "../../parser.js";
 import { Databases } from "@appwrite.io/console";
 
@@ -1156,7 +1157,7 @@ const databasesCreateDocumentCommand = databases
   .action(
     actionRunner(
       async ({ databaseId, collectionId, documentId, data, permissions, transactionId }) =>
-        parse(await (await getDatabasesClient()).createDocument(databaseId, collectionId, documentId, JSON.parse(data), permissions, transactionId)),
+        parse(await (await getDatabasesClient()).createDocument(databaseId, collectionId, documentId, parseJsonObject(data, "--data"), permissions, transactionId)),
     ),
   );
 
@@ -1210,7 +1211,7 @@ const databasesUpdateDocumentsCommand = databases
   .action(
     actionRunner(
       async ({ databaseId, collectionId, data, queries, transactionId, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getDatabasesClient()).updateDocuments(databaseId, collectionId, JSON.parse(data), buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), transactionId)),
+        parse(await (await getDatabasesClient()).updateDocuments(databaseId, collectionId, parseJsonObject(data, "--data"), buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), transactionId)),
     ),
   );
 
@@ -1266,7 +1267,7 @@ const databasesUpsertDocumentCommand = databases
   .action(
     actionRunner(
       async ({ databaseId, collectionId, documentId, data, permissions, transactionId }) =>
-        parse(await (await getDatabasesClient()).upsertDocument(databaseId, collectionId, documentId, JSON.parse(data), permissions, transactionId)),
+        parse(await (await getDatabasesClient()).upsertDocument(databaseId, collectionId, documentId, parseJsonObject(data, "--data"), permissions, transactionId)),
     ),
   );
 
@@ -1283,7 +1284,7 @@ const databasesUpdateDocumentCommand = databases
   .action(
     actionRunner(
       async ({ databaseId, collectionId, documentId, data, permissions, transactionId }) =>
-        parse(await (await getDatabasesClient()).updateDocument(databaseId, collectionId, documentId, JSON.parse(data), permissions, transactionId)),
+        parse(await (await getDatabasesClient()).updateDocument(databaseId, collectionId, documentId, parseJsonObject(data, "--data"), permissions, transactionId)),
     ),
   );
 
