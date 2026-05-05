@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-cli.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-1.9.2-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-1.9.3-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-19.2.0
+20.0.0
 ```
 
 ### Install using prebuilt binaries
@@ -83,7 +83,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-19.2.0
+20.0.0
 ```
 
 ## Getting Started 
@@ -230,6 +230,45 @@ The Appwrite CLI can also work in a CI environment. The initialisation of the CL
 appwrite client --endpoint http://localhost/v1 --projectId <PROJECT_ID> --key <API KEY>
 ```
 
+
+## Project configuration
+
+The CLI reads project resources from `appwrite.config.json`. Large resource arrays can be split into smaller JSON files with `includes`:
+
+```json
+{
+    "projectId": "my-project",
+    "includes": {
+        "functions": "./appwrite/functions.json",
+        "sites": "./appwrite/sites.json",
+        "databases": "./appwrite/databases.json",
+        "collections": "./appwrite/collections.json",
+        "tablesDB": "./appwrite/tables-db.json",
+        "tables": "./appwrite/tables.json",
+        "buckets": "./appwrite/buckets.json",
+        "teams": "./appwrite/teams.json",
+        "webhooks": "./appwrite/webhooks.json",
+        "topics": "./appwrite/topics.json",
+        "messages": "./appwrite/messages.json"
+    }
+}
+```
+
+Each included file contains only the array for that resource. Include paths are resolved relative to `appwrite.config.json`, and resource-local paths inside an included file are resolved relative to that included file:
+
+```json
+[
+    {
+        "$id": "api",
+        "name": "API",
+        "runtime": "node-22",
+        "path": "functions/api",
+        "entrypoint": "src/main.ts"
+    }
+]
+```
+
+JSON pointer fragments such as `./resources.json#/functions` are not supported.
 
 ## Contribution
 
