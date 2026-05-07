@@ -513,10 +513,24 @@ const functionsListVariablesCommand = functions
   .command(`list-variables`)
   .description(`Get a list of all variables of a specific function.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret`)
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ functionId }) =>
-        parse(await (await getFunctionsClient()).listVariables(functionId)),
+      async ({ functionId, queries, total, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getFunctionsClient()).listVariables(functionId, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -525,6 +539,7 @@ const functionsCreateVariableCommand = functions
   .command(`create-variable`)
   .description(`Create a new function environment variable. These variables can be accessed in the function at runtime as environment variables.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--key <key>`, `Variable key. Max length: 255 chars.`)
   .requiredOption(`--value <value>`, `Variable value. Max length: 8192 chars.`)
   .option(
@@ -535,8 +550,8 @@ const functionsCreateVariableCommand = functions
   )
   .action(
     actionRunner(
-      async ({ functionId, key, value, secret }) =>
-        parse(await (await getFunctionsClient()).createVariable(functionId, key, value, secret)),
+      async ({ functionId, variableId, key, value, secret }) =>
+        parse(await (await getFunctionsClient()).createVariable(functionId, variableId, key, value, secret)),
     ),
   );
 
@@ -559,7 +574,7 @@ const functionsUpdateVariableCommand = functions
   .description(`Update variable by its unique ID.`)
   .requiredOption(`--function-id <function-id>`, `Function unique ID.`)
   .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
-  .requiredOption(`--key <key>`, `Variable key. Max length: 255 chars.`)
+  .option(`--key <key>`, `Variable key. Max length: 255 chars.`)
   .option(`--value <value>`, `Variable value. Max length: 8192 chars.`)
   .option(
     `--secret [value]`,

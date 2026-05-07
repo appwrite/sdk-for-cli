@@ -367,6 +367,51 @@ const databasesListAttributesCommand = databases
   );
 
 
+const databasesCreateBigIntAttributeCommand = databases
+  .command(`create-big-int-attribute`)
+  .description(`Create a bigint attribute. Optionally, minimum and maximum values can be provided.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .option(`--min <min>`, `Minimum value`, parseInteger)
+  .option(`--max <max>`, `Maximum value`, parseInteger)
+  .option(`--xdefault <xdefault>`, `Default value. Cannot be set when attribute is required.`, parseInteger)
+  .option(
+    `--array [value]`,
+    `Is attribute an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, min, max, xdefault, array }) =>
+        parse(await (await getDatabasesClient()).createBigIntAttribute(databaseId, collectionId, key, required, min, max, xdefault, array)),
+    ),
+  );
+
+
+const databasesUpdateBigIntAttributeCommand = databases
+  .command(`update-big-int-attribute`)
+  .description(`Update a bigint attribute. Changing the \`default\` value will not update already existing documents.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
+  .requiredOption(`--key <key>`, `Attribute Key.`)
+  .requiredOption(`--required <required>`, `Is attribute required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value. Cannot be set when attribute is required.`, parseInteger)
+  .option(`--min <min>`, `Minimum value`, parseInteger)
+  .option(`--max <max>`, `Maximum value`, parseInteger)
+  .option(`--new-key <new-key>`, `New Attribute Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, collectionId, key, required, xdefault, min, max, newKey }) =>
+        parse(await (await getDatabasesClient()).updateBigIntAttribute(databaseId, collectionId, key, required, xdefault, min, max, newKey)),
+    ),
+  );
+
+
 const databasesCreateBooleanAttributeCommand = databases
   .command(`create-boolean-attribute`)
   .description(`Create a boolean attribute.
