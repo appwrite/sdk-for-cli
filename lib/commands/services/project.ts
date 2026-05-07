@@ -651,8 +651,8 @@ const projectUpdateOAuth2GitlabCommand = project
 const projectUpdateOAuth2GoogleCommand = project
   .command(`update-o-auth-2-google`)
   .description(`Update the project OAuth2 Google configuration.`)
-  .option(`--client-id <client-id>`, `'Client ID' of Google OAuth2 app. For example: 120000000095-92ifjb00000000000000000000g7ijfb.apps.googleusercontent.com`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Google OAuth2 app. For example: GOCSPX-2k8gsR0000000000000000VNahJj`)
+  .option(`--client-id <client-id>`, `'Client ID' of Google OAuth2 app. For example: your-google-client-id.apps.googleusercontent.com`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Google OAuth2 app. For example: your-google-client-secret`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -711,7 +711,7 @@ const projectUpdateOAuth2LinkedinCommand = project
   .command(`update-o-auth-2-linkedin`)
   .description(`Update the project OAuth2 Linkedin configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Linkedin OAuth2 app. For example: 770000000000dv`)
-  .option(`--primary-client-secret <primary-client-secret>`, `'Primary Client Secret or Secondary Client Secret' of Linkedin OAuth2 app. For example: WPL_AP1.2Bf0000000000000./HtlYw==`)
+  .option(`--primary-client-secret <primary-client-secret>`, `'Primary Client Secret or Secondary Client Secret' of Linkedin OAuth2 app. For example: your-linkedin-client-secret`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
