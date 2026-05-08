@@ -92,14 +92,16 @@ const vcsGetRepositoryCommand = vcs
 
 const vcsListRepositoryBranchesCommand = vcs
   .command(`list-repository-branches`)
-  .description(`Get a list of all branches from a GitHub repository in your installation. This endpoint returns the names of all branches in the repository and their total count. The GitHub installation must be properly configured and have access to the requested repository for this endpoint to work.
+  .description(`Get a list of branches from a GitHub repository in your installation. This endpoint supports filtering by a search term and pagination using query strings such as \`Query.limit()\`, \`Query.offset()\`, \`Query.cursorAfter()\`, and \`Query.cursorBefore()\`. It returns branch names along with the total number of matches. The GitHub installation must be properly configured and have access to the requested repository for this endpoint to work.
 `)
   .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--provider-repository-id <provider-repository-id>`, `Repository Id`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .option(`--queries <queries>`, `Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit, offset, cursorAfter, and cursorBefore`)
   .action(
     actionRunner(
-      async ({ installationId, providerRepositoryId }) =>
-        parse(await (await getVcsClient()).listRepositoryBranches(installationId, providerRepositoryId)),
+      async ({ installationId, providerRepositoryId, search, queries }) =>
+        parse(await (await getVcsClient()).listRepositoryBranches(installationId, providerRepositoryId, search, queries)),
     ),
   );
 

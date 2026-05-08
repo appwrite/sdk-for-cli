@@ -288,23 +288,11 @@ const projectListOAuth2ProvidersCommand = project
   );
 
 
-const projectGetOAuth2ProviderCommand = project
-  .command(`get-o-auth-2-provider`)
-  .description(`Get a single OAuth2 provider configuration. Credential fields (client secret, p8 file, key/team IDs) are write-only and always returned empty.`)
-  .requiredOption(`--provider-id <provider-id>`, `OAuth2 provider key. For example: github, google, apple.`)
-  .action(
-    actionRunner(
-      async ({ providerId }) =>
-        parse(await (await getProjectClient()).getOAuth2Provider(providerId)),
-    ),
-  );
-
-
 const projectUpdateOAuth2AmazonCommand = project
   .command(`update-o-auth-2-amazon`)
   .description(`Update the project OAuth2 Amazon configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Amazon OAuth2 app. For example: amzn1.application-oa2-client.87400c00000000000000000000063d5b2`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Amazon OAuth2 app. For example: 79ffe4000000000000000000000000000000000000000000000000000002de55`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Amazon OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -344,7 +332,7 @@ const projectUpdateOAuth2Auth0Command = project
   .command(`update-o-auth-2-auth-0`)
   .description(`Update the project OAuth2 Auth0 configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Auth0 OAuth2 app. For example: OaOkIA000000000000000000005KLSYq`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Auth0 OAuth2 app. For example: zXz0000-00000000000000000000000000000-00000000000000000000PJafnF`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Auth0 OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--endpoint <endpoint>`, `Domain of Auth0 instance. For example: example.us.auth0.com`)
   .option(
     `--enabled [value]`,
@@ -364,7 +352,7 @@ const projectUpdateOAuth2AuthentikCommand = project
   .command(`update-o-auth-2-authentik`)
   .description(`Update the project OAuth2 Authentik configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Authentik OAuth2 app. For example: dTKOPa0000000000000000000000000000e7G8hv`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Authentik OAuth2 app. For example: ntQadq000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000Hp5WK`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Authentik OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--endpoint <endpoint>`, `Domain of Authentik instance. For example: example.authentik.com`)
   .option(
     `--enabled [value]`,
@@ -384,7 +372,7 @@ const projectUpdateOAuth2AutodeskCommand = project
   .command(`update-o-auth-2-autodesk`)
   .description(`Update the project OAuth2 Autodesk configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Autodesk OAuth2 app. For example: 5zw90v00000000000000000000kVYXN7`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Autodesk OAuth2 app. For example: 7I000000000000MW`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Autodesk OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -403,7 +391,7 @@ const projectUpdateOAuth2BitbucketCommand = project
   .command(`update-o-auth-2-bitbucket`)
   .description(`Update the project OAuth2 Bitbucket configuration.`)
   .option(`--key <key>`, `'Key' of Bitbucket OAuth2 app. For example: Knt70000000000ByRc`)
-  .option(`--secret <secret>`, `'Secret' of Bitbucket OAuth2 app. For example: NMfLZJ00000000000000000000TLQdDx`)
+  .option(`--secret <secret>`, `'Secret' of Bitbucket OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -422,7 +410,7 @@ const projectUpdateOAuth2BitlyCommand = project
   .command(`update-o-auth-2-bitly`)
   .description(`Update the project OAuth2 Bitly configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Bitly OAuth2 app. For example: d95151000000000000000000000000000067af9b`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Bitly OAuth2 app. For example: a13e250000000000000000000000000000d73095`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Bitly OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -441,7 +429,7 @@ const projectUpdateOAuth2BoxCommand = project
   .command(`update-o-auth-2-box`)
   .description(`Update the project OAuth2 Box configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Box OAuth2 app. For example: deglcs00000000000000000000x2og6y`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Box OAuth2 app. For example: OKM1f100000000000000000000eshEif`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Box OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -460,7 +448,7 @@ const projectUpdateOAuth2DailymotionCommand = project
   .command(`update-o-auth-2-dailymotion`)
   .description(`Update the project OAuth2 Dailymotion configuration.`)
   .option(`--api-key <api-key>`, `'API Key' of Dailymotion OAuth2 app. For example: 07a9000000000000067f`)
-  .option(`--api-secret <api-secret>`, `'API Secret' of Dailymotion OAuth2 app. For example: a399a90000000000000000000000000000d90639`)
+  .option(`--api-secret <api-secret>`, `'API Secret' of Dailymotion OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -479,7 +467,7 @@ const projectUpdateOAuth2DiscordCommand = project
   .command(`update-o-auth-2-discord`)
   .description(`Update the project OAuth2 Discord configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Discord OAuth2 app. For example: 950722000000343754`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Discord OAuth2 app. For example: YmPXnM000000000000000000002zFg5D`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Discord OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -498,7 +486,7 @@ const projectUpdateOAuth2DisqusCommand = project
   .command(`update-o-auth-2-disqus`)
   .description(`Update the project OAuth2 Disqus configuration.`)
   .option(`--public-key <public-key>`, `'Public Key, also known as API Key' of Disqus OAuth2 app. For example: cgegH70000000000000000000000000000000000000000000000000000Hr1nYX`)
-  .option(`--secret-key <secret-key>`, `'Secret Key, also known as API Secret' of Disqus OAuth2 app. For example: W7Bykj00000000000000000000000000000000000000000000000000003o43w9`)
+  .option(`--secret-key <secret-key>`, `'Secret Key, also known as API Secret' of Disqus OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -517,7 +505,7 @@ const projectUpdateOAuth2DropboxCommand = project
   .command(`update-o-auth-2-dropbox`)
   .description(`Update the project OAuth2 Dropbox configuration.`)
   .option(`--app-key <app-key>`, `'App Key' of Dropbox OAuth2 app. For example: jl000000000009t`)
-  .option(`--app-secret <app-secret>`, `'App Secret' of Dropbox OAuth2 app. For example: g200000000000vw`)
+  .option(`--app-secret <app-secret>`, `'App Secret' of Dropbox OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -536,7 +524,7 @@ const projectUpdateOAuth2EtsyCommand = project
   .command(`update-o-auth-2-etsy`)
   .description(`Update the project OAuth2 Etsy configuration.`)
   .option(`--key-string <key-string>`, `'Keystring' of Etsy OAuth2 app. For example: nsgzxh0000000000008j85a2`)
-  .option(`--shared-secret <shared-secret>`, `'Shared Secret' of Etsy OAuth2 app. For example: tp000000ru`)
+  .option(`--shared-secret <shared-secret>`, `'Shared Secret' of Etsy OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -555,7 +543,7 @@ const projectUpdateOAuth2FacebookCommand = project
   .command(`update-o-auth-2-facebook`)
   .description(`Update the project OAuth2 Facebook configuration.`)
   .option(`--app-id <app-id>`, `'App ID' of Facebook OAuth2 app. For example: 260600000007694`)
-  .option(`--app-secret <app-secret>`, `'App Secret' of Facebook OAuth2 app. For example: 2d0b2800000000000000000000d38af4`)
+  .option(`--app-secret <app-secret>`, `'App Secret' of Facebook OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -574,7 +562,7 @@ const projectUpdateOAuth2FigmaCommand = project
   .command(`update-o-auth-2-figma`)
   .description(`Update the project OAuth2 Figma configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Figma OAuth2 app. For example: byay5H0000000000VtiI40`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Figma OAuth2 app. For example: yEpOYn0000000000000000004iIsU5`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Figma OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -593,7 +581,7 @@ const projectUpdateOAuth2FusionAuthCommand = project
   .command(`update-o-auth-2-fusion-auth`)
   .description(`Update the project OAuth2 FusionAuth configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of FusionAuth OAuth2 app. For example: b2222c00-0000-0000-0000-000000862097`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of FusionAuth OAuth2 app. For example: Jx4s0C0000000000000000000000000000000wGqLsc`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of FusionAuth OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--endpoint <endpoint>`, `Domain of FusionAuth instance. For example: example.fusionauth.io`)
   .option(
     `--enabled [value]`,
@@ -613,7 +601,7 @@ const projectUpdateOAuth2GitHubCommand = project
   .command(`update-o-auth-2-git-hub`)
   .description(`Update the project OAuth2 GitHub configuration.`)
   .option(`--client-id <client-id>`, `'OAuth2 app Client ID, or App ID' of GitHub OAuth2 app. For example: e4d87900000000540733. Example of wrong value: 370006`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of GitHub OAuth2 app. For example: 5e07c00000000000000000000000000000198bcc`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of GitHub OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -632,7 +620,7 @@ const projectUpdateOAuth2GitlabCommand = project
   .command(`update-o-auth-2-gitlab`)
   .description(`Update the project OAuth2 Gitlab configuration.`)
   .option(`--application-id <application-id>`, `'Application ID' of Gitlab OAuth2 app. For example: d41ffe0000000000000000000000000000000000000000000000000000d5e252`)
-  .option(`--secret <secret>`, `'Secret' of Gitlab OAuth2 app. For example: gloas-838cfa0000000000000000000000000000000000000000000000000000ecbb38`)
+  .option(`--secret <secret>`, `'Secret' of Gitlab OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--endpoint <endpoint>`, `Endpoint URL of self-hosted GitLab instance. For example: https://gitlab.com`)
   .option(
     `--enabled [value]`,
@@ -652,7 +640,7 @@ const projectUpdateOAuth2GoogleCommand = project
   .command(`update-o-auth-2-google`)
   .description(`Update the project OAuth2 Google configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Google OAuth2 app. For example: 120000000095-92ifjb00000000000000000000g7ijfb.apps.googleusercontent.com`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Google OAuth2 app. For example: GOCSPX-2k8gsR0000000000000000VNahJj`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Google OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -671,7 +659,7 @@ const projectUpdateOAuth2KeycloakCommand = project
   .command(`update-o-auth-2-keycloak`)
   .description(`Update the project OAuth2 Keycloak configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Keycloak OAuth2 app. For example: appwrite-o0000000st-app`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Keycloak OAuth2 app. For example: jdjrJd00000000000000000000HUsaZO`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Keycloak OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--endpoint <endpoint>`, `Domain of Keycloak instance. For example: keycloak.example.com`)
   .option(`--realm-name <realm-name>`, `Keycloak realm name. For example: appwrite-realm`)
   .option(
@@ -692,7 +680,7 @@ const projectUpdateOAuth2KickCommand = project
   .command(`update-o-auth-2-kick`)
   .description(`Update the project OAuth2 Kick configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Kick OAuth2 app. For example: 01KQ7C00000000000001MFHS32`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Kick OAuth2 app. For example: 34ac5600000000000000000000000000000000000000000000000000e830c8b`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Kick OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -711,7 +699,7 @@ const projectUpdateOAuth2LinkedinCommand = project
   .command(`update-o-auth-2-linkedin`)
   .description(`Update the project OAuth2 Linkedin configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Linkedin OAuth2 app. For example: 770000000000dv`)
-  .option(`--primary-client-secret <primary-client-secret>`, `'Primary Client Secret or Secondary Client Secret' of Linkedin OAuth2 app. For example: WPL_AP1.2Bf0000000000000./HtlYw==`)
+  .option(`--primary-client-secret <primary-client-secret>`, `'Primary Client Secret or Secondary Client Secret' of Linkedin OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -730,7 +718,7 @@ const projectUpdateOAuth2MicrosoftCommand = project
   .command(`update-o-auth-2-microsoft`)
   .description(`Update the project OAuth2 Microsoft configuration.`)
   .option(`--application-id <application-id>`, `'Entra ID Application ID, also known as Client ID' of Microsoft OAuth2 app. For example: 00001111-aaaa-2222-bbbb-3333cccc4444`)
-  .option(`--application-secret <application-secret>`, `'Entra ID Application Secret, also known as Client Secret' of Microsoft OAuth2 app. For example: A1bC2dE3fH4iJ5kL6mN7oP8qR9sT0u`)
+  .option(`--application-secret <application-secret>`, `'Entra ID Application Secret, also known as Client Secret' of Microsoft OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--tenant <tenant>`, `Microsoft Entra ID tenant identifier. Use 'common', 'organizations', 'consumers' or a specific tenant ID. For example: common`)
   .option(
     `--enabled [value]`,
@@ -750,7 +738,7 @@ const projectUpdateOAuth2NotionCommand = project
   .command(`update-o-auth-2-notion`)
   .description(`Update the project OAuth2 Notion configuration.`)
   .option(`--oauth-client-id <oauth-client-id>`, `'OAuth Client ID' of Notion OAuth2 app. For example: 341d8700-0000-0000-0000-000000446ee3`)
-  .option(`--oauth-client-secret <oauth-client-secret>`, `'OAuth Client Secret' of Notion OAuth2 app. For example: secret_dLUr4b000000000000000000000000000000lFHAa9`)
+  .option(`--oauth-client-secret <oauth-client-secret>`, `'OAuth Client Secret' of Notion OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -769,7 +757,7 @@ const projectUpdateOAuth2OidcCommand = project
   .command(`update-o-auth-2-oidc`)
   .description(`Update the project OAuth2 Oidc configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Oidc OAuth2 app. For example: qibI2x0000000000000000000000000006L2YFoG`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Oidc OAuth2 app. For example: Ah68ed000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003qpcHV`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Oidc OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--well-known-url <well-known-url>`, `OpenID Connect well-known configuration URL. When provided, authorization, token, and user info endpoints can be discovered automatically. For example: https://myoauth.com/.well-known/openid-configuration`)
   .option(`--authorization-url <authorization-url>`, `OpenID Connect authorization endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/authorize`)
   .option(`--token-url <token-url>`, `OpenID Connect token endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/token`)
@@ -792,7 +780,7 @@ const projectUpdateOAuth2OktaCommand = project
   .command(`update-o-auth-2-okta`)
   .description(`Update the project OAuth2 Okta configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Okta OAuth2 app. For example: 0oa00000000000000698`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Okta OAuth2 app. For example: Kiq0000000000000000000000000000000000000-00000000000H2L5-3SJ-vRV`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Okta OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(`--domain <domain>`, `Okta company domain. Required when enabling the provider. For example: trial-6400025.okta.com. Example of wrong value: trial-6400025-admin.okta.com, or https://trial-6400025.okta.com/`)
   .option(`--authorization-server-id <authorization-server-id>`, `Custom Authorization Servers. Optional, can be left empty or unconfigured. For example: aus000000000000000h7z`)
   .option(
@@ -813,7 +801,7 @@ const projectUpdateOAuth2PaypalCommand = project
   .command(`update-o-auth-2-paypal`)
   .description(`Update the project OAuth2 Paypal configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Paypal OAuth2 app. For example: AdhIEG7-000000000000-0000000000000000000000000000000-0000000000000000000000-2pyB`)
-  .option(`--secret-key <secret-key>`, `'Secret Key 1 or Secret Key 2' of Paypal OAuth2 app. For example: EH8KCXtew--000000000000000000000000000000000000000_C-1_5UP_000000000000000CB7KDp`)
+  .option(`--secret-key <secret-key>`, `'Secret Key 1 or Secret Key 2' of Paypal OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -832,7 +820,7 @@ const projectUpdateOAuth2PaypalSandboxCommand = project
   .command(`update-o-auth-2-paypal-sandbox`)
   .description(`Update the project OAuth2 PaypalSandbox configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of PaypalSandbox OAuth2 app. For example: AdhIEG7-000000000000-0000000000000000000000000000000-0000000000000000000000-2pyB`)
-  .option(`--secret-key <secret-key>`, `'Secret Key 1 or Secret Key 2' of PaypalSandbox OAuth2 app. For example: EH8KCXtew--000000000000000000000000000000000000000_C-1_5UP_000000000000000CB7KDp`)
+  .option(`--secret-key <secret-key>`, `'Secret Key 1 or Secret Key 2' of PaypalSandbox OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -851,7 +839,7 @@ const projectUpdateOAuth2PodioCommand = project
   .command(`update-o-auth-2-podio`)
   .description(`Update the project OAuth2 Podio configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Podio OAuth2 app. For example: appwrite-o0000000st-app`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Podio OAuth2 app. For example: Rn247T0000000000000000000000000000000000000000000000000000W2zWTN`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Podio OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -870,7 +858,7 @@ const projectUpdateOAuth2SalesforceCommand = project
   .command(`update-o-auth-2-salesforce`)
   .description(`Update the project OAuth2 Salesforce configuration.`)
   .option(`--customer-key <customer-key>`, `'Consumer Key' of Salesforce OAuth2 app. For example: 3MVG9I0000000000000000000000000000000000000000000000000000000000000000000000000C5Aejq`)
-  .option(`--customer-secret <customer-secret>`, `'Consumer Secret' of Salesforce OAuth2 app. For example: 3w000000000000e2`)
+  .option(`--customer-secret <customer-secret>`, `'Consumer Secret' of Salesforce OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -889,7 +877,7 @@ const projectUpdateOAuth2SlackCommand = project
   .command(`update-o-auth-2-slack`)
   .description(`Update the project OAuth2 Slack configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Slack OAuth2 app. For example: 23000000089.15000000000023`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Slack OAuth2 app. For example: 81656000000000000000000000f3d2fd`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Slack OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -908,7 +896,7 @@ const projectUpdateOAuth2SpotifyCommand = project
   .command(`update-o-auth-2-spotify`)
   .description(`Update the project OAuth2 Spotify configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Spotify OAuth2 app. For example: 6ec271000000000000000000009beace`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Spotify OAuth2 app. For example: db068a000000000000000000008b5b9f`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Spotify OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -927,7 +915,7 @@ const projectUpdateOAuth2StripeCommand = project
   .command(`update-o-auth-2-stripe`)
   .description(`Update the project OAuth2 Stripe configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Stripe OAuth2 app. For example: ca_UKibXX0000000000000000000006byvR`)
-  .option(`--api-secret-key <api-secret-key>`, `'API Secret Key' of Stripe OAuth2 app. For example: sk_51SfOd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000QGWYfp`)
+  .option(`--api-secret-key <api-secret-key>`, `'API Secret Key' of Stripe OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -946,7 +934,7 @@ const projectUpdateOAuth2TradeshiftCommand = project
   .command(`update-o-auth-2-tradeshift`)
   .description(`Update the project OAuth2 Tradeshift configuration.`)
   .option(`--oauth-2-client-id <oauth-2-client-id>`, `'OAuth2 Client ID' of Tradeshift OAuth2 app. For example: appwrite-tes00000.0000000000est-app`)
-  .option(`--oauth-2-client-secret <oauth-2-client-secret>`, `'OAuth2 Client Secret' of Tradeshift OAuth2 app. For example: 7cb52700-0000-0000-0000-000000ca5b83`)
+  .option(`--oauth-2-client-secret <oauth-2-client-secret>`, `'OAuth2 Client Secret' of Tradeshift OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -965,7 +953,7 @@ const projectUpdateOAuth2TradeshiftSandboxCommand = project
   .command(`update-o-auth-2-tradeshift-sandbox`)
   .description(`Update the project OAuth2 Tradeshift Sandbox configuration.`)
   .option(`--oauth-2-client-id <oauth-2-client-id>`, `'OAuth2 Client ID' of Tradeshift Sandbox OAuth2 app. For example: appwrite-tes00000.0000000000est-app`)
-  .option(`--oauth-2-client-secret <oauth-2-client-secret>`, `'OAuth2 Client Secret' of Tradeshift Sandbox OAuth2 app. For example: 7cb52700-0000-0000-0000-000000ca5b83`)
+  .option(`--oauth-2-client-secret <oauth-2-client-secret>`, `'OAuth2 Client Secret' of Tradeshift Sandbox OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -984,7 +972,7 @@ const projectUpdateOAuth2TwitchCommand = project
   .command(`update-o-auth-2-twitch`)
   .description(`Update the project OAuth2 Twitch configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Twitch OAuth2 app. For example: vvi0in000000000000000000ikmt9p`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Twitch OAuth2 app. For example: pmapue000000000000000000zylw3v`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Twitch OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1003,7 +991,7 @@ const projectUpdateOAuth2WordPressCommand = project
   .command(`update-o-auth-2-word-press`)
   .description(`Update the project OAuth2 WordPress configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of WordPress OAuth2 app. For example: 130005`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of WordPress OAuth2 app. For example: PlBfJS0000000000000000000000000000000000000000000000000000EdUZJk`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of WordPress OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1022,7 +1010,7 @@ const projectUpdateOAuth2XCommand = project
   .command(`update-o-auth-2x`)
   .description(`Update the project OAuth2 X configuration.`)
   .option(`--customer-key <customer-key>`, `'Customer Key' of X OAuth2 app. For example: slzZV0000000000000NFLaWT`)
-  .option(`--secret-key <secret-key>`, `'Secret Key' of X OAuth2 app. For example: tkEPkp00000000000000000000000000000000000000FTxbI9`)
+  .option(`--secret-key <secret-key>`, `'Secret Key' of X OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1041,7 +1029,7 @@ const projectUpdateOAuth2YahooCommand = project
   .command(`update-o-auth-2-yahoo`)
   .description(`Update the project OAuth2 Yahoo configuration.`)
   .option(`--client-id <client-id>`, `'Client ID, also known as Customer Key' of Yahoo OAuth2 app. For example: dj0yJm000000000000000000000000000000000000000000000000000000000000000000000000000000000000Z4PWRm`)
-  .option(`--client-secret <client-secret>`, `'Client Secret, also known as Customer Secret' of Yahoo OAuth2 app. For example: cf978f0000000000000000000000000000c5e2e9`)
+  .option(`--client-secret <client-secret>`, `'Client Secret, also known as Customer Secret' of Yahoo OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1060,7 +1048,7 @@ const projectUpdateOAuth2YandexCommand = project
   .command(`update-o-auth-2-yandex`)
   .description(`Update the project OAuth2 Yandex configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Yandex OAuth2 app. For example: 6a8a6a0000000000000000000091483c`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Yandex OAuth2 app. For example: bbf98500000000000000000000c75a63`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Yandex OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1079,7 +1067,7 @@ const projectUpdateOAuth2ZohoCommand = project
   .command(`update-o-auth-2-zoho`)
   .description(`Update the project OAuth2 Zoho configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Zoho OAuth2 app. For example: 1000.83C178000000000000000000RPNX0B`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Zoho OAuth2 app. For example: fb5cac000000000000000000000000000000a68f6e`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Zoho OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1098,7 +1086,7 @@ const projectUpdateOAuth2ZoomCommand = project
   .command(`update-o-auth-2-zoom`)
   .description(`Update the project OAuth2 Zoom configuration.`)
   .option(`--client-id <client-id>`, `'Client ID' of Zoom OAuth2 app. For example: QMAC00000000000000w0AQ`)
-  .option(`--client-secret <client-secret>`, `'Client Secret' of Zoom OAuth2 app. For example: GAWsG4000000000000000000007U01ON`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Zoom OAuth2 app. For example: <CLIENT_SECRET>`)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -1109,6 +1097,18 @@ const projectUpdateOAuth2ZoomCommand = project
     actionRunner(
       async ({ clientId, clientSecret, enabled }) =>
         parse(await (await getProjectClient()).updateOAuth2Zoom(clientId, clientSecret, enabled)),
+    ),
+  );
+
+
+const projectGetOAuth2ProviderCommand = project
+  .command(`get-o-auth-2-provider`)
+  .description(`Get a single OAuth2 provider configuration. Credential fields (client secret, p8 file, key/team IDs) are write-only and always returned empty.`)
+  .requiredOption(`--provider-id <provider-id>`, `OAuth2 provider key. For example: github, google, apple.`)
+  .action(
+    actionRunner(
+      async ({ providerId }) =>
+        parse(await (await getProjectClient()).getOAuth2Provider(providerId)),
     ),
   );
 
