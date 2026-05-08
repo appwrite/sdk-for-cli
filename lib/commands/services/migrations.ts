@@ -64,11 +64,10 @@ const migrationsCreateAppwriteMigrationCommand = migrations
   .requiredOption(`--endpoint <endpoint>`, `Source Appwrite endpoint`)
   .requiredOption(`--project-id <project-id>`, `Source Project ID`)
   .requiredOption(`--api-key <api-key>`, `Source API Key`)
-  .option(`--on-duplicate <on-duplicate>`, `Behavior when a row with an existing $id is encountered. "fail" (default): abort on first conflict. "skip": silently ignore. "overwrite": replace existing row.`)
   .action(
     actionRunner(
-      async ({ resources, endpoint, projectId, apiKey, onDuplicate }) =>
-        parse(await (await getMigrationsClient()).createAppwriteMigration(resources, endpoint, projectId, apiKey, onDuplicate)),
+      async ({ resources, endpoint, projectId, apiKey }) =>
+        parse(await (await getMigrationsClient()).createAppwriteMigration(resources, endpoint, projectId, apiKey)),
     ),
   );
 
@@ -137,11 +136,10 @@ const migrationsCreateCSVImportCommand = migrations
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--on-duplicate <on-duplicate>`, `Behavior when a row with an existing $id is encountered. "fail" (default): abort on first conflict. "skip": silently ignore. "overwrite": replace existing row.`)
   .action(
     actionRunner(
-      async ({ bucketId, fileId, resourceId, internalFile, onDuplicate }) =>
-        parse(await (await getMigrationsClient()).createCSVImport(bucketId, fileId, resourceId, internalFile, onDuplicate)),
+      async ({ bucketId, fileId, resourceId, internalFile }) =>
+        parse(await (await getMigrationsClient()).createCSVImport(bucketId, fileId, resourceId, internalFile)),
     ),
   );
 
@@ -214,11 +212,10 @@ const migrationsCreateJSONImportCommand = migrations
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--on-duplicate <on-duplicate>`, `Behavior when a row with an existing $id is encountered. "fail" (default): abort on first conflict. "skip": silently ignore. "overwrite": replace existing row.`)
   .action(
     actionRunner(
-      async ({ bucketId, fileId, resourceId, internalFile, onDuplicate }) =>
-        parse(await (await getMigrationsClient()).createJSONImport(bucketId, fileId, resourceId, internalFile, onDuplicate)),
+      async ({ bucketId, fileId, resourceId, internalFile }) =>
+        parse(await (await getMigrationsClient()).createJSONImport(bucketId, fileId, resourceId, internalFile)),
     ),
   );
 

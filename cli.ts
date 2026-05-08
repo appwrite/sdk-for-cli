@@ -45,6 +45,7 @@ import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
 import { organizations } from './lib/commands/services/organizations.js';
+import { presences } from './lib/commands/services/presences.js';
 import { project } from './lib/commands/services/project.js';
 import { projects } from './lib/commands/services/projects.js';
 import { proxy } from './lib/commands/services/proxy.js';
@@ -215,6 +216,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(messaging)
             .addCommand(migrations)
             .addCommand(organizations)
+            .addCommand(presences)
             .addCommand(project)
             .addCommand(projects)
             .addCommand(proxy)

@@ -2,11 +2,7 @@ import inquirer from "inquirer";
 import { Command } from "commander";
 import { Client } from "@appwrite.io/console";
 import { sdkForConsole } from "../sdks.js";
-import {
-  globalConfig,
-  localConfig,
-  normalizeCloudConsoleEndpoint,
-} from "../config.js";
+import { globalConfig, localConfig } from "../config.js";
 import { EXECUTABLE_NAME } from "../constants.js";
 import {
   actionRunner,
@@ -20,20 +16,14 @@ import {
   drawTable,
   cliConfig,
 } from "../parser.js";
-import { isCloudHostname } from "../utils.js";
 import ID from "../id.js";
 import {
   questionsLogin,
   questionsLogout,
   questionsListFactors,
   questionsMFAChallenge,
-  questionsSwitchAccount,
 } from "../questions.js";
-import {
-  Account,
-  Client as ConsoleClient,
-  type Models,
-} from "@appwrite.io/console";
+import { Account, Client as ConsoleClient } from "@appwrite.io/console";
 import ClientLegacy from "../client.js";
 
 const DEFAULT_ENDPOINT = "https://cloud.appwrite.io/v1";
@@ -46,56 +36,6 @@ interface AppwriteError {
 const isMfaRequiredError = (err: unknown): err is AppwriteError =>
   (err as AppwriteError)?.type === "user_more_factors_required" ||
   (err as AppwriteError)?.response === "user_more_factors_required";
-
-const isGuestUnauthorizedError = (err: unknown): err is AppwriteError =>
-  (err as AppwriteError)?.type === "general_unauthorized_scope" ||
-  (err as AppwriteError)?.response === "general_unauthorized_scope";
-
-const isRegionalCloudEndpoint = (endpoint: string): boolean => {
-  try {
-    const hostname = new URL(endpoint).hostname;
-    return isCloudHostname(hostname) && hostname !== "cloud.appwrite.io";
-  } catch (_error) {
-    return false;
-  }
-};
-
-const restoreCurrentSession = (sessionId: string): void => {
-  globalConfig.setCurrentSession(
-    globalConfig.getSessionIds().includes(sessionId) ? sessionId : "",
-  );
-};
-
-const removeCurrentSession = (): void => {
-  const current = globalConfig.getCurrentSession();
-  globalConfig.setCurrentSession("");
-  globalConfig.removeSession(current);
-};
-
-const getCurrentAccount = async (): Promise<Models.User | null> => {
-  if (globalConfig.getEndpoint() === "" || globalConfig.getCookie() === "") {
-    return null;
-  }
-
-  const endpoint = normalizeCloudConsoleEndpoint(globalConfig.getEndpoint());
-  if (endpoint !== globalConfig.getEndpoint()) {
-    globalConfig.setEndpoint(endpoint);
-  }
-
-  const client = await sdkForConsole(false);
-  const accountClient = new Account(client);
-
-  try {
-    const account = await accountClient.get();
-    globalConfig.setEmail(account.email);
-    return account;
-  } catch (err) {
-    if (isGuestUnauthorizedError(err)) {
-      removeCurrentSession();
-    }
-    return null;
-  }
-};
 
 const createLegacyConsoleClient = (endpoint: string): ClientLegacy => {
   const legacyClient = new ClientLegacy();
@@ -175,9 +115,7 @@ const getSessionAccountKey = (sessionId: string): string | undefined => {
     | { email?: string; endpoint?: string }
     | undefined;
   if (!session) return undefined;
-  return `${session.email ?? ""}|${normalizeCloudConsoleEndpoint(
-    session.endpoint ?? "",
-  )}`;
+  return `${session.email ?? ""}|${session.endpoint ?? ""}`;
 };
 
 /**
@@ -227,62 +165,33 @@ export const loginCommand = async ({
   endpoint,
   mfa,
   code,
-  switch: switchAccount,
-  new: newAccount,
 }: {
   email?: string;
   password?: string;
   endpoint?: string;
   mfa?: string;
   code?: string;
-  switch?: boolean;
-  new?: boolean;
 }): Promise<void> => {
-  let oldCurrent = globalConfig.getCurrentSession();
+  const oldCurrent = globalConfig.getCurrentSession();
 
-  if (switchAccount && newAccount) {
-    throw new Error("Use either --switch or --new, not both.");
-  }
-
-  if (endpoint && isRegionalCloudEndpoint(endpoint)) {
-    throw new Error(
-      `Cloud login uses ${DEFAULT_ENDPOINT}. Regional Cloud endpoints are for project API calls, not account login.`,
-    );
-  }
-
-  const configEndpoint = normalizeCloudConsoleEndpoint(
-    (endpoint ?? globalConfig.getEndpoint()) || DEFAULT_ENDPOINT,
-  );
+  const configEndpoint =
+    (endpoint ?? globalConfig.getEndpoint()) || DEFAULT_ENDPOINT;
 
   if (globalConfig.getCurrentSession() !== "") {
-    const account = await getCurrentAccount();
-    oldCurrent = globalConfig.getCurrentSession();
+    log("You are currently signed in as " + globalConfig.getEmail());
 
-    if (account) {
-      if (!email && !password && !endpoint && !switchAccount && !newAccount) {
-        success("Already logged in as " + account.email);
-        hint(`Use '${EXECUTABLE_NAME} login --new' to add another account`);
-        return;
-      }
+    if (globalConfig.getSessions().length === 1) {
+      hint("You can sign in and manage multiple accounts with Appwrite CLI");
     }
   }
 
-  let answers;
-  if (switchAccount) {
-    if (!globalConfig.getSessions().some((session) => session.email)) {
-      throw new Error(
-        `No signed-in accounts found. Run '${EXECUTABLE_NAME} login' to sign in.`,
-      );
-    }
-    answers = await inquirer.prompt(questionsSwitchAccount);
-  } else if (email && password) {
-    answers = { email, password };
-  } else {
-    answers = await inquirer.prompt(questionsLogin);
-  }
+  const answers =
+    email && password
+      ? { email, password }
+      : await inquirer.prompt(questionsLogin);
 
   if (!answers.method) {
-    answers.method = switchAccount ? "select" : "login";
+    answers.method = "login";
   }
 
   if (answers.method === "select") {
@@ -292,21 +201,7 @@ export const loginCommand = async ({
       throw Error("Session ID not found");
     }
 
-    if (accountId === oldCurrent) {
-      const account = await getCurrentAccount();
-      if (account) {
-        success(`Already using ${account.email}`);
-        return;
-      }
-      throw new Error(
-        `Selected account session is no longer valid. Run '${EXECUTABLE_NAME} login --switch' again.`,
-      );
-    }
-
     globalConfig.setCurrentSession(accountId);
-    globalConfig.setEndpoint(
-      normalizeCloudConsoleEndpoint(globalConfig.getEndpoint()),
-    );
 
     const client = await sdkForConsole(false);
     const accountClient = new Account(client);
@@ -318,10 +213,6 @@ export const loginCommand = async ({
       await accountClient.get();
     } catch (err) {
       if (!isMfaRequiredError(err)) {
-        if (isGuestUnauthorizedError(err)) {
-          globalConfig.removeSession(accountId);
-        }
-        restoreCurrentSession(oldCurrent);
         throw err;
       }
 
@@ -415,8 +306,14 @@ export const whoami = new Command("whoami")
         return;
       }
 
-      const account = await getCurrentAccount();
-      if (!account) {
+      const client = await sdkForConsole(false);
+      const accountClient = new Account(client);
+
+      let account;
+
+      try {
+        account = await accountClient.get();
+      } catch (_) {
         error("No user is signed in. To sign in, run 'appwrite login'");
         return;
       }
@@ -461,8 +358,6 @@ export const login = new Command("login")
     `Multi-factor authentication login factor: totp, email, phone or recoveryCode`,
   )
   .option(`--code [code]`, `Multi-factor code`)
-  .option(`--switch`, `Switch to another signed-in account`)
-  .option(`--new`, `Sign in to another account`)
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   })

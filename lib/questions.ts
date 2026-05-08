@@ -823,6 +823,16 @@ export const questionsPullCollection: Question[] = [
 
 export const questionsLogin: Question[] = [
   {
+    type: "list",
+    name: "method",
+    message: "What would you like to do?",
+    choices: [
+      { name: "Login to an account", value: "login" },
+      { name: "Switch to an account", value: "select" },
+    ],
+    when: () => globalConfig.getSessions().length >= 2,
+  },
+  {
     type: "input",
     name: "email",
     message: "Enter your email",
@@ -832,6 +842,7 @@ export const questionsLogin: Question[] = [
       }
       return true;
     },
+    when: (answers: Answers) => answers.method !== "select",
   },
   {
     type: "password",
@@ -844,36 +855,38 @@ export const questionsLogin: Question[] = [
       }
       return true;
     },
+    when: (answers: Answers) => answers.method !== "select",
   },
-];
-
-export const questionsSwitchAccount: Question[] = [
   {
     type: "list",
     name: "accountId",
-    message: "Select account:",
+    message: "Select an account to use",
     choices() {
       const sessions = globalConfig.getSessions();
       const current = globalConfig.getCurrentSession();
 
       const data: Choice[] = [];
 
+      const longestEmail = sessions.reduce((prev: any, current: any) =>
+        prev && (prev.email ?? "").length > (current.email ?? "").length
+          ? prev
+          : current,
+      ).email.length;
+
       sessions.forEach((session: any) => {
         if (session.email) {
           data.push({
             current: current === session.id,
             value: session.id,
-            short: session.email,
-            name:
-              session.endpoint === DEFAULT_ENDPOINT
-                ? session.email
-                : `${session.email} (${session.endpoint})`,
+            short: `${session.email} (${session.endpoint})`,
+            name: `${session.email.padEnd(longestEmail)} ${current === session.id ? chalk.green.bold("current") : " ".repeat(6)} ${session.endpoint}`,
           });
         }
       });
 
       return data.sort((a, b) => Number(b.current) - Number(a.current));
     },
+    when: (answers: Answers) => answers.method === "select",
   },
 ];
 
