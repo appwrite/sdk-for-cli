@@ -103,22 +103,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-export function normalizeCloudConsoleEndpoint(endpoint: string): string {
-  try {
-    const url = new URL(endpoint);
-    if (
-      url.hostname === "cloud.appwrite.io" ||
-      url.hostname.endsWith(".cloud.appwrite.io")
-    ) {
-      return "https://cloud.appwrite.io/v1";
-    }
-  } catch (_error) {
-    return endpoint;
-  }
-
-  return endpoint;
-}
-
 function ensureDirectoryForFile(filePath: string): void {
   const dir = _path.dirname(filePath);
   if (!fs.existsSync(dir)) {
@@ -1217,17 +1201,10 @@ class Global extends Config<GlobalConfigData> {
     sessions.forEach((sessionId) => {
       const sessionData = (this.data as any)[sessionId];
       const email = sessionData[Global.PREFERENCE_EMAIL] ?? "";
-      const endpoint = normalizeCloudConsoleEndpoint(
-        sessionData[Global.PREFERENCE_ENDPOINT] ?? "",
-      );
+      const endpoint = sessionData[Global.PREFERENCE_ENDPOINT] ?? "";
       const key = `${email}|${endpoint}`;
-      const existingSession = sessionMap.get(key);
 
-      if (
-        !existingSession ||
-        sessionId === current ||
-        existingSession.id !== current
-      ) {
+      if (sessionId === current || !sessionMap.has(key)) {
         sessionMap.set(key, {
           id: sessionId,
           endpoint,
