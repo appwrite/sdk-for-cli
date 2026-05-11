@@ -54,42 +54,6 @@ const projectUpdateAuthMethodCommand = project
   );
 
 
-const projectUpdateCanonicalEmailsCommand = project
-  .command(`update-canonical-emails`)
-  .description(`Configure if canonical emails (alias subaddresses and emails with suffixes) are allowed during new users sign-ups in this project.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to require canonical email addresses during signup and email updates.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateCanonicalEmails(enabled)),
-    ),
-  );
-
-
-const projectUpdateDisposableEmailsCommand = project
-  .command(`update-disposable-emails`)
-  .description(`Configure if disposable emails (emails of known temporary domains) are allowed during new users sign-ups in this project.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to block disposable email addresses during signup and email updates.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDisposableEmails(enabled)),
-    ),
-  );
-
-
-const projectUpdateFreeEmailsCommand = project
-  .command(`update-free-emails`)
-  .description(`Configure if free emails (non-commercial and not a custom domain) are allowed during new users sign-ups in this project.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to block free email addresses during signup and email updates.`, parseBool)
-  .action(
-    actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateFreeEmails(enabled)),
-    ),
-  );
-
-
 const projectListKeysCommand = project
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current project.`)
@@ -271,9 +235,19 @@ const projectDeleteMockPhoneCommand = project
 const projectListOAuth2ProvidersCommand = project
   .command(`list-o-auth-2-providers`)
   .description(`Get a list of all OAuth2 providers supported by the server, along with the project's configuration for each. Credential fields are write-only and always returned empty.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .action(
     actionRunner(
-      async () => parse(await (await getProjectClient()).listOAuth2Providers()),
+      async ({ queries, total, limit, offset }) =>
+        parse(await (await getProjectClient()).listOAuth2Providers(buildQueries({ queries, limit, offset }), total)),
     ),
   );
 
@@ -1094,11 +1068,11 @@ const projectUpdateOAuth2ZoomCommand = project
 const projectGetOAuth2ProviderCommand = project
   .command(`get-o-auth-2-provider`)
   .description(`Get a single OAuth2 provider configuration. Credential fields (client secret, p8 file, key/team IDs) are write-only and always returned empty.`)
-  .requiredOption(`--provider <provider>`, `OAuth2 provider key. For example: github, google, apple.`)
+  .requiredOption(`--provider-id <provider-id>`, `OAuth2 provider key. For example: github, google, apple.`)
   .action(
     actionRunner(
-      async ({ provider }) =>
-        parse(await (await getProjectClient()).getOAuth2Provider(provider)),
+      async ({ providerId }) =>
+        parse(await (await getProjectClient()).getOAuth2Provider(providerId)),
     ),
   );
 
@@ -1308,6 +1282,42 @@ const projectListPoliciesCommand = project
     actionRunner(
       async ({ queries, total, limit, offset }) =>
         parse(await (await getProjectClient()).listPolicies(buildQueries({ queries, limit, offset }), total)),
+    ),
+  );
+
+
+const projectUpdateDenyCanonicalEmailPolicyCommand = project
+  .command(`update-deny-canonical-email-policy`)
+  .description(`Configures if email aliases such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.`)
+  .requiredOption(`--enabled <enabled>`, `Set whether or not to block email aliases during signup and email updates.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updateDenyCanonicalEmailPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdateDenyDisposableEmailPolicyCommand = project
+  .command(`update-deny-disposable-email-policy`)
+  .description(`Configures if disposable emails from known temporary domains are denied during new users sign-ups and email updates.`)
+  .requiredOption(`--enabled <enabled>`, `Set whether or not to block disposable email addresses during signup and email updates.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updateDenyDisposableEmailPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdateDenyFreeEmailPolicyCommand = project
+  .command(`update-deny-free-email-policy`)
+  .description(`Configures if emails from free providers such as Gmail or Yahoo are denied during new users sign-ups and email updates.`)
+  .requiredOption(`--enabled <enabled>`, `Set whether or not to block free email addresses during signup and email updates.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updateDenyFreeEmailPolicy(enabled)),
     ),
   );
 
@@ -1621,7 +1631,7 @@ const projectListVariablesCommand = project
 const projectCreateVariableCommand = project
   .command(`create-variable`)
   .description(`Create a new project environment variable. These variables can be accessed by all functions and sites in the project.`)
-  .requiredOption(`--variable-id <variable-id>`, `Variable ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--key <key>`, `Variable key. Max length: 255 chars.`)
   .requiredOption(`--value <value>`, `Variable value. Max length: 8192 chars.`)
   .option(
@@ -1641,7 +1651,7 @@ const projectCreateVariableCommand = project
 const projectGetVariableCommand = project
   .command(`get-variable`)
   .description(`Get a variable by its unique ID. `)
-  .requiredOption(`--variable-id <variable-id>`, `Variable ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
   .action(
     actionRunner(
       async ({ variableId }) =>
@@ -1653,7 +1663,7 @@ const projectGetVariableCommand = project
 const projectUpdateVariableCommand = project
   .command(`update-variable`)
   .description(`Update variable by its unique ID.`)
-  .requiredOption(`--variable-id <variable-id>`, `Variable ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
   .option(`--key <key>`, `Variable key. Max length: 255 chars.`)
   .option(`--value <value>`, `Variable value. Max length: 8192 chars.`)
   .option(
@@ -1673,7 +1683,7 @@ const projectUpdateVariableCommand = project
 const projectDeleteVariableCommand = project
   .command(`delete-variable`)
   .description(`Delete a variable by its unique ID. `)
-  .requiredOption(`--variable-id <variable-id>`, `Variable ID.`)
+  .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
   .action(
     actionRunner(
       async ({ variableId }) =>

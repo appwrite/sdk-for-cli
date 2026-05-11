@@ -92,14 +92,23 @@ const vcsGetRepositoryCommand = vcs
 
 const vcsListRepositoryBranchesCommand = vcs
   .command(`list-repository-branches`)
-  .description(`Get a list of all branches from a GitHub repository in your installation. This endpoint returns the names of all branches in the repository and their total count. The GitHub installation must be properly configured and have access to the requested repository for this endpoint to work.
+  .description(`Get a list of branches from a GitHub repository in your installation. This endpoint supports filtering by a search term and pagination using query strings such as \`Query.limit()\`, \`Query.offset()\`, \`Query.cursorAfter()\`, and \`Query.cursorBefore()\`. It returns branch names along with the total number of matches. The GitHub installation must be properly configured and have access to the requested repository for this endpoint to work.
 `)
   .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--provider-repository-id <provider-repository-id>`, `Repository Id`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --where, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit, offset, cursorAfter, and cursorBefore`)
+  .option(`--where <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ installationId, providerRepositoryId }) =>
-        parse(await (await getVcsClient()).listRepositoryBranches(installationId, providerRepositoryId)),
+      async ({ installationId, providerRepositoryId, search, queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getVcsClient()).listRepositoryBranches(installationId, providerRepositoryId, search, buildQueries({ queries, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }))),
     ),
   );
 
