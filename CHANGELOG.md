@@ -1,5 +1,9 @@
 # Change Log
 
+## 20.2.0
+
+* Added: Code-signed Windows release binaries (`appwrite-cli-win-x64.exe` and `appwrite-cli-win-arm64.exe`) via SignPath
+
 ## 20.1.0
 
 * Added `--switch` and `--new` flags on `appwrite login` to explicitly manage multiple saved accounts
