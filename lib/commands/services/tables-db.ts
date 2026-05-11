@@ -367,6 +367,51 @@ const tablesDBListColumnsCommand = tablesDB
   );
 
 
+const tablesDBCreateBigIntColumnCommand = tablesDB
+  .command(`create-big-int-column`)
+  .description(`Create a bigint column. Optionally, minimum and maximum values can be provided.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .option(`--min <min>`, `Minimum value`, parseInteger)
+  .option(`--max <max>`, `Maximum value`, parseInteger)
+  .option(`--xdefault <xdefault>`, `Default value. Cannot be set when column is required.`, parseInteger)
+  .option(
+    `--array [value]`,
+    `Is column an array?`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, min, max, xdefault, array }) =>
+        parse(await (await getTablesDBClient()).createBigIntColumn(databaseId, tableId, key, required, min, max, xdefault, array)),
+    ),
+  );
+
+
+const tablesDBUpdateBigIntColumnCommand = tablesDB
+  .command(`update-big-int-column`)
+  .description(`Update a bigint column. Changing the \`default\` value will not update already existing rows.
+`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--table-id <table-id>`, `Table ID.`)
+  .requiredOption(`--key <key>`, `Column Key.`)
+  .requiredOption(`--required <required>`, `Is column required?`, parseBool)
+  .requiredOption(`--xdefault <xdefault>`, `Default value. Cannot be set when column is required.`, parseInteger)
+  .option(`--min <min>`, `Minimum value`, parseInteger)
+  .option(`--max <max>`, `Maximum value`, parseInteger)
+  .option(`--new-key <new-key>`, `New Column Key.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, tableId, key, required, xdefault, min, max, newKey }) =>
+        parse(await (await getTablesDBClient()).updateBigIntColumn(databaseId, tableId, key, required, xdefault, min, max, newKey)),
+    ),
+  );
+
+
 const tablesDBCreateBooleanColumnCommand = tablesDB
   .command(`create-boolean-column`)
   .description(`Create a boolean column.
