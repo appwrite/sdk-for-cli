@@ -1,10 +1,18 @@
 # Change Log
 
-## 20.2.0
+## 21.0.0
 
-* Added: Introduced `bigint` create/update APIs for legacy Databases attributes
-* Added: Introduced `bigint` create/update APIs for `TablesDB` columns
+* Breaking: Renamed `project update-canonical-emails`, `update-disposable-emails`, and `update-free-emails` to `update-deny-canonical-email-policy`, `update-deny-disposable-email-policy`, and `update-deny-free-email-policy`
+* Breaking: Renamed `proxy update-rule-verification` to `proxy update-rule-status`
+* Breaking: Renamed `--provider` to `--provider-id` on `project get-o-auth-2-provider`
+* Breaking: Made `--variable-id` required on `functions create-variable` and `sites create-variable`
+* Added: Introduced `bigint` create/update commands for legacy Databases attributes
+* Added: Introduced `bigint` create/update commands for `TablesDB` columns
+* Added: Added `--on-duplicate` flag on `tablesdb upsert-row`, `create-rows`, and `upsert-rows`
+* Added: Added `--limit` flag on `vcs list-repository-branches`
+* Added: Code-signed Windows release binaries (`appwrite-cli-win-x64.exe` and `appwrite-cli-win-arm64.exe`) via SignPath
 * Updated: Extended key-list query filters with `key`, `resourceType`, `resourceId`, and `secret`
+* Updated: Changed default `--duration` on `project create-ephemeral-key` from `1` to `600` seconds
 
 ## 20.1.0
 
