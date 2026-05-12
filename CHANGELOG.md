@@ -1,8 +1,19 @@
 # Change Log
 
-## 20.2.0-rc.1
+## 21.0.0
 
-* Added: Code-signed Windows release binaries (`appwrite-cli-win-x64.exe` and `appwrite-cli-win-arm64.exe`) via SignPath
+* Breaking: Renamed `project update-canonical-emails` to `update-deny-canonical-email-policy`
+* Breaking: Renamed `project update-disposable-emails` to `update-deny-disposable-email-policy`
+* Breaking: Renamed `project update-free-emails` to `update-deny-free-email-policy`
+* Breaking: Renamed `proxy update-rule-verification` to `update-rule-status`
+* Breaking: Removed `--search` option from `proxy list-rules`
+* Breaking: `functions create-variable` and `sites create-variable` now require `--variable-id`
+* Added: `databases create-big-int-attribute` and `update-big-int-attribute` commands
+* Added: `tablesdb create-big-int-column` and `update-big-int-column` commands
+* Added: `--prompt` option on `project update-o-auth-2-google`
+* Added: Pagination and filter flags on `vcs list-repository-branches` and `sites list-variables`
+* Added: `--on-duplicate` option on `migrations create-appwrite-migration`, `create-csv-import`, and `create-json-import`
+* Updated: Extended key-list query filters with `key`, `resourceType`, `resourceId`, and `secret`
 
 ## 20.1.0
 
