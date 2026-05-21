@@ -68,31 +68,10 @@ const projectsCreateCommand = projects
   .requiredOption(`--name <name>`, `Project name. Max length: 128 chars.`)
   .requiredOption(`--team-id <team-id>`, `Team unique ID.`)
   .option(`--region <region>`, `Project Region.`)
-  .option(`--description <description>`, `Project description. Max length: 256 chars.`)
-  .option(`--logo <logo>`, `Project logo.`)
-  .option(`--url <url>`, `Project URL.`)
-  .option(`--legal-name <legal-name>`, `Project legal Name. Max length: 256 chars.`)
-  .option(`--legal-country <legal-country>`, `Project legal Country. Max length: 256 chars.`)
-  .option(`--legal-state <legal-state>`, `Project legal State. Max length: 256 chars.`)
-  .option(`--legal-city <legal-city>`, `Project legal City. Max length: 256 chars.`)
-  .option(`--legal-address <legal-address>`, `Project legal Address. Max length: 256 chars.`)
-  .option(`--legal-tax-id <legal-tax-id>`, `Project legal Tax ID. Max length: 256 chars.`)
   .action(
     actionRunner(
-      async ({ projectId, name, teamId, region, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId }) =>
-        parse(await (await getProjectsClient()).create(projectId, name, teamId, region, description, logo, url, legalName, legalCountry, legalState, legalCity, legalAddress, legalTaxId)),
-    ),
-  );
-
-
-const projectsGetCommand = projects
-  .command(`get`)
-  .description(`Get a project by its unique ID. This endpoint allows you to retrieve the project's details, including its name, description, team, region, and other metadata. `)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .action(
-    actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getProjectsClient()).get(projectId)),
+      async ({ projectId, name, teamId, region }) =>
+        parse(await (await getProjectsClient()).create(projectId, name, teamId, region)),
     ),
   );
 
