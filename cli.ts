@@ -45,17 +45,14 @@ import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
 import { organizations } from './lib/commands/services/organizations.js';
-import { presences } from './lib/commands/services/presences.js';
 import { project } from './lib/commands/services/project.js';
 import { projects } from './lib/commands/services/projects.js';
 import { proxy } from './lib/commands/services/proxy.js';
-import { advisor } from './lib/commands/services/advisor.js';
 import { sites } from './lib/commands/services/sites.js';
 import { storage } from './lib/commands/services/storage.js';
 import { tablesDB } from './lib/commands/services/tables-db.js';
 import { teams } from './lib/commands/services/teams.js';
 import { tokens } from './lib/commands/services/tokens.js';
-import { usage } from './lib/commands/services/usage.js';
 import { users } from './lib/commands/services/users.js';
 import { vcs } from './lib/commands/services/vcs.js';
 import { webhooks } from './lib/commands/services/webhooks.js';
@@ -218,17 +215,14 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(messaging)
             .addCommand(migrations)
             .addCommand(organizations)
-            .addCommand(presences)
             .addCommand(project)
             .addCommand(projects)
             .addCommand(proxy)
-            .addCommand(advisor)
             .addCommand(sites)
             .addCommand(storage)
             .addCommand(tablesDB)
             .addCommand(teams)
             .addCommand(tokens)
-            .addCommand(usage)
             .addCommand(users)
             .addCommand(vcs)
             .addCommand(webhooks)
