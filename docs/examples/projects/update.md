@@ -1,5 +1,5 @@
 ```bash
-appwrite organization update-project \
+appwrite projects update \
     --project-id <PROJECT_ID> \
     --name <NAME>
 ```

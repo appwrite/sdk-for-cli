@@ -1,4 +1,4 @@
 ```bash
-appwrite presences list \
+appwrite projects list \
     --limit 25
 ```

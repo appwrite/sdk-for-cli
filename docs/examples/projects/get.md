@@ -1,4 +1,4 @@
 ```bash
-appwrite organization get-project \
+appwrite projects get \
     --project-id <PROJECT_ID>
 ```
