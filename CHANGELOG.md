@@ -1,5 +1,10 @@
 # Change Log
 
+## 21.0.1
+
+* Fixed: Kotlin type generation now emits `Long` for Appwrite integer attributes to match the Android and Kotlin SDK models
+* Fixed: Type generation now includes Sites when validating supported config resource keys
+
 ## 21.0.0
 
 * Breaking: Renamed `project update-canonical-emails` to `update-deny-canonical-email-policy`
