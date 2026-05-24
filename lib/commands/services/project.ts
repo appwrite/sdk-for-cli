@@ -32,6 +32,16 @@ export const project = new Command("project")
     helpWidth: process.stdout.columns || 80,
   });
 
+const projectGetCommand = project
+  .command(`get`)
+  .description(`Get a project.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getProjectClient()).get()),
+    ),
+  );
+
+
 const projectDeleteCommand = project
   .command(`delete`)
   .description(`Delete a project.`)
@@ -1290,14 +1300,14 @@ const projectListPoliciesCommand = project
   );
 
 
-const projectUpdateDenyCanonicalEmailPolicyCommand = project
-  .command(`update-deny-canonical-email-policy`)
-  .description(`Configures if email aliases such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to block email aliases during signup and email updates.`, parseBool)
+const projectUpdateDenyAliasedEmailPolicyCommand = project
+  .command(`update-deny-aliased-email-policy`)
+  .description(`Configures if aliased emails such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.`)
+  .requiredOption(`--enabled <enabled>`, `Set whether or not to block aliased emails during signup and email updates.`, parseBool)
   .action(
     actionRunner(
       async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDenyCanonicalEmailPolicy(enabled)),
+        parse(await (await getProjectClient()).updateDenyAliasedEmailPolicy(enabled)),
     ),
   );
 
@@ -1493,7 +1503,7 @@ const projectUpdateProtocolCommand = project
 const projectUpdateServiceCommand = project
   .command(`update-service`)
   .description(`Update properties of a specific service. Use this endpoint to enable or disable a service in your project. `)
-  .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging`)
+  .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging, advisor`)
   .requiredOption(`--enabled <enabled>`, `Service status.`, parseBool)
   .action(
     actionRunner(
@@ -1508,12 +1518,12 @@ const projectUpdateSMTPCommand = project
   .description(`Update the SMTP configuration for your project. Use this endpoint to configure your project's SMTP provider with your custom settings for sending transactional emails.`)
   .option(`--host <host>`, `SMTP server hostname (domain)`)
   .option(`--port <port>`, `SMTP server port`, parseInteger)
-  .option(`--username <username>`, `SMTP server username. Leave empty for no authorization.`)
-  .option(`--password <password>`, `SMTP server password. Leave empty for no authorization. This property is stored securely and cannot be read in future (write-only).`)
-  .option(`--sender-email <sender-email>`, `Email address shown in inbox as the sender of the email.`)
-  .option(`--sender-name <sender-name>`, `Name shown in inbox as the sender of the email.`)
-  .option(`--reply-to-email <reply-to-email>`, `Email used when user replies to the email.`)
-  .option(`--reply-to-name <reply-to-name>`, `Name used when user replies to the email.`)
+  .option(`--username <username>`, `SMTP server username. Pass an empty string to clear a previously set value.`)
+  .option(`--password <password>`, `SMTP server password. Pass an empty string to clear a previously set value. This property is stored securely and cannot be read in future (write-only).`)
+  .option(`--sender-email <sender-email>`, `Email address shown in inbox as the sender of the email. Pass an empty string to clear a previously set value.`)
+  .option(`--sender-name <sender-name>`, `Name shown in inbox as the sender of the email. Pass an empty string to clear a previously set value.`)
+  .option(`--reply-to-email <reply-to-email>`, `Email used when user replies to the email. Pass an empty string to clear a previously set value.`)
+  .option(`--reply-to-name <reply-to-name>`, `Name used when user replies to the email. Pass an empty string to clear a previously set value.`)
   .option(`--secure <secure>`, `Configures if communication with SMTP server is encrypted. Allowed values are: tls, ssl. Leave empty for no encryption.`)
   .option(
     `--enabled [value]`,
@@ -1569,8 +1579,8 @@ const projectUpdateEmailTemplateCommand = project
   .option(`--subject <subject>`, `Subject of the email template. Can be up to 255 characters.`)
   .option(`--message <message>`, `Plain or HTML body of the email template message. Can be up to 10MB of content.`)
   .option(`--sender-name <sender-name>`, `Name of the email sender.`)
-  .option(`--sender-email <sender-email>`, `Email of the sender.`)
-  .option(`--reply-to-email <reply-to-email>`, `Reply to email.`)
+  .option(`--sender-email <sender-email>`, `Email of the sender. Pass an empty string to clear a previously set value.`)
+  .option(`--reply-to-email <reply-to-email>`, `Reply to email. Pass an empty string to clear a previously set value.`)
   .option(`--reply-to-name <reply-to-name>`, `Reply to name.`)
   .action(
     actionRunner(
