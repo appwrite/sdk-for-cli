@@ -97,13 +97,15 @@ const sitesCreateCommand = sites
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to site code in the linked repo.`)
+  .option(`--provider-branches [provider-branches...]`, `List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches.`)
+  .option(`--provider-paths [provider-paths...]`, `List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.`)
   .option(`--build-specification <build-specification>`, `Build specification for the site deployments.`)
   .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the SSR executions.`)
   .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
-        parse(await (await getSitesClient()).create(siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
+      async ({ siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getSitesClient()).create(siteId, name, framework, buildRuntime, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, adapter, installationId, fallbackFile, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 
@@ -215,13 +217,15 @@ const sitesUpdateCommand = sites
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to site code in the linked repo.`)
+  .option(`--provider-branches [provider-branches...]`, `List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches.`)
+  .option(`--provider-paths [provider-paths...]`, `List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.`)
   .option(`--build-specification <build-specification>`, `Build specification for the site deployments.`)
   .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the SSR executions.`)
   .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
-        parse(await (await getSitesClient()).update(siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
+      async ({ siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getSitesClient()).update(siteId, name, framework, enabled, logging, timeout, installCommand, buildCommand, startCommand, outputDirectory, buildRuntime, adapter, fallbackFile, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 

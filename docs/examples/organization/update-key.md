@@ -1,6 +1,5 @@
 ```bash
-appwrite organizations update-key \
-    --organization-id <ORGANIZATION_ID> \
+appwrite organization update-key \
     --key-id <KEY_ID> \
     --name <NAME> \
     --scopes one two three

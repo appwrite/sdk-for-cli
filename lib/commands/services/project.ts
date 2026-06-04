@@ -32,6 +32,16 @@ export const project = new Command("project")
     helpWidth: process.stdout.columns || 80,
   });
 
+const projectGetCommand = project
+  .command(`get`)
+  .description(`Get a project.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getProjectClient()).get()),
+    ),
+  );
+
+
 const projectDeleteCommand = project
   .command(`delete`)
   .description(`Delete a project.`)
@@ -250,6 +260,30 @@ const projectListOAuth2ProvidersCommand = project
     actionRunner(
       async ({ queries, total, limit, offset }) =>
         parse(await (await getProjectClient()).listOAuth2Providers(buildQueries({ queries, limit, offset }), total)),
+    ),
+  );
+
+
+const projectUpdateOAuth2ServerCommand = project
+  .command(`update-o-auth-2-server`)
+  .description(`Update the OAuth2 server (OIDC provider) configuration.`)
+  .requiredOption(`--enabled <enabled>`, `Enable or disable the OAuth2 server.`, parseBool)
+  .requiredOption(`--authorization-url <authorization-url>`, `URL to your application with consent screen.`)
+  .option(`--scopes [scopes...]`, `List of allowed OAuth2 scopes. Maximum of 100 scopes are allowed, each up to 128 characters long.`)
+  .option(`--access-token-duration <access-token-duration>`, `Access token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 8 hours.`, parseInteger)
+  .option(`--refresh-token-duration <refresh-token-duration>`, `Refresh token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 1 year.`, parseInteger)
+  .option(`--public-access-token-duration <public-access-token-duration>`, `Access token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 1 hour.`, parseInteger)
+  .option(`--public-refresh-token-duration <public-refresh-token-duration>`, `Refresh token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 30 days.`, parseInteger)
+  .option(
+    `--confidential-pkce [value]`,
+    `When enabled, PKCE is required for confidential clients (server-side flows using client_secret). PKCE is always required for public clients regardless of this setting.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ enabled, authorizationUrl, scopes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce }) =>
+        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce)),
     ),
   );
 
@@ -1290,14 +1324,14 @@ const projectListPoliciesCommand = project
   );
 
 
-const projectUpdateDenyCanonicalEmailPolicyCommand = project
-  .command(`update-deny-canonical-email-policy`)
-  .description(`Configures if email aliases such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.`)
-  .requiredOption(`--enabled <enabled>`, `Set whether or not to block email aliases during signup and email updates.`, parseBool)
+const projectUpdateDenyAliasedEmailPolicyCommand = project
+  .command(`update-deny-aliased-email-policy`)
+  .description(`Configures if aliased emails such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.`)
+  .requiredOption(`--enabled <enabled>`, `Set whether or not to block aliased emails during signup and email updates.`, parseBool)
   .action(
     actionRunner(
       async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDenyCanonicalEmailPolicy(enabled)),
+        parse(await (await getProjectClient()).updateDenyAliasedEmailPolicy(enabled)),
     ),
   );
 
@@ -1405,6 +1439,42 @@ const projectUpdatePasswordPersonalDataPolicyCommand = project
   );
 
 
+const projectUpdatePasswordStrengthPolicyCommand = project
+  .command(`update-password-strength-policy`)
+  .description(`Update the password strength requirements for users in the project.`)
+  .option(`--min <min>`, `Minimum password length. Value must be between 8 and 256. Default is 8.`, parseInteger)
+  .option(
+    `--uppercase [value]`,
+    `Whether passwords must include at least one uppercase letter.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--lowercase [value]`,
+    `Whether passwords must include at least one lowercase letter.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--number [value]`,
+    `Whether passwords must include at least one number.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--symbols [value]`,
+    `Whether passwords must include at least one symbol.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ min, uppercase, lowercase, number, symbols }) =>
+        parse(await (await getProjectClient()).updatePasswordStrengthPolicy(min, uppercase, lowercase, number, symbols)),
+    ),
+  );
+
+
 const projectUpdateSessionAlertPolicyCommand = project
   .command(`update-session-alert-policy`)
   .description(`Updating this policy allows you to control if email alert is sent upon session creation. When enabled, and user signs into their account, they will be sent an email notification. There is an exception, the first session after a new sign up does not trigger an alert, even if the policy is enabled.`)
@@ -1468,7 +1538,7 @@ const projectUpdateUserLimitPolicyCommand = project
 const projectGetPolicyCommand = project
   .command(`get-policy`)
   .description(`Get a policy by its unique ID. This endpoint returns the current configuration for the requested project policy.`)
-  .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy.`)
+  .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, deny-aliased-email, deny-disposable-email, deny-free-email.`)
   .action(
     actionRunner(
       async ({ policyId }) =>
@@ -1493,7 +1563,7 @@ const projectUpdateProtocolCommand = project
 const projectUpdateServiceCommand = project
   .command(`update-service`)
   .description(`Update properties of a specific service. Use this endpoint to enable or disable a service in your project. `)
-  .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging`)
+  .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging, advisor`)
   .requiredOption(`--enabled <enabled>`, `Service status.`, parseBool)
   .action(
     actionRunner(
@@ -1508,12 +1578,12 @@ const projectUpdateSMTPCommand = project
   .description(`Update the SMTP configuration for your project. Use this endpoint to configure your project's SMTP provider with your custom settings for sending transactional emails.`)
   .option(`--host <host>`, `SMTP server hostname (domain)`)
   .option(`--port <port>`, `SMTP server port`, parseInteger)
-  .option(`--username <username>`, `SMTP server username. Leave empty for no authorization.`)
-  .option(`--password <password>`, `SMTP server password. Leave empty for no authorization. This property is stored securely and cannot be read in future (write-only).`)
-  .option(`--sender-email <sender-email>`, `Email address shown in inbox as the sender of the email.`)
-  .option(`--sender-name <sender-name>`, `Name shown in inbox as the sender of the email.`)
-  .option(`--reply-to-email <reply-to-email>`, `Email used when user replies to the email.`)
-  .option(`--reply-to-name <reply-to-name>`, `Name used when user replies to the email.`)
+  .option(`--username <username>`, `SMTP server username. Pass an empty string to clear a previously set value.`)
+  .option(`--password <password>`, `SMTP server password. Pass an empty string to clear a previously set value. This property is stored securely and cannot be read in future (write-only).`)
+  .option(`--sender-email <sender-email>`, `Email address shown in inbox as the sender of the email. Pass an empty string to clear a previously set value.`)
+  .option(`--sender-name <sender-name>`, `Name shown in inbox as the sender of the email. Pass an empty string to clear a previously set value.`)
+  .option(`--reply-to-email <reply-to-email>`, `Email used when user replies to the email. Pass an empty string to clear a previously set value.`)
+  .option(`--reply-to-name <reply-to-name>`, `Name used when user replies to the email. Pass an empty string to clear a previously set value.`)
   .option(`--secure <secure>`, `Configures if communication with SMTP server is encrypted. Allowed values are: tls, ssl. Leave empty for no encryption.`)
   .option(
     `--enabled [value]`,
@@ -1569,8 +1639,8 @@ const projectUpdateEmailTemplateCommand = project
   .option(`--subject <subject>`, `Subject of the email template. Can be up to 255 characters.`)
   .option(`--message <message>`, `Plain or HTML body of the email template message. Can be up to 10MB of content.`)
   .option(`--sender-name <sender-name>`, `Name of the email sender.`)
-  .option(`--sender-email <sender-email>`, `Email of the sender.`)
-  .option(`--reply-to-email <reply-to-email>`, `Reply to email.`)
+  .option(`--sender-email <sender-email>`, `Email of the sender. Pass an empty string to clear a previously set value.`)
+  .option(`--reply-to-email <reply-to-email>`, `Reply to email. Pass an empty string to clear a previously set value.`)
   .option(`--reply-to-name <reply-to-name>`, `Reply to name.`)
   .action(
     actionRunner(
