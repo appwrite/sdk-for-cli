@@ -6,8 +6,7 @@
 * Breaking: Moved organization API key commands to the new `organization` group (`list-keys`, `create-key`, `get-key`, `update-key`, `delete-key`)
 * Breaking: Moved project management to the new `organization` group (`list-projects`, `create-project`, `get-project`, `update-project`, `delete-project`)
 * Added: `presences` commands to track presence and usage
-* Added: `messaging create-ses-provider` and `update-ses-provider` commands
-* Added: `project get` and `update-password-strength-policy` commands
+* Added: `project get` command
 
 ## 21.0.1
 

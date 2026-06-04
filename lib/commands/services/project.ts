@@ -264,30 +264,6 @@ const projectListOAuth2ProvidersCommand = project
   );
 
 
-const projectUpdateOAuth2ServerCommand = project
-  .command(`update-o-auth-2-server`)
-  .description(`Update the OAuth2 server (OIDC provider) configuration.`)
-  .requiredOption(`--enabled <enabled>`, `Enable or disable the OAuth2 server.`, parseBool)
-  .requiredOption(`--authorization-url <authorization-url>`, `URL to your application with consent screen.`)
-  .option(`--scopes [scopes...]`, `List of allowed OAuth2 scopes. Maximum of 100 scopes are allowed, each up to 128 characters long.`)
-  .option(`--access-token-duration <access-token-duration>`, `Access token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 8 hours.`, parseInteger)
-  .option(`--refresh-token-duration <refresh-token-duration>`, `Refresh token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 1 year.`, parseInteger)
-  .option(`--public-access-token-duration <public-access-token-duration>`, `Access token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 1 hour.`, parseInteger)
-  .option(`--public-refresh-token-duration <public-refresh-token-duration>`, `Refresh token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 30 days.`, parseInteger)
-  .option(
-    `--confidential-pkce [value]`,
-    `When enabled, PKCE is required for confidential clients (server-side flows using client_secret). PKCE is always required for public clients regardless of this setting.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .action(
-    actionRunner(
-      async ({ enabled, authorizationUrl, scopes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce }) =>
-        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce)),
-    ),
-  );
-
-
 const projectUpdateOAuth2AmazonCommand = project
   .command(`update-o-auth-2-amazon`)
   .description(`Update the project OAuth2 Amazon configuration.`)
@@ -1439,42 +1415,6 @@ const projectUpdatePasswordPersonalDataPolicyCommand = project
   );
 
 
-const projectUpdatePasswordStrengthPolicyCommand = project
-  .command(`update-password-strength-policy`)
-  .description(`Update the password strength requirements for users in the project.`)
-  .option(`--min <min>`, `Minimum password length. Value must be between 8 and 256. Default is 8.`, parseInteger)
-  .option(
-    `--uppercase [value]`,
-    `Whether passwords must include at least one uppercase letter.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(
-    `--lowercase [value]`,
-    `Whether passwords must include at least one lowercase letter.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(
-    `--number [value]`,
-    `Whether passwords must include at least one number.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(
-    `--symbols [value]`,
-    `Whether passwords must include at least one symbol.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .action(
-    actionRunner(
-      async ({ min, uppercase, lowercase, number, symbols }) =>
-        parse(await (await getProjectClient()).updatePasswordStrengthPolicy(min, uppercase, lowercase, number, symbols)),
-    ),
-  );
-
-
 const projectUpdateSessionAlertPolicyCommand = project
   .command(`update-session-alert-policy`)
   .description(`Updating this policy allows you to control if email alert is sent upon session creation. When enabled, and user signs into their account, they will be sent an email notification. There is an exception, the first session after a new sign up does not trigger an alert, even if the policy is enabled.`)
@@ -1538,7 +1478,7 @@ const projectUpdateUserLimitPolicyCommand = project
 const projectGetPolicyCommand = project
   .command(`get-policy`)
   .description(`Get a policy by its unique ID. This endpoint returns the current configuration for the requested project policy.`)
-  .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, deny-aliased-email, deny-disposable-email, deny-free-email.`)
+  .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy.`)
   .action(
     actionRunner(
       async ({ policyId }) =>
