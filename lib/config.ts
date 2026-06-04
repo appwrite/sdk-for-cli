@@ -37,7 +37,7 @@ import type {
   Entity,
   GlobalConfigData,
 } from "./types.js";
-import { createSettingsObject } from "./utils.js";
+import { createSettingsObject, isCloudHostname } from "./utils.js";
 import {
   CONFIG_RESOURCE_KEYS,
   EXECUTABLE_NAME,
@@ -81,6 +81,7 @@ const KeyIndexes = getSchemaKeys(IndexSchema);
 const KeyIndexesColumns = getSchemaKeys(IndexTableSchema);
 
 const CONFIG_KEY_ORDER = [
+  "organizationId",
   "projectId",
   "projectName",
   "endpoint",
@@ -106,10 +107,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 export function normalizeCloudConsoleEndpoint(endpoint: string): string {
   try {
     const url = new URL(endpoint);
-    if (
-      url.hostname === "cloud.appwrite.io" ||
-      url.hostname.endsWith(".cloud.appwrite.io")
-    ) {
+    if (isCloudHostname(url.hostname)) {
       return "https://cloud.appwrite.io/v1";
     }
   } catch (_error) {
@@ -1156,6 +1154,7 @@ class Local extends Config<ConfigType> {
   }
 
   getProject(): {
+    organizationId?: string;
     projectId?: string;
     projectName?: string;
     projectSettings?: SettingsType;
@@ -1165,6 +1164,7 @@ class Local extends Config<ConfigType> {
     }
 
     return {
+      organizationId: this.get("organizationId"),
       projectId: this.get("projectId"),
       projectName: this.get("projectName"),
       projectSettings: this.get("settings"),
@@ -1187,6 +1187,10 @@ class Local extends Config<ConfigType> {
     }
 
     this.set("settings", createSettingsObject(project));
+  }
+
+  setOrganizationId(organizationId: string): void {
+    this.set("organizationId", organizationId);
   }
 }
 

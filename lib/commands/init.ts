@@ -4,7 +4,7 @@ import childProcess from "child_process";
 import { Command } from "commander";
 import inquirer from "inquirer";
 import chalk from "chalk";
-import { getProjectsService, getSitesService } from "../services.js";
+import { getOrganizationService, getSitesService } from "../services.js";
 import { pullResources } from "./pull.js";
 import ID from "../id.js";
 import { localConfig, globalConfig } from "../config.js";
@@ -40,12 +40,16 @@ import {
   detectProjectSkills,
   placeSkills,
 } from "../utils.js";
-import { Account, UseCases, AppwriteException } from "@appwrite.io/console";
+import {
+  Account,
+  AppwriteException,
+  SiteTemplateUseCase,
+} from "@appwrite.io/console";
+import type { Region } from "@appwrite.io/console";
 import { DEFAULT_ENDPOINT, EXECUTABLE_NAME } from "../constants.js";
 
 type InitResourceAction = (_options?: unknown) => Promise<void>;
-type ProjectsService = Awaited<ReturnType<typeof getProjectsService>>;
-type ProjectCreateRegion = Parameters<ProjectsService["create"]>[3];
+type ProjectCreateRegion = Region;
 
 interface ExistingProjectSummary {
   $id: string;
@@ -99,16 +103,18 @@ interface InitProjectStepOptions {
   autoPulled: boolean;
 }
 
-const extractSelectionId = (value: string): string => {
-  const match = value.match(/\(([^()]+)\)$/);
-  return match ? match[1] : value;
-};
-
 const getExistingProjectSummary = async (
+  organizationId: string,
   projectId: string,
 ): Promise<ExistingProjectSummary> => {
-  const projectsService = await getProjectsService();
-  const project = await projectsService.get(extractSelectionId(projectId));
+  const client = await sdkForConsole({
+    requiresAuth: true,
+    organizationId,
+  });
+  const organizationService = await getOrganizationService(client);
+  const project = await organizationService.getProject({
+    projectId,
+  });
 
   return {
     $id: project.$id,
@@ -308,9 +314,6 @@ const initProject = async ({
       log("No changes made. Existing project configuration was kept.");
       return;
     }
-    if (typeof answers.organization === "string") {
-      answers.organization = extractSelectionId(answers.organization);
-    }
   } else {
     const selectedOrganization =
       organizationId ??
@@ -320,16 +323,17 @@ const initProject = async ({
     const selectedProjectId =
       projectId ?? (await inquirer.prompt([questionsInitProject[4]])).id;
 
-    const normalizedOrganization = extractSelectionId(selectedOrganization);
-
     answers = {
       start: "existing",
       project: selectedProjectId,
-      organization: normalizedOrganization,
+      organization: selectedOrganization,
     };
 
     try {
-      answers.project = await getExistingProjectSummary(selectedProjectId);
+      answers.project = await getExistingProjectSummary(
+        selectedOrganization,
+        selectedProjectId,
+      );
     } catch (e) {
       if (e instanceof AppwriteException && e.code === 404) {
         answers = {
@@ -345,7 +349,10 @@ const initProject = async ({
   }
 
   if (answers.start === "existing" && typeof answers.project === "string") {
-    answers.project = await getExistingProjectSummary(answers.project);
+    answers.project = await getExistingProjectSummary(
+      answers.organization,
+      answers.project,
+    );
   }
 
   localConfig.clear(); // Clear the config to avoid any conflicts
@@ -370,15 +377,19 @@ const initProject = async ({
         break;
     }
 
-    const projectsService = await getProjectsService();
-    const response = await projectsService.create(
-      projectIdToCreate,
-      projectNameToCreate,
-      answers.organization,
-      answers.region,
-    );
+    const consoleClient = await sdkForConsole({
+      requiresAuth: true,
+      organizationId: answers.organization,
+    });
+    const organizationService = await getOrganizationService(consoleClient);
+    const response = await organizationService.createProject({
+      projectId: projectIdToCreate,
+      name: projectNameToCreate,
+      region: answers.region,
+    });
 
     localConfig.setProject(response["$id"], response.name ?? "");
+    localConfig.setOrganizationId(answers.organization);
     if (answers.region) {
       localConfig.setEndpoint(
         `https://${answers.region}.${url.host}${url.pathname}`,
@@ -400,6 +411,7 @@ const initProject = async ({
     }
 
     localConfig.setProject(selectedProject.$id, selectedProject.name ?? "");
+    localConfig.setOrganizationId(answers.organization);
 
     if (isCloud() && selectedProject.region) {
       localConfig.setEndpoint(
@@ -839,7 +851,7 @@ const initSite = async (): Promise<void> => {
     const sitesService = await getSitesService();
     const response = await sitesService.listTemplates(
       [answers.framework.key],
-      [UseCases.Starter],
+      [SiteTemplateUseCase.Starter],
       1,
     );
     if (response.total == 0) {

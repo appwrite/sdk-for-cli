@@ -97,13 +97,15 @@ const functionsCreateCommand = functions
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to function code in the linked repo.`)
+  .option(`--provider-branches [provider-branches...]`, `List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches.`)
+  .option(`--provider-paths [provider-paths...]`, `List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.`)
   .option(`--build-specification <build-specification>`, `Build specification for the function deployments.`)
   .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the function executions.`)
   .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
-        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
+      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getFunctionsClient()).create(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 
@@ -220,13 +222,15 @@ const functionsUpdateCommand = functions
       value === undefined ? true : parseBool(value),
   )
   .option(`--provider-root-directory <provider-root-directory>`, `Path to function code in the linked repo.`)
+  .option(`--provider-branches [provider-branches...]`, `List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches.`)
+  .option(`--provider-paths [provider-paths...]`, `List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.`)
   .option(`--build-specification <build-specification>`, `Build specification for the function deployments.`)
   .option(`--runtime-specification <runtime-specification>`, `Runtime specification for the function executions.`)
   .option(`--deployment-retention <deployment-retention>`, `Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.`, parseInteger)
   .action(
     actionRunner(
-      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention }) =>
-        parse(await (await getFunctionsClient()).update(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, buildSpecification, runtimeSpecification, deploymentRetention)),
+      async ({ functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention }) =>
+        parse(await (await getFunctionsClient()).update(functionId, name, runtime, execute, events, schedule, timeout, enabled, logging, entrypoint, commands, scopes, installationId, providerRepositoryId, providerBranch, providerSilentMode, providerRootDirectory, providerBranches, providerPaths, buildSpecification, runtimeSpecification, deploymentRetention)),
     ),
   );
 
