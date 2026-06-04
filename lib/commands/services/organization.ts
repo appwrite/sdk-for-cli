@@ -5,7 +5,7 @@ import {
   parseDeprecatedWhereQuery,
   parseFilterQuery,
 } from "../utils/query.js";
-import { sdkForProject } from "../../sdks.js";
+import { sdkForConsole } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -20,7 +20,7 @@ let organizationClient: Organization | null = null;
 
 const getOrganizationClient = async (): Promise<Organization> => {
   if (!organizationClient) {
-    const sdkClient = await sdkForProject();
+    const sdkClient = await sdkForConsole();
     organizationClient = new Organization(sdkClient);
   }
   return organizationClient;
