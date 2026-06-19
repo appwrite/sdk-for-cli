@@ -407,6 +407,9 @@ const functionsGetDeploymentDownloadCommand = functions
       async ({ functionId, deploymentId, type, destination }) => {
         const url = await (await getFunctionsClient()).getDeploymentDownload(functionId, deploymentId, type);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);

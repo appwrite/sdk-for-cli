@@ -3,6 +3,7 @@
 ## 22.1.0
 
 * Fixed: `organization get-invoice-download` and `get-invoice-view` now save the invoice to disk via `--destination`
+* Fixed: File download commands now report a clear error when the download request fails
 * Added: `oauth2` command group (`authorize`, `create-token`, `create-grant`, `get-grant`, `approve`, `reject`, `revoke`, `logout`, `create-device-authorization`)
 * Added: `messaging create-ses-provider` and `update-ses-provider` commands for Amazon SES
 * Added: `project update-o-auth-2-server` command to configure the OIDC provider

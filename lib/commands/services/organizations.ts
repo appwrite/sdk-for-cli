@@ -390,6 +390,9 @@ const organizationsGetInvoiceDownloadCommand = organizations
       async ({ organizationId, invoiceId, destination }) => {
         const url = await (await getOrganizationsClient()).getInvoiceDownload(organizationId, invoiceId);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
@@ -436,6 +439,9 @@ const organizationsGetInvoiceViewCommand = organizations
       async ({ organizationId, invoiceId, destination }) => {
         const url = await (await getOrganizationsClient()).getInvoiceView(organizationId, invoiceId);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);

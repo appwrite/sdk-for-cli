@@ -282,6 +282,9 @@ const storageGetFileDownloadCommand = storage
       async ({ bucketId, fileId, token, destination }) => {
         const url = await (await getStorageClient()).getFileDownload(bucketId, fileId, token);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
@@ -313,6 +316,9 @@ const storageGetFilePreviewCommand = storage
       async ({ bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output, token, destination }) => {
         const url = await (await getStorageClient()).getFilePreview(bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output, token);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
@@ -333,6 +339,9 @@ const storageGetFileViewCommand = storage
       async ({ bucketId, fileId, token, destination }) => {
         const url = await (await getStorageClient()).getFileView(bucketId, fileId, token);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
