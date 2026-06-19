@@ -6,5 +6,5 @@ appwrite migrations create-n-host-migration \
     --admin-secret <ADMIN_SECRET> \
     --database <DATABASE> \
     --username <USERNAME> \
-    --password <PASSWORD>
+    --password password
 ```

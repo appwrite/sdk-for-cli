@@ -353,7 +353,7 @@ const accountUpdatePasswordCommand = account
   .command(`update-password`)
   .description(`Update currently logged in user password. For validation, user is required to pass in the new password, and the old password. For users created with OAuth, Team Invites and Magic URL, oldPassword is optional.`)
   .requiredOption(`--password <password>`, `New user password. Must be at least 8 chars.`)
-  .option(`--old-password <old-password>`, `Current user password. Must be at least 8 chars.`)
+  .option(`--old-password <old-password>`, `Current user password. Max length: 256 chars.`)
   .action(
     actionRunner(
       async ({ password, oldPassword }) =>

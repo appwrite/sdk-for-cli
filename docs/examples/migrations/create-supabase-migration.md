@@ -5,5 +5,5 @@ appwrite migrations create-supabase-migration \
     --api-key <API_KEY> \
     --database-host <DATABASE_HOST> \
     --username <USERNAME> \
-    --password <PASSWORD>
+    --password password
 ```

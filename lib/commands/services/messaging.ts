@@ -665,6 +665,58 @@ const messagingUpdateSendgridProviderCommand = messaging
   );
 
 
+const messagingCreateSesProviderCommand = messaging
+  .command(`create-ses-provider`)
+  .description(`Create a new Amazon SES provider.`)
+  .requiredOption(`--provider-id <provider-id>`, `Provider ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
+  .requiredOption(`--name <name>`, `Provider name.`)
+  .option(`--access-key <access-key>`, `AWS access key ID.`)
+  .option(`--secret-key <secret-key>`, `AWS secret access key.`)
+  .option(`--region <region>`, `AWS region, for example us-east-1.`)
+  .option(`--from-name <from-name>`, `Sender Name.`)
+  .option(`--from-email <from-email>`, `Sender email address.`)
+  .option(`--reply-to-name <reply-to-name>`, `Name set in the reply to field for the mail. Default value is sender name.`)
+  .option(`--reply-to-email <reply-to-email>`, `Email set in the reply to field for the mail. Default value is sender email.`)
+  .option(
+    `--enabled [value]`,
+    `Set as enabled.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ providerId, name, accessKey, secretKey, region, fromName, fromEmail, replyToName, replyToEmail, enabled }) =>
+        parse(await (await getMessagingClient()).createSesProvider(providerId, name, accessKey, secretKey, region, fromName, fromEmail, replyToName, replyToEmail, enabled)),
+    ),
+  );
+
+
+const messagingUpdateSesProviderCommand = messaging
+  .command(`update-ses-provider`)
+  .description(`Update an Amazon SES provider by its unique ID.`)
+  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
+  .option(`--name <name>`, `Provider name.`)
+  .option(
+    `--enabled [value]`,
+    `Set as enabled.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--access-key <access-key>`, `AWS access key ID.`)
+  .option(`--secret-key <secret-key>`, `AWS secret access key.`)
+  .option(`--region <region>`, `AWS region, for example us-east-1.`)
+  .option(`--from-name <from-name>`, `Sender Name.`)
+  .option(`--from-email <from-email>`, `Sender email address.`)
+  .option(`--reply-to-name <reply-to-name>`, `Name set in the Reply To field for the mail. Default value is Sender Name.`)
+  .option(`--reply-to-email <reply-to-email>`, `Email set in the Reply To field for the mail. Default value is Sender Email.`)
+  .action(
+    actionRunner(
+      async ({ providerId, name, enabled, accessKey, secretKey, region, fromName, fromEmail, replyToName, replyToEmail }) =>
+        parse(await (await getMessagingClient()).updateSesProvider(providerId, name, enabled, accessKey, secretKey, region, fromName, fromEmail, replyToName, replyToEmail)),
+    ),
+  );
+
+
 const messagingCreateSmtpProviderCommand = messaging
   .command(`create-smtp-provider`)
   .description(`Create a new SMTP provider.`)

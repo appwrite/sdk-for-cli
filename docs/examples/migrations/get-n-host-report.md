@@ -6,5 +6,5 @@ appwrite migrations get-n-host-report \
     --admin-secret <ADMIN_SECRET> \
     --database <DATABASE> \
     --username <USERNAME> \
-    --password <PASSWORD>
+    --password password
 ```

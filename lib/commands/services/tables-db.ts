@@ -72,10 +72,11 @@ const tablesDBCreateCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--dedicated-database-id <dedicated-database-id>`, `Optional dedicated database (compute) ID to attach this database to. Leave empty to create a database on the shared pool.`)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled }) =>
-        parse(await (await getTablesDBClient()).create(databaseId, name, enabled)),
+      async ({ databaseId, name, enabled, dedicatedDatabaseId }) =>
+        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, dedicatedDatabaseId)),
     ),
   );
 

@@ -264,6 +264,35 @@ const projectListOAuth2ProvidersCommand = project
   );
 
 
+const projectUpdateOAuth2ServerCommand = project
+  .command(`update-o-auth-2-server`)
+  .description(`Update the OAuth2 server (OIDC provider) configuration.`)
+  .requiredOption(`--enabled <enabled>`, `Enable or disable the OAuth2 server.`, parseBool)
+  .requiredOption(`--authorization-url <authorization-url>`, `URL to your application with consent screen.`)
+  .option(`--scopes [scopes...]`, `List of allowed OAuth2 scopes. Maximum of 100 scopes are allowed, each up to 128 characters long.`)
+  .option(`--authorization-details-types [authorization-details-types...]`, `List of accepted \`authorization_details\` types. Maximum of 100 types are allowed, each up to 128 characters long.`)
+  .option(`--access-token-duration <access-token-duration>`, `Access token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 8 hours.`, parseInteger)
+  .option(`--refresh-token-duration <refresh-token-duration>`, `Refresh token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 1 year.`, parseInteger)
+  .option(`--public-access-token-duration <public-access-token-duration>`, `Access token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 1 hour.`, parseInteger)
+  .option(`--public-refresh-token-duration <public-refresh-token-duration>`, `Refresh token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 30 days.`, parseInteger)
+  .option(
+    `--confidential-pkce [value]`,
+    `When enabled, PKCE is required for confidential clients (server-side flows using client_secret). PKCE is always required for public clients regardless of this setting.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--verification-url <verification-url>`, `URL to your application page where users enter the device flow user code. Required to enable the Device Authorization Grant.`)
+  .option(`--user-code-length <user-code-length>`, `Number of characters in the device flow user code, excluding the formatting separator. Shorter codes are easier to type but weaker; pair short codes with short expiry. Leave empty to use default 8.`, parseInteger)
+  .option(`--user-code-format <user-code-format>`, `Character set for device flow user codes: \`numeric\` (digits only — best for numeric keypads and TV remotes), \`alphabetic\` (letters only), or \`alphanumeric\` (letters and digits — highest entropy per character). Defaults to \`alphanumeric\`.`)
+  .option(`--device-code-duration <device-code-duration>`, `Lifetime in seconds of device flow device codes and user codes. Device codes are intentionally short-lived. Leave empty to use default 600.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration }) =>
+        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration)),
+    ),
+  );
+
+
 const projectUpdateOAuth2AmazonCommand = project
   .command(`update-o-auth-2-amazon`)
   .description(`Update the project OAuth2 Amazon configuration.`)
@@ -1312,6 +1341,18 @@ const projectUpdateDenyAliasedEmailPolicyCommand = project
   );
 
 
+const projectUpdateDenyCorporateEmailPolicyCommand = project
+  .command(`update-deny-corporate-email-policy`)
+  .description(`Configures if only corporate email addresses (non-free and non-disposable domains) are allowed during new user sign-ups and email updates.`)
+  .requiredOption(`--enabled <enabled>`, `Set whether or not to restrict sign-ups and email updates to corporate email addresses only.`, parseBool)
+  .action(
+    actionRunner(
+      async ({ enabled }) =>
+        parse(await (await getProjectClient()).updateDenyCorporateEmailPolicy(enabled)),
+    ),
+  );
+
+
 const projectUpdateDenyDisposableEmailPolicyCommand = project
   .command(`update-deny-disposable-email-policy`)
   .description(`Configures if disposable emails from known temporary domains are denied during new users sign-ups and email updates.`)
@@ -1369,10 +1410,16 @@ const projectUpdateMembershipPrivacyPolicyCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(
+    `--user-accessed-at [value]`,
+    `Set to true if you want make user last access time visible to all team members, or false to hide it.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
   .action(
     actionRunner(
-      async ({ userId, userEmail, userPhone, userName, userMfa }) =>
-        parse(await (await getProjectClient()).updateMembershipPrivacyPolicy(userId, userEmail, userPhone, userName, userMfa)),
+      async ({ userId, userEmail, userPhone, userName, userMfa, userAccessedAt }) =>
+        parse(await (await getProjectClient()).updateMembershipPrivacyPolicy(userId, userEmail, userPhone, userName, userMfa, userAccessedAt)),
     ),
   );
 
@@ -1411,6 +1458,42 @@ const projectUpdatePasswordPersonalDataPolicyCommand = project
     actionRunner(
       async ({ enabled }) =>
         parse(await (await getProjectClient()).updatePasswordPersonalDataPolicy(enabled)),
+    ),
+  );
+
+
+const projectUpdatePasswordStrengthPolicyCommand = project
+  .command(`update-password-strength-policy`)
+  .description(`Update the password strength requirements for users in the project.`)
+  .option(`--min <min>`, `Minimum password length. Value must be between 8 and 256. Default is 8.`, parseInteger)
+  .option(
+    `--uppercase [value]`,
+    `Whether passwords must include at least one uppercase letter.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--lowercase [value]`,
+    `Whether passwords must include at least one lowercase letter.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--number [value]`,
+    `Whether passwords must include at least one number.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(
+    `--symbols [value]`,
+    `Whether passwords must include at least one symbol.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ min, uppercase, lowercase, number, symbols }) =>
+        parse(await (await getProjectClient()).updatePasswordStrengthPolicy(min, uppercase, lowercase, number, symbols)),
     ),
   );
 
@@ -1478,7 +1561,7 @@ const projectUpdateUserLimitPolicyCommand = project
 const projectGetPolicyCommand = project
   .command(`get-policy`)
   .description(`Get a policy by its unique ID. This endpoint returns the current configuration for the requested project policy.`)
-  .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy.`)
+  .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.`)
   .action(
     actionRunner(
       async ({ policyId }) =>
@@ -1503,7 +1586,7 @@ const projectUpdateProtocolCommand = project
 const projectUpdateServiceCommand = project
   .command(`update-service`)
   .description(`Update properties of a specific service. Use this endpoint to enable or disable a service in your project. `)
-  .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging, advisor`)
+  .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging, advisor, oauth2`)
   .requiredOption(`--enabled <enabled>`, `Service status.`, parseBool)
   .action(
     actionRunner(

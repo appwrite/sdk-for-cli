@@ -5,5 +5,5 @@ appwrite migrations get-supabase-report \
     --api-key <API_KEY> \
     --database-host <DATABASE_HOST> \
     --username <USERNAME> \
-    --password <PASSWORD>
+    --password password
 ```

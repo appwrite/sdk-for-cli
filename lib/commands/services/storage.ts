@@ -79,7 +79,7 @@ const storageCreateBucketCommand = storage
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 0B.`, parseInteger)
+  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 5GB.`, parseInteger)
   .option(`--allowed-file-extensions [allowed-file-extensions...]`, `Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.`)
   .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none,  gzip (https://en.wikipedia.org/wiki/Gzip), or zstd (https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
   .option(
@@ -138,7 +138,7 @@ const storageUpdateBucketCommand = storage
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 0B.`, parseInteger)
+  .option(`--maximum-file-size <maximum-file-size>`, `Maximum file size allowed in bytes. Maximum allowed value is 5GB.`, parseInteger)
   .option(`--allowed-file-extensions [allowed-file-extensions...]`, `Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.`)
   .option(`--compression <compression>`, `Compression algorithm chosen for compression. Can be one of none, gzip (https://en.wikipedia.org/wiki/Gzip), or zstd (https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled`)
   .option(
@@ -282,6 +282,9 @@ const storageGetFileDownloadCommand = storage
       async ({ bucketId, fileId, token, destination }) => {
         const url = await (await getStorageClient()).getFileDownload(bucketId, fileId, token);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
@@ -313,6 +316,9 @@ const storageGetFilePreviewCommand = storage
       async ({ bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output, token, destination }) => {
         const url = await (await getStorageClient()).getFilePreview(bucketId, fileId, width, height, gravity, quality, borderWidth, borderColor, borderRadius, opacity, rotation, background, output, token);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
@@ -333,6 +339,9 @@ const storageGetFileViewCommand = storage
       async ({ bucketId, fileId, token, destination }) => {
         const url = await (await getStorageClient()).getFileView(bucketId, fileId, token);
         const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+        }
         const buffer = Buffer.from(await response.arrayBuffer());
         fs.writeFileSync(destination, buffer);
         success(`File saved to ${destination}`);
