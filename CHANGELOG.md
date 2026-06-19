@@ -1,5 +1,10 @@
 # Change Log
 
+## 22.1.1
+
+* Added: Support for logging into staging Cloud environments (`stage.cloud.appwrite.io`)
+* Updated: Compiled binaries now built with `--minify` instead of inline sourcemaps
+
 ## 22.1.0
 
 * Fixed: `organization get-invoice-download` and `get-invoice-view` now save the invoice to disk via `--destination`
