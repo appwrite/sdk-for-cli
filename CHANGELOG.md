@@ -1,5 +1,16 @@
 # Change Log
 
+## 22.1.0
+
+* Fixed: `organization get-invoice-download` and `get-invoice-view` now save the invoice to disk via `--destination`
+* Added: `oauth2` command group (`authorize`, `create-token`, `create-grant`, `get-grant`, `approve`, `reject`, `revoke`, `logout`, `create-device-authorization`)
+* Added: `messaging create-ses-provider` and `update-ses-provider` commands for Amazon SES
+* Added: `project update-o-auth-2-server` command to configure the OIDC provider
+* Added: `project update-deny-corporate-email-policy` command
+* Added: `project update-password-strength-policy` command
+* Added: `--dedicated-database-id` option to `tables-db create`
+* Updated: Bumped `@appwrite.io/console` dependency to `^15.0.0`
+
 ## 22.0.0
 
 * Breaking: Renamed `project update-deny-canonical-email-policy` to `update-deny-aliased-email-policy`

@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import fs from "fs";
 import {
   buildQueries,
   collectQueryValue,
@@ -383,10 +384,16 @@ const organizationsGetInvoiceDownloadCommand = organizations
   .description(`Download invoice in PDF`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
   .requiredOption(`--invoice-id <invoice-id>`, `Invoice unique ID`)
+  .requiredOption(`--destination <destination>`, `Path to save the file to.`)
   .action(
     actionRunner(
-      async ({ organizationId, invoiceId }) =>
-        parse(await (await getOrganizationsClient()).getInvoiceDownload(organizationId, invoiceId)),
+      async ({ organizationId, invoiceId, destination }) => {
+        const url = await (await getOrganizationsClient()).getInvoiceDownload(organizationId, invoiceId);
+        const response = await fetch(url);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        fs.writeFileSync(destination, buffer);
+        success(`File saved to ${destination}`);
+      },
     ),
   );
 
@@ -423,10 +430,16 @@ const organizationsGetInvoiceViewCommand = organizations
   .description(`View invoice in PDF`)
   .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
   .requiredOption(`--invoice-id <invoice-id>`, `Invoice unique ID`)
+  .requiredOption(`--destination <destination>`, `Path to save the file to.`)
   .action(
     actionRunner(
-      async ({ organizationId, invoiceId }) =>
-        parse(await (await getOrganizationsClient()).getInvoiceView(organizationId, invoiceId)),
+      async ({ organizationId, invoiceId, destination }) => {
+        const url = await (await getOrganizationsClient()).getInvoiceView(organizationId, invoiceId);
+        const response = await fetch(url);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        fs.writeFileSync(destination, buffer);
+        success(`File saved to ${destination}`);
+      },
     ),
   );
 

@@ -1,4 +1,4 @@
 ```bash
 appwrite account update-password \
-    --password ''
+    --password password
 ```
