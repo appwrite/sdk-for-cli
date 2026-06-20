@@ -1,5 +1,11 @@
 # Change Log
 
+## 22.1.2
+
+* Added: OAuth2 login now requests the `account.admin` scope
+* Fixed: `logout` now reports the underlying server error when a session can't be revoked
+* Fixed: `logout` and `client --reset` no longer report success when the server session revocation fails
+
 ## 22.1.1
 
 * Added: Support for logging into staging Cloud environments (`stage.cloud.appwrite.io`)
