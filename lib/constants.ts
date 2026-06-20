@@ -1,7 +1,7 @@
 // SDK
 export const SDK_TITLE = 'Appwrite';
 export const SDK_TITLE_LOWER = 'appwrite';
-export const SDK_VERSION = '22.1.1';
+export const SDK_VERSION = '22.1.2';
 export const SDK_NAME = 'Command Line';
 export const SDK_PLATFORM = 'console';
 export const SDK_LANGUAGE = 'cli';
@@ -29,7 +29,7 @@ export const DEFAULT_ENDPOINT = 'https://cloud.appwrite.io/v1';
 
 // OAuth2
 export const OAUTH2_CLIENT_ID = "appwrite-cli";
-export const OAUTH2_SCOPES = "openid email profile";
+export const OAUTH2_SCOPES = "openid email profile account.admin";
 
 // Config resources
 export const CONFIG_RESOURCE_KEYS = [
