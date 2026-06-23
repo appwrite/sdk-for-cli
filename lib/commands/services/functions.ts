@@ -123,9 +123,11 @@ const functionsListRuntimesCommand = functions
 const functionsListSpecificationsCommand = functions
   .command(`list-specifications`)
   .description(`List allowed function specifications for this instance.`)
+  .option(`--type <type>`, `Specification type to list. Can be one of: runtimes, builds.`)
   .action(
     actionRunner(
-      async () => parse(await (await getFunctionsClient()).listSpecifications()),
+      async ({ type }) =>
+        parse(await (await getFunctionsClient()).listSpecifications(type)),
     ),
   );
 

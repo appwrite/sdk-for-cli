@@ -1,5 +1,12 @@
 # Change Log
 
+## 22.2.0
+
+* Added: OAuth refresh tokens now stored in the OS keychain via `@napi-rs/keyring`, falling back to config
+* Added: `--type` option to `functions list-specifications` and `sites list-specifications`
+* Updated: Cleaner account selection prompt for `logout` with a `(current)` marker
+* Fixed: OAuth login now clears the stale legacy session cookie
+
 ## 22.1.3
 
 * Added: `--resource` option to `oauth2 authorize`, `create-device-authorization`, and `create-token` for RFC 8707 resource indicators

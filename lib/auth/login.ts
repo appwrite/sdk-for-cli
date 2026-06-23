@@ -32,6 +32,7 @@ import {
   restoreCurrentSession,
   deleteServerSession,
 } from "./session.js";
+import { setStoredRefreshToken } from "./refresh-token.js";
 
 const DEFAULT_ENDPOINT = "https://cloud.appwrite.io/v1";
 
@@ -71,7 +72,7 @@ const startWaitingForApprovalSpinner = (): (() => void) => {
   };
 };
 
-const listenForBrowserOpen = (
+export const listenForBrowserOpen = (
   url: string,
   onCancel: () => void,
 ): (() => void) => {
@@ -90,7 +91,6 @@ const listenForBrowserOpen = (
   if (shouldRestoreRawMode) {
     stdin.setRawMode?.(true);
   }
-  const shouldPause = stdin.isPaused();
   stdin.resume();
 
   const cleanup = (): void => {
@@ -98,9 +98,7 @@ const listenForBrowserOpen = (
     if (shouldRestoreRawMode) {
       stdin.setRawMode?.(false);
     }
-    if (shouldPause) {
-      stdin.pause();
-    }
+    stdin.pause();
   };
 
   // Open the browser at most once; keep listening afterwards so Ctrl+C still
@@ -393,7 +391,7 @@ const loginWithOAuthDevice = async ({
 
   const tokenExpiry = Date.now() + token.expires_in * 1000;
   globalConfig.setAccessToken(token.access_token);
-  globalConfig.setRefreshToken(token.refresh_token || "");
+  setStoredRefreshToken(id, token.refresh_token || "");
   globalConfig.setTokenExpiry(tokenExpiry);
 
   let tokenEmail = "";
@@ -419,6 +417,7 @@ const loginWithOAuthDevice = async ({
   }
 
   globalConfig.setEmail(account.email);
+  globalConfig.removeCookie();
 
   const { removed: removedLegacySessions, failed: failedLegacySessions } =
     await removeLegacySessionsExcept(id);
