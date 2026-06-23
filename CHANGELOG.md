@@ -1,5 +1,11 @@
 # Change Log
 
+## 22.1.3
+
+* Added: `--resource` option to `oauth2 authorize`, `create-device-authorization`, and `create-token` for RFC 8707 resource indicators
+* Added: Press Enter during device login to open the verification URL in your browser
+* Updated: Bumped `@appwrite.io/console` dependency to `^15.1.0`
+
 ## 22.1.2
 
 * Added: OAuth2 login now requests the `account.admin` scope

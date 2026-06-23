@@ -53,10 +53,11 @@ const oauth2AuthorizeCommand = oauth2
   .option(`--prompt <prompt>`, `OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.`)
   .option(`--max-_age <max-_age>`, `OIDC max_age paraleter for customization of consent screen. Maximum allowable elapsed time in seconds since the user last authenticated. If exceeded, re-authentication is required.`, parseInteger)
   .option(`--authorization-_details <authorization-_details>`, `Rich authorization request. JSON array of objects, each with a \`type\` and project-defined fields`)
+  .option(`--resource <resource>`, `RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.`)
   .action(
     actionRunner(
-      async ({ client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details }) =>
-        parse(await (await getOauth2Client()).authorize(client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details)),
+      async ({ client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource }) =>
+        parse(await (await getOauth2Client()).authorize(client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource)),
     ),
   );
 
@@ -67,10 +68,11 @@ const oauth2CreateDeviceAuthorizationCommand = oauth2
   .option(`--client-_id <client-_id>`, `OAuth2 client ID.`)
   .option(`--scope <scope>`, `Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: \`openid\`, \`email\`, \`profile\`.`)
   .option(`--authorization-_details <authorization-_details>`, `Rich authorization request. JSON array of objects, each with a \`type\` and project-defined fields`)
+  .option(`--resource <resource>`, `RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.`)
   .action(
     actionRunner(
-      async ({ client_id, scope, authorization_details }) =>
-        parse(await (await getOauth2Client()).createDeviceAuthorization(client_id, scope, authorization_details)),
+      async ({ client_id, scope, authorization_details, resource }) =>
+        parse(await (await getOauth2Client()).createDeviceAuthorization(client_id, scope, authorization_details, resource)),
     ),
   );
 
@@ -154,10 +156,11 @@ const oauth2CreateTokenCommand = oauth2
   .option(`--client-_secret <client-_secret>`, `OAuth2 client secret. Required for confidential apps.`)
   .option(`--code-_verifier <code-_verifier>`, `PKCE code verifier. Required for public apps.`)
   .option(`--redirect-_uri <redirect-_uri>`, `Redirect URI. Required for \`authorization_code\` grant type.`)
+  .option(`--resource <resource>`, `RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.`)
   .action(
     actionRunner(
-      async ({ grant_type, code, refresh_token, device_code, client_id, client_secret, code_verifier, redirect_uri }) =>
-        parse(await (await getOauth2Client()).createToken(grant_type, code, refresh_token, device_code, client_id, client_secret, code_verifier, redirect_uri)),
+      async ({ grant_type, code, refresh_token, device_code, client_id, client_secret, code_verifier, redirect_uri, resource }) =>
+        parse(await (await getOauth2Client()).createToken(grant_type, code, refresh_token, device_code, client_id, client_secret, code_verifier, redirect_uri, resource)),
     ),
   );
 
