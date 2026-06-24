@@ -1,5 +1,9 @@
 # Change Log
 
+## 22.2.2
+
+* Fixed: Release binaries now embed `@napi-rs/keyring` native bindings for all targets
+
 ## 22.2.1
 
 * Fixed: Compiled binaries no longer crash from `@napi-rs/keyring` native bindings
