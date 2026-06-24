@@ -7,6 +7,7 @@
 * Updated: Bumped `@appwrite.io/console` dependency to `^15.1.1`
 * Updated: Cleaner account selection prompt for `logout` with a `(current)` marker
 * Fixed: OAuth login now clears the stale legacy session cookie
+* Fixed: Browser launch on Windows now uses `rundll32` for OAuth flows
 
 ## 22.1.3
 
