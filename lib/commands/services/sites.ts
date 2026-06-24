@@ -123,9 +123,11 @@ const sitesListFrameworksCommand = sites
 const sitesListSpecificationsCommand = sites
   .command(`list-specifications`)
   .description(`List allowed site specifications for this instance.`)
+  .option(`--type <type>`, `Specification type to list. Can be one of: runtimes, builds.`)
   .action(
     actionRunner(
-      async () => parse(await (await getSitesClient()).listSpecifications()),
+      async ({ type }) =>
+        parse(await (await getSitesClient()).listSpecifications(type)),
     ),
   );
 
