@@ -4,6 +4,7 @@
 
 * Added: OAuth refresh tokens now stored in the OS keychain via `@napi-rs/keyring`, falling back to config
 * Added: `--type` option to `functions list-specifications` and `sites list-specifications`
+* Updated: Bumped `@appwrite.io/console` dependency to `^15.1.1`
 * Updated: Cleaner account selection prompt for `logout` with a `(current)` marker
 * Fixed: OAuth login now clears the stale legacy session cookie
 
