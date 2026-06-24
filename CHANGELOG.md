@@ -1,5 +1,9 @@
 # Change Log
 
+## 22.2.1
+
+* Fixed: Compiled binaries no longer crash from `@napi-rs/keyring` native bindings
+
 ## 22.2.0
 
 * Added: OAuth refresh tokens now stored in the OS keychain via `@napi-rs/keyring`, falling back to config
