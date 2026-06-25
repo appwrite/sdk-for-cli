@@ -1,5 +1,9 @@
 # Change Log
 
+## 22.2.3
+
+* Fixed: Verbose and report error output no longer dumps bundled source context from compiled binaries
+
 ## 22.2.2
 
 * Fixed: Release binaries now embed `@napi-rs/keyring` native bindings for all targets
