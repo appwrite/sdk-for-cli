@@ -1,5 +1,15 @@
 # Change Log
 
+## 22.3.0
+
+* Added: Regional cloud endpoints are now derived from your configured endpoint in `init` and `push`
+* Added: `push` creates a default function proxy rule when an existing function is missing one
+* Added: `push` aborts and asks you to re-run when tablesDB deletions change the config
+* Fixed: Unauthorized sessions now retry an OAuth token refresh before logging out
+* Fixed: Auth security policies `limit`, `sessionsLimit`, and `passwordHistory` now accept null for unlimited
+* Updated: `push` applies service, protocol, auth method, and policy updates concurrently
+* Updated: Verbose error logs now include `code`, `type`, and `response` details
+
 ## 22.2.2
 
 * Fixed: Release binaries now embed `@napi-rs/keyring` native bindings for all targets
