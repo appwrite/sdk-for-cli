@@ -171,39 +171,6 @@ const projectsGetScheduleCommand = projects
   );
 
 
-const projectsListStagesCommand = projects
-  .command(`list-stages`)
-  .description(`Get the onboarding stages for the current project, including each stage’s SDK method key and status (for example pending, completed, or skipped).
-`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .action(
-    actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getProjectsClient()).listStages(projectId)),
-    ),
-  );
-
-
-const projectsUpdateStageCommand = projects
-  .command(`update-stage`)
-  .description(`Update an onboarding stage for the current project. Use this endpoint to skip a stage or leave it unchanged without performing the related API action.
-`)
-  .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
-  .requiredOption(`--stage-id <stage-id>`, `SDK method key (namespace.method).`)
-  .option(
-    `--skip [value]`,
-    `Mark the stage as skipped.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .action(
-    actionRunner(
-      async ({ projectId, stageId, skip }) =>
-        parse(await (await getProjectsClient()).updateStage(projectId, stageId, skip)),
-    ),
-  );
-
-
 const projectsUpdateStatusCommand = projects
   .command(`update-status`)
   .description(`Update the status of a project. Can be used to archive/restore projects, and to restore paused projects. When restoring a paused project, the console fingerprint header must be provided and the project must not be blocked for any reason other than inactivity.

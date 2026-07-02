@@ -26,20 +26,6 @@ export const oauth2 = new Command("oauth-2")
     helpWidth: process.stdout.columns || 80,
   });
 
-const oauth2ApproveCommand = oauth2
-  .command(`approve`)
-  .description(`Approve an OAuth2 grant after the user gives consent. Returns the \`redirectUrl\` the end user should be sent to. The consent screen may optionally pass enriched \`authorization_details\` to record the concrete resources the user selected. You can pass Accept header of \`application/json\` to receive a JSON response instead of a redirect.`)
-  .requiredOption(`--grant-_id <grant-_id>`, `Grant ID made during authorization, provided to consent screen in URL search params.`)
-  .option(`--authorization-_details <authorization-_details>`, `Enriched \`authorization_details\` the user consented to, replacing what the client requested. Each entry must use a \`type\` the project accepts. Optional; omit to keep the originally requested details.`)
-  .option(`--scope <scope>`, `Space-separated scopes the user consented to. Must be a subset of the scopes originally requested; identity scopes such as \`openid\` are always retained. Optional; omit to keep the originally requested scopes.`)
-  .action(
-    actionRunner(
-      async ({ grant_id, authorization_details, scope }) =>
-        parse(await (await getOauth2Client()).approve(grant_id, authorization_details, scope)),
-    ),
-  );
-
-
 const oauth2AuthorizeCommand = oauth2
   .command(`authorize`)
   .description(`Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of \`application/json\` to receive a JSON response instead of a redirect.`)

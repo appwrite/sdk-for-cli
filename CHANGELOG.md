@@ -3,9 +3,7 @@
 ## 22.4.0
 
 * Updated: Removed pre-release activity log commands `list-logs`, `list-collection-logs`, `list-document-logs`, `list-table-logs`, `list-row-logs`, `list-message-logs`, `list-provider-logs`, `list-subscriber-logs`, and `list-topic-logs`
-* Added: `projects list-stages` and `projects update-stage` commands for onboarding stages
-* Added: `health get-queue-notifications` command
-* Added: `--scope` option to `oauth2 approve` for narrowing consented scopes
+* Updated: Removed `oauth2 approve` command, meant for the console consent screen only
 * Updated: `--scope` on `oauth2 authorize` is now optional and supports the `phone` scope
 * Updated: CLI OAuth login now requests the `all` scope instead of `account.admin`
 * Updated: Skills install now uses the `appwrite/skills` repository
