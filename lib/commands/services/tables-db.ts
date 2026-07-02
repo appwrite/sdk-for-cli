@@ -72,7 +72,7 @@ const tablesDBCreateCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--dedicated-database-id <dedicated-database-id>`, `Optional dedicated database (compute) ID to attach this database to. Leave empty to create a database on the shared pool.`)
+  .option(`--dedicated-database-id <dedicated-database-id>`, `Optional dedicated database ID to attach this database to. Leave empty to create a database on the shared pool.`)
   .action(
     actionRunner(
       async ({ databaseId, name, enabled, dedicatedDatabaseId }) =>
@@ -1240,22 +1240,6 @@ const tablesDBDeleteIndexCommand = tablesDB
   );
 
 
-const tablesDBListTableLogsCommand = tablesDB
-  .command(`list-table-logs`)
-  .description(`Get the table activity logs list by its unique ID.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ databaseId, tableId, queries, limit, offset }) =>
-        parse(await (await getTablesDBClient()).listTableLogs(databaseId, tableId, buildQueries({ queries, limit, offset }))),
-    ),
-  );
-
-
 const tablesDBListRowsCommand = tablesDB
   .command(`list-rows`)
   .description(`Get a list of all the user's rows in a given table. You can use the query params to filter your results.`)
@@ -1444,23 +1428,6 @@ const tablesDBDeleteRowCommand = tablesDB
     actionRunner(
       async ({ databaseId, tableId, rowId, transactionId }) =>
         parse(await (await getTablesDBClient()).deleteRow(databaseId, tableId, rowId, transactionId)),
-    ),
-  );
-
-
-const tablesDBListRowLogsCommand = tablesDB
-  .command(`list-row-logs`)
-  .description(`Get the row activity logs list by its unique ID.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .requiredOption(`--row-id <row-id>`, `Row ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ databaseId, tableId, rowId, queries, limit, offset }) =>
-        parse(await (await getTablesDBClient()).listRowLogs(databaseId, tableId, rowId, buildQueries({ queries, limit, offset }))),
     ),
   );
 

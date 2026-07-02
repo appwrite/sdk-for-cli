@@ -1357,23 +1357,6 @@ const databasesDeleteDocumentCommand = databases
   );
 
 
-const databasesListDocumentLogsCommand = databases
-  .command(`list-document-logs`)
-  .description(`Get the document activity logs list by its unique ID.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
-  .requiredOption(`--document-id <document-id>`, `Document ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ databaseId, collectionId, documentId, queries, limit, offset }) =>
-        parse(await (await getDatabasesClient()).listDocumentLogs(databaseId, collectionId, documentId, buildQueries({ queries, limit, offset }))),
-    ),
-  );
-
-
 const databasesDecrementDocumentAttributeCommand = databases
   .command(`decrement-document-attribute`)
   .description(`Decrement a specific attribute of a document by a given value.`)
@@ -1485,22 +1468,6 @@ const databasesDeleteIndexCommand = databases
   );
 
 
-const databasesListCollectionLogsCommand = databases
-  .command(`list-collection-logs`)
-  .description(`Get the collection activity logs list by its unique ID.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ databaseId, collectionId, queries, limit, offset }) =>
-        parse(await (await getDatabasesClient()).listCollectionLogs(databaseId, collectionId, buildQueries({ queries, limit, offset }))),
-    ),
-  );
-
-
 const databasesGetCollectionUsageCommand = databases
   .command(`get-collection-usage`)
   .description(`Get usage metrics and statistics for a collection. Returning the total number of documents. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
@@ -1511,21 +1478,6 @@ const databasesGetCollectionUsageCommand = databases
     actionRunner(
       async ({ databaseId, collectionId, range }) =>
         parse(await (await getDatabasesClient()).getCollectionUsage(databaseId, collectionId, range)),
-    ),
-  );
-
-
-const databasesListLogsCommand = databases
-  .command(`list-logs`)
-  .description(`Get the database activity logs list by its unique ID.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ databaseId, queries, limit, offset }) =>
-        parse(await (await getDatabasesClient()).listLogs(databaseId, buildQueries({ queries, limit, offset }))),
     ),
   );
 

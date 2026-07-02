@@ -26,26 +26,13 @@ export const oauth2 = new Command("oauth-2")
     helpWidth: process.stdout.columns || 80,
   });
 
-const oauth2ApproveCommand = oauth2
-  .command(`approve`)
-  .description(`Approve an OAuth2 grant after the user gives consent. Returns the \`redirectUrl\` the end user should be sent to. The consent screen may optionally pass enriched \`authorization_details\` to record the concrete resources the user selected. You can pass Accept header of \`application/json\` to receive a JSON response instead of a redirect.`)
-  .requiredOption(`--grant-_id <grant-_id>`, `Grant ID made during authorization, provided to consent screen in URL search params.`)
-  .option(`--authorization-_details <authorization-_details>`, `Enriched \`authorization_details\` the user consented to, replacing what the client requested. Each entry must use a \`type\` the project accepts. Optional; omit to keep the originally requested details.`)
-  .action(
-    actionRunner(
-      async ({ grant_id, authorization_details }) =>
-        parse(await (await getOauth2Client()).approve(grant_id, authorization_details)),
-    ),
-  );
-
-
 const oauth2AuthorizeCommand = oauth2
   .command(`authorize`)
   .description(`Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of \`application/json\` to receive a JSON response instead of a redirect.`)
   .requiredOption(`--client-_id <client-_id>`, `OAuth2 client ID.`)
   .requiredOption(`--redirect-_uri <redirect-_uri>`, `Redirect URI where visitor will be redirected after authorization, whether successful or not.`)
   .requiredOption(`--response-_type <response-_type>`, `OAuth2 / OIDC response type. One of \`code\` (Authorization Code Flow), \`id_token\` (Implicit Flow, OIDC login only), or \`code id_token\` (Hybrid Flow).`)
-  .requiredOption(`--scope <scope>`, `Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: \`openid\`, \`email\`, \`profile\`.`)
+  .option(`--scope <scope>`, `Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: \`openid\`, \`email\`, \`profile\`, \`phone\`.`)
   .option(`--state <state>`, `OAuth2 state. You receive this back in the redirect URI.`)
   .option(`--nonce <nonce>`, `OIDC nonce parameter to prevent replay attacks. Required when response_type includes \`id_token\`.`)
   .option(`--code-_challenge <code-_challenge>`, `PKCE code challenge. Required when OAuth2 app is public.`)

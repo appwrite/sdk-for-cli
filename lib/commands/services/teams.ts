@@ -120,27 +120,6 @@ const teamsDeleteCommand = teams
   );
 
 
-const teamsListLogsCommand = teams
-  .command(`list-logs`)
-  .description(`Get the team activity logs list by its unique ID.`)
-  .requiredOption(`--team-id <team-id>`, `Team ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ teamId, queries, total, limit, offset }) =>
-        parse(await (await getTeamsClient()).listLogs(teamId, buildQueries({ queries, limit, offset }), total)),
-    ),
-  );
-
-
 const teamsListMembershipsCommand = teams
   .command(`list-memberships`)
   .description(`Use this endpoint to list a team's members using the team's ID. All team members have read access to this endpoint. Hide sensitive attributes from the response by toggling membership privacy in the Console.`)
