@@ -290,27 +290,6 @@ const messagingDeleteCommand = messaging
   );
 
 
-const messagingListMessageLogsCommand = messaging
-  .command(`list-message-logs`)
-  .description(`Get the message activity logs listed by its unique ID.`)
-  .requiredOption(`--message-id <message-id>`, `Message ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ messageId, queries, total, limit, offset }) =>
-        parse(await (await getMessagingClient()).listMessageLogs(messageId, buildQueries({ queries, limit, offset }), total)),
-    ),
-  );
-
-
 const messagingListTargetsCommand = messaging
   .command(`list-targets`)
   .description(`Get a list of the targets associated with a message.`)
@@ -988,48 +967,6 @@ const messagingDeleteProviderCommand = messaging
   );
 
 
-const messagingListProviderLogsCommand = messaging
-  .command(`list-provider-logs`)
-  .description(`Get the provider activity logs listed by its unique ID.`)
-  .requiredOption(`--provider-id <provider-id>`, `Provider ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ providerId, queries, total, limit, offset }) =>
-        parse(await (await getMessagingClient()).listProviderLogs(providerId, buildQueries({ queries, limit, offset }), total)),
-    ),
-  );
-
-
-const messagingListSubscriberLogsCommand = messaging
-  .command(`list-subscriber-logs`)
-  .description(`Get the subscriber activity logs listed by its unique ID.`)
-  .requiredOption(`--subscriber-id <subscriber-id>`, `Subscriber ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ subscriberId, queries, total, limit, offset }) =>
-        parse(await (await getMessagingClient()).listSubscriberLogs(subscriberId, buildQueries({ queries, limit, offset }), total)),
-    ),
-  );
-
-
 const messagingListTopicsCommand = messaging
   .command(`list-topics`)
   .description(`Get a list of all topics from the current Appwrite project.`)
@@ -1107,27 +1044,6 @@ const messagingDeleteTopicCommand = messaging
     actionRunner(
       async ({ topicId }) =>
         parse(await (await getMessagingClient()).deleteTopic(topicId)),
-    ),
-  );
-
-
-const messagingListTopicLogsCommand = messaging
-  .command(`list-topic-logs`)
-  .description(`Get the topic activity logs listed by its unique ID.`)
-  .requiredOption(`--topic-id <topic-id>`, `Topic ID.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
-  .option(
-    `--total [value]`,
-    `When set to false, the total count returned will be 0 and will not be calculated.`,
-    (value: string | undefined) =>
-      value === undefined ? true : parseBool(value),
-  )
-  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
-  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ topicId, queries, total, limit, offset }) =>
-        parse(await (await getMessagingClient()).listTopicLogs(topicId, buildQueries({ queries, limit, offset }), total)),
     ),
   );
 

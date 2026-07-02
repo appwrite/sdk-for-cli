@@ -63,7 +63,7 @@ const organizationCreateKeyCommand = organization
   .description(`Create a new organization API key.`)
   .requiredOption(`--key-id <key-id>`, `Key ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
-  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
+  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
@@ -90,7 +90,7 @@ const organizationUpdateKeyCommand = organization
   .description(`Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
-  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
+  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
@@ -115,7 +115,7 @@ const organizationDeleteKeyCommand = organization
 const organizationListProjectsCommand = organization
   .command(`list-projects`)
   .description(`Get a list of all projects. You can use the query params to filter your results.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search, accessedAt`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,

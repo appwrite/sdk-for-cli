@@ -138,7 +138,21 @@ export const siteRequiresBuildCommand = (site: SiteBuildConfig): boolean => {
 
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
-    return error.message;
+    const message =
+      typeof error.message === "string" ? error.message.trim() : "";
+    if (message) {
+      return message;
+    }
+
+    // Some error responses carry no `message` field, leaving the exception
+    // message empty. Fall back to the raw response body so users see more
+    // than a bare "✗ Error:".
+    const response = (error as { response?: unknown }).response;
+    if (typeof response === "string" && response.trim() !== "") {
+      return response.trim();
+    }
+
+    return "An unknown error occurred.";
   }
 
   return String(error);
@@ -919,9 +933,9 @@ export function isCloud(): boolean {
   return hostname.endsWith("appwrite.io");
 }
 
-// --- Agent Skills helpers ---
+// --- Skills helpers ---
 
-const SKILLS_REPO = "https://github.com/appwrite/agent-skills";
+const SKILLS_REPO = "https://github.com/appwrite/skills";
 
 const LANGUAGE_MARKERS: Record<string, string[]> = {
   typescript: [

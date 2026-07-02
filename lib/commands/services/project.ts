@@ -98,7 +98,7 @@ const projectCreateKeyCommand = project
 You can also create an ephemeral API key if you need a short-lived key instead.`)
   .requiredOption(`--key-id <key-id>`, `Key ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
-  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
+  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(
@@ -113,7 +113,7 @@ const projectCreateEphemeralKeyCommand = project
   .description(`Create a new ephemeral API key. It's recommended to have multiple API keys with strict scopes for separate functions within your project.
 
 You can also create a standard API key if you need a longer-lived key instead.`)
-  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
+  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .requiredOption(`--duration <duration>`, `Time in seconds before ephemeral key expires. Maximum duration is 3600 seconds.`, parseInteger)
   .action(
     actionRunner(
@@ -140,7 +140,7 @@ const projectUpdateKeyCommand = project
   .description(`Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.`)
   .requiredOption(`--key-id <key-id>`, `Key ID.`)
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
-  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 100 scopes are allowed.`)
+  .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
   .action(
     actionRunner(

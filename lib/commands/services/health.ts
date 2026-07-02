@@ -224,6 +224,19 @@ const healthGetQueueMigrationsCommand = health
   );
 
 
+const healthGetQueueNotificationsCommand = health
+  .command(`get-queue-notifications`)
+  .description(`Get the number of jobs in the notifications queue.
+`)
+  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ threshold }) =>
+        parse(await (await getHealthClient()).getQueueNotifications(threshold)),
+    ),
+  );
+
+
 const healthGetQueueStatsResourcesCommand = health
   .command(`get-queue-stats-resources`)
   .description(`Get the number of metrics that are waiting to be processed in the Appwrite stats resources queue.`)
