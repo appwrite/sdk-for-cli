@@ -33,6 +33,88 @@ export const projects = new Command("projects")
     helpWidth: process.stdout.columns || 80,
   });
 
+const projectsListAddonsCommand = projects
+  .command(`list-addons`)
+  .description(`List all billing addons for a project.
+`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .action(
+    actionRunner(
+      async ({ projectId }) =>
+        parse(await (await getProjectsClient()).listAddons(projectId)),
+    ),
+  );
+
+
+const projectsCreatePremiumGeoDBAddonCommand = projects
+  .command(`create-premium-geo-db-addon`)
+  .description(`Create a Premium Geo DB addon for a project.
+`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .action(
+    actionRunner(
+      async ({ projectId }) =>
+        parse(await (await getProjectsClient()).createPremiumGeoDBAddon(projectId)),
+    ),
+  );
+
+
+const projectsGetAddonCommand = projects
+  .command(`get-addon`)
+  .description(`Get the details of a billing addon for a project.
+`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .requiredOption(`--addon-id <addon-id>`, `Addon ID`)
+  .action(
+    actionRunner(
+      async ({ projectId, addonId }) =>
+        parse(await (await getProjectsClient()).getAddon(projectId, addonId)),
+    ),
+  );
+
+
+const projectsDeleteAddonCommand = projects
+  .command(`delete-addon`)
+  .description(`Delete a billing addon for a project.
+`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .requiredOption(`--addon-id <addon-id>`, `Addon ID`)
+  .action(
+    actionRunner(
+      async ({ projectId, addonId }) =>
+        parse(await (await getProjectsClient()).deleteAddon(projectId, addonId)),
+    ),
+  );
+
+
+const projectsConfirmAddonPaymentCommand = projects
+  .command(`confirm-addon-payment`)
+  .description(`Confirm payment for a billing addon for a project.
+`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .requiredOption(`--addon-id <addon-id>`, `Addon ID`)
+  .action(
+    actionRunner(
+      async ({ projectId, addonId }) =>
+        parse(await (await getProjectsClient()).confirmAddonPayment(projectId, addonId)),
+    ),
+  );
+
+
+const projectsGetAddonPriceCommand = projects
+  .command(`get-addon-price`)
+  .description(`Get the price details for a billing addon for a project, including the prorated amount for the remaining days in the current billing cycle.
+`)
+  .requiredOption(`--project-id <project-id>`, `Project ID`)
+  .requiredOption(`--addon <addon>`, `Addon key identifier (e.g. premiumGeoDB).`)
+  .action(
+    actionRunner(
+      async ({ projectId, addon }) =>
+        parse(await (await getProjectsClient()).getAddonPrice(projectId, addon)),
+    ),
+  );
+
+
 const projectsListDevKeysCommand = projects
   .command(`list-dev-keys`)
   .description(`List all the project\'s dev keys. Dev keys are project specific and allow you to bypass rate limits and get better error logging during development.'`)

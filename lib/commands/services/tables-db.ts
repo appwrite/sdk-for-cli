@@ -72,11 +72,11 @@ const tablesDBCreateCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
-  .option(`--dedicated-database-id <dedicated-database-id>`, `Optional dedicated database ID to attach this database to. Leave empty to create a database on the shared pool.`)
+  .option(`--specification <specification>`, `Database specification. Defaults to \`serverless\`, which creates the database on the shared pool. Any other value provisions a dedicated database on that specification.`)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled, dedicatedDatabaseId }) =>
-        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, dedicatedDatabaseId)),
+      async ({ databaseId, name, enabled, specification }) =>
+        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, specification)),
     ),
   );
 
@@ -225,6 +225,57 @@ const tablesDBDeleteCommand = tablesDB
     actionRunner(
       async ({ databaseId }) =>
         parse(await (await getTablesDBClient()).delete(databaseId)),
+    ),
+  );
+
+
+const tablesDBListMigrationsCommand = tablesDB
+  .command(`list-migrations`)
+  .description(`List the dedicated migrations for a TablesDB database. A database has at most one in-flight migration.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .action(
+    actionRunner(
+      async ({ databaseId }) =>
+        parse(await (await getTablesDBClient()).listMigrations(databaseId)),
+    ),
+  );
+
+
+const tablesDBCreateMigrationCommand = tablesDB
+  .command(`create-migration`)
+  .description(`Start migrating a serverless TablesDB database onto a dedicated MySQL compute. Data is copied to the target while the source stays live, with a brief read-only window during cutover.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--specification <specification>`, `Dedicated compute specification to provision as the migration target (e.g. s-2vcpu-4gb). The migration always targets a dedicated compute, so \`serverless\` is not accepted.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, specification }) =>
+        parse(await (await getTablesDBClient()).createMigration(databaseId, specification)),
+    ),
+  );
+
+
+const tablesDBGetMigrationCommand = tablesDB
+  .command(`get-migration`)
+  .description(`Get a single dedicated migration for a TablesDB database by its ID.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--migration-id <migration-id>`, `Migration ID.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, migrationId }) =>
+        parse(await (await getTablesDBClient()).getMigration(databaseId, migrationId)),
+    ),
+  );
+
+
+const tablesDBDeleteMigrationCommand = tablesDB
+  .command(`delete-migration`)
+  .description(`Abort an in-flight TablesDB dedicated migration. Only allowed before cutover; once the migration has cut over it cannot be aborted.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .requiredOption(`--migration-id <migration-id>`, `Migration ID.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, migrationId }) =>
+        parse(await (await getTablesDBClient()).deleteMigration(databaseId, migrationId)),
     ),
   );
 

@@ -179,15 +179,19 @@ const backupsDeletePolicyCommand = backups
 
 const backupsCreateRestorationCommand = backups
   .command(`create-restoration`)
-  .description(`Create and trigger a new restoration for a backup on a project.`)
+  .description(`Create and trigger a new restoration for a backup on a project.
+
+When restoring a DocumentsDB or VectorsDB database to a new resource, pass \`newSpecification\` to provision the restored database on a different specification than the archived one (for example, restoring onto a larger or smaller dedicated database). Use \`serverless\` to restore onto the shared pool, or a dedicated specification slug to restore onto a dedicated database of that size. The specification must be permitted by the organization's plan. \`newSpecification\` is not supported for legacy/TablesDB databases or for bucket restores.
+`)
   .requiredOption(`--archive-id <archive-id>`, `Backup archive ID to restore`)
   .requiredOption(`--services [services...]`, `Array of services to restore`)
   .option(`--new-resource-id <new-resource-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .option(`--new-resource-name <new-resource-name>`, `Database name. Max length: 128 chars.`)
+  .option(`--new-specification <new-specification>`, `Specification to provision the restored database on, when restoring a DocumentsDB or VectorsDB database to a new resource. Defaults to the archived database's specification. Use \`serverless\` for the shared pool or a dedicated specification slug.`)
   .action(
     actionRunner(
-      async ({ archiveId, services, newResourceId, newResourceName }) =>
-        parse(await (await getBackupsClient()).createRestoration(archiveId, services, newResourceId, newResourceName)),
+      async ({ archiveId, services, newResourceId, newResourceName, newSpecification }) =>
+        parse(await (await getBackupsClient()).createRestoration(archiveId, services, newResourceId, newResourceName, newSpecification)),
     ),
   );
 

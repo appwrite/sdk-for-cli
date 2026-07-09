@@ -1,5 +1,24 @@
 # Change Log
 
+## 22.5.0
+
+* Updated: `tablesdb create` now takes `--specification` instead of `--dedicated-database-id`
+* Updated: Removed `health get-queue-logs` command
+* Added: `notifications` command group for console notifications
+* Added: `organization get`, `update`, and `delete` commands
+* Added: `organization list-memberships`, `create-membership`, `get-membership`, `update-membership`, and `delete-membership` commands
+* Added: `tablesdb list-migrations`, `create-migration`, `get-migration`, and `delete-migration` commands for dedicated database migrations
+* Added: `oauth2 create-par`, `list-organizations`, and `list-projects` commands
+* Added: `--request-_uri` option on `oauth2 authorize`; client ID, redirect URI, and response type are now optional
+* Added: `projects list-addons`, `get-addon`, `delete-addon`, `confirm-addon-payment`, and `get-addon-price` commands
+* Added: `create-premium-geo-db-addon` command on `projects` and `organizations`
+* Added: `account list-logs`, `teams list-logs`, and `users list-logs` commands
+* Added: `health get-geo` and `get-geo-premium` commands
+* Added: `--new-specification` option on `backups create-restoration`
+* Added: `--prompt` and `--max-age` options on `project update-o-auth-2-oidc`
+* Fixed: Project config validation now sends the `X-Appwrite-Project` header, fixing 401 errors for guest sessions
+* Fixed: Update check now reads the latest version from the Homebrew tap instead of stale local metadata
+
 ## 22.4.0
 
 * Updated: Removed pre-release activity log commands `list-logs`, `list-collection-logs`, `list-document-logs`, `list-table-logs`, `list-row-logs`, `list-message-logs`, `list-provider-logs`, `list-subscriber-logs`, and `list-topic-logs`

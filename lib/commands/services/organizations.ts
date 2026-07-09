@@ -130,6 +130,19 @@ const organizationsCreateBaaAddonCommand = organizations
   );
 
 
+const organizationsCreatePremiumGeoDBAddonCommand = organizations
+  .command(`create-premium-geo-db-addon`)
+  .description(`Create a Premium Geo DB addon for an organization.
+`)
+  .requiredOption(`--organization-id <organization-id>`, `Organization ID`)
+  .action(
+    actionRunner(
+      async ({ organizationId }) =>
+        parse(await (await getOrganizationsClient()).createPremiumGeoDBAddon(organizationId)),
+    ),
+  );
+
+
 const organizationsGetAddonCommand = organizations
   .command(`get-addon`)
   .description(`Get the details of a billing addon for an organization.

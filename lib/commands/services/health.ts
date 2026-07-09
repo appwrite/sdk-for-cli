@@ -78,6 +78,27 @@ const healthGetDBCommand = health
   );
 
 
+const healthGetGeoCommand = health
+  .command(`get-geo`)
+  .description(`Check the Appwrite geo service is up and connection is successful.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getGeo()),
+    ),
+  );
+
+
+const healthGetGeoPremiumCommand = health
+  .command(`get-geo-premium`)
+  .description(`Get the health status of the premium geo service. This endpoint probes the internal \`appwrite-geo-premium\` service used for premium IP-to-location lookups (organizations or projects on the premium geo DB addon) and returns a \`pass\` status when reachable.
+`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getHealthClient()).getGeoPremium()),
+    ),
+  );
+
+
 const healthGetPubSubCommand = health
   .command(`get-pub-sub`)
   .description(`Check the Appwrite pub-sub servers are up and connection is successful.`)
@@ -172,18 +193,6 @@ const healthGetQueueFunctionsCommand = health
     actionRunner(
       async ({ threshold }) =>
         parse(await (await getHealthClient()).getQueueFunctions(threshold)),
-    ),
-  );
-
-
-const healthGetQueueLogsCommand = health
-  .command(`get-queue-logs`)
-  .description(`Get the number of logs that are waiting to be processed in the Appwrite internal queue server.`)
-  .option(`--threshold <threshold>`, `Queue size threshold. When hit (equal or higher), endpoint returns server error. Default value is 5000.`, parseInteger)
-  .action(
-    actionRunner(
-      async ({ threshold }) =>
-        parse(await (await getHealthClient()).getQueueLogs(threshold)),
     ),
   );
 
