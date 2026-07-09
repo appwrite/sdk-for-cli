@@ -29,9 +29,9 @@ export const oauth2 = new Command("oauth-2")
 const oauth2AuthorizeCommand = oauth2
   .command(`authorize`)
   .description(`Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of \`application/json\` to receive a JSON response instead of a redirect.`)
-  .requiredOption(`--client-_id <client-_id>`, `OAuth2 client ID.`)
-  .requiredOption(`--redirect-_uri <redirect-_uri>`, `Redirect URI where visitor will be redirected after authorization, whether successful or not.`)
-  .requiredOption(`--response-_type <response-_type>`, `OAuth2 / OIDC response type. One of \`code\` (Authorization Code Flow), \`id_token\` (Implicit Flow, OIDC login only), or \`code id_token\` (Hybrid Flow).`)
+  .option(`--client-_id <client-_id>`, `OAuth2 client ID.`)
+  .option(`--redirect-_uri <redirect-_uri>`, `Redirect URI where visitor will be redirected after authorization, whether successful or not.`)
+  .option(`--response-_type <response-_type>`, `OAuth2 / OIDC response type. One of \`code\` (Authorization Code Flow), \`id_token\` (Implicit Flow, OIDC login only), or \`code id_token\` (Hybrid Flow).`)
   .option(`--scope <scope>`, `Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: \`openid\`, \`email\`, \`profile\`, \`phone\`.`)
   .option(`--state <state>`, `OAuth2 state. You receive this back in the redirect URI.`)
   .option(`--nonce <nonce>`, `OIDC nonce parameter to prevent replay attacks. Required when response_type includes \`id_token\`.`)
@@ -41,10 +41,11 @@ const oauth2AuthorizeCommand = oauth2
   .option(`--max-_age <max-_age>`, `OIDC max_age paraleter for customization of consent screen. Maximum allowable elapsed time in seconds since the user last authenticated. If exceeded, re-authentication is required.`, parseInteger)
   .option(`--authorization-_details <authorization-_details>`, `Rich authorization request. JSON array of objects, each with a \`type\` and project-defined fields`)
   .option(`--resource <resource>`, `RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.`)
+  .option(`--request-_uri <request-_uri>`, `OAuth2 authorization request handle returned by the pushed authorization request endpoint.`)
   .action(
     actionRunner(
-      async ({ client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource }) =>
-        parse(await (await getOauth2Client()).authorize(client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource)),
+      async ({ client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource, request_uri }) =>
+        parse(await (await getOauth2Client()).authorize(client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource, request_uri)),
     ),
   );
 
@@ -101,6 +102,57 @@ const oauth2LogoutCommand = oauth2
     actionRunner(
       async ({ id_token_hint, logout_hint, client_id, post_logout_redirect_uri, state, ui_locales }) =>
         parse(await (await getOauth2Client()).logout(id_token_hint, logout_hint, client_id, post_logout_redirect_uri, state, ui_locales)),
+    ),
+  );
+
+
+const oauth2ListOrganizationsCommand = oauth2
+  .command(`list-organizations`)
+  .description(`List the organizations the OAuth2 access token can access. Resolves the token's \`organization\` authorization details, expanding the \`*\` wildcard into the concrete set of organizations the user can see.`)
+  .option(`--limit <limit>`, `Maximum number of organizations to return. Between 1 and 5000.`, parseInteger)
+  .option(`--offset <offset>`, `Number of organizations to skip before returning results. Used for pagination.`, parseInteger)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .action(
+    actionRunner(
+      async ({ limit, offset, search }) =>
+        parse(await (await getOauth2Client()).listOrganizations(limit, offset, search)),
+    ),
+  );
+
+
+const oauth2CreatePARCommand = oauth2
+  .command(`create-par`)
+  .description(`Store an OAuth2 authorization request server-side and receive a short-lived request_uri handle for the authorize endpoint.`)
+  .requiredOption(`--client-_id <client-_id>`, `OAuth2 client ID.`)
+  .requiredOption(`--redirect-_uri <redirect-_uri>`, `Redirect URI where visitor will be redirected after authorization, whether successful or not.`)
+  .requiredOption(`--response-_type <response-_type>`, `OAuth2 / OIDC response type.`)
+  .requiredOption(`--scope <scope>`, `Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: \`openid\`, \`email\`, \`profile\`, \`phone\`.`)
+  .option(`--state <state>`, `OAuth2 state. You receive this back in the redirect URI.`)
+  .option(`--nonce <nonce>`, `OIDC nonce parameter to prevent replay attacks. Required when response_type includes \`id_token\`.`)
+  .option(`--code-_challenge <code-_challenge>`, `PKCE code challenge. Required when OAuth2 app is public.`)
+  .option(`--code-_challenge-_method <code-_challenge-_method>`, `PKCE code challenge method. Required when OAuth2 app is public.`)
+  .option(`--prompt <prompt>`, `OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.`)
+  .option(`--max-_age <max-_age>`, `OIDC max_age parameter for customization of consent screen.`, parseInteger)
+  .option(`--authorization-_details <authorization-_details>`, `Rich authorization request. JSON array of objects, each with a \`type\` and project-defined fields`)
+  .option(`--resource <resource>`, `RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.`)
+  .action(
+    actionRunner(
+      async ({ client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource }) =>
+        parse(await (await getOauth2Client()).createPAR(client_id, redirect_uri, response_type, scope, state, nonce, code_challenge, code_challenge_method, prompt, max_age, authorization_details, resource)),
+    ),
+  );
+
+
+const oauth2ListProjectsCommand = oauth2
+  .command(`list-projects`)
+  .description(`List the projects the OAuth2 access token can access. Resolves the token's \`project\` authorization details, expanding the \`*\` wildcard into the concrete set of projects the user can see.`)
+  .option(`--limit <limit>`, `Maximum number of projects to return. Between 1 and 5000.`, parseInteger)
+  .option(`--offset <offset>`, `Number of projects to skip before returning results. Used for pagination.`, parseInteger)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .action(
+    actionRunner(
+      async ({ limit, offset, search }) =>
+        parse(await (await getOauth2Client()).listProjects(limit, offset, search)),
     ),
   );
 

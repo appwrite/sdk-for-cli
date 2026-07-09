@@ -44,6 +44,7 @@ import { health } from './lib/commands/services/health.js';
 import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
+import { notifications } from './lib/commands/services/notifications.js';
 import { oauth2 } from './lib/commands/services/oauth-2.js';
 import { organization } from './lib/commands/services/organization.js';
 import { organizations } from './lib/commands/services/organizations.js';
@@ -217,6 +218,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(locale)
             .addCommand(messaging)
             .addCommand(migrations)
+            .addCommand(notifications)
             .addCommand(oauth2)
             .addCommand(organization)
             .addCommand(organizations)

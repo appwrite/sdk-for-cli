@@ -768,6 +768,8 @@ const projectUpdateOAuth2OidcCommand = project
   .option(`--authorization-url <authorization-url>`, `OpenID Connect authorization endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/authorize`)
   .option(`--token-url <token-url>`, `OpenID Connect token endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/token`)
   .option(`--user-info-url <user-info-url>`, `OpenID Connect user info endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/userinfo`)
+  .option(`--prompt [prompt...]`, `Array of OpenID Connect prompt values controlling the authentication and consent screens. If "none" is included, it must be the only element. "none" means: don't display any authentication or consent screens. "login" means: prompt the user to re-authenticate. "consent" means: prompt the user for consent. "select_account" means: prompt the user to select an account.`)
+  .option(`--max-age <max-age>`, `Maximum authentication age in seconds. When set, the user must have authenticated within this many seconds, otherwise they are prompted to re-authenticate.`, parseInteger)
   .option(
     `--enabled [value]`,
     `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
@@ -776,8 +778,8 @@ const projectUpdateOAuth2OidcCommand = project
   )
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Oidc(clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, enabled)),
+      async ({ clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, prompt, maxAge, enabled }) =>
+        parse(await (await getProjectClient()).updateOAuth2Oidc(clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, prompt, maxAge, enabled)),
     ),
   );
 

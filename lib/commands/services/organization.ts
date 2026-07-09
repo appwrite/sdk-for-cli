@@ -32,6 +32,38 @@ export const organization = new Command("organization")
     helpWidth: process.stdout.columns || 80,
   });
 
+const organizationGetCommand = organization
+  .command(`get`)
+  .description(`Get the current organization.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getOrganizationClient()).get()),
+    ),
+  );
+
+
+const organizationUpdateCommand = organization
+  .command(`update`)
+  .description(`Update the current organization's name.`)
+  .requiredOption(`--name <name>`, `New organization name. Max length: 128 chars.`)
+  .action(
+    actionRunner(
+      async ({ name }) =>
+        parse(await (await getOrganizationClient()).update(name)),
+    ),
+  );
+
+
+const organizationDeleteCommand = organization
+  .command(`delete`)
+  .description(`Delete the current organization. All projects that belong to the organization are deleted as well.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getOrganizationClient()).delete()),
+    ),
+  );
+
+
 const organizationListKeysCommand = organization
   .command(`list-keys`)
   .description(`Get a list of all API keys from the current organization.`)
@@ -108,6 +140,87 @@ const organizationDeleteKeyCommand = organization
     actionRunner(
       async ({ keyId }) =>
         parse(await (await getOrganizationClient()).deleteKey(keyId)),
+    ),
+  );
+
+
+const organizationListMembershipsCommand = organization
+  .command(`list-memberships`)
+  .description(`Get a list of all memberships from the current organization.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--filter <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseFilterQuery(value), previous))
+  .option(`--where <expression>`, `Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseDeprecatedWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .action(
+    actionRunner(
+      async ({ queries, search, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getOrganizationClient()).listMemberships(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
+    ),
+  );
+
+
+const organizationCreateMembershipCommand = organization
+  .command(`create-membership`)
+  .description(`Invite a new member to join the current organization. An email with a link to join the organization will be sent to the new member's email address. If member doesn't exist in the project it will be automatically created.`)
+  .requiredOption(`--roles [roles...]`, `Array of strings. Use this param to set the user roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.`)
+  .option(`--email <email>`, `Email of the new organization member.`)
+  .option(`--user-id <user-id>`, `ID of the user to be added to the organization.`)
+  .option(`--phone <phone>`, `Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
+  .option(`--url <url>`, `URL to redirect the user back to your app from the invitation email. This parameter is not required when an API key is supplied.`)
+  .option(`--name <name>`, `Name of the new organization member. Max length: 128 chars.`)
+  .action(
+    actionRunner(
+      async ({ roles, email, userId, phone, url, name }) =>
+        parse(await (await getOrganizationClient()).createMembership(roles, email, userId, phone, url, name)),
+    ),
+  );
+
+
+const organizationGetMembershipCommand = organization
+  .command(`get-membership`)
+  .description(`Get a membership from the current organization by its unique ID.`)
+  .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
+  .action(
+    actionRunner(
+      async ({ membershipId }) =>
+        parse(await (await getOrganizationClient()).getMembership(membershipId)),
+    ),
+  );
+
+
+const organizationUpdateMembershipCommand = organization
+  .command(`update-membership`)
+  .description(`Modify the roles of a member in the current organization.`)
+  .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
+  .requiredOption(`--roles [roles...]`, `An array of strings. Use this param to set the user's roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.`)
+  .action(
+    actionRunner(
+      async ({ membershipId, roles }) =>
+        parse(await (await getOrganizationClient()).updateMembership(membershipId, roles)),
+    ),
+  );
+
+
+const organizationDeleteMembershipCommand = organization
+  .command(`delete-membership`)
+  .description(`Remove a member from the current organization. The member is removed whether they accepted the invitation or not; a pending invitation is revoked.`)
+  .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
+  .action(
+    actionRunner(
+      async ({ membershipId }) =>
+        parse(await (await getOrganizationClient()).deleteMembership(membershipId)),
     ),
   );
 
