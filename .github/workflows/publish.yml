@@ -144,11 +144,10 @@ jobs:
 
       - name: Audit npm dependencies
         run: |
-          # CLI builds with Bun, but npm audit reads package-lock.json.
-          # update-lockfiles.sh updates both lockfiles; this catches npm lock drift.
-          npm install --package-lock-only --ignore-scripts
-          git diff --exit-code package-lock.json
-          npm audit --audit-level=high --omit=dev
+          # The committed package-lock.json is generated from sdk-generator's
+          # lockfile template (the single source of truth) — never rewrite it
+          # here; different npm versions emit different lockfile metadata.
+          npm audit --package-lock-only --audit-level=high --omit=dev
 
       - name: Publish
         run: npm publish --provenance --access public --tag ${{ steps.release_tag.outputs.tag }}
