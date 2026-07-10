@@ -1,5 +1,11 @@
 # Change Log
 
+## 22.6.0
+
+* Added: `push functions` and `pull` now work with API key authentication, enabling CI usage without a console session
+* Updated: Console-only steps during push, like default domain rules, are skipped with a warning when using an API key
+* Updated: Clearer authentication errors that distinguish API key and console session requirements
+
 ## 22.5.0
 
 * Updated: `tablesdb create` now takes `--specification` instead of `--dedicated-database-id`
