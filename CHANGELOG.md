@@ -1,6 +1,6 @@
 # Change Log
 
-## 22.7.0
+## 22.6.1
 
 * Fixed: snake_case parameters now map to proper kebab-case flags: `oauth2` commands use `--client-id`, `--redirect-uri`, `--response-type`, `--request-uri`, `--code-challenge`, `--max-age` instead of the malformed `--client-_id` style names
 

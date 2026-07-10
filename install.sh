@@ -120,7 +120,7 @@ verifyMacOSCodeSignature() {
 downloadBinary() {
     echo "[2/5] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="22.7.0"
+    GITHUB_LATEST_VERSION="22.6.1"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
