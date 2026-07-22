@@ -1,4 +1,4 @@
 ```bash
-appwrite databases get-usage \
+appwrite tables-db get-status \
     --database-id <DATABASE_ID>
 ```

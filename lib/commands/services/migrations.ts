@@ -35,7 +35,7 @@ export const migrations = new Command("migrations")
 const migrationsListCommand = migrations
   .command(`list`)
   .description(`List all migrations in the current project. This endpoint returns a list of all migrations including their status, progress, and any errors that occurred during the migration process.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, stage, source, destination, resources, resourceId, resourceType, statusCounters, resourceData, errors`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, stage, source, destination, resources, resourceId, resourceInternalId, resourceType, parentResourceId, parentResourceInternalId, parentResourceType, destinationResourceId, destinationResourceInternalId, destinationResourceType, statusCounters, resourceData, errors`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
   .option(
     `--total [value]`,
@@ -93,7 +93,8 @@ const migrationsGetAppwriteReportCommand = migrations
 const migrationsCreateCSVExportCommand = migrations
   .command(`create-csv-export`)
   .description(`Export documents to a CSV file from your Appwrite database. This endpoint allows you to export documents to a CSV file stored in a secure internal bucket. You'll receive an email with a download link when the export is complete.`)
-  .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database to export.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID containing the source collection.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID to export documents from.`)
   .requiredOption(`--filename <filename>`, `The name of the file to be created for the export, excluding the .csv extension.`)
   .option(`--columns [columns...]`, `List of attributes to export. If empty, all attributes will be exported. You can use the \`*\` wildcard to export all attributes from the collection.`)
   .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
@@ -122,8 +123,8 @@ const migrationsCreateCSVExportCommand = migrations
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ resourceId, filename, columns, queries, delimiter, enclosure, escape, header, notify, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getMigrationsClient()).createCSVExport(resourceId, filename, columns, buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), delimiter, enclosure, escape, header, notify)),
+      async ({ databaseId, collectionId, filename, columns, queries, delimiter, enclosure, escape, header, notify, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getMigrationsClient()).createCSVExport(databaseId, collectionId, filename, columns, buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), delimiter, enclosure, escape, header, notify)),
     ),
   );
 
@@ -133,7 +134,8 @@ const migrationsCreateCSVImportCommand = migrations
   .description(`Import documents from a CSV file into your Appwrite database. This endpoint allows you to import documents from a CSV file uploaded to Appwrite Storage bucket.`)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
-  .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID containing the target collection.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID to import documents into.`)
   .option(
     `--internal-file [value]`,
     `Is the file stored in an internal bucket?`,
@@ -143,8 +145,8 @@ const migrationsCreateCSVImportCommand = migrations
   .option(`--on-duplicate <on-duplicate>`, `Behavior when a row with an existing $id is encountered. "fail" (default): abort on first conflict. "skip": silently ignore. "overwrite": replace existing row.`)
   .action(
     actionRunner(
-      async ({ bucketId, fileId, resourceId, internalFile, onDuplicate }) =>
-        parse(await (await getMigrationsClient()).createCSVImport(bucketId, fileId, resourceId, internalFile, onDuplicate)),
+      async ({ bucketId, fileId, databaseId, collectionId, internalFile, onDuplicate }) =>
+        parse(await (await getMigrationsClient()).createCSVImport(bucketId, fileId, databaseId, collectionId, internalFile, onDuplicate)),
     ),
   );
 
@@ -179,7 +181,8 @@ const migrationsCreateJSONExportCommand = migrations
   .command(`create-json-export`)
   .description(`Export documents to a JSON file from your Appwrite database. This endpoint allows you to export documents to a JSON file stored in a secure internal bucket. You'll receive an email with a download link when the export is complete.
 `)
-  .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database to export.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID containing the source collection.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID to export documents from.`)
   .requiredOption(`--filename <filename>`, `The name of the file to be created for the export, excluding the .json extension.`)
   .option(`--columns [columns...]`, `List of attributes to export. If empty, all attributes will be exported. You can use the \`*\` wildcard to export all attributes from the collection.`)
   .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.`)
@@ -199,8 +202,8 @@ const migrationsCreateJSONExportCommand = migrations
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ resourceId, filename, columns, queries, notify, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getMigrationsClient()).createJSONExport(resourceId, filename, columns, buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), notify)),
+      async ({ databaseId, collectionId, filename, columns, queries, notify, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getMigrationsClient()).createJSONExport(databaseId, collectionId, filename, columns, buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), notify)),
     ),
   );
 
@@ -211,7 +214,8 @@ const migrationsCreateJSONImportCommand = migrations
 `)
   .requiredOption(`--bucket-id <bucket-id>`, `Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).`)
   .requiredOption(`--file-id <file-id>`, `File ID.`)
-  .requiredOption(`--resource-id <resource-id>`, `Composite ID in the format {databaseId:collectionId}, identifying a collection within a database.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID containing the target collection.`)
+  .requiredOption(`--collection-id <collection-id>`, `Collection ID to import documents into.`)
   .option(
     `--internal-file [value]`,
     `Is the file stored in an internal bucket?`,
@@ -221,8 +225,8 @@ const migrationsCreateJSONImportCommand = migrations
   .option(`--on-duplicate <on-duplicate>`, `Behavior when a row with an existing $id is encountered. "fail" (default): abort on first conflict. "skip": silently ignore. "overwrite": replace existing row.`)
   .action(
     actionRunner(
-      async ({ bucketId, fileId, resourceId, internalFile, onDuplicate }) =>
-        parse(await (await getMigrationsClient()).createJSONImport(bucketId, fileId, resourceId, internalFile, onDuplicate)),
+      async ({ bucketId, fileId, databaseId, collectionId, internalFile, onDuplicate }) =>
+        parse(await (await getMigrationsClient()).createJSONImport(bucketId, fileId, databaseId, collectionId, internalFile, onDuplicate)),
     ),
   );
 

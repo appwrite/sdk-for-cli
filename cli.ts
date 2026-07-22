@@ -40,7 +40,6 @@ import { backups } from './lib/commands/services/backups.js';
 import { databases } from './lib/commands/services/databases.js';
 import { functions } from './lib/commands/services/functions.js';
 import { graphql } from './lib/commands/services/graphql.js';
-import { health } from './lib/commands/services/health.js';
 import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
@@ -50,7 +49,6 @@ import { organization } from './lib/commands/services/organization.js';
 import { organizations } from './lib/commands/services/organizations.js';
 import { presences } from './lib/commands/services/presences.js';
 import { project } from './lib/commands/services/project.js';
-import { projects } from './lib/commands/services/projects.js';
 import { proxy } from './lib/commands/services/proxy.js';
 import { sites } from './lib/commands/services/sites.js';
 import { storage } from './lib/commands/services/storage.js';
@@ -214,7 +212,6 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(databases)
             .addCommand(functions)
             .addCommand(graphql)
-            .addCommand(health)
             .addCommand(locale)
             .addCommand(messaging)
             .addCommand(migrations)
@@ -224,7 +221,6 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(organizations)
             .addCommand(presences)
             .addCommand(project)
-            .addCommand(projects)
             .addCommand(proxy)
             .addCommand(sites)
             .addCommand(storage)

@@ -165,18 +165,6 @@ const functionsGetTemplateCommand = functions
   );
 
 
-const functionsListUsageCommand = functions
-  .command(`list-usage`)
-  .description(`Get usage metrics and statistics for all functions in the project. View statistics including total deployments, builds, logs, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ range }) =>
-        parse(await (await getFunctionsClient()).listUsage(range)),
-    ),
-  );
-
-
 const functionsGetCommand = functions
   .command(`get`)
   .description(`Get a function by its unique ID.`)
@@ -403,11 +391,12 @@ const functionsGetDeploymentDownloadCommand = functions
   .requiredOption(`--function-id <function-id>`, `Function ID.`)
   .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
   .option(`--type <type>`, `Deployment file to download. Can be: "source", "output".`)
+  .option(`--token <token>`, `Presigned source-download token for accessing this deployment without a session (jobs-service).`)
   .requiredOption(`--destination <destination>`, `Path to save the file to.`)
   .action(
     actionRunner(
-      async ({ functionId, deploymentId, type, destination }) => {
-        const url = await (await getFunctionsClient()).getDeploymentDownload(functionId, deploymentId, type);
+      async ({ functionId, deploymentId, type, token, destination }) => {
+        const url = await (await getFunctionsClient()).getDeploymentDownload(functionId, deploymentId, type, token);
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
@@ -505,19 +494,6 @@ const functionsDeleteExecutionCommand = functions
     actionRunner(
       async ({ functionId, executionId }) =>
         parse(await (await getFunctionsClient()).deleteExecution(functionId, executionId)),
-    ),
-  );
-
-
-const functionsGetUsageCommand = functions
-  .command(`get-usage`)
-  .description(`Get usage metrics and statistics for a for a specific function. View statistics including total deployments, builds, executions, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
-  .requiredOption(`--function-id <function-id>`, `Function ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ functionId, range }) =>
-        parse(await (await getFunctionsClient()).getUsage(functionId, range)),
     ),
   );
 

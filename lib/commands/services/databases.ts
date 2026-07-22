@@ -173,18 +173,6 @@ const databasesCreateOperationsCommand = databases
   );
 
 
-const databasesListUsageCommand = databases
-  .command(`list-usage`)
-  .description(`List usage metrics and statistics for all databases in the project. You can view the total number of databases, collections, documents, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ range }) =>
-        parse(await (await getDatabasesClient()).listUsage(range)),
-    ),
-  );
-
-
 const databasesGetCommand = databases
   .command(`get`)
   .description(`Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.`)
@@ -1464,33 +1452,6 @@ const databasesDeleteIndexCommand = databases
     actionRunner(
       async ({ databaseId, collectionId, key }) =>
         parse(await (await getDatabasesClient()).deleteIndex(databaseId, collectionId, key)),
-    ),
-  );
-
-
-const databasesGetCollectionUsageCommand = databases
-  .command(`get-collection-usage`)
-  .description(`Get usage metrics and statistics for a collection. Returning the total number of documents. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--collection-id <collection-id>`, `Collection ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ databaseId, collectionId, range }) =>
-        parse(await (await getDatabasesClient()).getCollectionUsage(databaseId, collectionId, range)),
-    ),
-  );
-
-
-const databasesGetUsageCommand = databases
-  .command(`get-usage`)
-  .description(`Get usage metrics and statistics for a database. You can view the total number of collections, documents, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ databaseId, range }) =>
-        parse(await (await getDatabasesClient()).getUsage(databaseId, range)),
     ),
   );
 
