@@ -73,10 +73,21 @@ const tablesDBCreateCommand = tablesDB
       value === undefined ? true : parseBool(value),
   )
   .option(`--specification <specification>`, `Database specification. Defaults to \`serverless\`, which creates the database on the shared pool. Any other value provisions a dedicated database on that specification.`)
+  .option(`--replicas <replicas>`, `Number of high availability replicas (0-5) for the dedicated database backing this database. Requires a dedicated \`specification\`; must be 0 for a serverless database. High availability is enabled when greater than 0.`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled, specification }) =>
-        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, specification)),
+      async ({ databaseId, name, enabled, specification, replicas }) =>
+        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, specification, replicas)),
+    ),
+  );
+
+
+const tablesDBListSpecificationsCommand = tablesDB
+  .command(`list-specifications`)
+  .description(`List the dedicated database specifications available on the current plan. Each specification reports its resource limits, pricing, and whether it is enabled for the organization.`)
+  .action(
+    actionRunner(
+      async () => parse(await (await getTablesDBClient()).listSpecifications()),
     ),
   );
 
@@ -174,18 +185,6 @@ const tablesDBCreateOperationsCommand = tablesDB
   );
 
 
-const tablesDBListUsageCommand = tablesDB
-  .command(`list-usage`)
-  .description(`List usage metrics and statistics for all databases in the project. You can view the total number of databases, tables, rows, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ range }) =>
-        parse(await (await getTablesDBClient()).listUsage(range)),
-    ),
-  );
-
-
 const tablesDBGetCommand = tablesDB
   .command(`get`)
   .description(`Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.`)
@@ -209,10 +208,11 @@ const tablesDBUpdateCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--replicas <replicas>`, `Number of high availability replicas (0-5) for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification. High availability is enabled when greater than 0.`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled }) =>
-        parse(await (await getTablesDBClient()).update(databaseId, name, enabled)),
+      async ({ databaseId, name, enabled, replicas }) =>
+        parse(await (await getTablesDBClient()).update(databaseId, name, enabled, replicas)),
     ),
   );
 
@@ -225,6 +225,19 @@ const tablesDBDeleteCommand = tablesDB
     actionRunner(
       async ({ databaseId }) =>
         parse(await (await getTablesDBClient()).delete(databaseId)),
+    ),
+  );
+
+
+const tablesDBCreateFailoverCommand = tablesDB
+  .command(`create-failover`)
+  .description(`Trigger a manual failover for a dedicated database with high availability enabled. Promotes a replica to primary. The failover runs asynchronously; poll the database document for status updates.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .option(`--target-replica-id <target-replica-id>`, `Target replica ID to promote. If not specified, the healthiest replica is selected.`)
+  .action(
+    actionRunner(
+      async ({ databaseId, targetReplicaId }) =>
+        parse(await (await getTablesDBClient()).createFailover(databaseId, targetReplicaId)),
     ),
   );
 
@@ -276,6 +289,30 @@ const tablesDBDeleteMigrationCommand = tablesDB
     actionRunner(
       async ({ databaseId, migrationId }) =>
         parse(await (await getTablesDBClient()).deleteMigration(databaseId, migrationId)),
+    ),
+  );
+
+
+const tablesDBGetReplicasCommand = tablesDB
+  .command(`get-replicas`)
+  .description(`Get high availability status for a dedicated database. Returns replica statuses, replication lag, and sync mode.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .action(
+    actionRunner(
+      async ({ databaseId }) =>
+        parse(await (await getTablesDBClient()).getReplicas(databaseId)),
+    ),
+  );
+
+
+const tablesDBGetStatusCommand = tablesDB
+  .command(`get-status`)
+  .description(`Get real-time health and status information for a dedicated database. Returns health status, readiness, uptime, connection info, replica status, and volume information.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .action(
+    actionRunner(
+      async ({ databaseId }) =>
+        parse(await (await getTablesDBClient()).getStatus(databaseId)),
     ),
   );
 
@@ -1515,33 +1552,6 @@ const tablesDBIncrementRowColumnCommand = tablesDB
     actionRunner(
       async ({ databaseId, tableId, rowId, column, value, max, transactionId }) =>
         parse(await (await getTablesDBClient()).incrementRowColumn(databaseId, tableId, rowId, column, value, max, transactionId)),
-    ),
-  );
-
-
-const tablesDBGetTableUsageCommand = tablesDB
-  .command(`get-table-usage`)
-  .description(`Get usage metrics and statistics for a table. Returning the total number of rows. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .requiredOption(`--table-id <table-id>`, `Table ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ databaseId, tableId, range }) =>
-        parse(await (await getTablesDBClient()).getTableUsage(databaseId, tableId, range)),
-    ),
-  );
-
-
-const tablesDBGetUsageCommand = tablesDB
-  .command(`get-usage`)
-  .description(`Get usage metrics and statistics for a database. You can view the total number of tables, rows, and storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.`)
-  .requiredOption(`--database-id <database-id>`, `Database ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ databaseId, range }) =>
-        parse(await (await getTablesDBClient()).getUsage(databaseId, range)),
     ),
   );
 

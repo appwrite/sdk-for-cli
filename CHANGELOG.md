@@ -1,5 +1,16 @@
 # Change Log
 
+## 23.0.0
+
+* Breaking: removed `projects` service commands
+* Breaking: removed `health` service commands
+* Breaking: removed usage commands: `get-usage`, `list-usage`, `get-bucket-usage`, `get-collection-usage`, `get-table-usage`
+* Updated: removed `--new-specification` option from `backups create-restoration`
+* Added: `account` OAuth2 consent commands: `list-consents`, `get-consent`, `delete-consent` and consent token commands
+* Added: `oauth2 authorize-post` and `oauth2 logout-post` commands
+* Added: `project update-o-auth-2-appwrite` command
+* Added: `--token` option to `functions get-deployment-download` and `sites get-deployment-download`
+
 ## 22.6.1
 
 * Fixed: snake_case parameters now map to proper kebab-case flags: `oauth2` commands use `--client-id`, `--redirect-uri`, `--response-type`, `--request-uri`, `--code-challenge`, `--max-age` instead of the malformed `--client-_id` style names

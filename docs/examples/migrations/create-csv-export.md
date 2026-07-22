@@ -1,6 +1,7 @@
 ```bash
 appwrite migrations create-csv-export \
-    --resource-id <ID1:ID2> \
+    --database-id <DATABASE_ID> \
+    --collection-id <COLLECTION_ID> \
     --filename <FILENAME> \
     --limit 25
 ```

@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db get-usage \
+appwrite tables-db get-replicas \
     --database-id <DATABASE_ID>
 ```

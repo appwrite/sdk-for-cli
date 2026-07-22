@@ -285,10 +285,11 @@ const projectUpdateOAuth2ServerCommand = project
   .option(`--user-code-length <user-code-length>`, `Number of characters in the device flow user code, excluding the formatting separator. Shorter codes are easier to type but weaker; pair short codes with short expiry. Leave empty to use default 8.`, parseInteger)
   .option(`--user-code-format <user-code-format>`, `Character set for device flow user codes: \`numeric\` (digits only — best for numeric keypads and TV remotes), \`alphabetic\` (letters only), or \`alphanumeric\` (letters and digits — highest entropy per character). Defaults to \`alphanumeric\`.`)
   .option(`--device-code-duration <device-code-duration>`, `Lifetime in seconds of device flow device codes and user codes. Device codes are intentionally short-lived. Leave empty to use default 600.`, parseInteger)
+  .option(`--default-scopes [default-scopes...]`, `List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long.`)
   .action(
     actionRunner(
-      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration }) =>
-        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration)),
+      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes }) =>
+        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes)),
     ),
   );
 
@@ -329,6 +330,25 @@ const projectUpdateOAuth2AppleCommand = project
     actionRunner(
       async ({ serviceId, keyId, teamId, p8File, enabled }) =>
         parse(await (await getProjectClient()).updateOAuth2Apple(serviceId, keyId, teamId, p8File, enabled)),
+    ),
+  );
+
+
+const projectUpdateOAuth2AppwriteCommand = project
+  .command(`update-o-auth-2-appwrite`)
+  .description(`Update the project OAuth2 Appwrite configuration.`)
+  .option(`--client-id <client-id>`, `'Client ID' of Appwrite OAuth2 app. For example: 6a42000000000000b5a0`)
+  .option(`--client-secret <client-secret>`, `'Client Secret' of Appwrite OAuth2 app. For example: b86afd000000000000000000000000000000000000000000000000000ced5f93`)
+  .option(
+    `--enabled [value]`,
+    `OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .action(
+    actionRunner(
+      async ({ clientId, clientSecret, enabled }) =>
+        parse(await (await getProjectClient()).updateOAuth2Appwrite(clientId, clientSecret, enabled)),
     ),
   );
 

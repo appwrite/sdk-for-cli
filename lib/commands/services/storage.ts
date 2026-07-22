@@ -350,30 +350,3 @@ const storageGetFileViewCommand = storage
   );
 
 
-const storageGetUsageCommand = storage
-  .command(`get-usage`)
-  .description(`Get usage metrics and statistics for all buckets in the project. You can view the total number of buckets, files, storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.
-`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ range }) =>
-        parse(await (await getStorageClient()).getUsage(range)),
-    ),
-  );
-
-
-const storageGetBucketUsageCommand = storage
-  .command(`get-bucket-usage`)
-  .description(`Get usage metrics and statistics a specific bucket in the project. You can view the total number of files, storage usage. The response includes both current totals and historical data over time. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, range defaults to 30 days.
-`)
-  .requiredOption(`--bucket-id <bucket-id>`, `Bucket ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ bucketId, range }) =>
-        parse(await (await getStorageClient()).getBucketUsage(bucketId, range)),
-    ),
-  );
-
-

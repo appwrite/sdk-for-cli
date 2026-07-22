@@ -159,18 +159,6 @@ const sitesGetTemplateCommand = sites
   );
 
 
-const sitesListUsageCommand = sites
-  .command(`list-usage`)
-  .description(`Get usage metrics and statistics for all sites in the project. View statistics including total deployments, builds, logs, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ range }) =>
-        parse(await (await getSitesClient()).listUsage(range)),
-    ),
-  );
-
-
 const sitesGetCommand = sites
   .command(`get`)
   .description(`Get a site by its unique ID.`)
@@ -399,11 +387,12 @@ const sitesGetDeploymentDownloadCommand = sites
   .requiredOption(`--site-id <site-id>`, `Site ID.`)
   .requiredOption(`--deployment-id <deployment-id>`, `Deployment ID.`)
   .option(`--type <type>`, `Deployment file to download. Can be: "source", "output".`)
+  .option(`--token <token>`, `Presigned source-download token for accessing this deployment without a session (jobs-service).`)
   .requiredOption(`--destination <destination>`, `Path to save the file to.`)
   .action(
     actionRunner(
-      async ({ siteId, deploymentId, type, destination }) => {
-        const url = await (await getSitesClient()).getDeploymentDownload(siteId, deploymentId, type);
+      async ({ siteId, deploymentId, type, token, destination }) => {
+        const url = await (await getSitesClient()).getDeploymentDownload(siteId, deploymentId, type, token);
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
@@ -478,19 +467,6 @@ const sitesDeleteLogCommand = sites
     actionRunner(
       async ({ siteId, logId }) =>
         parse(await (await getSitesClient()).deleteLog(siteId, logId)),
-    ),
-  );
-
-
-const sitesGetUsageCommand = sites
-  .command(`get-usage`)
-  .description(`Get usage metrics and statistics for a for a specific site. View statistics including total deployments, builds, executions, storage usage, and compute time. The response includes both current totals and historical data for each metric. Use the optional range parameter to specify the time window for historical data: 24h (last 24 hours), 30d (last 30 days), or 90d (last 90 days). If not specified, defaults to 30 days.`)
-  .requiredOption(`--site-id <site-id>`, `Site ID.`)
-  .option(`--range <range>`, `Date range.`)
-  .action(
-    actionRunner(
-      async ({ siteId, range }) =>
-        parse(await (await getSitesClient()).getUsage(siteId, range)),
     ),
   );
 
