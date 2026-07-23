@@ -36,6 +36,7 @@ import { generate } from './lib/commands/generate.js';
 
 import { account } from './lib/commands/services/account.js';
 import { activities } from './lib/commands/services/activities.js';
+import { apps } from './lib/commands/services/apps.js';
 import { backups } from './lib/commands/services/backups.js';
 import { databases } from './lib/commands/services/databases.js';
 import { functions } from './lib/commands/services/functions.js';
@@ -208,6 +209,7 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(logout)
             .addCommand(account)
             .addCommand(activities)
+            .addCommand(apps)
             .addCommand(backups)
             .addCommand(databases)
             .addCommand(functions)
