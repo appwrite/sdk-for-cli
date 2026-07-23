@@ -21,7 +21,7 @@ const getActivitiesClient = async (): Promise<Activities> => {
 };
 
 export const activities = new Command("activities")
-  .description(commandDescriptions["activities"] ?? "")
+  .description(commandDescriptions["activities"] || "The Activities service allows you to list and inspect project activity events.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

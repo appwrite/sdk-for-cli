@@ -29,7 +29,7 @@ const getSitesClient = async (): Promise<Sites> => {
 };
 
 export const sites = new Command("sites")
-  .description(commandDescriptions["sites"] ?? "")
+  .description(commandDescriptions["sites"] || "The Sites Service allows you view, create and manage your web applications.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

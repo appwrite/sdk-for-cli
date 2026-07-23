@@ -27,7 +27,7 @@ const getProxyClient = async (): Promise<Proxy> => {
 };
 
 export const proxy = new Command("proxy")
-  .description(commandDescriptions["proxy"] ?? "")
+  .description(commandDescriptions["proxy"] || "The Proxy Service allows you to configure actions for your domains beyond DNS configuration.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

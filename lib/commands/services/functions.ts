@@ -30,7 +30,7 @@ const getFunctionsClient = async (): Promise<Functions> => {
 };
 
 export const functions = new Command("functions")
-  .description(commandDescriptions["functions"] ?? "")
+  .description(commandDescriptions["functions"] || "The Functions Service allows you view, create and manage your Cloud Functions.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

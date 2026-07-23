@@ -28,7 +28,7 @@ const getPresencesClient = async (): Promise<Presences> => {
 };
 
 export const presences = new Command("presences")
-  .description(commandDescriptions["presences"] ?? "")
+  .description(commandDescriptions["presences"] || "The Presences service allows you to track and manage real-time user presence in your project.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

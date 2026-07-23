@@ -27,7 +27,7 @@ const getWebhooksClient = async (): Promise<Webhooks> => {
 };
 
 export const webhooks = new Command("webhooks")
-  .description(commandDescriptions["webhooks"] ?? "")
+  .description(commandDescriptions["webhooks"] || "The Webhooks service allows you to manage your project webhooks.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

@@ -28,7 +28,7 @@ const getAccountClient = async (): Promise<Account> => {
 };
 
 export const account = new Command("account")
-  .description(commandDescriptions["account"] ?? "")
+  .description(commandDescriptions["account"] || "The Account service allows you to authenticate and manage a user account.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

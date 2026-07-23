@@ -28,7 +28,7 @@ const getUsersClient = async (): Promise<Users> => {
 };
 
 export const users = new Command("users")
-  .description(commandDescriptions["users"] ?? "")
+  .description(commandDescriptions["users"] || "The Users service allows you to manage your project users.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

@@ -27,7 +27,7 @@ const getTokensClient = async (): Promise<Tokens> => {
 };
 
 export const tokens = new Command("tokens")
-  .description(commandDescriptions["tokens"] ?? "")
+  .description(commandDescriptions["tokens"] || "The Tokens service allows you to create and manage resource tokens for secure file access.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

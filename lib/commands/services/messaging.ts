@@ -28,7 +28,7 @@ const getMessagingClient = async (): Promise<Messaging> => {
 };
 
 export const messaging = new Command("messaging")
-  .description(commandDescriptions["messaging"] ?? "")
+  .description(commandDescriptions["messaging"] || "The Messaging service allows you to send messages to any provider type (SMTP, push notification, SMS, etc.).")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

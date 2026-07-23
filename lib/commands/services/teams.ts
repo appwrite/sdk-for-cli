@@ -37,7 +37,7 @@ const getTeamsClient = async (): Promise<Teams> => {
 };
 
 export const teams = new Command("teams")
-  .description(commandDescriptions["teams"] ?? "")
+  .description(commandDescriptions["teams"] || "The Teams service allows you to group users of your project and to enable them to share read and write access to your project resources")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

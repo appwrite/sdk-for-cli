@@ -21,7 +21,7 @@ const getLocaleClient = async (): Promise<Locale> => {
 };
 
 export const locale = new Command("locale")
-  .description(commandDescriptions["locale"] ?? "")
+  .description(commandDescriptions["locale"] || "The Locale service allows you to customize your app based on your users' location.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

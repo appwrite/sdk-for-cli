@@ -27,7 +27,7 @@ const getProjectClient = async (): Promise<Project> => {
 };
 
 export const project = new Command("project")
-  .description(commandDescriptions["project"] ?? "")
+  .description(commandDescriptions["project"] || "The Project service allows you to manage all the projects in your Appwrite server.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

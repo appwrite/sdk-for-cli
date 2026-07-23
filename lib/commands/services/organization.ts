@@ -27,7 +27,7 @@ const getOrganizationClient = async (): Promise<Organization> => {
 };
 
 export const organization = new Command("organization")
-  .description(commandDescriptions["organization"] ?? "")
+  .description(commandDescriptions["organization"] || "The Organization service allows you to manage organization-level projects.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });
