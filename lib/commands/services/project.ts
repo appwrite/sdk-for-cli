@@ -27,7 +27,7 @@ const getProjectClient = async (): Promise<Project> => {
 };
 
 export const project = new Command("project")
-  .description(commandDescriptions["project"] ?? "")
+  .description(commandDescriptions["project"] || "The Project service allows you to manage all the projects in your Appwrite server.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });
@@ -275,6 +275,7 @@ const projectUpdateOAuth2ServerCommand = project
   .option(`--refresh-token-duration <refresh-token-duration>`, `Refresh token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 1 year.`, parseInteger)
   .option(`--public-access-token-duration <public-access-token-duration>`, `Access token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 1 hour.`, parseInteger)
   .option(`--public-refresh-token-duration <public-refresh-token-duration>`, `Refresh token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 30 days.`, parseInteger)
+  .option(`--installation-access-token-duration <installation-access-token-duration>`, `Access token duration in seconds for app installation access tokens. Leave empty to use default 1 hour.`, parseInteger)
   .option(
     `--confidential-pkce [value]`,
     `When enabled, PKCE is required for confidential clients (server-side flows using client_secret). PKCE is always required for public clients regardless of this setting.`,
@@ -288,8 +289,8 @@ const projectUpdateOAuth2ServerCommand = project
   .option(`--default-scopes [default-scopes...]`, `List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long.`)
   .action(
     actionRunner(
-      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes }) =>
-        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes)),
+      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, installationAccessTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes }) =>
+        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, installationAccessTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes)),
     ),
   );
 

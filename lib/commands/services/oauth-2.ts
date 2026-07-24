@@ -21,7 +21,7 @@ const getOauth2Client = async (): Promise<Oauth2> => {
 };
 
 export const oauth2 = new Command("oauth-2")
-  .description(commandDescriptions["oauth2"] ?? "")
+  .description(commandDescriptions["oauth2"] || "The OAuth2 service allows you to authorize apps and issue standards-based OAuth2 and OpenID Connect tokens.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

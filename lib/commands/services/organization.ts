@@ -27,7 +27,7 @@ const getOrganizationClient = async (): Promise<Organization> => {
 };
 
 export const organization = new Command("organization")
-  .description(commandDescriptions["organization"] ?? "")
+  .description(commandDescriptions["organization"] || "The Organization service allows you to manage organization-level projects.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });
@@ -60,6 +60,82 @@ const organizationDeleteCommand = organization
   .action(
     actionRunner(
       async () => parse(await (await getOrganizationClient()).delete()),
+    ),
+  );
+
+
+const organizationListInstallationsCommand = organization
+  .command(`list-installations`)
+  .description(`List app installations on the organization. Any organization member can read installations.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.`)
+  .option(
+    `--total [value]`,
+    `When set to false, the total count returned will be 0 and will not be calculated.`,
+    (value: string | undefined) =>
+      value === undefined ? true : parseBool(value),
+  )
+  .option(`--filter <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseFilterQuery(value), previous))
+  .option(`--where <expression>`, `Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseDeprecatedWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .action(
+    actionRunner(
+      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getOrganizationClient()).listInstallations(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
+    ),
+  );
+
+
+const organizationCreateInstallationCommand = organization
+  .command(`create-installation`)
+  .description(`Install an app on the organization. Only organization members with the owner role can install apps. The installation is granted the scopes the app currently requests.`)
+  .requiredOption(`--app-id <app-id>`, `Application unique ID.`)
+  .option(`--authorization-details <authorization-details>`, `Authorization details granted to the installation as a JSON array of objects, each with a \`type\` and app-defined fields. The Appwrite Console stores authorized project IDs here.`)
+  .action(
+    actionRunner(
+      async ({ appId, authorizationDetails }) =>
+        parse(await (await getOrganizationClient()).createInstallation(appId, authorizationDetails)),
+    ),
+  );
+
+
+const organizationGetInstallationCommand = organization
+  .command(`get-installation`)
+  .description(`Get an app installation on the organization by its unique ID. Any organization member can read installations.`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation unique ID.`)
+  .action(
+    actionRunner(
+      async ({ installationId }) =>
+        parse(await (await getOrganizationClient()).getInstallation(installationId)),
+    ),
+  );
+
+
+const organizationUpdateInstallationCommand = organization
+  .command(`update-installation`)
+  .description(`Update an app installation on the organization. Only organization members with the owner role can update installations. The installation's granted scopes are refreshed to the scopes the app currently requests; previously issued installation access tokens are revoked.`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation unique ID.`)
+  .option(`--authorization-details <authorization-details>`, `Authorization details granted to the installation as a JSON array of objects, each with a \`type\` and app-defined fields. Omit to keep the current value.`)
+  .action(
+    actionRunner(
+      async ({ installationId, authorizationDetails }) =>
+        parse(await (await getOrganizationClient()).updateInstallation(installationId, authorizationDetails)),
+    ),
+  );
+
+
+const organizationDeleteInstallationCommand = organization
+  .command(`delete-installation`)
+  .description(`Uninstall an app from the organization by its installation ID. Only organization members with the owner role can remove installations. Previously issued installation access tokens are revoked.`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation unique ID.`)
+  .action(
+    actionRunner(
+      async ({ installationId }) =>
+        parse(await (await getOrganizationClient()).deleteInstallation(installationId)),
     ),
   );
 

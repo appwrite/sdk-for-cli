@@ -27,7 +27,7 @@ const getBackupsClient = async (): Promise<Backups> => {
 };
 
 export const backups = new Command("backups")
-  .description(commandDescriptions["backups"] ?? "")
+  .description(commandDescriptions["backups"] || "The Backups service allows you to manage backup policies, archives, and restorations for your project.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

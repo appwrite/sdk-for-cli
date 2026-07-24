@@ -28,7 +28,7 @@ const getOrganizationsClient = async (): Promise<Organizations> => {
 };
 
 export const organizations = new Command("organizations")
-  .description(commandDescriptions["organizations"] ?? "")
+  .description(commandDescriptions["organizations"] || "The Organizations service allows you to manage organization billing, plans, invoices, and add-ons.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

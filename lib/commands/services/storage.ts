@@ -29,7 +29,7 @@ const getStorageClient = async (): Promise<Storage> => {
 };
 
 export const storage = new Command("storage")
-  .description(commandDescriptions["storage"] ?? "")
+  .description(commandDescriptions["storage"] || "The Storage service allows you to manage your project files.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

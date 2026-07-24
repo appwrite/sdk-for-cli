@@ -27,7 +27,7 @@ const getVcsClient = async (): Promise<Vcs> => {
 };
 
 export const vcs = new Command("vcs")
-  .description(commandDescriptions["vcs"] ?? "")
+  .description(commandDescriptions["vcs"] || "The VCS service allows you to interact with providers like GitHub, GitLab etc.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

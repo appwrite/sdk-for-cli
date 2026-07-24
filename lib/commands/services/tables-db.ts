@@ -28,7 +28,7 @@ const getTablesDBClient = async (): Promise<TablesDB> => {
 };
 
 export const tablesDB = new Command("tables-db")
-  .description(commandDescriptions["tablesDB"] ?? "")
+  .description(commandDescriptions["tablesDB"] || "The TablesDB service allows you to create structured tables of columns, query and filter lists of rows")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

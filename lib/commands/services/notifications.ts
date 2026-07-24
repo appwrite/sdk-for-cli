@@ -27,7 +27,7 @@ const getNotificationsClient = async (): Promise<Notifications> => {
 };
 
 export const notifications = new Command("notifications")
-  .description(commandDescriptions["notifications"] ?? "")
+  .description(commandDescriptions["notifications"] || "The Notifications service allows you to read and manage your Appwrite Console notifications.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

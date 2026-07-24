@@ -28,7 +28,7 @@ const getDatabasesClient = async (): Promise<Databases> => {
 };
 
 export const databases = new Command("databases")
-  .description(commandDescriptions["databases"] ?? "")
+  .description(commandDescriptions["databases"] || "The Databases service allows you to create structured collections of documents, query and filter lists of documents")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

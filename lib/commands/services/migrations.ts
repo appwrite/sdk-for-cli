@@ -27,7 +27,7 @@ const getMigrationsClient = async (): Promise<Migrations> => {
 };
 
 export const migrations = new Command("migrations")
-  .description(commandDescriptions["migrations"] ?? "")
+  .description(commandDescriptions["migrations"] || "The Migrations service allows you to migrate third-party data to your Appwrite project.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });

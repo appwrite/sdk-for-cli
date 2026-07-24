@@ -1,5 +1,12 @@
 # Change Log
 
+## 23.1.0
+
+* Added: `apps` service commands for managing OAuth2 applications, keys, secrets, and installations
+* Added: `organization` app installation commands: `list-installations`, `create-installation`, `get-installation`, `update-installation`, `delete-installation`
+* Added: `teams` app installation commands: `list-installations`, `create-installation`, `get-installation`, `update-installation`, `delete-installation`
+* Added: `--installation-access-token-duration` option to `project update-o-auth2-server`
+
 ## 23.0.0
 
 * Breaking: removed `projects` service commands

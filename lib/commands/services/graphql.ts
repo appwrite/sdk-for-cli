@@ -22,7 +22,7 @@ const getGraphqlClient = async (): Promise<Graphql> => {
 };
 
 export const graphql = new Command("graphql")
-  .description(commandDescriptions["graphql"] ?? "")
+  .description(commandDescriptions["graphql"] || "The GraphQL API allows you to query and mutate your Appwrite server using GraphQL.")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
   });
