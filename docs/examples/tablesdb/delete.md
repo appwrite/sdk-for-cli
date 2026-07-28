@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db delete \
+appwrite tablesdb delete \
     --database-id <DATABASE_ID>
 ```

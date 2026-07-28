@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-polygon-column \
+appwrite tablesdb update-polygon-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

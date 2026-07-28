@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db update \
+appwrite tablesdb update \
     --database-id <DATABASE_ID>
 ```

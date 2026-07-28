@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db get-transaction \
+appwrite tablesdb get-transaction \
     --transaction-id <TRANSACTION_ID>
 ```

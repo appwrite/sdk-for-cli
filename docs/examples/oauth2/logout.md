@@ -1,3 +1,3 @@
 ```bash
-appwrite oauth-2 logout
+appwrite oauth2 logout
 ```

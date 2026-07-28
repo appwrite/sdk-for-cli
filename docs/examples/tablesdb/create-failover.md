@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db create-failover \
+appwrite tablesdb create-failover \
     --database-id <DATABASE_ID>
 ```

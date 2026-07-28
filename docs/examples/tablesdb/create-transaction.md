@@ -1,3 +1,3 @@
 ```bash
-appwrite tables-db create-transaction
+appwrite tablesdb create-transaction
 ```

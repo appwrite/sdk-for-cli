@@ -1,3 +1,4 @@
 ```bash
-appwrite activities list-events
+appwrite activities list-events \
+    --limit 25
 ```

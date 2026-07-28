@@ -1,3 +1,3 @@
 ```bash
-appwrite oauth-2 list-projects
+appwrite oauth2 list-projects
 ```

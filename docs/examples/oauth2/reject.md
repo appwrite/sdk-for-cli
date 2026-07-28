@@ -1,4 +1,4 @@
 ```bash
-appwrite oauth-2 reject \
+appwrite oauth2 reject \
     --grant-_id <GRANT_ID>
 ```

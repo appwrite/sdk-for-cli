@@ -1,3 +1,3 @@
 ```bash
-appwrite oauth-2 authorize
+appwrite oauth2 authorize
 ```

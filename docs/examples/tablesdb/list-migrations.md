@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db list-migrations \
+appwrite tablesdb list-migrations \
     --database-id <DATABASE_ID>
 ```

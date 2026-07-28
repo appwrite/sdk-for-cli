@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-rows \
+appwrite tablesdb update-rows \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --limit 25

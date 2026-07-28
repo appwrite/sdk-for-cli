@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-datetime-column \
+appwrite tablesdb update-datetime-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

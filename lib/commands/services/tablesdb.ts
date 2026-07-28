@@ -27,7 +27,9 @@ const getTablesDBClient = async (): Promise<TablesDB> => {
   return tablesDBClient;
 };
 
-export const tablesDB = new Command("tables-db")
+export const tablesDB = new Command("tablesdb")
+  // TODO: Move CLI alias configuration to the API spec.
+  .alias("tables-db")
   .description(commandDescriptions["tablesDB"] || "The TablesDB service allows you to create structured tables of columns, query and filter lists of rows")
   .configureHelp({
     helpWidth: process.stdout.columns || 80,
@@ -289,6 +291,21 @@ const tablesDBDeleteMigrationCommand = tablesDB
     actionRunner(
       async ({ databaseId, migrationId }) =>
         parse(await (await getTablesDBClient()).deleteMigration(databaseId, migrationId)),
+    ),
+  );
+
+
+const tablesDBListOperationsCommand = tablesDB
+  .command(`list-operations`)
+  .description(`List the lifecycle operations recorded for a dedicated database, newest first. Every provision, update, restore, backup and replication action is recorded here with its outcome, including an attempt that was abandoned because another worker took over the database.`)
+  .requiredOption(`--database-id <database-id>`, `Database ID.`)
+  .option(`--status <status>`, `Filter by operation status.`)
+  .option(`--limit <limit>`, `Maximum number of operations to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of operations to skip.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ databaseId, status, limit, offset }) =>
+        parse(await (await getTablesDBClient()).listOperations(databaseId, status, limit, offset)),
     ),
   );
 

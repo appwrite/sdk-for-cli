@@ -1,3 +1,3 @@
 ```bash
-appwrite tables-db list-specifications
+appwrite tablesdb list-specifications
 ```

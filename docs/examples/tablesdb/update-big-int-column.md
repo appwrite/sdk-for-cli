@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-big-int-column \
+appwrite tablesdb update-big-int-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \
