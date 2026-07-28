@@ -221,10 +221,11 @@ If you're creating a new file using one of the Appwrite SDKs, all the chunking l
   .requiredOption(`--file-id <file-id>`, `File ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--file <file>`, `Binary file. Appwrite SDKs provide helpers to handle file input. Learn about file input (https://appwrite.io/docs/products/storage/upload-download#input-file).`)
   .option(`--permissions [permissions...]`, `An array of permission strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).`)
+  .option(`--folder <folder>`, `Virtual folder to place the file in, for example "photos/2026". Nest folders with \`/\`. Defaults to the bucket root.`)
   .action(
     actionRunner(
-      async ({ bucketId, fileId, file, permissions }) =>
-        parse(await (await getStorageClient()).createFile(bucketId, fileId, file !== undefined ? await resolveFileParam(file) : undefined, permissions)),
+      async ({ bucketId, fileId, file, permissions, folder }) =>
+        parse(await (await getStorageClient()).createFile(bucketId, fileId, file !== undefined ? await resolveFileParam(file) : undefined, permissions, folder)),
     ),
   );
 
