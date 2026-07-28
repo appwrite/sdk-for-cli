@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-float-column \
+appwrite tablesdb update-float-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

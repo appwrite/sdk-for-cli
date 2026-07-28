@@ -1,4 +1,4 @@
 ```bash
-appwrite oauth-2 revoke \
+appwrite oauth2 revoke \
     --token <TOKEN>
 ```

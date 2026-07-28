@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db create-line-column \
+appwrite tablesdb create-line-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

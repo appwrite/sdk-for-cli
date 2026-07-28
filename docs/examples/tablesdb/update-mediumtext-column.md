@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-mediumtext-column \
+appwrite tablesdb update-mediumtext-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

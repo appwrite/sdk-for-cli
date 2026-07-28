@@ -1,3 +1,3 @@
 ```bash
-appwrite oauth-2 create-device-authorization
+appwrite oauth2 create-device-authorization
 ```

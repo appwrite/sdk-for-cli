@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-enum-column \
+appwrite tablesdb update-enum-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

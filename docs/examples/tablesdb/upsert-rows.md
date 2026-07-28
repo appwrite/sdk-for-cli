@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db upsert-rows \
+appwrite tablesdb upsert-rows \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --rows one two three

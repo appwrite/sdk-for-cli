@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db delete-table \
+appwrite tablesdb delete-table \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID>
 ```

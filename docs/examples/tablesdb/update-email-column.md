@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-email-column \
+appwrite tablesdb update-email-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

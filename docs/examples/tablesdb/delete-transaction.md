@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db delete-transaction \
+appwrite tablesdb delete-transaction \
     --transaction-id <TRANSACTION_ID>
 ```

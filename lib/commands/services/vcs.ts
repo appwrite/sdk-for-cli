@@ -53,13 +53,19 @@ const vcsListRepositoriesCommand = vcs
   .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--type <type>`, `Detector type. Must be one of the following: runtime, framework`)
   .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
-  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common filtering, sorting, and pagination prefer --filter, --sort-asc, --sort-desc, --limit, and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit, offset, and equal on namespace.`)
+  .option(`--filter <expression>`, `Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseFilterQuery(value), previous))
+  .option(`--where <expression>`, `Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.`, (value: string, previous: string[] | undefined) => collectQueryValue(parseDeprecatedWhereQuery(value), previous))
+  .option(`--sort-asc <attribute>`, `Sort results by an attribute in ascending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
+  .option(`--sort-desc <attribute>`, `Sort results by an attribute in descending order. Repeat for multiple sort fields.`, (value: string, previous: string[] | undefined) => collectQueryValue(value, previous))
   .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
+  .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
   .action(
     actionRunner(
-      async ({ installationId, type, search, queries, limit, offset }) =>
-        parse(await (await getVcsClient()).listRepositories(installationId, type, search, buildQueries({ queries, limit, offset }))),
+      async ({ installationId, type, search, queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
+        parse(await (await getVcsClient()).listRepositories(installationId, type, search, buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }))),
     ),
   );
 
@@ -70,10 +76,11 @@ const vcsCreateRepositoryCommand = vcs
   .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
   .requiredOption(`--name <name>`, `Repository name (slug)`)
   .requiredOption(`--xprivate <xprivate>`, `Mark repository public or private`, parseBool)
+  .option(`--provider-namespace <provider-namespace>`, `Namespace of the git repository. Defaults to the installation's own namespace.`)
   .action(
     actionRunner(
-      async ({ installationId, name, xprivate }) =>
-        parse(await (await getVcsClient()).createRepository(installationId, name, xprivate)),
+      async ({ installationId, name, xprivate, providerNamespace }) =>
+        parse(await (await getVcsClient()).createRepository(installationId, name, xprivate, providerNamespace)),
     ),
   );
 
@@ -192,6 +199,22 @@ const vcsDeleteInstallationCommand = vcs
     actionRunner(
       async ({ installationId }) =>
         parse(await (await getVcsClient()).deleteInstallation(installationId)),
+    ),
+  );
+
+
+const vcsListNamespacesCommand = vcs
+  .command(`list-namespaces`)
+  .description(`List provider namespaces available to a VCS installation. This can include the user personal namespace and any groups or organizations the installation can browse.`)
+  .requiredOption(`--installation-id <installation-id>`, `Installation Id`)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .option(`--queries [queries...]`, `Raw Appwrite JSON query strings (legacy). Use this for advanced queries or automation; for common pagination prefer --limit and --offset. When mixed, raw --queries are sent before generated flag queries. Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset`)
+  .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
+  .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .action(
+    actionRunner(
+      async ({ installationId, search, queries, limit, offset }) =>
+        parse(await (await getVcsClient()).listNamespaces(installationId, search, buildQueries({ queries, limit, offset }))),
     ),
   );
 

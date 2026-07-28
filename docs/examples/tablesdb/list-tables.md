@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db list-tables \
+appwrite tablesdb list-tables \
     --database-id <DATABASE_ID> \
     --limit 25
 ```

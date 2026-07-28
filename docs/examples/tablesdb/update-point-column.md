@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db update-point-column \
+appwrite tablesdb update-point-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

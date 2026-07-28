@@ -1,5 +1,21 @@
 # Change Log
 
+## 23.2.0
+
+* Added: `apps` installation commands: `list-installations`, `get-installation`, `delete-installation`, `create-installation-token`
+* Added: `vcs list-namespaces` command for listing provider namespaces of an installation
+* Added: `--provider-namespace` option to `vcs create-repository`
+* Added: `tablesdb list-operations` command for dedicated database lifecycle operations
+* Added: Compact deployment summaries with human-readable sizes in deployment output
+* Added: `--filter`, `--where`, `--sort-asc`, `--sort-desc`, `--limit`, `--offset`, `--cursor-after`, and `--cursor-before` options to `vcs list-repositories` and `activities list-events`
+* Updated: Command groups now use compact service names: `tablesdb` and `oauth2`. `tables-db` still works as an alias
+* Updated: `apps` command group now shows a service description in help output
+* Updated: `storage list-files` documents `folder` as a filterable attribute
+* Fixed: `push sites` and `pull sites` now carry `fallbackFile` and the VCS fields `installationId`, `providerRepositoryId`, `providerBranch`, `providerSilentMode`, and `providerRootDirectory`
+* Fixed: Symlinks in function directories are resolved for `run` and `push`, confined to the project root
+* Fixed: Token refresh now uses the logged-in session endpoint, and session credentials are no longer sent to a different endpoint
+* Fixed: Site screenshot previews preserve the configured region
+
 ## 23.1.0
 
 * Added: `apps` service commands for managing OAuth2 applications, keys, secrets, and installations

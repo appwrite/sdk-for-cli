@@ -2311,6 +2311,12 @@ export class Push {
               buildRuntime: site.buildRuntime,
               adapter: site.adapter,
               startCommand: site.startCommand,
+              fallbackFile: site.fallbackFile,
+              installationId: site.installationId,
+              providerRepositoryId: site.providerRepositoryId,
+              providerBranch: site.providerBranch,
+              providerSilentMode: site.providerSilentMode,
+              providerRootDirectory: site.providerRootDirectory,
               buildSpecification: site.buildSpecification,
               runtimeSpecification: site.runtimeSpecification,
               deploymentRetention: site.deploymentRetention,
@@ -2346,6 +2352,12 @@ export class Push {
                 buildRuntime: site.buildRuntime,
                 adapter: site.adapter,
                 startCommand: site.startCommand,
+                fallbackFile: site.fallbackFile,
+                installationId: site.installationId,
+                providerRepositoryId: site.providerRepositoryId,
+                providerBranch: site.providerBranch,
+                providerSilentMode: site.providerSilentMode,
+                providerRootDirectory: site.providerRootDirectory,
                 buildSpecification: site.buildSpecification,
                 runtimeSpecification: site.runtimeSpecification,
                 deploymentRetention: site.deploymentRetention,
@@ -2760,6 +2772,7 @@ export class Push {
             requiresAuth: true,
             endpointOverride:
               localConfig.getEndpoint() || globalConfig.getEndpoint(),
+            preserveRegion: true,
           });
           sitePreviewRenderer = {
             consoleClient,

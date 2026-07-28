@@ -1,5 +1,5 @@
 ```bash
-appwrite tables-db create-big-int-column \
+appwrite tablesdb create-big-int-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
     --key '' \

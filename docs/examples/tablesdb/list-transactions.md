@@ -1,4 +1,4 @@
 ```bash
-appwrite tables-db list-transactions \
+appwrite tablesdb list-transactions \
     --limit 25
 ```
