@@ -210,11 +210,12 @@ const tablesDBUpdateCommand = tablesDB
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--specification <specification>`, `Database specification. Resizing between dedicated specifications changes cpu, memory, storage and the connection ceiling via a rolling cutover with zero downtime. Moving a \`serverless\` database onto a dedicated specification is a data migration, not a resize.`)
   .option(`--replicas <replicas>`, `Number of high availability replicas (0-5) for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification. High availability is enabled when greater than 0.`, parseInteger)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled, replicas }) =>
-        parse(await (await getTablesDBClient()).update(databaseId, name, enabled, replicas)),
+      async ({ databaseId, name, enabled, specification, replicas }) =>
+        parse(await (await getTablesDBClient()).update(databaseId, name, enabled, specification, replicas)),
     ),
   );
 
@@ -233,7 +234,7 @@ const tablesDBDeleteCommand = tablesDB
 
 const tablesDBCreateFailoverCommand = tablesDB
   .command(`create-failover`)
-  .description(`Trigger a manual failover for a dedicated database with high availability enabled. Promotes a replica to primary. The failover runs asynchronously; poll the database document for status updates.`)
+  .description(`Trigger a manual failover for a dedicated database with high availability enabled. Promotes a replica to primary. The failover runs asynchronously; poll the database document for status updates. A database left mid-operation by a failover that did not finish also accepts this call as a repair, provided \`targetReplicaId\` names the member to promote.`)
   .requiredOption(`--database-id <database-id>`, `Database ID.`)
   .option(`--target-replica-id <target-replica-id>`, `Target replica ID to promote. If not specified, the healthiest replica is selected.`)
   .action(

@@ -1,5 +1,11 @@
 # Change Log
 
+## 24.0.0
+
+* Added: `login` against Cloud now signs in through your browser
+* Updated: `--email`, `--password`, `--mfa`, and `--code` now apply to self-hosted instances only
+* Updated: Existing Cloud sessions keep working in read-only mode until you run `login` again
+
 ## 23.2.0
 
 * Added: `apps` installation commands: `list-installations`, `get-installation`, `delete-installation`, `create-installation-token`
