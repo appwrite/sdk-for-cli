@@ -1464,7 +1464,7 @@ const projectUpdatePasswordHistoryPolicyCommand = project
   .description(`Updates one of password strength policies. Based on total length configured, previous password hashes are stored, and users cannot choose a new password that is already stored in the passwird history list, when updating an user password, or setting new one through password recovery.
 
 Keep in mind, while password history policy is disabled, the history is not being stored. Enabling the policy will not have any history on existing users, and it will only start to collect and enforce the policy on password changes since the policy is enabled.`)
-  .requiredOption(`--total <total>`, `Set the password history length per user. Value can be between 1 and 5000, or null to disable the limit.`, parseInteger)
+  .requiredOption(`--total <total>`, `Set the password history length per user. Value can be between 1 and 20, or null to disable the limit.`, parseInteger)
   .action(
     actionRunner(
       async ({ total }) =>
@@ -1536,7 +1536,7 @@ const projectUpdateSessionAlertPolicyCommand = project
 const projectUpdateSessionDurationPolicyCommand = project
   .command(`update-session-duration-policy`)
   .description(`Update maximum duration how long sessions created within a project should stay active for.`)
-  .requiredOption(`--duration <duration>`, `Maximum session length in seconds. Minium allowed value is 5 second, and maximum is 1 year, which is 31536000 seconds.`, parseInteger)
+  .requiredOption(`--duration <duration>`, `Maximum session length in seconds. Minium allowed value is 60 seconds, and maximum is 1 year, which is 31536000 seconds.`, parseInteger)
   .action(
     actionRunner(
       async ({ duration }) =>
@@ -1560,7 +1560,7 @@ const projectUpdateSessionInvalidationPolicyCommand = project
 const projectUpdateSessionLimitPolicyCommand = project
   .command(`update-session-limit-policy`)
   .description(`Update the maximum number of sessions allowed per user. When the limit is hit, the oldest session will be deleted to make room for new one.`)
-  .requiredOption(`--total <total>`, `Set the maximum number of sessions allowed per user. Value can be between 1 and 5000, or null to disable the limit.`, parseInteger)
+  .requiredOption(`--total <total>`, `Set the maximum number of sessions allowed per user. Value can be between 1 and 100.`, parseInteger)
   .action(
     actionRunner(
       async ({ total }) =>
@@ -1572,7 +1572,7 @@ const projectUpdateSessionLimitPolicyCommand = project
 const projectUpdateUserLimitPolicyCommand = project
   .command(`update-user-limit-policy`)
   .description(`Update the maximum number of users in the project. When the limit is hit or amount of existing users already exceeded the limit, all users remain active, but new user sign up will be prohibited.`)
-  .requiredOption(`--total <total>`, `Set the maximum number of users allowed in the project. Value can be between 1 and 5000, or null to disable the limit.`, parseInteger)
+  .requiredOption(`--total <total>`, `Set the maximum number of users allowed in the project. Value can be between 0 and 10000. Use 0 or null to disable the limit.`, parseInteger)
   .action(
     actionRunner(
       async ({ total }) =>

@@ -76,10 +76,11 @@ const tablesDBCreateCommand = tablesDB
   )
   .option(`--specification <specification>`, `Database specification. Defaults to \`serverless\`, which creates the database on the shared pool. Any other value provisions a dedicated database on that specification.`)
   .option(`--replicas <replicas>`, `Number of high availability replicas (0-5) for the dedicated database backing this database. Requires a dedicated \`specification\`; must be 0 for a serverless database. High availability is enabled when greater than 0.`, parseInteger)
+  .option(`--sync-mode <sync-mode>`, `Replication sync mode for the dedicated database backing this database. Requires a dedicated \`specification\`; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.`)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled, specification, replicas }) =>
-        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, specification, replicas)),
+      async ({ databaseId, name, enabled, specification, replicas, syncMode }) =>
+        parse(await (await getTablesDBClient()).create(databaseId, name, enabled, specification, replicas, syncMode)),
     ),
   );
 
@@ -212,10 +213,11 @@ const tablesDBUpdateCommand = tablesDB
   )
   .option(`--specification <specification>`, `Database specification. Resizing between dedicated specifications changes cpu, memory, storage and the connection ceiling via a rolling cutover with zero downtime. Moving a \`serverless\` database onto a dedicated specification is a data migration, not a resize.`)
   .option(`--replicas <replicas>`, `Number of high availability replicas (0-5) for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification. High availability is enabled when greater than 0.`, parseInteger)
+  .option(`--sync-mode <sync-mode>`, `Replication sync mode for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.`)
   .action(
     actionRunner(
-      async ({ databaseId, name, enabled, specification, replicas }) =>
-        parse(await (await getTablesDBClient()).update(databaseId, name, enabled, specification, replicas)),
+      async ({ databaseId, name, enabled, specification, replicas, syncMode }) =>
+        parse(await (await getTablesDBClient()).update(databaseId, name, enabled, specification, replicas, syncMode)),
     ),
   );
 
