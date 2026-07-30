@@ -1,5 +1,22 @@
 # Change Log
 
+## 24.1.0
+
+* Added: `previousKey` on an attribute or column renames it in place on `push`
+* Fixed: `client --endpoint` reuses or switches an existing session instead of minting an unauthenticated stub
+* Fixed: `client --reset` asks for confirmation before signing out signed-in accounts
+* Fixed: Commands that need a session now list signed-in accounts and suggest `login --switch`
+* Fixed: Regional cloud endpoints match their canonical host when resolving a session
+* Fixed: `push` updates attributes in place instead of recreating them where the API allows it
+* Fixed: `push` resizes a `string` attribute in place instead of recreating it
+* Fixed: `push` no longer recreates indexes whose attributes were renamed
+* Fixed: `push` aborts on a failed attribute update instead of continuing past it
+* Fixed: `push` waits for index deletion to finish before recreating indexes
+* Fixed: `push` leaves `encrypt` untouched when the config omits it
+* Fixed: `logout` signs out the selected account instead of the current session id
+* Fixed: Table output wraps long reasons instead of truncating them mid-word
+* Updated: Project policy limits for password history, session duration, session count, and users
+
 ## 24.0.0
 
 * Added: `login` against Cloud now signs in through your browser
