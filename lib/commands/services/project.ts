@@ -16,15 +16,12 @@ import {
 } from "../../parser.js";
 import { Project } from "@appwrite.io/console";
 
-let projectClient: Project | null = null;
-
-const getProjectClient = async (): Promise<Project> => {
-  if (!projectClient) {
-    const sdkClient = await sdkForProject();
-    projectClient = new Project(sdkClient);
-  }
-  return projectClient;
-};
+// Every endpoint here targets one project, so the client is built per
+// command rather than cached across differing --project-id values.
+const getProjectClient = async (
+  projectId?: string,
+): Promise<Project> =>
+  new Project(await sdkForProject(projectId));
 
 export const project = new Command("project")
   .description(commandDescriptions["project"] || "The Project service allows you to manage all the projects in your Appwrite server.")
@@ -35,9 +32,11 @@ export const project = new Command("project")
 const projectGetCommand = project
   .command(`get`)
   .description(`Get a project.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async () => parse(await (await getProjectClient()).get()),
+      async ({ projectId }) =>
+        parse(await (await getProjectClient(projectId)).get()),
     ),
   );
 
@@ -45,9 +44,11 @@ const projectGetCommand = project
 const projectDeleteCommand = project
   .command(`delete`)
   .description(`Delete a project.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async () => parse(await (await getProjectClient()).delete()),
+      async ({ projectId }) =>
+        parse(await (await getProjectClient(projectId)).delete()),
     ),
   );
 
@@ -57,10 +58,11 @@ const projectUpdateAuthMethodCommand = project
   .description(`Update properties of a specific auth method. Use this endpoint to enable or disable a method in your project. `)
   .requiredOption(`--method-id <method-id>`, `Auth Method ID. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone`)
   .requiredOption(`--enabled <enabled>`, `Auth method status.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ methodId, enabled }) =>
-        parse(await (await getProjectClient()).updateAuthMethod(methodId, enabled)),
+      async ({ methodId, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateAuthMethod(methodId, enabled)),
     ),
   );
 
@@ -83,10 +85,11 @@ const projectListKeysCommand = project
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getProjectClient()).listKeys(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
+      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listKeys(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -100,10 +103,11 @@ You can also create an ephemeral API key if you need a short-lived key instead.`
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId, name, scopes, expire }) =>
-        parse(await (await getProjectClient()).createKey(keyId, name, scopes, expire)),
+      async ({ keyId, name, scopes, expire, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createKey(keyId, name, scopes, expire)),
     ),
   );
 
@@ -115,10 +119,11 @@ const projectCreateEphemeralKeyCommand = project
 You can also create a standard API key if you need a longer-lived key instead.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .requiredOption(`--duration <duration>`, `Time in seconds before ephemeral key expires. Maximum duration is 3600 seconds.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ scopes, duration }) =>
-        parse(await (await getProjectClient()).createEphemeralKey(scopes, duration)),
+      async ({ scopes, duration, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createEphemeralKey(scopes, duration)),
     ),
   );
 
@@ -127,10 +132,11 @@ const projectGetKeyCommand = project
   .command(`get-key`)
   .description(`Get a key by its unique ID. `)
   .requiredOption(`--key-id <key-id>`, `Key ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId }) =>
-        parse(await (await getProjectClient()).getKey(keyId)),
+      async ({ keyId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getKey(keyId)),
     ),
   );
 
@@ -142,10 +148,11 @@ const projectUpdateKeyCommand = project
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId, name, scopes, expire }) =>
-        parse(await (await getProjectClient()).updateKey(keyId, name, scopes, expire)),
+      async ({ keyId, name, scopes, expire, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateKey(keyId, name, scopes, expire)),
     ),
   );
 
@@ -154,10 +161,11 @@ const projectDeleteKeyCommand = project
   .command(`delete-key`)
   .description(`Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.`)
   .requiredOption(`--key-id <key-id>`, `Key ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId }) =>
-        parse(await (await getProjectClient()).deleteKey(keyId)),
+      async ({ keyId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).deleteKey(keyId)),
     ),
   );
 
@@ -166,10 +174,11 @@ const projectUpdateLabelsCommand = project
   .command(`update-labels`)
   .description(`Update the project labels. Labels can be used to easily filter projects in an organization.`)
   .requiredOption(`--labels [labels...]`, `Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ labels }) =>
-        parse(await (await getProjectClient()).updateLabels(labels)),
+      async ({ labels, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateLabels(labels)),
     ),
   );
 
@@ -186,10 +195,11 @@ const projectListMockPhonesCommand = project
   )
   .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, limit, offset }) =>
-        parse(await (await getProjectClient()).listMockPhones(buildQueries({ queries, limit, offset }), total)),
+      async ({ queries, total, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listMockPhones(buildQueries({ queries, limit, offset }), total)),
     ),
   );
 
@@ -199,10 +209,11 @@ const projectCreateMockPhoneCommand = project
   .description(`Create a new mock phone for your project. Use this endpoint to register a mock phone number and its sign-in OTP for your testers.`)
   .requiredOption(`--number <number>`, `Phone number to associate with the mock phone. Must be a valid E.164 formatted phone number.`)
   .requiredOption(`--otp <otp>`, `One-time password (OTP) to associate with the mock phone. Must be a 6-digit numeric code.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ number, otp }) =>
-        parse(await (await getProjectClient()).createMockPhone(number, otp)),
+      async ({ number, otp, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createMockPhone(number, otp)),
     ),
   );
 
@@ -211,10 +222,11 @@ const projectGetMockPhoneCommand = project
   .command(`get-mock-phone`)
   .description(`Get a mock phone by its unique number. This endpoint returns the mock phone's OTP.`)
   .requiredOption(`--number <number>`, `Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ number }) =>
-        parse(await (await getProjectClient()).getMockPhone(number)),
+      async ({ number, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getMockPhone(number)),
     ),
   );
 
@@ -224,10 +236,11 @@ const projectUpdateMockPhoneCommand = project
   .description(`Update a mock phone by its unique number. Use this endpoint to update the mock phone's OTP.`)
   .requiredOption(`--number <number>`, `Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.`)
   .requiredOption(`--otp <otp>`, `One-time password (OTP) to associate with the mock phone. Must be a 6-digit numeric code.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ number, otp }) =>
-        parse(await (await getProjectClient()).updateMockPhone(number, otp)),
+      async ({ number, otp, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateMockPhone(number, otp)),
     ),
   );
 
@@ -236,10 +249,11 @@ const projectDeleteMockPhoneCommand = project
   .command(`delete-mock-phone`)
   .description(`Delete a mock phone by its unique number. This endpoint removes the mock phone and its OTP configuration from the project.`)
   .requiredOption(`--number <number>`, `Phone number associated with the mock phone. Must be a valid E.164 formatted phone number.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ number }) =>
-        parse(await (await getProjectClient()).deleteMockPhone(number)),
+      async ({ number, projectId }) =>
+        parse(await (await getProjectClient(projectId)).deleteMockPhone(number)),
     ),
   );
 
@@ -256,10 +270,11 @@ const projectListOAuth2ProvidersCommand = project
   )
   .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, limit, offset }) =>
-        parse(await (await getProjectClient()).listOAuth2Providers(buildQueries({ queries, limit, offset }), total)),
+      async ({ queries, total, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listOAuth2Providers(buildQueries({ queries, limit, offset }), total)),
     ),
   );
 
@@ -287,10 +302,11 @@ const projectUpdateOAuth2ServerCommand = project
   .option(`--user-code-format <user-code-format>`, `Character set for device flow user codes: \`numeric\` (digits only — best for numeric keypads and TV remotes), \`alphabetic\` (letters only), or \`alphanumeric\` (letters and digits — highest entropy per character). Defaults to \`alphanumeric\`.`)
   .option(`--device-code-duration <device-code-duration>`, `Lifetime in seconds of device flow device codes and user codes. Device codes are intentionally short-lived. Leave empty to use default 600.`, parseInteger)
   .option(`--default-scopes [default-scopes...]`, `List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, installationAccessTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes }) =>
-        parse(await (await getProjectClient()).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, installationAccessTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes)),
+      async ({ enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, installationAccessTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Server(enabled, authorizationUrl, scopes, authorizationDetailsTypes, accessTokenDuration, refreshTokenDuration, publicAccessTokenDuration, publicRefreshTokenDuration, installationAccessTokenDuration, confidentialPkce, verificationUrl, userCodeLength, userCodeFormat, deviceCodeDuration, defaultScopes)),
     ),
   );
 
@@ -306,10 +322,11 @@ const projectUpdateOAuth2AmazonCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Amazon(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Amazon(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -327,10 +344,11 @@ const projectUpdateOAuth2AppleCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ serviceId, keyId, teamId, p8File, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Apple(serviceId, keyId, teamId, p8File, enabled)),
+      async ({ serviceId, keyId, teamId, p8File, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Apple(serviceId, keyId, teamId, p8File, enabled)),
     ),
   );
 
@@ -346,10 +364,11 @@ const projectUpdateOAuth2AppwriteCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Appwrite(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Appwrite(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -366,10 +385,11 @@ const projectUpdateOAuth2Auth0Command = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, endpoint, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Auth0(clientId, clientSecret, endpoint, enabled)),
+      async ({ clientId, clientSecret, endpoint, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Auth0(clientId, clientSecret, endpoint, enabled)),
     ),
   );
 
@@ -386,10 +406,11 @@ const projectUpdateOAuth2AuthentikCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, endpoint, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Authentik(clientId, clientSecret, endpoint, enabled)),
+      async ({ clientId, clientSecret, endpoint, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Authentik(clientId, clientSecret, endpoint, enabled)),
     ),
   );
 
@@ -405,10 +426,11 @@ const projectUpdateOAuth2AutodeskCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Autodesk(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Autodesk(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -424,10 +446,11 @@ const projectUpdateOAuth2BitbucketCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ key, secret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Bitbucket(key, secret, enabled)),
+      async ({ key, secret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Bitbucket(key, secret, enabled)),
     ),
   );
 
@@ -443,10 +466,11 @@ const projectUpdateOAuth2BitlyCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Bitly(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Bitly(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -462,10 +486,11 @@ const projectUpdateOAuth2BoxCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Box(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Box(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -481,10 +506,11 @@ const projectUpdateOAuth2DailymotionCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ apiKey, apiSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Dailymotion(apiKey, apiSecret, enabled)),
+      async ({ apiKey, apiSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Dailymotion(apiKey, apiSecret, enabled)),
     ),
   );
 
@@ -500,10 +526,11 @@ const projectUpdateOAuth2DiscordCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Discord(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Discord(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -519,10 +546,11 @@ const projectUpdateOAuth2DisqusCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ publicKey, secretKey, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Disqus(publicKey, secretKey, enabled)),
+      async ({ publicKey, secretKey, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Disqus(publicKey, secretKey, enabled)),
     ),
   );
 
@@ -538,10 +566,11 @@ const projectUpdateOAuth2DropboxCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ appKey, appSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Dropbox(appKey, appSecret, enabled)),
+      async ({ appKey, appSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Dropbox(appKey, appSecret, enabled)),
     ),
   );
 
@@ -557,10 +586,11 @@ const projectUpdateOAuth2EtsyCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyString, sharedSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Etsy(keyString, sharedSecret, enabled)),
+      async ({ keyString, sharedSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Etsy(keyString, sharedSecret, enabled)),
     ),
   );
 
@@ -576,10 +606,11 @@ const projectUpdateOAuth2FacebookCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ appId, appSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Facebook(appId, appSecret, enabled)),
+      async ({ appId, appSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Facebook(appId, appSecret, enabled)),
     ),
   );
 
@@ -595,10 +626,11 @@ const projectUpdateOAuth2FigmaCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Figma(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Figma(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -615,10 +647,11 @@ const projectUpdateOAuth2FusionAuthCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, endpoint, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2FusionAuth(clientId, clientSecret, endpoint, enabled)),
+      async ({ clientId, clientSecret, endpoint, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2FusionAuth(clientId, clientSecret, endpoint, enabled)),
     ),
   );
 
@@ -634,10 +667,11 @@ const projectUpdateOAuth2GitHubCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2GitHub(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2GitHub(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -654,10 +688,11 @@ const projectUpdateOAuth2GitlabCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ applicationId, secret, endpoint, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Gitlab(applicationId, secret, endpoint, enabled)),
+      async ({ applicationId, secret, endpoint, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Gitlab(applicationId, secret, endpoint, enabled)),
     ),
   );
 
@@ -674,10 +709,11 @@ const projectUpdateOAuth2GoogleCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, prompt, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Google(clientId, clientSecret, prompt, enabled)),
+      async ({ clientId, clientSecret, prompt, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Google(clientId, clientSecret, prompt, enabled)),
     ),
   );
 
@@ -695,10 +731,11 @@ const projectUpdateOAuth2KeycloakCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, endpoint, realmName, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Keycloak(clientId, clientSecret, endpoint, realmName, enabled)),
+      async ({ clientId, clientSecret, endpoint, realmName, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Keycloak(clientId, clientSecret, endpoint, realmName, enabled)),
     ),
   );
 
@@ -714,10 +751,11 @@ const projectUpdateOAuth2KickCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Kick(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Kick(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -733,10 +771,11 @@ const projectUpdateOAuth2LinkedinCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, primaryClientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Linkedin(clientId, primaryClientSecret, enabled)),
+      async ({ clientId, primaryClientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Linkedin(clientId, primaryClientSecret, enabled)),
     ),
   );
 
@@ -753,10 +792,11 @@ const projectUpdateOAuth2MicrosoftCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ applicationId, applicationSecret, tenant, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Microsoft(applicationId, applicationSecret, tenant, enabled)),
+      async ({ applicationId, applicationSecret, tenant, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Microsoft(applicationId, applicationSecret, tenant, enabled)),
     ),
   );
 
@@ -772,10 +812,11 @@ const projectUpdateOAuth2NotionCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ oauthClientId, oauthClientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Notion(oauthClientId, oauthClientSecret, enabled)),
+      async ({ oauthClientId, oauthClientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Notion(oauthClientId, oauthClientSecret, enabled)),
     ),
   );
 
@@ -797,10 +838,11 @@ const projectUpdateOAuth2OidcCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, prompt, maxAge, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Oidc(clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, prompt, maxAge, enabled)),
+      async ({ clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, prompt, maxAge, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Oidc(clientId, clientSecret, wellKnownUrl, authorizationUrl, tokenUrl, userInfoUrl, prompt, maxAge, enabled)),
     ),
   );
 
@@ -818,10 +860,11 @@ const projectUpdateOAuth2OktaCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, domain, authorizationServerId, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Okta(clientId, clientSecret, domain, authorizationServerId, enabled)),
+      async ({ clientId, clientSecret, domain, authorizationServerId, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Okta(clientId, clientSecret, domain, authorizationServerId, enabled)),
     ),
   );
 
@@ -837,10 +880,11 @@ const projectUpdateOAuth2PaypalCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, secretKey, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Paypal(clientId, secretKey, enabled)),
+      async ({ clientId, secretKey, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Paypal(clientId, secretKey, enabled)),
     ),
   );
 
@@ -856,10 +900,11 @@ const projectUpdateOAuth2PaypalSandboxCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, secretKey, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2PaypalSandbox(clientId, secretKey, enabled)),
+      async ({ clientId, secretKey, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2PaypalSandbox(clientId, secretKey, enabled)),
     ),
   );
 
@@ -875,10 +920,11 @@ const projectUpdateOAuth2PodioCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Podio(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Podio(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -894,10 +940,11 @@ const projectUpdateOAuth2SalesforceCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ customerKey, customerSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Salesforce(customerKey, customerSecret, enabled)),
+      async ({ customerKey, customerSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Salesforce(customerKey, customerSecret, enabled)),
     ),
   );
 
@@ -913,10 +960,11 @@ const projectUpdateOAuth2SlackCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Slack(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Slack(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -932,10 +980,11 @@ const projectUpdateOAuth2SpotifyCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Spotify(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Spotify(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -951,10 +1000,11 @@ const projectUpdateOAuth2StripeCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, apiSecretKey, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Stripe(clientId, apiSecretKey, enabled)),
+      async ({ clientId, apiSecretKey, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Stripe(clientId, apiSecretKey, enabled)),
     ),
   );
 
@@ -970,10 +1020,11 @@ const projectUpdateOAuth2TradeshiftCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ oauth2ClientId, oauth2ClientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Tradeshift(oauth2ClientId, oauth2ClientSecret, enabled)),
+      async ({ oauth2ClientId, oauth2ClientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Tradeshift(oauth2ClientId, oauth2ClientSecret, enabled)),
     ),
   );
 
@@ -989,10 +1040,11 @@ const projectUpdateOAuth2TradeshiftSandboxCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ oauth2ClientId, oauth2ClientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2TradeshiftSandbox(oauth2ClientId, oauth2ClientSecret, enabled)),
+      async ({ oauth2ClientId, oauth2ClientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2TradeshiftSandbox(oauth2ClientId, oauth2ClientSecret, enabled)),
     ),
   );
 
@@ -1008,10 +1060,11 @@ const projectUpdateOAuth2TwitchCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Twitch(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Twitch(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -1027,10 +1080,11 @@ const projectUpdateOAuth2WordPressCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2WordPress(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2WordPress(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -1046,10 +1100,11 @@ const projectUpdateOAuth2XCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ customerKey, secretKey, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2X(customerKey, secretKey, enabled)),
+      async ({ customerKey, secretKey, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2X(customerKey, secretKey, enabled)),
     ),
   );
 
@@ -1065,10 +1120,11 @@ const projectUpdateOAuth2YahooCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Yahoo(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Yahoo(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -1084,10 +1140,11 @@ const projectUpdateOAuth2YandexCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Yandex(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Yandex(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -1103,10 +1160,11 @@ const projectUpdateOAuth2ZohoCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Zoho(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Zoho(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -1122,10 +1180,11 @@ const projectUpdateOAuth2ZoomCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ clientId, clientSecret, enabled }) =>
-        parse(await (await getProjectClient()).updateOAuth2Zoom(clientId, clientSecret, enabled)),
+      async ({ clientId, clientSecret, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateOAuth2Zoom(clientId, clientSecret, enabled)),
     ),
   );
 
@@ -1134,10 +1193,11 @@ const projectGetOAuth2ProviderCommand = project
   .command(`get-o-auth-2-provider`)
   .description(`Get a single OAuth2 provider configuration. Credential fields (client secret, p8 file, key/team IDs) are write-only and always returned empty.`)
   .requiredOption(`--provider-id <provider-id>`, `OAuth2 provider key. For example: github, google, apple.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ providerId }) =>
-        parse(await (await getProjectClient()).getOAuth2Provider(providerId)),
+      async ({ providerId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getOAuth2Provider(providerId)),
     ),
   );
 
@@ -1160,10 +1220,11 @@ const projectListPlatformsCommand = project
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getProjectClient()).listPlatforms(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
+      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listPlatforms(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -1174,10 +1235,11 @@ const projectCreateAndroidPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--application-id <application-id>`, `Android application ID. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, applicationId }) =>
-        parse(await (await getProjectClient()).createAndroidPlatform(platformId, name, applicationId)),
+      async ({ platformId, name, applicationId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createAndroidPlatform(platformId, name, applicationId)),
     ),
   );
 
@@ -1188,10 +1250,11 @@ const projectUpdateAndroidPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--application-id <application-id>`, `Android application ID. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, applicationId }) =>
-        parse(await (await getProjectClient()).updateAndroidPlatform(platformId, name, applicationId)),
+      async ({ platformId, name, applicationId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateAndroidPlatform(platformId, name, applicationId)),
     ),
   );
 
@@ -1202,10 +1265,11 @@ const projectCreateApplePlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--bundle-identifier <bundle-identifier>`, `Apple bundle identifier. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, bundleIdentifier }) =>
-        parse(await (await getProjectClient()).createApplePlatform(platformId, name, bundleIdentifier)),
+      async ({ platformId, name, bundleIdentifier, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createApplePlatform(platformId, name, bundleIdentifier)),
     ),
   );
 
@@ -1216,10 +1280,11 @@ const projectUpdateApplePlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--bundle-identifier <bundle-identifier>`, `Apple bundle identifier. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, bundleIdentifier }) =>
-        parse(await (await getProjectClient()).updateApplePlatform(platformId, name, bundleIdentifier)),
+      async ({ platformId, name, bundleIdentifier, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateApplePlatform(platformId, name, bundleIdentifier)),
     ),
   );
 
@@ -1230,10 +1295,11 @@ const projectCreateLinuxPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--package-name <package-name>`, `Linux package name. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, packageName }) =>
-        parse(await (await getProjectClient()).createLinuxPlatform(platformId, name, packageName)),
+      async ({ platformId, name, packageName, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createLinuxPlatform(platformId, name, packageName)),
     ),
   );
 
@@ -1244,10 +1310,11 @@ const projectUpdateLinuxPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--package-name <package-name>`, `Linux package name. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, packageName }) =>
-        parse(await (await getProjectClient()).updateLinuxPlatform(platformId, name, packageName)),
+      async ({ platformId, name, packageName, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateLinuxPlatform(platformId, name, packageName)),
     ),
   );
 
@@ -1258,10 +1325,11 @@ const projectCreateWebPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--hostname <hostname>`, `Platform web hostname. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, hostname }) =>
-        parse(await (await getProjectClient()).createWebPlatform(platformId, name, hostname)),
+      async ({ platformId, name, hostname, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createWebPlatform(platformId, name, hostname)),
     ),
   );
 
@@ -1272,10 +1340,11 @@ const projectUpdateWebPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--hostname <hostname>`, `Platform web hostname. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, hostname }) =>
-        parse(await (await getProjectClient()).updateWebPlatform(platformId, name, hostname)),
+      async ({ platformId, name, hostname, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateWebPlatform(platformId, name, hostname)),
     ),
   );
 
@@ -1286,10 +1355,11 @@ const projectCreateWindowsPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--package-identifier-name <package-identifier-name>`, `Windows package identifier name. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, packageIdentifierName }) =>
-        parse(await (await getProjectClient()).createWindowsPlatform(platformId, name, packageIdentifierName)),
+      async ({ platformId, name, packageIdentifierName, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createWindowsPlatform(platformId, name, packageIdentifierName)),
     ),
   );
 
@@ -1300,10 +1370,11 @@ const projectUpdateWindowsPlatformCommand = project
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
   .requiredOption(`--name <name>`, `Platform name. Max length: 128 chars.`)
   .requiredOption(`--package-identifier-name <package-identifier-name>`, `Windows package identifier name. Max length: 256 chars.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId, name, packageIdentifierName }) =>
-        parse(await (await getProjectClient()).updateWindowsPlatform(platformId, name, packageIdentifierName)),
+      async ({ platformId, name, packageIdentifierName, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateWindowsPlatform(platformId, name, packageIdentifierName)),
     ),
   );
 
@@ -1312,10 +1383,11 @@ const projectGetPlatformCommand = project
   .command(`get-platform`)
   .description(`Get a platform by its unique ID. This endpoint returns the platform's details, including its name, type, and key configurations.`)
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId }) =>
-        parse(await (await getProjectClient()).getPlatform(platformId)),
+      async ({ platformId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getPlatform(platformId)),
     ),
   );
 
@@ -1324,10 +1396,11 @@ const projectDeletePlatformCommand = project
   .command(`delete-platform`)
   .description(`Delete a platform by its unique ID. This endpoint removes the platform and all its configurations from the project.`)
   .requiredOption(`--platform-id <platform-id>`, `Platform ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ platformId }) =>
-        parse(await (await getProjectClient()).deletePlatform(platformId)),
+      async ({ platformId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).deletePlatform(platformId)),
     ),
   );
 
@@ -1344,10 +1417,11 @@ const projectListPoliciesCommand = project
   )
   .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, limit, offset }) =>
-        parse(await (await getProjectClient()).listPolicies(buildQueries({ queries, limit, offset }), total)),
+      async ({ queries, total, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listPolicies(buildQueries({ queries, limit, offset }), total)),
     ),
   );
 
@@ -1356,10 +1430,11 @@ const projectUpdateDenyAliasedEmailPolicyCommand = project
   .command(`update-deny-aliased-email-policy`)
   .description(`Configures if aliased emails such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.`)
   .requiredOption(`--enabled <enabled>`, `Set whether or not to block aliased emails during signup and email updates.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDenyAliasedEmailPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateDenyAliasedEmailPolicy(enabled)),
     ),
   );
 
@@ -1368,10 +1443,11 @@ const projectUpdateDenyCorporateEmailPolicyCommand = project
   .command(`update-deny-corporate-email-policy`)
   .description(`Configures if only corporate email addresses (non-free and non-disposable domains) are allowed during new user sign-ups and email updates.`)
   .requiredOption(`--enabled <enabled>`, `Set whether or not to restrict sign-ups and email updates to corporate email addresses only.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDenyCorporateEmailPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateDenyCorporateEmailPolicy(enabled)),
     ),
   );
 
@@ -1380,10 +1456,11 @@ const projectUpdateDenyDisposableEmailPolicyCommand = project
   .command(`update-deny-disposable-email-policy`)
   .description(`Configures if disposable emails from known temporary domains are denied during new users sign-ups and email updates.`)
   .requiredOption(`--enabled <enabled>`, `Set whether or not to block disposable email addresses during signup and email updates.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDenyDisposableEmailPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateDenyDisposableEmailPolicy(enabled)),
     ),
   );
 
@@ -1392,10 +1469,11 @@ const projectUpdateDenyFreeEmailPolicyCommand = project
   .command(`update-deny-free-email-policy`)
   .description(`Configures if emails from free providers such as Gmail or Yahoo are denied during new users sign-ups and email updates.`)
   .requiredOption(`--enabled <enabled>`, `Set whether or not to block free email addresses during signup and email updates.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateDenyFreeEmailPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateDenyFreeEmailPolicy(enabled)),
     ),
   );
 
@@ -1439,10 +1517,11 @@ const projectUpdateMembershipPrivacyPolicyCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ userId, userEmail, userPhone, userName, userMfa, userAccessedAt }) =>
-        parse(await (await getProjectClient()).updateMembershipPrivacyPolicy(userId, userEmail, userPhone, userName, userMfa, userAccessedAt)),
+      async ({ userId, userEmail, userPhone, userName, userMfa, userAccessedAt, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateMembershipPrivacyPolicy(userId, userEmail, userPhone, userName, userMfa, userAccessedAt)),
     ),
   );
 
@@ -1451,10 +1530,11 @@ const projectUpdatePasswordDictionaryPolicyCommand = project
   .command(`update-password-dictionary-policy`)
   .description(`Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.`)
   .requiredOption(`--enabled <enabled>`, `Toggle password dictionary policy. Set to true if you want password change to block passwords in the dictionary, or false to allow them. When changing this policy, existing passwords remain valid.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updatePasswordDictionaryPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updatePasswordDictionaryPolicy(enabled)),
     ),
   );
 
@@ -1465,10 +1545,11 @@ const projectUpdatePasswordHistoryPolicyCommand = project
 
 Keep in mind, while password history policy is disabled, the history is not being stored. Enabling the policy will not have any history on existing users, and it will only start to collect and enforce the policy on password changes since the policy is enabled.`)
   .requiredOption(`--total <total>`, `Set the password history length per user. Value can be between 1 and 20, or null to disable the limit.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ total }) =>
-        parse(await (await getProjectClient()).updatePasswordHistoryPolicy(total)),
+      async ({ total, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updatePasswordHistoryPolicy(total)),
     ),
   );
 
@@ -1477,10 +1558,11 @@ const projectUpdatePasswordPersonalDataPolicyCommand = project
   .command(`update-password-personal-data-policy`)
   .description(`Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.`)
   .requiredOption(`--enabled <enabled>`, `Toggle password personal data policy. Set to true if you want to block passwords including user's personal data, or false to allow it. When changing this policy, existing passwords remain valid.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updatePasswordPersonalDataPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updatePasswordPersonalDataPolicy(enabled)),
     ),
   );
 
@@ -1513,10 +1595,11 @@ const projectUpdatePasswordStrengthPolicyCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ min, uppercase, lowercase, number, symbols }) =>
-        parse(await (await getProjectClient()).updatePasswordStrengthPolicy(min, uppercase, lowercase, number, symbols)),
+      async ({ min, uppercase, lowercase, number, symbols, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updatePasswordStrengthPolicy(min, uppercase, lowercase, number, symbols)),
     ),
   );
 
@@ -1525,10 +1608,11 @@ const projectUpdateSessionAlertPolicyCommand = project
   .command(`update-session-alert-policy`)
   .description(`Updating this policy allows you to control if email alert is sent upon session creation. When enabled, and user signs into their account, they will be sent an email notification. There is an exception, the first session after a new sign up does not trigger an alert, even if the policy is enabled.`)
   .requiredOption(`--enabled <enabled>`, `Toggle session alert policy. Set to true if you want users to receive email notifications when a sessions are created for their users, or false to not send email alerts.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateSessionAlertPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateSessionAlertPolicy(enabled)),
     ),
   );
 
@@ -1537,10 +1621,11 @@ const projectUpdateSessionDurationPolicyCommand = project
   .command(`update-session-duration-policy`)
   .description(`Update maximum duration how long sessions created within a project should stay active for.`)
   .requiredOption(`--duration <duration>`, `Maximum session length in seconds. Minium allowed value is 60 seconds, and maximum is 1 year, which is 31536000 seconds.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ duration }) =>
-        parse(await (await getProjectClient()).updateSessionDurationPolicy(duration)),
+      async ({ duration, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateSessionDurationPolicy(duration)),
     ),
   );
 
@@ -1549,10 +1634,11 @@ const projectUpdateSessionInvalidationPolicyCommand = project
   .command(`update-session-invalidation-policy`)
   .description(`Updating this policy allows you to control if existing sessions should be invalidated when a password of a user is changed. When enabled, and user changes their password, they will be logged out of all their devices.`)
   .requiredOption(`--enabled <enabled>`, `Toggle session invalidation policy. Set to true if you want password change to invalidate all sessions of an user, or false to keep sessions active.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ enabled }) =>
-        parse(await (await getProjectClient()).updateSessionInvalidationPolicy(enabled)),
+      async ({ enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateSessionInvalidationPolicy(enabled)),
     ),
   );
 
@@ -1561,10 +1647,11 @@ const projectUpdateSessionLimitPolicyCommand = project
   .command(`update-session-limit-policy`)
   .description(`Update the maximum number of sessions allowed per user. When the limit is hit, the oldest session will be deleted to make room for new one.`)
   .requiredOption(`--total <total>`, `Set the maximum number of sessions allowed per user. Value can be between 1 and 100.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ total }) =>
-        parse(await (await getProjectClient()).updateSessionLimitPolicy(total)),
+      async ({ total, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateSessionLimitPolicy(total)),
     ),
   );
 
@@ -1573,10 +1660,11 @@ const projectUpdateUserLimitPolicyCommand = project
   .command(`update-user-limit-policy`)
   .description(`Update the maximum number of users in the project. When the limit is hit or amount of existing users already exceeded the limit, all users remain active, but new user sign up will be prohibited.`)
   .requiredOption(`--total <total>`, `Set the maximum number of users allowed in the project. Value can be between 0 and 10000. Use 0 or null to disable the limit.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ total }) =>
-        parse(await (await getProjectClient()).updateUserLimitPolicy(total)),
+      async ({ total, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateUserLimitPolicy(total)),
     ),
   );
 
@@ -1585,10 +1673,11 @@ const projectGetPolicyCommand = project
   .command(`get-policy`)
   .description(`Get a policy by its unique ID. This endpoint returns the current configuration for the requested project policy.`)
   .requiredOption(`--policy-id <policy-id>`, `Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ policyId }) =>
-        parse(await (await getProjectClient()).getPolicy(policyId)),
+      async ({ policyId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getPolicy(policyId)),
     ),
   );
 
@@ -1598,10 +1687,11 @@ const projectUpdateProtocolCommand = project
   .description(`Update properties of a specific protocol. Use this endpoint to enable or disable a protocol in your project. `)
   .requiredOption(`--protocol-id <protocol-id>`, `Protocol name. Can be one of: rest, graphql, websocket`)
   .requiredOption(`--enabled <enabled>`, `Protocol status.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ protocolId, enabled }) =>
-        parse(await (await getProjectClient()).updateProtocol(protocolId, enabled)),
+      async ({ protocolId, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateProtocol(protocolId, enabled)),
     ),
   );
 
@@ -1611,10 +1701,11 @@ const projectUpdateServiceCommand = project
   .description(`Update properties of a specific service. Use this endpoint to enable or disable a service in your project. `)
   .requiredOption(`--service-id <service-id>`, `Service name. Can be one of: account, avatars, databases, tablesdb, locale, health, project, storage, teams, users, vcs, sites, functions, proxy, graphql, migrations, messaging, advisor, oauth2`)
   .requiredOption(`--enabled <enabled>`, `Service status.`, parseBool)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ serviceId, enabled }) =>
-        parse(await (await getProjectClient()).updateService(serviceId, enabled)),
+      async ({ serviceId, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateService(serviceId, enabled)),
     ),
   );
 
@@ -1637,10 +1728,11 @@ const projectUpdateSMTPCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ host, port, username, password, senderEmail, senderName, replyToEmail, replyToName, secure, enabled }) =>
-        parse(await (await getProjectClient()).updateSMTP(host, port, username, password, senderEmail, senderName, replyToEmail, replyToName, secure, enabled)),
+      async ({ host, port, username, password, senderEmail, senderName, replyToEmail, replyToName, secure, enabled, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateSMTP(host, port, username, password, senderEmail, senderName, replyToEmail, replyToName, secure, enabled)),
     ),
   );
 
@@ -1649,10 +1741,11 @@ const projectCreateSMTPTestCommand = project
   .command(`create-smtp-test`)
   .description(`Send a test email to verify SMTP configuration. `)
   .requiredOption(`--emails [emails...]`, `Array of emails to send test email to. Maximum of 10 emails are allowed.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ emails }) =>
-        parse(await (await getProjectClient()).createSMTPTest(emails)),
+      async ({ emails, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createSMTPTest(emails)),
     ),
   );
 
@@ -1669,10 +1762,11 @@ const projectListEmailTemplatesCommand = project
   )
   .option(`--limit <limit>`, `Maximum number of results to return.`, parseInteger)
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, limit, offset }) =>
-        parse(await (await getProjectClient()).listEmailTemplates(buildQueries({ queries, limit, offset }), total)),
+      async ({ queries, total, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listEmailTemplates(buildQueries({ queries, limit, offset }), total)),
     ),
   );
 
@@ -1688,10 +1782,11 @@ const projectUpdateEmailTemplateCommand = project
   .option(`--sender-email <sender-email>`, `Email of the sender. Pass an empty string to clear a previously set value.`)
   .option(`--reply-to-email <reply-to-email>`, `Reply to email. Pass an empty string to clear a previously set value.`)
   .option(`--reply-to-name <reply-to-name>`, `Reply to name.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ templateId, locale, subject, message, senderName, senderEmail, replyToEmail, replyToName }) =>
-        parse(await (await getProjectClient()).updateEmailTemplate(templateId, locale, subject, message, senderName, senderEmail, replyToEmail, replyToName)),
+      async ({ templateId, locale, subject, message, senderName, senderEmail, replyToEmail, replyToName, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateEmailTemplate(templateId, locale, subject, message, senderName, senderEmail, replyToEmail, replyToName)),
     ),
   );
 
@@ -1701,10 +1796,11 @@ const projectGetEmailTemplateCommand = project
   .description(`Get a custom email template for the specified locale and type. This endpoint returns the template content, subject, and other configuration details.`)
   .requiredOption(`--template-id <template-id>`, `Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession`)
   .option(`--locale <locale>`, `Custom email template locale. If left empty, the fallback locale (en) will be used.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ templateId, locale }) =>
-        parse(await (await getProjectClient()).getEmailTemplate(templateId, locale)),
+      async ({ templateId, locale, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getEmailTemplate(templateId, locale)),
     ),
   );
 
@@ -1715,10 +1811,11 @@ const projectGetUsageCommand = project
   .requiredOption(`--start-date <start-date>`, `Starting date for the usage`)
   .requiredOption(`--end-date <end-date>`, `End date for the usage`)
   .option(`--period <period>`, `Period used`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ startDate, endDate, period }) =>
-        parse(await (await getProjectClient()).getUsage(startDate, endDate, period)),
+      async ({ startDate, endDate, period, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getUsage(startDate, endDate, period)),
     ),
   );
 
@@ -1741,10 +1838,11 @@ const projectListVariablesCommand = project
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getProjectClient()).listVariables(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
+      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, projectId }) =>
+        parse(await (await getProjectClient(projectId)).listVariables(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -1761,10 +1859,11 @@ const projectCreateVariableCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ variableId, key, value, secret }) =>
-        parse(await (await getProjectClient()).createVariable(variableId, key, value, secret)),
+      async ({ variableId, key, value, secret, projectId }) =>
+        parse(await (await getProjectClient(projectId)).createVariable(variableId, key, value, secret)),
     ),
   );
 
@@ -1773,10 +1872,11 @@ const projectGetVariableCommand = project
   .command(`get-variable`)
   .description(`Get a variable by its unique ID. `)
   .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ variableId }) =>
-        parse(await (await getProjectClient()).getVariable(variableId)),
+      async ({ variableId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).getVariable(variableId)),
     ),
   );
 
@@ -1793,10 +1893,11 @@ const projectUpdateVariableCommand = project
     (value: string | undefined) =>
       value === undefined ? true : parseBool(value),
   )
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ variableId, key, value, secret }) =>
-        parse(await (await getProjectClient()).updateVariable(variableId, key, value, secret)),
+      async ({ variableId, key, value, secret, projectId }) =>
+        parse(await (await getProjectClient(projectId)).updateVariable(variableId, key, value, secret)),
     ),
   );
 
@@ -1805,10 +1906,11 @@ const projectDeleteVariableCommand = project
   .command(`delete-variable`)
   .description(`Delete a variable by its unique ID. `)
   .requiredOption(`--variable-id <variable-id>`, `Variable unique ID.`)
+  .option(`--project-id <project-id>`, `Project to act on. Defaults to the project linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ variableId }) =>
-        parse(await (await getProjectClient()).deleteVariable(variableId)),
+      async ({ variableId, projectId }) =>
+        parse(await (await getProjectClient(projectId)).deleteVariable(variableId)),
     ),
   );
 

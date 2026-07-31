@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { sdkForProject } from "../../sdks.js";
+import { sdkForConsole, sdkForProject } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -18,6 +18,16 @@ const getOauth2Client = async (): Promise<Oauth2> => {
     oauth2Client = new Oauth2(sdkClient);
   }
   return oauth2Client;
+};
+
+let oauth2ConsoleClient: Oauth2 | null = null;
+
+// A few endpoints on this service are only served on the console project.
+const getOauth2ConsoleClient = async (): Promise<Oauth2> => {
+  if (!oauth2ConsoleClient) {
+    oauth2ConsoleClient = new Oauth2(await sdkForConsole());
+  }
+  return oauth2ConsoleClient;
 };
 
 export const oauth2 = new Command("oauth2")
@@ -159,7 +169,7 @@ const oauth2ListOrganizationsCommand = oauth2
   .action(
     actionRunner(
       async ({ limit, offset, search }) =>
-        parse(await (await getOauth2Client()).listOrganizations(limit, offset, search)),
+        parse(await (await getOauth2ConsoleClient()).listOrganizations(limit, offset, search)),
     ),
   );
 
@@ -197,7 +207,7 @@ const oauth2ListProjectsCommand = oauth2
   .action(
     actionRunner(
       async ({ limit, offset, search }) =>
-        parse(await (await getOauth2Client()).listProjects(limit, offset, search)),
+        parse(await (await getOauth2ConsoleClient()).listProjects(limit, offset, search)),
     ),
   );
 

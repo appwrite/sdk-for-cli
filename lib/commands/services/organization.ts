@@ -5,7 +5,7 @@ import {
   parseDeprecatedWhereQuery,
   parseFilterQuery,
 } from "../utils/query.js";
-import { sdkForConsole } from "../../sdks.js";
+import { sdkForConsoleWithOrganization } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -16,15 +16,12 @@ import {
 } from "../../parser.js";
 import { Organization } from "@appwrite.io/console";
 
-let organizationClient: Organization | null = null;
-
-const getOrganizationClient = async (): Promise<Organization> => {
-  if (!organizationClient) {
-    const sdkClient = await sdkForConsole();
-    organizationClient = new Organization(sdkClient);
-  }
-  return organizationClient;
-};
+// Every endpoint here targets one organization, so the client is built per
+// command rather than cached across differing --organization-id values.
+const getOrganizationClient = async (
+  organizationId?: string,
+): Promise<Organization> =>
+  new Organization(await sdkForConsoleWithOrganization(organizationId));
 
 export const organization = new Command("organization")
   .description(commandDescriptions["organization"] || "The Organization service allows you to manage organization-level projects.")
@@ -35,9 +32,11 @@ export const organization = new Command("organization")
 const organizationGetCommand = organization
   .command(`get`)
   .description(`Get the current organization.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async () => parse(await (await getOrganizationClient()).get()),
+      async ({ organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).get()),
     ),
   );
 
@@ -46,10 +45,11 @@ const organizationUpdateCommand = organization
   .command(`update`)
   .description(`Update the current organization's name.`)
   .requiredOption(`--name <name>`, `New organization name. Max length: 128 chars.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ name }) =>
-        parse(await (await getOrganizationClient()).update(name)),
+      async ({ name, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).update(name)),
     ),
   );
 
@@ -57,9 +57,11 @@ const organizationUpdateCommand = organization
 const organizationDeleteCommand = organization
   .command(`delete`)
   .description(`Delete the current organization. All projects that belong to the organization are deleted as well.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async () => parse(await (await getOrganizationClient()).delete()),
+      async ({ organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).delete()),
     ),
   );
 
@@ -82,10 +84,11 @@ const organizationListInstallationsCommand = organization
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getOrganizationClient()).listInstallations(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
+      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).listInstallations(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -95,10 +98,11 @@ const organizationCreateInstallationCommand = organization
   .description(`Install an app on the organization. Only organization members with the owner role can install apps. The installation is granted the scopes the app currently requests.`)
   .requiredOption(`--app-id <app-id>`, `Application unique ID.`)
   .option(`--authorization-details <authorization-details>`, `Authorization details granted to the installation as a JSON array of objects, each with a \`type\` and app-defined fields. The Appwrite Console stores authorized project IDs here.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ appId, authorizationDetails }) =>
-        parse(await (await getOrganizationClient()).createInstallation(appId, authorizationDetails)),
+      async ({ appId, authorizationDetails, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).createInstallation(appId, authorizationDetails)),
     ),
   );
 
@@ -107,10 +111,11 @@ const organizationGetInstallationCommand = organization
   .command(`get-installation`)
   .description(`Get an app installation on the organization by its unique ID. Any organization member can read installations.`)
   .requiredOption(`--installation-id <installation-id>`, `Installation unique ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ installationId }) =>
-        parse(await (await getOrganizationClient()).getInstallation(installationId)),
+      async ({ installationId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).getInstallation(installationId)),
     ),
   );
 
@@ -120,10 +125,11 @@ const organizationUpdateInstallationCommand = organization
   .description(`Update an app installation on the organization. Only organization members with the owner role can update installations. The installation's granted scopes are refreshed to the scopes the app currently requests; previously issued installation access tokens are revoked.`)
   .requiredOption(`--installation-id <installation-id>`, `Installation unique ID.`)
   .option(`--authorization-details <authorization-details>`, `Authorization details granted to the installation as a JSON array of objects, each with a \`type\` and app-defined fields. Omit to keep the current value.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ installationId, authorizationDetails }) =>
-        parse(await (await getOrganizationClient()).updateInstallation(installationId, authorizationDetails)),
+      async ({ installationId, authorizationDetails, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).updateInstallation(installationId, authorizationDetails)),
     ),
   );
 
@@ -132,10 +138,11 @@ const organizationDeleteInstallationCommand = organization
   .command(`delete-installation`)
   .description(`Uninstall an app from the organization by its installation ID. Only organization members with the owner role can remove installations. Previously issued installation access tokens are revoked.`)
   .requiredOption(`--installation-id <installation-id>`, `Installation unique ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ installationId }) =>
-        parse(await (await getOrganizationClient()).deleteInstallation(installationId)),
+      async ({ installationId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).deleteInstallation(installationId)),
     ),
   );
 
@@ -158,10 +165,11 @@ const organizationListKeysCommand = organization
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getOrganizationClient()).listKeys(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
+      async ({ queries, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).listKeys(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), total)),
     ),
   );
 
@@ -173,10 +181,11 @@ const organizationCreateKeyCommand = organization
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId, name, scopes, expire }) =>
-        parse(await (await getOrganizationClient()).createKey(keyId, name, scopes, expire)),
+      async ({ keyId, name, scopes, expire, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).createKey(keyId, name, scopes, expire)),
     ),
   );
 
@@ -185,10 +194,11 @@ const organizationGetKeyCommand = organization
   .command(`get-key`)
   .description(`Get a key by its unique ID. This endpoint returns details about a specific API key in your organization including its scopes.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId }) =>
-        parse(await (await getOrganizationClient()).getKey(keyId)),
+      async ({ keyId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).getKey(keyId)),
     ),
   );
 
@@ -200,10 +210,11 @@ const organizationUpdateKeyCommand = organization
   .requiredOption(`--name <name>`, `Key name. Max length: 128 chars.`)
   .requiredOption(`--scopes [scopes...]`, `Key scopes list. Maximum of 200 scopes are allowed.`)
   .option(`--expire <expire>`, `Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId, name, scopes, expire }) =>
-        parse(await (await getOrganizationClient()).updateKey(keyId, name, scopes, expire)),
+      async ({ keyId, name, scopes, expire, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).updateKey(keyId, name, scopes, expire)),
     ),
   );
 
@@ -212,10 +223,11 @@ const organizationDeleteKeyCommand = organization
   .command(`delete-key`)
   .description(`Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.`)
   .requiredOption(`--key-id <key-id>`, `Key unique ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ keyId }) =>
-        parse(await (await getOrganizationClient()).deleteKey(keyId)),
+      async ({ keyId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).deleteKey(keyId)),
     ),
   );
 
@@ -239,10 +251,11 @@ const organizationListMembershipsCommand = organization
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, search, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getOrganizationClient()).listMemberships(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
+      async ({ queries, search, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).listMemberships(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 
@@ -256,10 +269,11 @@ const organizationCreateMembershipCommand = organization
   .option(`--phone <phone>`, `Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.`)
   .option(`--url <url>`, `URL to redirect the user back to your app from the invitation email. This parameter is not required when an API key is supplied.`)
   .option(`--name <name>`, `Name of the new organization member. Max length: 128 chars.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ roles, email, userId, phone, url, name }) =>
-        parse(await (await getOrganizationClient()).createMembership(roles, email, userId, phone, url, name)),
+      async ({ roles, email, userId, phone, url, name, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).createMembership(roles, email, userId, phone, url, name)),
     ),
   );
 
@@ -268,10 +282,11 @@ const organizationGetMembershipCommand = organization
   .command(`get-membership`)
   .description(`Get a membership from the current organization by its unique ID.`)
   .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ membershipId }) =>
-        parse(await (await getOrganizationClient()).getMembership(membershipId)),
+      async ({ membershipId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).getMembership(membershipId)),
     ),
   );
 
@@ -281,10 +296,11 @@ const organizationUpdateMembershipCommand = organization
   .description(`Modify the roles of a member in the current organization.`)
   .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
   .requiredOption(`--roles [roles...]`, `An array of strings. Use this param to set the user's roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ membershipId, roles }) =>
-        parse(await (await getOrganizationClient()).updateMembership(membershipId, roles)),
+      async ({ membershipId, roles, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).updateMembership(membershipId, roles)),
     ),
   );
 
@@ -293,10 +309,11 @@ const organizationDeleteMembershipCommand = organization
   .command(`delete-membership`)
   .description(`Remove a member from the current organization. The member is removed whether they accepted the invitation or not; a pending invitation is revoked.`)
   .requiredOption(`--membership-id <membership-id>`, `Membership ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ membershipId }) =>
-        parse(await (await getOrganizationClient()).deleteMembership(membershipId)),
+      async ({ membershipId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).deleteMembership(membershipId)),
     ),
   );
 
@@ -320,10 +337,11 @@ const organizationListProjectsCommand = organization
   .option(`--offset <offset>`, `Number of results to skip.`, parseInteger)
   .option(`--cursor-after <id>`, `Return results after this cursor ID.`)
   .option(`--cursor-before <id>`, `Return results before this cursor ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ queries, search, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }) =>
-        parse(await (await getOrganizationClient()).listProjects(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
+      async ({ queries, search, total, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).listProjects(buildQueries({ queries, filter, where, sortAsc, sortDesc, cursorAfter, cursorBefore, limit, offset }), search, total)),
     ),
   );
 
@@ -334,10 +352,11 @@ const organizationCreateProjectCommand = organization
   .requiredOption(`--project-id <project-id>`, `Unique Id. Choose a custom ID or generate a random ID with \`ID.unique()\`. Valid chars are a-z, and hyphen. Can't start with a special char. Max length is 36 chars.`)
   .requiredOption(`--name <name>`, `Project name. Max length: 128 chars.`)
   .option(`--region <region>`, `Project Region.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ projectId, name, region }) =>
-        parse(await (await getOrganizationClient()).createProject(projectId, name, region)),
+      async ({ projectId, name, region, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).createProject(projectId, name, region)),
     ),
   );
 
@@ -346,10 +365,11 @@ const organizationGetProjectCommand = organization
   .command(`get-project`)
   .description(`Get a project.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getOrganizationClient()).getProject(projectId)),
+      async ({ projectId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).getProject(projectId)),
     ),
   );
 
@@ -359,10 +379,11 @@ const organizationUpdateProjectCommand = organization
   .description(`Update a project by its unique ID.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
   .requiredOption(`--name <name>`, `Project name. Max length: 128 chars.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ projectId, name }) =>
-        parse(await (await getOrganizationClient()).updateProject(projectId, name)),
+      async ({ projectId, name, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).updateProject(projectId, name)),
     ),
   );
 
@@ -371,10 +392,11 @@ const organizationDeleteProjectCommand = organization
   .command(`delete-project`)
   .description(`Delete a project by its unique ID.`)
   .requiredOption(`--project-id <project-id>`, `Project unique ID.`)
+  .option(`--organization-id <organization-id>`, `Organization to act on. Defaults to the organization linked in appwrite.config.json.`)
   .action(
     actionRunner(
-      async ({ projectId }) =>
-        parse(await (await getOrganizationClient()).deleteProject(projectId)),
+      async ({ projectId, organizationId }) =>
+        parse(await (await getOrganizationClient(organizationId)).deleteProject(projectId)),
     ),
   );
 
