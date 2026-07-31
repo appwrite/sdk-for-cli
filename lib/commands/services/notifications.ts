@@ -5,7 +5,7 @@ import {
   parseDeprecatedWhereQuery,
   parseFilterQuery,
 } from "../utils/query.js";
-import { sdkForProject } from "../../sdks.js";
+import { sdkForConsole } from "../../sdks.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -20,7 +20,7 @@ let notificationsClient: Notifications | null = null;
 
 const getNotificationsClient = async (): Promise<Notifications> => {
   if (!notificationsClient) {
-    const sdkClient = await sdkForProject();
+    const sdkClient = await sdkForConsole();
     notificationsClient = new Notifications(sdkClient);
   }
   return notificationsClient;

@@ -1,5 +1,24 @@
 # Change Log
 
+## 25.0.0
+
+* Breaking: Removed the `organizations` command group covering billing, plans, invoices, and add-ons
+* Added: `organization` commands accept `--organization-id` to target another organization
+* Added: `project` commands accept `--project-id` to target another project
+* Added: Grouped `--help` screen with follow-up command hints after each action
+* Added: `push` and `pull` document `--all` and `--id` in their own help
+* Added: `client` reports the configured `organizationId`
+* Fixed: `login` warns and signs in to the base Cloud endpoint instead of failing on a regional one
+* Fixed: `init` no longer stacks a region prefix onto an already regional endpoint
+* Fixed: `notifications` and `oauth2 list-organizations`, `list-projects` call the console, not the linked project
+* Fixed: Passwords are masked in full instead of revealing a tail
+* Updated: Timestamps, durations, sizes, and large counts render in human-readable form
+* Updated: Enabled and disabled lists collapse into wrapped groups instead of wide tables
+* Updated: Condensed output notes how many fields `--raw` would add
+* Updated: Prompts and errors listing several accounts print one account per line
+* Updated: `teams` hints and `register` visibility point at `organization` and `login`
+* Updated: Dropped the `deploy` placeholder command, which only printed a "use `push`" warning
+
 ## 24.1.0
 
 * Added: `previousKey` on an attribute or column renames it in place on `push`

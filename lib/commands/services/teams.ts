@@ -27,7 +27,7 @@ const getTeamsClient = async (): Promise<Teams> => {
       sdkClient = await sdkForProject();
     } catch (e) {
       if (e instanceof Error && e.message.includes("Project is not set")) {
-        hint(`To manage console-level teams, use the 'organizations' command instead.`);
+        hint(`To manage organization members, use the 'organization' command instead.`);
       }
       throw e;
     }
