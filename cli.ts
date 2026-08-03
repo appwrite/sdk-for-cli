@@ -47,7 +47,7 @@ import { locale } from './lib/commands/services/locale.js';
 import { messaging } from './lib/commands/services/messaging.js';
 import { migrations } from './lib/commands/services/migrations.js';
 import { notifications } from './lib/commands/services/notifications.js';
-import { oauth2 } from './lib/commands/services/oauth2.js';
+import { oauth2, oauth2ListOrganizationsRootCommand, oauth2ListProjectsRootCommand } from './lib/commands/services/oauth2.js';
 import { organization } from './lib/commands/services/organization.js';
 import { presences } from './lib/commands/services/presences.js';
 import { project } from './lib/commands/services/project.js';
@@ -227,6 +227,8 @@ if (process.argv.includes('-v') || process.argv.includes('--version')) {
             .addCommand(migrations)
             .addCommand(notifications)
             .addCommand(oauth2)
+            .addCommand(oauth2ListOrganizationsRootCommand)
+            .addCommand(oauth2ListProjectsRootCommand)
             .addCommand(organization)
             .addCommand(presences)
             .addCommand(project)

@@ -6,6 +6,7 @@ import {
   parseFilterQuery,
 } from "../utils/query.js";
 import { sdkForConsoleWithOrganization } from "../../sdks.js";
+import { getOrganizationForSession } from "../../console-fallback.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -36,7 +37,7 @@ const organizationGetCommand = organization
   .action(
     actionRunner(
       async ({ organizationId }) =>
-        parse(await (await getOrganizationClient(organizationId)).get()),
+        parse(await getOrganizationForSession(organizationId)),
     ),
   );
 

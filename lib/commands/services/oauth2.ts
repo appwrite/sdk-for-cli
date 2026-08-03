@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { sdkForConsole, sdkForProject } from "../../sdks.js";
+import { listOrganizationsForSession, listProjectsForSession } from "../../console-fallback.js";
 import {
   actionRunner,
   commandDescriptions,
@@ -161,7 +162,7 @@ const oauth2LogoutPostCommand = oauth2
 
 
 const oauth2ListOrganizationsCommand = oauth2
-  .command(`list-organizations`)
+  .command(`list-organizations`, { hidden: true })
   .description(`List the organizations the OAuth2 access token can access. Resolves the token's \`organization\` authorization details, expanding the \`*\` wildcard into the concrete set of organizations the user can see.`)
   .option(`--limit <limit>`, `Maximum number of organizations to return. Between 1 and 5000.`, parseInteger)
   .option(`--offset <offset>`, `Number of organizations to skip before returning results. Used for pagination.`, parseInteger)
@@ -169,7 +170,22 @@ const oauth2ListOrganizationsCommand = oauth2
   .action(
     actionRunner(
       async ({ limit, offset, search }) =>
-        parse(await (await getOauth2ConsoleClient()).listOrganizations(limit, offset, search)),
+        parse(await listOrganizationsForSession(limit, offset, search)),
+    ),
+  );
+
+export const oauth2ListOrganizationsRootCommand = new Command(`list-organizations`)
+  .configureHelp({
+    helpWidth: process.stdout.columns || 80,
+  })
+  .description(`List the organizations the OAuth2 access token can access. Resolves the token's \`organization\` authorization details, expanding the \`*\` wildcard into the concrete set of organizations the user can see.`)
+  .option(`--limit <limit>`, `Maximum number of organizations to return. Between 1 and 5000.`, parseInteger)
+  .option(`--offset <offset>`, `Number of organizations to skip before returning results. Used for pagination.`, parseInteger)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .action(
+    actionRunner(
+      async ({ limit, offset, search }) =>
+        parse(await listOrganizationsForSession(limit, offset, search)),
     ),
   );
 
@@ -199,7 +215,7 @@ const oauth2CreatePARCommand = oauth2
 
 
 const oauth2ListProjectsCommand = oauth2
-  .command(`list-projects`)
+  .command(`list-projects`, { hidden: true })
   .description(`List the projects the OAuth2 access token can access. Resolves the token's \`project\` authorization details, expanding the \`*\` wildcard into the concrete set of projects the user can see.`)
   .option(`--limit <limit>`, `Maximum number of projects to return. Between 1 and 5000.`, parseInteger)
   .option(`--offset <offset>`, `Number of projects to skip before returning results. Used for pagination.`, parseInteger)
@@ -207,7 +223,22 @@ const oauth2ListProjectsCommand = oauth2
   .action(
     actionRunner(
       async ({ limit, offset, search }) =>
-        parse(await (await getOauth2ConsoleClient()).listProjects(limit, offset, search)),
+        parse(await listProjectsForSession(limit, offset, search)),
+    ),
+  );
+
+export const oauth2ListProjectsRootCommand = new Command(`list-projects`)
+  .configureHelp({
+    helpWidth: process.stdout.columns || 80,
+  })
+  .description(`List the projects the OAuth2 access token can access. Resolves the token's \`project\` authorization details, expanding the \`*\` wildcard into the concrete set of projects the user can see.`)
+  .option(`--limit <limit>`, `Maximum number of projects to return. Between 1 and 5000.`, parseInteger)
+  .option(`--offset <offset>`, `Number of projects to skip before returning results. Used for pagination.`, parseInteger)
+  .option(`--search <search>`, `Search term to filter your list results. Max length: 256 chars.`)
+  .action(
+    actionRunner(
+      async ({ limit, offset, search }) =>
+        parse(await listProjectsForSession(limit, offset, search)),
     ),
   );
 
