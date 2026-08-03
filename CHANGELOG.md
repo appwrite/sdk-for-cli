@@ -1,5 +1,15 @@
 # Change Log
 
+## 25.1.0
+
+* Added: `list-organizations` and `list-projects` run at the root, alongside `login`
+* Added: Hint pointing at `/v1` when an endpoint misses the API path
+* Fixed: `list-organizations`, `list-projects`, and `organization get` work on self-hosted installs
+* Fixed: `login --endpoint` verifies the endpoint before prompting for credentials
+* Fixed: Trailing slashes in an endpoint no longer produce double-slashed request paths
+* Fixed: HTML and oversized error pages are summarized instead of printed verbatim
+* Fixed: `--report` issue links stay within the length GitHub accepts
+
 ## 25.0.0
 
 * Breaking: Removed the `organizations` command group covering billing, plans, invoices, and add-ons
