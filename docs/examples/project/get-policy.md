@@ -1,4 +1,4 @@
 ```bash
 appwrite project get-policy \
-    --policy-id "password-dictionary"
+    --policy-id password-dictionary
 ```

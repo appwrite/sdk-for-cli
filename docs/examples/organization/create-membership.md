@@ -1,4 +1,4 @@
 ```bash
 appwrite organization create-membership \
-    --roles []string{}
+    --roles one two three
 ```

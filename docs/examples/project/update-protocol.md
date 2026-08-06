@@ -1,5 +1,5 @@
 ```bash
 appwrite project update-protocol \
-    --protocol-id "rest" \
+    --protocol-id rest \
     --enabled false
 ```

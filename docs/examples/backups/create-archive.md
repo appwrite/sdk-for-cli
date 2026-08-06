@@ -1,4 +1,4 @@
 ```bash
 appwrite backups create-archive \
-    --services []string{}
+    --services one two three
 ```

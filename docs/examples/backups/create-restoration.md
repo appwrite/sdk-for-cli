@@ -1,5 +1,5 @@
 ```bash
 appwrite backups create-restoration \
-    --archive-id "<ARCHIVE_ID>" \
-    --services []string{}
+    --archive-id <ARCHIVE_ID> \
+    --services one two three
 ```
