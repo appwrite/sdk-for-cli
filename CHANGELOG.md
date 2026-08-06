@@ -10,7 +10,6 @@
 * Breaking: Removed usage and log commands on `presences`, `project`, `users`, and `teams`
 * Added: Homebrew, scoop, and `curl | bash` installs alongside npm
 * Added: A per-platform npm package, so installing no longer downloads a binary afterwards
-* Added: `update` honours prereleases instead of walking back onto the last stable build
 * Updated: Startup is around 9.5ms, down from around 173ms
 
 ## 25.1.0
