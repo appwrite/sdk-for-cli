@@ -1,23 +1,28 @@
-name: Publish Package to npmjs
+name: Publish
+
+# Publishing uses npm trusted publishing, so no npm token is needed -- but trust
+# is configured per existing package, so the parent and the six platform packages
+# each need one manual token-based publish before this workflow can run.
+#
+# Windows signing is optional: without secrets.WINDOWS_SIGNING_API_TOKEN the .exe
+# assets ship unsigned with a warning instead of failing the release.
 
 on:
   release:
     types: [published]
 
 permissions:
-  actions: read
-  id-token: write
   contents: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
 
 jobs:
-  build-and-publish:
+  publish:
     runs-on: ubuntu-latest
     env:
-      # Bun 1.3.12 has a sig_size calculation bug in macho.zig that truncates the
-      # LC_CODE_SIGNATURE blob on cross-compiled Darwin binaries, so macOS kills
-      # them on launch (oven-sh/bun#29120). Unpin once a Bun release includes the
-      # upstream fix (oven-sh/bun#29122).
-      CLI_BUN_VERSION: '1.3.11'
       HOMEBREW_TAP_REPO: appwrite/homebrew-appwrite
       WINDOWS_SIGNING_PROJECT_SLUG: ${{ vars.WINDOWS_SIGNING_PROJECT_SLUG || 'sdk-for-cli' }}
       WINDOWS_SIGNING_POLICY_SLUG: ${{ vars.WINDOWS_SIGNING_POLICY_SLUG || 'release-signing' }}
@@ -25,57 +30,70 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          token: ${{ secrets.GH_TOKEN }}
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          bun-version: ${{ env.CLI_BUN_VERSION }}
+          go-version-file: go.mod
 
-      - name: Setup binfmt with QEMU
-        run: | 
-          sudo apt update
-          sudo apt install qemu-system binfmt-support qemu-user-static osslsigncode
-          update-binfmts --display
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24.14.1'
+          registry-url: 'https://registry.npmjs.org'
 
-      - name: Setup ldid
+      # Trusted publishing needs npm >= 11.5.1, which no node release bundles yet.
+      - name: Pin npm for trusted publishing
+        run: npm install -g npm@11.10.0
+
+      # Linux runners have no codesign, so ad-hoc signing the darwin builds
+      # falls back to ldid.
+      - name: Install ldid
         run: |
-          git clone https://github.com/tpoechtrager/ldid
-          cd ./ldid
-          sudo make
-          sudo make install
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ldid
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Build
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        with:
+          version: '~> v2'
+          args: release --clean --skip=publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch keyring native bindings for all targets
+      - name: Stage release assets
+        run: node scripts/stage-assets.mjs dist staging
+
+      - name: Detect Windows code signing
+        id: signing
+        env:
+          SIGNING_TOKEN: ${{ secrets.WINDOWS_SIGNING_API_TOKEN }}
         run: |
-          version="$(bun -e 'console.log(require("@napi-rs/keyring/package.json").version)')"
-          for triple in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc win32-arm64-msvc; do
-            dir="node_modules/@napi-rs/keyring-$triple"
-            [ -d "$dir" ] && continue
-            mkdir -p "$dir"
-            curl -fsSL "https://registry.npmjs.org/@napi-rs/keyring-$triple/-/keyring-$triple-$version.tgz" | tar -xz -C "$dir" --strip-components=1
-          done
+          set -euo pipefail
 
-      - name: Build for Linux and Windows
-        run: |
-          bun run linux-x64
-          bun run linux-arm64
-          bun run mac-x64
-          bun run mac-arm64
-          bun run windows-x64
-          bun run windows-arm64
+          if [ -n "${SIGNING_TOKEN}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Windows binaries are unsigned::\
+          WINDOWS_SIGNING_API_TOKEN is not set, so the .exe assets ship unsigned \
+          and Windows SmartScreen will warn on first run. Set the secret to sign them."
+          fi
 
       - name: Upload unsigned Windows binaries
         id: upload-windows-unsigned
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: windows-unsigned
           path: |
-            build/appwrite-cli-win-x64.exe
-            build/appwrite-cli-win-arm64.exe
+            staging/appwrite-cli-win-x64.exe
+            staging/appwrite-cli-win-arm64.exe
 
       - name: Submit Windows binaries for signing
-        uses: signpath/github-action-submit-signing-request@b9d91eadd323de506c0c81cf0c7fe7438f3360fd # v2
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
+        uses: signpath/github-action-submit-signing-request@b9d91eadd323de506c0c81cf0c7fe7438f3360fd # v2.2
         with:
           api-token: ${{ secrets.WINDOWS_SIGNING_API_TOKEN }}
           organization-id: ${{ vars.WINDOWS_SIGNING_ORGANIZATION_ID }}
@@ -84,77 +102,85 @@ jobs:
           artifact-configuration-slug: ${{ env.WINDOWS_SIGNING_ARTIFACT_CONFIGURATION_SLUG }}
           github-artifact-id: ${{ steps.upload-windows-unsigned.outputs.artifact-id }}
           wait-for-completion: true
-          output-artifact-directory: build-signed
+          output-artifact-directory: signed
           parameters: |
             version: "${{ github.event.release.tag_name }}"
 
       - name: Replace unsigned Windows binaries
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
         run: |
           set -euo pipefail
 
-          signed_x64="$(find build-signed -type f -name 'appwrite-cli-win-x64.exe' -print -quit)"
-          signed_arm64="$(find build-signed -type f -name 'appwrite-cli-win-arm64.exe' -print -quit)"
+          for arch in x64 arm64; do
+            asset="appwrite-cli-win-${arch}.exe"
+            signed="$(find signed -type f -name "$asset" -print -quit)"
 
-          if [ -z "$signed_x64" ] || [ -z "$signed_arm64" ]; then
-            echo "Signed Windows binaries were not found in build-signed"
-            find build-signed -type f -print
-            exit 1
-          fi
-
-          cp "$signed_x64" build/appwrite-cli-win-x64.exe
-          cp "$signed_arm64" build/appwrite-cli-win-arm64.exe
-
-      - name: Verify Windows signatures
-        run: |
-          set -uo pipefail
-
-          verify_signature() {
-            local file="$1"
-            local output rc
-            rc=0
-            output="$(osslsigncode verify -in "$file" 2>&1)" || rc=$?
-            echo "--- $file (osslsigncode exit $rc) ---"
-            echo "$output"
-
-            if [ "$rc" -ne 0 ] || ! grep -Fq "Succeeded" <<< "$output"; then
-              echo "::warning::$file signature verification failed; continuing while Windows signing policy is being enabled"
+            if [ -z "$signed" ]; then
+              echo "signed $asset not found"
+              find signed -type f -print
+              exit 1
             fi
-          }
 
-          verify_signature build/appwrite-cli-win-x64.exe
-          verify_signature build/appwrite-cli-win-arm64.exe
+            cp "$signed" "staging/$asset"
+          done
 
-      - name: Setup Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '24.14.1'
-          registry-url: 'https://registry.npmjs.org'
+      # goreleaser checksummed the unsigned Windows builds, and signing changed
+      # the bytes.
+      - name: Recompute checksums
+        working-directory: staging
+        run: sha256sum appwrite-cli-* > checksums.txt
 
-      - name: Pin npm for trusted publishing
-        run: npm install -g npm@11.10.0
-
-      - name: Determine release tag
-        id: release_tag
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          if [[ "${{ github.ref }}" == *"-rc"* ]] || [[ "${{ github.ref }}" == *"-RC"* ]]; then
+          set -euo pipefail
+          gh release upload "$RELEASE_TAG" staging/* --clobber
+
+      - name: Determine npm tag
+        id: npm_tag
+        env:
+          PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          set -euo pipefail
+          if [ "$PRERELEASE" = "true" ]; then
             echo "tag=next" >> "$GITHUB_OUTPUT"
           else
             echo "tag=latest" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Audit npm dependencies
-        run: npm audit --package-lock-only --audit-level=high --omit=dev
-
-      - name: Publish
-        run: npm publish --provenance --access public --tag ${{ steps.release_tag.outputs.tag }}
-
-      - uses: fnkr/github-action-ghr@96b1448dc6162f370067e1de51e856e733a76b4f # v1.3
+      - name: Build npm packages
         env:
-          GHR_PATH: build/
-          GHR_REPLACE: false
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          version="${RELEASE_TAG#v}"
+          node scripts/build-npm-packages.mjs staging npm-packages "$version"
+          node -e '
+            const fs = require("node:fs");
+            const version = process.argv[1];
+            const manifest = JSON.parse(fs.readFileSync("npm/package.json", "utf8"));
+            manifest.version = version;
+            for (const name of Object.keys(manifest.optionalDependencies)) {
+              manifest.optionalDependencies[name] = version;
+            }
+            fs.writeFileSync("npm/package.json", JSON.stringify(manifest, null, 2) + "\n");
+          ' "$version"
 
-      - name: Generate Appwrite Bot token for Homebrew tap
+      # Before the parent, which pins them as exact optionalDependencies.
+      - name: Publish platform packages
+        run: |
+          set -euo pipefail
+          for directory in npm-packages/*/; do
+            npm publish "$directory" --provenance --access public --tag ${{ steps.npm_tag.outputs.tag }}
+          done
+
+      - name: Publish appwrite-cli
+        run: npm publish ./npm --provenance --access public --tag ${{ steps.npm_tag.outputs.tag }}
+
+      - name: Generate token for the Homebrew tap
+        if: ${{ !github.event.release.prerelease }}
         id: bot-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
@@ -163,15 +189,17 @@ jobs:
           owner: appwrite
           repositories: homebrew-appwrite
 
-      - name: Check out Homebrew tap
+      - name: Check out the Homebrew tap
+        if: ${{ !github.event.release.prerelease }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ env.HOMEBREW_TAP_REPO }}
           token: ${{ steps.bot-token.outputs.token }}
           path: homebrew-tap
-          fetch-depth: 0
+          ref: main
 
-      - name: Update Homebrew formula in tap
+      - name: Update the Homebrew formula
+        if: ${{ !github.event.release.prerelease }}
         id: tap
         working-directory: homebrew-tap
         env:
@@ -181,38 +209,38 @@ jobs:
 
           FORMULA_PATH="$(find Formula -maxdepth 1 -name '*.rb' | head -n 1)"
           if [ -z "$FORMULA_PATH" ]; then
-            echo "No formula found in Homebrew tap"
+            echo "no formula found in the tap"
             exit 1
           fi
-          EXECUTABLE_NAME="$(basename "$FORMULA_PATH" .rb)"
 
-          export FORMULA_PATH EXECUTABLE_NAME
-          export MAC_ARM64_SHA256="$(sha256sum "../build/${EXECUTABLE_NAME}-cli-darwin-arm64" | awk '{print $1}')"
-          export MAC_X64_SHA256="$(sha256sum "../build/${EXECUTABLE_NAME}-cli-darwin-x64" | awk '{print $1}')"
-          export LINUX_ARM64_SHA256="$(sha256sum "../build/${EXECUTABLE_NAME}-cli-linux-arm64" | awk '{print $1}')"
-          export LINUX_X64_SHA256="$(sha256sum "../build/${EXECUTABLE_NAME}-cli-linux-x64" | awk '{print $1}')"
+          export FORMULA_PATH
+          export ASSET_PREFIX="appwrite-cli"
+          for target in darwin-arm64 darwin-x64 linux-arm64 linux-x64; do
+            checksum="$(sha256sum "../staging/${ASSET_PREFIX}-${target}" | awk '{print $1}')"
+            export "SHA256_${target//-/_}=$checksum"
+          done
 
           ruby <<'RUBY'
           formula_path = ENV.fetch("FORMULA_PATH")
-          executable = ENV.fetch("EXECUTABLE_NAME")
+          prefix = ENV.fetch("ASSET_PREFIX")
           release_tag = ENV.fetch("RELEASE_TAG")
           checksums = {
-            "#{executable}-cli-darwin-arm64" => ENV.fetch("MAC_ARM64_SHA256"),
-            "#{executable}-cli-darwin-x64" => ENV.fetch("MAC_X64_SHA256"),
-            "#{executable}-cli-linux-arm64" => ENV.fetch("LINUX_ARM64_SHA256"),
-            "#{executable}-cli-linux-x64" => ENV.fetch("LINUX_X64_SHA256"),
+            "#{prefix}-darwin-arm64" => ENV.fetch("SHA256_darwin_arm64"),
+            "#{prefix}-darwin-x64" => ENV.fetch("SHA256_darwin_x64"),
+            "#{prefix}-linux-arm64" => ENV.fetch("SHA256_linux_arm64"),
+            "#{prefix}-linux-x64" => ENV.fetch("SHA256_linux_x64"),
           }
 
           text = File.read(formula_path)
 
           unless text.sub!(/^(\s*version ")([^"]+)(")$/) { "#{$1}#{release_tag}#{$3}" }
-            abort("Failed to update formula version")
+            abort("failed to update the formula version")
           end
 
           checksums.each do |artifact, checksum|
             pattern = /(#{Regexp.escape(artifact)}"\n\s+sha256 ")([0-9a-f]{64})(")/
             unless text.sub!(pattern) { "#{$1}#{checksum}#{$3}" }
-              abort("Failed to update checksum for #{artifact}")
+              abort("failed to update the checksum for #{artifact}")
             end
           end
 
@@ -220,32 +248,25 @@ jobs:
           RUBY
 
           ruby -c "$FORMULA_PATH"
+          echo "formula_path=${FORMULA_PATH}" >> "$GITHUB_OUTPUT"
 
-          {
-            echo "executable=${EXECUTABLE_NAME}"
-            echo "formula_path=${FORMULA_PATH}"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Commit Homebrew formula update
+      - name: Commit the Homebrew formula
+        if: ${{ !github.event.release.prerelease }}
         working-directory: homebrew-tap
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
-          EXECUTABLE_NAME: ${{ steps.tap.outputs.executable }}
           FORMULA_PATH: ${{ steps.tap.outputs.formula_path }}
         run: |
           set -euo pipefail
 
           if git diff --quiet -- "$FORMULA_PATH"; then
-            echo "Homebrew formula already up to date for ${RELEASE_TAG}"
+            echo "formula already up to date for ${RELEASE_TAG}"
             exit 0
           fi
 
           git config user.name "appwrite-bot[bot]"
           git config user.email "217594562+appwrite-bot[bot]@users.noreply.github.com"
-
           git add "$FORMULA_PATH"
-          git commit -m "${EXECUTABLE_NAME} ${RELEASE_TAG}"
-
-          BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-          git pull --rebase origin "$BRANCH"
-          git push origin "HEAD:${BRANCH}"
+          git commit -m "appwrite ${RELEASE_TAG}"
+          git pull --rebase origin "main"
+          git push origin "HEAD:main"

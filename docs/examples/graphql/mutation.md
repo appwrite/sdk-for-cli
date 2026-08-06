@@ -1,4 +1,4 @@
 ```bash
 appwrite graphql mutation \
-    --query '{ "key": "value" }'
+    --query map[string]interface{}{}
 ```

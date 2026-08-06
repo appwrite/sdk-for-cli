@@ -1,4 +1,4 @@
 ```bash
 appwrite account delete-mfa-authenticator \
-    --type totp
+    --type "totp"
 ```

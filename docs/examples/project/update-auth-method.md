@@ -1,5 +1,5 @@
 ```bash
 appwrite project update-auth-method \
-    --method-id email-password \
+    --method-id "email-password" \
     --enabled false
 ```

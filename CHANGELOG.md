@@ -1,5 +1,18 @@
 # Change Log
 
+## 26.0.0-rc.1
+
+* Breaking: Rewrote the CLI in Go, shipping a single binary with no runtime to install
+* Breaking: Removed the `vcs`, `migrations`, `notifications`, and `affiliates` command groups
+* Breaking: Removed `account` key, push target, OAuth2 session, and `delete` commands
+* Breaking: Removed `functions` and `sites` template commands
+* Breaking: Removed `tablesdb` migration commands and `presences upsert`, `update`
+* Breaking: Removed usage and log commands on `presences`, `project`, `users`, and `teams`
+* Added: Homebrew, scoop, and `curl | bash` installs alongside npm
+* Added: A per-platform npm package, so installing no longer downloads a binary afterwards
+* Added: `update` honours prereleases instead of walking back onto the last stable build
+* Updated: Startup is around 9.5ms, down from around 173ms
+
 ## 25.1.0
 
 * Added: `list-organizations` and `list-projects` run at the root, alongside `login`

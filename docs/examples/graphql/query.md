@@ -1,4 +1,4 @@
 ```bash
 appwrite graphql query \
-    --query '{ "key": "value" }'
+    --query map[string]interface{}{}
 ```
