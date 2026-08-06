@@ -1,4 +1,3 @@
-node_modules/
-build/
-.DS_Store
-dist/
+/appwrite
+/build/
+/dist/

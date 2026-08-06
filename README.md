@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/github/license/appwrite/sdk-for-cli.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-1.9.5-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-1.9.6-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/travis/com/appwrite/sdk-generator?style=flat-square)](https://travis-ci.com/appwrite/sdk-generator)
 [![Twitter Account](https://img.shields.io/twitter/follow/appwrite?color=00acee&label=twitter&style=flat-square)](https://twitter.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-25.1.0
+26.0.0-rc.1
 ```
 
 ### Install using prebuilt binaries
@@ -83,7 +83,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-25.1.0
+26.0.0-rc.1
 ```
 
 ## Getting Started 
@@ -290,20 +290,16 @@ $ docker run --rm --interactive --tty --volume "$(pwd)":/app composer install --
 $ docker run --rm -v $(pwd):/app -w /app php:8.1-cli php example.php
 ```
 
-3. Head over to the generated SDK and install the dependencies.
+3. Head over to the generated SDK and build it.
 ```sh
-$ cd examples/cli
-$ npm install 
+$ cd examples/go-cli
+$ go mod tidy
+$ go build -ldflags="-s -w" -o appwrite .
 ```
 
-4. Install the CLI using 
+4. You can now use the CLI
 ```sh
-$ npm install -g .
-```
-
-5. You can now use the CLI 
-```sh
-$ appwrite -v
+$ ./appwrite -v
 ```
 ## License
 

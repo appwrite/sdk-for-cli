@@ -1,6 +1,6 @@
 ```bash
 appwrite oauth2 create-par \
-    --client-_id <CLIENT_ID> \
-    --redirect-_uri https://example.com \
-    --response-_type code
+    --client-id <CLIENT_ID> \
+    --redirect-uri https://example.com \
+    --response-type code
 ```
