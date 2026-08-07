@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewWebhooksCommand builds the `webhooks` command tree.
@@ -84,7 +85,7 @@ func newWebhooksListCommand() *cobra.Command {
 
 			result, err := service.List(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -147,7 +148,7 @@ func newWebhooksCreateCommand() *cobra.Command {
 
 			result, err := service.Create(webhookId, url, name, events, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -187,7 +188,7 @@ func newWebhooksGetCommand() *cobra.Command {
 
 			result, err := service.Get(webhookId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -237,7 +238,7 @@ func newWebhooksUpdateCommand() *cobra.Command {
 
 			result, err := service.Update(webhookId, name, url, events, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -276,7 +277,7 @@ func newWebhooksDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(webhookId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -311,7 +312,7 @@ func newWebhooksUpdateSecretCommand() *cobra.Command {
 
 			result, err := service.UpdateSecret(webhookId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)

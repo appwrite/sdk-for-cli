@@ -1,5 +1,16 @@
 # Change Log
 
+## 26.0.0-rc.2
+
+* Added: `graphql query` and `graphql mutation` accept a raw GraphQL document at `--query`
+* Added: `init skill` takes `--all`, `--skill`, `--agent`, and `--method` for headless installs
+* Added: `--code` on `functions` and `sites create-deployment` accepts a source directory
+* Fixed: Requests no longer fail at a ten second deadline, so large uploads complete
+* Fixed: `--self-signed` reaches service commands instead of being dropped before the request
+* Fixed: A timed out mutation reports an unknown outcome instead of an ordinary failure
+* Fixed: `--documents`, `--rows`, `--columns`, `--attributes`, `--indexes`, and `--operations` parse each value as JSON
+* Updated: `list-specifications` documents that `--type` defaults to `runtimes`
+
 ## 26.0.0-rc.1
 
 * Breaking: Rewrote the CLI in Go, shipping a single binary with no runtime to install

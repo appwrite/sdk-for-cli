@@ -6,6 +6,10 @@ import (
 	"path/filepath"
 
 	sdkfile "github.com/appwrite/sdk-for-go/v6/file"
+
+	"github.com/appwrite/sdk-for-cli/internal/config"
+	"github.com/appwrite/sdk-for-cli/internal/deploy"
+	"github.com/appwrite/sdk-for-cli/internal/output"
 )
 
 // InputFile turns a path into the SDK's upload type.
@@ -26,4 +30,52 @@ func InputFile(path string) (sdkfile.InputFile, error) {
 	}
 
 	return sdkfile.NewInputFile(resolved, filepath.Base(resolved)), nil
+}
+
+// DeploymentInputFile turns a deployment archive or source directory into the
+// SDK's upload type. Directories use the same packaging rules as `push`, and
+// the returned cleanup must run after the SDK has finished reading the file.
+func DeploymentInputFile(path string) (sdkfile.InputFile, func(), error) {
+	if path == "" {
+		return sdkfile.InputFile{}, func() {}, fmt.Errorf("a file or directory path is required")
+	}
+
+	resolved, err := filepath.Abs(path)
+	if err != nil {
+		return sdkfile.InputFile{}, func() {}, err
+	}
+	info, err := os.Stat(resolved)
+	if err != nil {
+		return sdkfile.InputFile{}, func() {}, fmt.Errorf("cannot read %q: %w", path, err)
+	}
+	if !info.IsDir() {
+		return sdkfile.NewInputFile(resolved, filepath.Base(resolved)), func() {}, nil
+	}
+
+	packaged, err := deploy.PackageDirectory(
+		resolved,
+		nil,
+		inputFileProjectRoot(),
+		func(message string) { output.Warn(os.Stderr, "%s", message) },
+	)
+	if err != nil {
+		return sdkfile.InputFile{}, func() {}, err
+	}
+
+	cleanup := func() { _ = packaged.Remove() }
+
+	return sdkfile.NewInputFile(packaged.Path, deploy.ArchiveName), cleanup, nil
+}
+
+// inputFileProjectRoot mirrors the TypeScript CLI's best-effort local config
+// lookup. It bounds followed symlinks when the command runs inside a project,
+// while still allowing a directory passed from outside any project.
+func inputFileProjectRoot() string {
+	path := config.FindLocalPath()
+	info, err := os.Stat(path)
+	if err != nil || info.IsDir() {
+		return ""
+	}
+
+	return filepath.Dir(path)
 }

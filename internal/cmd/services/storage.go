@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewStorageCommand builds the `storage` command tree.
@@ -95,7 +96,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 
 			result, err := service.ListBuckets(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -173,7 +174,7 @@ func newStorageCreateBucketCommand() *cobra.Command {
 
 			result, err := service.CreateBucket(bucketId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -216,7 +217,7 @@ func newStorageGetBucketCommand() *cobra.Command {
 
 			result, err := service.GetBucket(bucketId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -284,7 +285,7 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 
 			result, err := service.UpdateBucket(bucketId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -327,7 +328,7 @@ func newStorageDeleteBucketCommand() *cobra.Command {
 
 			result, err := service.DeleteBucket(bucketId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -402,7 +403,7 @@ func newStorageListFilesCommand() *cobra.Command {
 
 			result, err := service.ListFiles(bucketId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -459,7 +460,7 @@ func newStorageCreateFileCommand() *cobra.Command {
 
 			result, err := service.CreateFile(bucketId, fileId, fileFile, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -493,7 +494,7 @@ func newStorageGetFileCommand() *cobra.Command {
 
 			result, err := service.GetFile(bucketId, fileId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -535,7 +536,7 @@ func newStorageUpdateFileCommand() *cobra.Command {
 
 			result, err := service.UpdateFile(bucketId, fileId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -567,7 +568,7 @@ func newStorageDeleteFileCommand() *cobra.Command {
 
 			result, err := service.DeleteFile(bucketId, fileId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -606,7 +607,7 @@ func newStorageGetFileDownloadCommand() *cobra.Command {
 
 			result, err := service.GetFileDownload(bucketId, fileId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			// A location method returns the file bytes, not a URL. The
@@ -694,7 +695,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 
 			result, err := service.GetFilePreview(bucketId, fileId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			// A location method returns the file bytes, not a URL. The
@@ -749,7 +750,7 @@ func newStorageGetFileViewCommand() *cobra.Command {
 
 			result, err := service.GetFileView(bucketId, fileId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			// A location method returns the file bytes, not a URL. The

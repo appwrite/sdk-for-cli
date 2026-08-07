@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewBackupsCommand builds the `backups` command tree.
@@ -86,7 +87,7 @@ func newBackupsListArchivesCommand() *cobra.Command {
 
 			result, err := service.ListArchives(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -128,7 +129,7 @@ func newBackupsCreateArchiveCommand() *cobra.Command {
 
 			result, err := service.CreateArchive(services, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -156,7 +157,7 @@ func newBackupsGetArchiveCommand() *cobra.Command {
 
 			result, err := service.GetArchive(archiveId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -183,7 +184,7 @@ func newBackupsDeleteArchiveCommand() *cobra.Command {
 
 			result, err := service.DeleteArchive(archiveId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -249,7 +250,7 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 
 			result, err := service.ListPolicies(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -302,7 +303,7 @@ func newBackupsCreatePolicyCommand() *cobra.Command {
 
 			result, err := service.CreatePolicy(policyId, services, retention, schedule, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -339,7 +340,7 @@ func newBackupsGetPolicyCommand() *cobra.Command {
 
 			result, err := service.GetPolicy(policyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -386,7 +387,7 @@ func newBackupsUpdatePolicyCommand() *cobra.Command {
 
 			result, err := service.UpdatePolicy(policyId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -418,7 +419,7 @@ func newBackupsDeletePolicyCommand() *cobra.Command {
 
 			result, err := service.DeletePolicy(policyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -458,7 +459,7 @@ func newBackupsCreateRestorationCommand() *cobra.Command {
 
 			result, err := service.CreateRestoration(archiveId, services, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -528,7 +529,7 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 
 			result, err := service.ListRestorations(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -562,7 +563,7 @@ func newBackupsGetRestorationCommand() *cobra.Command {
 
 			result, err := service.GetRestoration(restorationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)

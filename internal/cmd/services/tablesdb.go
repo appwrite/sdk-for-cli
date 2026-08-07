@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewTablesDBCommand builds the `tablesdb` command tree.
@@ -159,7 +160,7 @@ func newTablesDBListCommand() *cobra.Command {
 
 			result, err := service.List(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -217,7 +218,7 @@ func newTablesDBCreateCommand() *cobra.Command {
 
 			result, err := service.Create(databaseId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -250,7 +251,7 @@ func newTablesDBListSpecificationsCommand() *cobra.Command {
 
 			result, err := service.ListSpecifications()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -314,7 +315,7 @@ func newTablesDBListTransactionsCommand() *cobra.Command {
 
 			result, err := service.ListTransactions(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -355,7 +356,7 @@ func newTablesDBCreateTransactionCommand() *cobra.Command {
 
 			result, err := service.CreateTransaction(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -381,7 +382,7 @@ func newTablesDBGetTransactionCommand() *cobra.Command {
 
 			result, err := service.GetTransaction(transactionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -420,7 +421,7 @@ func newTablesDBUpdateTransactionCommand() *cobra.Command {
 
 			result, err := service.UpdateTransaction(transactionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -451,7 +452,7 @@ func newTablesDBDeleteTransactionCommand() *cobra.Command {
 
 			result, err := service.DeleteTransaction(transactionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -476,17 +477,21 @@ func newTablesDBCreateOperationsCommand() *cobra.Command {
 				return err
 			}
 			service := tablesdb.New(client)
+			operationsDecoded, err := app.DecodeSlice[interface{}](operations)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []tablesdb.CreateOperationsOption{}
 			if cmd.Flags().Changed("operations") {
-				options = append(options, service.WithCreateOperationsOperations(app.ToAnySlice(operations)))
+				options = append(options, service.WithCreateOperationsOperations(operationsDecoded))
 			}
 
 			result, err := service.CreateOperations(transactionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -514,7 +519,7 @@ func newTablesDBGetCommand() *cobra.Command {
 
 			result, err := service.Get(databaseId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -565,7 +570,7 @@ func newTablesDBUpdateCommand() *cobra.Command {
 
 			result, err := service.Update(databaseId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -598,7 +603,7 @@ func newTablesDBDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(databaseId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -633,7 +638,7 @@ func newTablesDBCreateFailoverCommand() *cobra.Command {
 
 			result, err := service.CreateFailover(databaseId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -677,7 +682,7 @@ func newTablesDBListOperationsCommand() *cobra.Command {
 
 			result, err := service.ListOperations(databaseId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -707,7 +712,7 @@ func newTablesDBGetReplicasCommand() *cobra.Command {
 
 			result, err := service.GetReplicas(databaseId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -734,7 +739,7 @@ func newTablesDBGetStatusCommand() *cobra.Command {
 
 			result, err := service.GetStatus(databaseId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -809,7 +814,7 @@ func newTablesDBListTablesCommand() *cobra.Command {
 
 			result, err := service.ListTables(databaseId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -852,6 +857,14 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 				return err
 			}
 			service := tablesdb.New(client)
+			columnsDecoded, err := app.DecodeSlice[interface{}](columns)
+			if err != nil {
+				return err
+			}
+			indexesDecoded, err := app.DecodeSlice[interface{}](indexes)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
@@ -866,15 +879,15 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 				options = append(options, service.WithCreateTableEnabled(enabled))
 			}
 			if cmd.Flags().Changed("columns") {
-				options = append(options, service.WithCreateTableColumns(app.ToAnySlice(columns)))
+				options = append(options, service.WithCreateTableColumns(columnsDecoded))
 			}
 			if cmd.Flags().Changed("indexes") {
-				options = append(options, service.WithCreateTableIndexes(app.ToAnySlice(indexes)))
+				options = append(options, service.WithCreateTableIndexes(indexesDecoded))
 			}
 
 			result, err := service.CreateTable(databaseId, tableId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -913,7 +926,7 @@ func newTablesDBGetTableCommand() *cobra.Command {
 
 			result, err := service.GetTable(databaseId, tableId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -967,7 +980,7 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 
 			result, err := service.UpdateTable(databaseId, tableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1005,7 +1018,7 @@ func newTablesDBDeleteTableCommand() *cobra.Command {
 
 			result, err := service.DeleteTable(databaseId, tableId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -1079,7 +1092,7 @@ func newTablesDBListColumnsCommand() *cobra.Command {
 
 			result, err := service.ListColumns(databaseId, tableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1142,7 +1155,7 @@ func newTablesDBCreateBigIntColumnCommand() *cobra.Command {
 
 			result, err := service.CreateBigIntColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1200,7 +1213,7 @@ func newTablesDBUpdateBigIntColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateBigIntColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1253,7 +1266,7 @@ func newTablesDBCreateBooleanColumnCommand() *cobra.Command {
 
 			result, err := service.CreateBooleanColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1302,7 +1315,7 @@ func newTablesDBUpdateBooleanColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateBooleanColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1353,7 +1366,7 @@ func newTablesDBCreateDatetimeColumnCommand() *cobra.Command {
 
 			result, err := service.CreateDatetimeColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1401,7 +1414,7 @@ func newTablesDBUpdateDatetimeColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateDatetimeColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1452,7 +1465,7 @@ func newTablesDBCreateEmailColumnCommand() *cobra.Command {
 
 			result, err := service.CreateEmailColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1500,7 +1513,7 @@ func newTablesDBUpdateEmailColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateEmailColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1552,7 +1565,7 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 
 			result, err := service.CreateEnumColumn(databaseId, tableId, key, elements, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1603,7 +1616,7 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateEnumColumn(databaseId, tableId, key, elements, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1664,7 +1677,7 @@ func newTablesDBCreateFloatColumnCommand() *cobra.Command {
 
 			result, err := service.CreateFloatColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1722,7 +1735,7 @@ func newTablesDBUpdateFloatColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateFloatColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1783,7 +1796,7 @@ func newTablesDBCreateIntegerColumnCommand() *cobra.Command {
 
 			result, err := service.CreateIntegerColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1841,7 +1854,7 @@ func newTablesDBUpdateIntegerColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateIntegerColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1894,7 +1907,7 @@ func newTablesDBCreateIpColumnCommand() *cobra.Command {
 
 			result, err := service.CreateIpColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1942,7 +1955,7 @@ func newTablesDBUpdateIpColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateIpColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1993,7 +2006,7 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 
 			result, err := service.CreateLineColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2046,7 +2059,7 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateLineColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2100,7 +2113,7 @@ func newTablesDBCreateLongtextColumnCommand() *cobra.Command {
 
 			result, err := service.CreateLongtextColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2150,7 +2163,7 @@ func newTablesDBUpdateLongtextColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateLongtextColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2205,7 +2218,7 @@ func newTablesDBCreateMediumtextColumnCommand() *cobra.Command {
 
 			result, err := service.CreateMediumtextColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2255,7 +2268,7 @@ func newTablesDBUpdateMediumtextColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateMediumtextColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2306,7 +2319,7 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 
 			result, err := service.CreatePointColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2359,7 +2372,7 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 
 			result, err := service.UpdatePointColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2409,7 +2422,7 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 
 			result, err := service.CreatePolygonColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2462,7 +2475,7 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 
 			result, err := service.UpdatePolygonColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2520,7 +2533,7 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 
 			result, err := service.CreateRelationshipColumn(databaseId, tableId, relatedTableId, typeArg, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2578,7 +2591,7 @@ func newTablesDBCreateStringColumnCommand() *cobra.Command {
 
 			result, err := service.CreateStringColumn(databaseId, tableId, key, size, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2634,7 +2647,7 @@ func newTablesDBUpdateStringColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateStringColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2690,7 +2703,7 @@ func newTablesDBCreateTextColumnCommand() *cobra.Command {
 
 			result, err := service.CreateTextColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2740,7 +2753,7 @@ func newTablesDBUpdateTextColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateTextColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2791,7 +2804,7 @@ func newTablesDBCreateUrlColumnCommand() *cobra.Command {
 
 			result, err := service.CreateUrlColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2839,7 +2852,7 @@ func newTablesDBUpdateUrlColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateUrlColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2895,7 +2908,7 @@ func newTablesDBCreateVarcharColumnCommand() *cobra.Command {
 
 			result, err := service.CreateVarcharColumn(databaseId, tableId, key, size, required, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2951,7 +2964,7 @@ func newTablesDBUpdateVarcharColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateVarcharColumn(databaseId, tableId, key, required, xdefault, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2990,7 +3003,7 @@ func newTablesDBGetColumnCommand() *cobra.Command {
 
 			result, err := service.GetColumn(databaseId, tableId, key)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3023,7 +3036,7 @@ func newTablesDBDeleteColumnCommand() *cobra.Command {
 
 			result, err := service.DeleteColumn(databaseId, tableId, key)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -3068,7 +3081,7 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 
 			result, err := service.UpdateRelationshipColumn(databaseId, tableId, key, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3146,7 +3159,7 @@ func newTablesDBListIndexesCommand() *cobra.Command {
 
 			result, err := service.ListIndexes(databaseId, tableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3206,7 +3219,7 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 
 			result, err := service.CreateIndex(databaseId, tableId, key, typeArg, columns, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3245,7 +3258,7 @@ func newTablesDBGetIndexCommand() *cobra.Command {
 
 			result, err := service.GetIndex(databaseId, tableId, key)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3278,7 +3291,7 @@ func newTablesDBDeleteIndexCommand() *cobra.Command {
 
 			result, err := service.DeleteIndex(databaseId, tableId, key)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -3364,7 +3377,7 @@ func newTablesDBListRowsCommand() *cobra.Command {
 
 			result, err := service.ListRows(databaseId, tableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3426,7 +3439,7 @@ func newTablesDBCreateRowCommand() *cobra.Command {
 
 			result, err := service.CreateRow(databaseId, tableId, rowId, dataValue, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3461,6 +3474,10 @@ func newTablesDBCreateRowsCommand() *cobra.Command {
 				return err
 			}
 			service := tablesdb.New(client)
+			rowsDecoded, err := app.DecodeSlice[interface{}](rows)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
@@ -3469,9 +3486,9 @@ func newTablesDBCreateRowsCommand() *cobra.Command {
 				options = append(options, service.WithCreateRowsTransactionId(transactionId))
 			}
 
-			result, err := service.CreateRows(databaseId, tableId, app.ToAnySlice(rows), options...)
+			result, err := service.CreateRows(databaseId, tableId, rowsDecoded, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3503,6 +3520,10 @@ func newTablesDBUpsertRowsCommand() *cobra.Command {
 				return err
 			}
 			service := tablesdb.New(client)
+			rowsDecoded, err := app.DecodeSlice[interface{}](rows)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
@@ -3511,9 +3532,9 @@ func newTablesDBUpsertRowsCommand() *cobra.Command {
 				options = append(options, service.WithUpsertRowsTransactionId(transactionId))
 			}
 
-			result, err := service.UpsertRows(databaseId, tableId, app.ToAnySlice(rows), options...)
+			result, err := service.UpsertRows(databaseId, tableId, rowsDecoded, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3598,7 +3619,7 @@ func newTablesDBUpdateRowsCommand() *cobra.Command {
 
 			result, err := service.UpdateRows(databaseId, tableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3683,7 +3704,7 @@ func newTablesDBDeleteRowsCommand() *cobra.Command {
 
 			result, err := service.DeleteRows(databaseId, tableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -3745,7 +3766,7 @@ func newTablesDBGetRowCommand() *cobra.Command {
 
 			result, err := service.GetRow(databaseId, tableId, rowId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3801,7 +3822,7 @@ func newTablesDBUpsertRowCommand() *cobra.Command {
 
 			result, err := service.UpsertRow(databaseId, tableId, rowId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3857,7 +3878,7 @@ func newTablesDBUpdateRowCommand() *cobra.Command {
 
 			result, err := service.UpdateRow(databaseId, tableId, rowId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3901,7 +3922,7 @@ func newTablesDBDeleteRowCommand() *cobra.Command {
 
 			result, err := service.DeleteRow(databaseId, tableId, rowId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -3952,7 +3973,7 @@ func newTablesDBDecrementRowColumnCommand() *cobra.Command {
 
 			result, err := service.DecrementRowColumn(databaseId, tableId, rowId, column, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -4007,7 +4028,7 @@ func newTablesDBIncrementRowColumnCommand() *cobra.Command {
 
 			result, err := service.IncrementRowColumn(databaseId, tableId, rowId, column, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
