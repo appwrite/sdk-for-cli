@@ -1,5 +1,16 @@
 # Change Log
 
+## 26.0.0-rc.2
+
+* Added: `graphql query` and `graphql mutation` accept a raw GraphQL document at `--query`
+* Added: `init skill` takes `--all`, `--skill`, `--agent`, and `--method` for headless installs
+* Added: `--code` on `functions` and `sites create-deployment` accepts a source directory
+* Fixed: Requests no longer fail at a ten second deadline, so large uploads complete
+* Fixed: `--self-signed` reaches service commands instead of being dropped before the request
+* Fixed: A timed out mutation reports an unknown outcome instead of an ordinary failure
+* Fixed: `--documents`, `--rows`, `--columns`, `--attributes`, `--indexes`, and `--operations` parse each value as JSON
+* Updated: `list-specifications` documents that `--type` defaults to `runtimes`
+
 ## 26.0.0-rc.1
 
 * Breaking: Rewrote the CLI in Go, shipping a single binary with no runtime to install
@@ -10,6 +21,8 @@
 * Breaking: Removed usage and log commands on `presences`, `project`, `users`, and `teams`
 * Added: Homebrew, scoop, and `curl | bash` installs alongside npm
 * Added: A per-platform npm package, so installing no longer downloads a binary afterwards
+* Added: `update` follows the prerelease channel, so a release candidate moves to the next candidate
+* Added: `update` refuses to install an older version unless `--force` is passed
 * Updated: Startup is around 9.5ms, down from around 173ms
 
 ## 25.1.0

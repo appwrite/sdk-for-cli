@@ -6,6 +6,7 @@ import (
 	"github.com/appwrite/sdk-for-go/v6/graphql"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewGraphqlCommand builds the `graphql` command tree.
@@ -26,28 +27,28 @@ func newGraphqlQueryCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "query",
-		Short: "Execute a GraphQL mutation.",
+		Short: "Execute a GraphQL query.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
 				return err
 			}
 			service := graphql.New(client)
-			queryValue, err := app.JSONObject(query)
+			queryValue, err := app.GraphQLRequest(query)
 			if err != nil {
 				return err
 			}
 
 			result, err := service.Query(queryValue)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
 		},
 	}
 
-	cmd.Flags().StringVar(&query, "query", "", "The query or queries to execute.")
+	cmd.Flags().StringVar(&query, "query", "", "Raw GraphQL document, or a JSON request object or array for variables, operation names, or batching.")
 	_ = cmd.MarkFlagRequired("query")
 	return cmd
 }
@@ -64,21 +65,21 @@ func newGraphqlMutationCommand() *cobra.Command {
 				return err
 			}
 			service := graphql.New(client)
-			queryValue, err := app.JSONObject(query)
+			queryValue, err := app.GraphQLRequest(query)
 			if err != nil {
 				return err
 			}
 
 			result, err := service.Mutation(queryValue)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
 		},
 	}
 
-	cmd.Flags().StringVar(&query, "query", "", "The query or queries to execute.")
+	cmd.Flags().StringVar(&query, "query", "", "Raw GraphQL document, or a JSON request object or array for variables, operation names, or batching.")
 	_ = cmd.MarkFlagRequired("query")
 	return cmd
 }

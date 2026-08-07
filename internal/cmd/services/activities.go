@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewActivitiesCommand builds the `activities` command tree.
@@ -76,7 +77,7 @@ func newActivitiesListEventsCommand() *cobra.Command {
 
 			result, err := service.ListEvents(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -110,7 +111,7 @@ func newActivitiesGetEventCommand() *cobra.Command {
 
 			result, err := service.GetEvent(eventId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)

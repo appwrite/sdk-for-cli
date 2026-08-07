@@ -6,6 +6,7 @@ import (
 	"github.com/appwrite/sdk-for-go/v6/oauth2"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewOauth2Command builds the `oauth2` command tree.
@@ -123,7 +124,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 
 			result, err := service.Authorize(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -221,7 +222,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 
 			result, err := service.AuthorizePost(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -283,7 +284,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 
 			result, err := service.CreateDeviceAuthorization(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -313,7 +314,7 @@ func newOauth2CreateGrantCommand() *cobra.Command {
 
 			result, err := service.CreateGrant(userCode)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -340,7 +341,7 @@ func newOauth2GetGrantCommand() *cobra.Command {
 
 			result, err := service.GetGrant(grantId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -366,7 +367,7 @@ func newOauth2ListOrganizationsCommand() *cobra.Command {
 			result, err := app.ListOrganizationsForSession(
 				app.FlagInt(cmd, "limit", limit), app.FlagInt(cmd, "offset", offset), search)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -440,7 +441,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 
 			result, err := service.CreatePAR(clientId, redirectUri, responseType, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -480,7 +481,7 @@ func newOauth2ListProjectsCommand() *cobra.Command {
 			result, err := app.ListProjectsForSession("",
 				app.FlagInt(cmd, "limit", limit), app.FlagInt(cmd, "offset", offset), search)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -508,7 +509,7 @@ func newOauth2RejectCommand() *cobra.Command {
 
 			result, err := service.Reject(grantId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -551,7 +552,7 @@ func newOauth2RevokeCommand() *cobra.Command {
 
 			result, err := service.Revoke(token, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -621,7 +622,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 
 			result, err := service.CreateToken(grantType, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
