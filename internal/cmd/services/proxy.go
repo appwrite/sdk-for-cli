@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewProxyCommand builds the `proxy` command tree.
@@ -53,7 +54,7 @@ func newProxyCreateInvalidationCommand() *cobra.Command {
 
 			result, err := service.CreateInvalidation(domain, typeArg, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -126,7 +127,7 @@ func newProxyListRulesCommand() *cobra.Command {
 
 			result, err := service.ListRules(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -162,7 +163,7 @@ func newProxyCreateAPIRuleCommand() *cobra.Command {
 
 			result, err := service.CreateAPIRule(domain)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -198,7 +199,7 @@ func newProxyCreateFunctionRuleCommand() *cobra.Command {
 
 			result, err := service.CreateFunctionRule(domain, functionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -232,7 +233,7 @@ func newProxyCreateRedirectRuleCommand() *cobra.Command {
 
 			result, err := service.CreateRedirectRule(domain, url, statusCode, resourceId, resourceType)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -276,7 +277,7 @@ func newProxyCreateSiteRuleCommand() *cobra.Command {
 
 			result, err := service.CreateSiteRule(domain, siteId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -306,7 +307,7 @@ func newProxyGetRuleCommand() *cobra.Command {
 
 			result, err := service.GetRule(ruleId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -333,7 +334,7 @@ func newProxyDeleteRuleCommand() *cobra.Command {
 
 			result, err := service.DeleteRule(ruleId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -360,7 +361,7 @@ func newProxyUpdateRuleStatusCommand() *cobra.Command {
 
 			result, err := service.UpdateRuleStatus(ruleId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)

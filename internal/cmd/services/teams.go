@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewTeamsCommand builds the `teams` command tree.
@@ -100,7 +101,7 @@ func newTeamsListCommand() *cobra.Command {
 
 			result, err := service.List(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -146,7 +147,7 @@ func newTeamsCreateCommand() *cobra.Command {
 
 			result, err := service.Create(teamId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -176,7 +177,7 @@ func newTeamsGetCommand() *cobra.Command {
 
 			result, err := service.Get(teamId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -204,7 +205,7 @@ func newTeamsUpdateNameCommand() *cobra.Command {
 
 			result, err := service.UpdateName(teamId, name)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -233,7 +234,7 @@ func newTeamsDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(teamId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -304,7 +305,7 @@ func newTeamsListInstallationsCommand() *cobra.Command {
 
 			result, err := service.ListInstallations(teamId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -351,7 +352,7 @@ func newTeamsCreateInstallationCommand() *cobra.Command {
 
 			result, err := service.CreateInstallation(teamId, appId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -382,7 +383,7 @@ func newTeamsGetInstallationCommand() *cobra.Command {
 
 			result, err := service.GetInstallation(teamId, installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -420,7 +421,7 @@ func newTeamsUpdateInstallationCommand() *cobra.Command {
 
 			result, err := service.UpdateInstallation(teamId, installationId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -451,7 +452,7 @@ func newTeamsDeleteInstallationCommand() *cobra.Command {
 
 			result, err := service.DeleteInstallation(teamId, installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -528,7 +529,7 @@ func newTeamsListMembershipsCommand() *cobra.Command {
 
 			result, err := service.ListMemberships(teamId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -592,7 +593,7 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 
 			result, err := service.CreateMembership(teamId, roles, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -627,7 +628,7 @@ func newTeamsGetMembershipCommand() *cobra.Command {
 
 			result, err := service.GetMembership(teamId, membershipId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -658,7 +659,7 @@ func newTeamsUpdateMembershipCommand() *cobra.Command {
 
 			result, err := service.UpdateMembership(teamId, membershipId, roles)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -690,7 +691,7 @@ func newTeamsDeleteMembershipCommand() *cobra.Command {
 
 			result, err := service.DeleteMembership(teamId, membershipId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -722,7 +723,7 @@ func newTeamsUpdateMembershipStatusCommand() *cobra.Command {
 
 			result, err := service.UpdateMembershipStatus(teamId, membershipId, userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -755,7 +756,7 @@ func newTeamsGetPrefsCommand() *cobra.Command {
 
 			result, err := service.GetPrefs(teamId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -787,7 +788,7 @@ func newTeamsUpdatePrefsCommand() *cobra.Command {
 
 			result, err := service.UpdatePrefs(teamId, prefsValue)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)

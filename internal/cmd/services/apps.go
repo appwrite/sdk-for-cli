@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewAppsCommand builds the `apps` command tree.
@@ -100,7 +101,7 @@ func newAppsListCommand() *cobra.Command {
 
 			result, err := service.List(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -206,7 +207,7 @@ func newAppsCreateCommand() *cobra.Command {
 
 			result, err := service.Create(appId, name, redirectUris, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -254,7 +255,7 @@ func newAppsListInstallationScopesCommand() *cobra.Command {
 
 			result, err := service.ListInstallationScopes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -278,7 +279,7 @@ func newAppsListOAuth2ScopesCommand() *cobra.Command {
 
 			result, err := service.ListOAuth2Scopes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -303,7 +304,7 @@ func newAppsGetCommand() *cobra.Command {
 
 			result, err := service.Get(appId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -407,7 +408,7 @@ func newAppsUpdateCommand() *cobra.Command {
 
 			result, err := service.Update(appId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -456,7 +457,7 @@ func newAppsDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(appId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -527,7 +528,7 @@ func newAppsListInstallationsCommand() *cobra.Command {
 
 			result, err := service.ListInstallations(appId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -566,7 +567,7 @@ func newAppsGetInstallationCommand() *cobra.Command {
 
 			result, err := service.GetInstallation(appId, installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -596,7 +597,7 @@ func newAppsDeleteInstallationCommand() *cobra.Command {
 
 			result, err := service.DeleteInstallation(appId, installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -626,7 +627,7 @@ func newAppsCreateInstallationTokenCommand() *cobra.Command {
 
 			result, err := service.CreateInstallationToken(appId, installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -699,7 +700,7 @@ func newAppsListKeysCommand() *cobra.Command {
 
 			result, err := service.ListKeys(appId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -737,7 +738,7 @@ func newAppsCreateKeyCommand() *cobra.Command {
 
 			result, err := service.CreateKey(appId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -765,7 +766,7 @@ func newAppsGetKeyCommand() *cobra.Command {
 
 			result, err := service.GetKey(appId, keyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -795,7 +796,7 @@ func newAppsDeleteKeyCommand() *cobra.Command {
 
 			result, err := service.DeleteKey(appId, keyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -825,7 +826,7 @@ func newAppsUpdateLabelsCommand() *cobra.Command {
 
 			result, err := service.UpdateLabels(appId, labels)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -898,7 +899,7 @@ func newAppsListSecretsCommand() *cobra.Command {
 
 			result, err := service.ListSecrets(appId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -936,7 +937,7 @@ func newAppsCreateSecretCommand() *cobra.Command {
 
 			result, err := service.CreateSecret(appId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -964,7 +965,7 @@ func newAppsGetSecretCommand() *cobra.Command {
 
 			result, err := service.GetSecret(appId, secretId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -994,7 +995,7 @@ func newAppsDeleteSecretCommand() *cobra.Command {
 
 			result, err := service.DeleteSecret(appId, secretId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -1024,7 +1025,7 @@ func newAppsUpdateTeamCommand() *cobra.Command {
 
 			result, err := service.UpdateTeam(appId, teamId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1053,7 +1054,7 @@ func newAppsDeleteTokensCommand() *cobra.Command {
 
 			result, err := service.DeleteTokens(appId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)

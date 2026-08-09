@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewAccountCommand builds the `account` command tree.
@@ -85,7 +86,7 @@ func newAccountGetCommand() *cobra.Command {
 
 			result, err := service.Get()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -120,7 +121,7 @@ func newAccountCreateCommand() *cobra.Command {
 
 			result, err := service.Create(userId, email, password, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -195,7 +196,7 @@ func newAccountListConsentsCommand() *cobra.Command {
 
 			result, err := service.ListConsents(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -231,7 +232,7 @@ func newAccountGetConsentCommand() *cobra.Command {
 
 			result, err := service.GetConsent(consentId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -258,7 +259,7 @@ func newAccountDeleteConsentCommand() *cobra.Command {
 
 			result, err := service.DeleteConsent(consentId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -329,7 +330,7 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 
 			result, err := service.ListConsentTokens(consentId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -368,7 +369,7 @@ func newAccountGetConsentTokenCommand() *cobra.Command {
 
 			result, err := service.GetConsentToken(consentId, tokenId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -398,7 +399,7 @@ func newAccountDeleteConsentTokenCommand() *cobra.Command {
 
 			result, err := service.DeleteConsentToken(consentId, tokenId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -428,7 +429,7 @@ func newAccountUpdateEmailCommand() *cobra.Command {
 
 			result, err := service.UpdateEmail(email, password)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -500,7 +501,7 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 
 			result, err := service.ListIdentities(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -536,7 +537,7 @@ func newAccountDeleteIdentityCommand() *cobra.Command {
 
 			result, err := service.DeleteIdentity(identityId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -570,7 +571,7 @@ func newAccountCreateJWTCommand() *cobra.Command {
 
 			result, err := service.CreateJWT(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -618,7 +619,7 @@ func newAccountListLogsCommand() *cobra.Command {
 
 			result, err := service.ListLogs(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -648,7 +649,7 @@ func newAccountUpdateMFACommand() *cobra.Command {
 
 			result, err := service.UpdateMFA(mfa)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -675,7 +676,7 @@ func newAccountCreateMfaAuthenticatorCommand() *cobra.Command {
 
 			result, err := service.CreateMfaAuthenticator(typeArg)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -703,7 +704,7 @@ func newAccountUpdateMfaAuthenticatorCommand() *cobra.Command {
 
 			result, err := service.UpdateMfaAuthenticator(typeArg, otp)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -732,7 +733,7 @@ func newAccountDeleteMfaAuthenticatorCommand() *cobra.Command {
 
 			result, err := service.DeleteMfaAuthenticator(typeArg)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -759,7 +760,7 @@ func newAccountCreateMfaChallengeCommand() *cobra.Command {
 
 			result, err := service.CreateMfaChallenge(factor)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -787,7 +788,7 @@ func newAccountUpdateMfaChallengeCommand() *cobra.Command {
 
 			result, err := service.UpdateMfaChallenge(challengeId, otp)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -815,7 +816,7 @@ func newAccountListMfaFactorsCommand() *cobra.Command {
 
 			result, err := service.ListMfaFactors()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -839,7 +840,7 @@ func newAccountGetMfaRecoveryCodesCommand() *cobra.Command {
 
 			result, err := service.GetMfaRecoveryCodes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -863,7 +864,7 @@ func newAccountCreateMfaRecoveryCodesCommand() *cobra.Command {
 
 			result, err := service.CreateMfaRecoveryCodes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -887,7 +888,7 @@ func newAccountUpdateMfaRecoveryCodesCommand() *cobra.Command {
 
 			result, err := service.UpdateMfaRecoveryCodes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -912,7 +913,7 @@ func newAccountUpdateNameCommand() *cobra.Command {
 
 			result, err := service.UpdateName(name)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -947,7 +948,7 @@ func newAccountUpdatePasswordCommand() *cobra.Command {
 
 			result, err := service.UpdatePassword(password, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -976,7 +977,7 @@ func newAccountUpdatePhoneCommand() *cobra.Command {
 
 			result, err := service.UpdatePhone(phone, password)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1004,7 +1005,7 @@ func newAccountGetPrefsCommand() *cobra.Command {
 
 			result, err := service.GetPrefs()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1033,7 +1034,7 @@ func newAccountUpdatePrefsCommand() *cobra.Command {
 
 			result, err := service.UpdatePrefs(prefsValue)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1061,7 +1062,7 @@ func newAccountCreateRecoveryCommand() *cobra.Command {
 
 			result, err := service.CreateRecovery(email, url)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1092,7 +1093,7 @@ func newAccountUpdateRecoveryCommand() *cobra.Command {
 
 			result, err := service.UpdateRecovery(userId, secret, password)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1122,7 +1123,7 @@ func newAccountListSessionsCommand() *cobra.Command {
 
 			result, err := service.ListSessions()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1146,7 +1147,7 @@ func newAccountDeleteSessionsCommand() *cobra.Command {
 
 			result, err := service.DeleteSessions()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -1170,7 +1171,7 @@ func newAccountCreateAnonymousSessionCommand() *cobra.Command {
 
 			result, err := service.CreateAnonymousSession()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1196,7 +1197,7 @@ func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 
 			result, err := service.CreateEmailPasswordSession(email, password)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1226,7 +1227,7 @@ func newAccountUpdateMagicURLSessionCommand() *cobra.Command {
 
 			result, err := service.UpdateMagicURLSession(userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1256,7 +1257,7 @@ func newAccountUpdatePhoneSessionCommand() *cobra.Command {
 
 			result, err := service.UpdatePhoneSession(userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1286,7 +1287,7 @@ func newAccountCreateSessionCommand() *cobra.Command {
 
 			result, err := service.CreateSession(userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1315,7 +1316,7 @@ func newAccountGetSessionCommand() *cobra.Command {
 
 			result, err := service.GetSession(sessionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1342,7 +1343,7 @@ func newAccountUpdateSessionCommand() *cobra.Command {
 
 			result, err := service.UpdateSession(sessionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1369,7 +1370,7 @@ func newAccountDeleteSessionCommand() *cobra.Command {
 
 			result, err := service.DeleteSession(sessionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -1395,7 +1396,7 @@ func newAccountUpdateStatusCommand() *cobra.Command {
 
 			result, err := service.UpdateStatus()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1429,7 +1430,7 @@ func newAccountCreateEmailTokenCommand() *cobra.Command {
 
 			result, err := service.CreateEmailToken(userId, email, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1473,7 +1474,7 @@ func newAccountCreateMagicURLTokenCommand() *cobra.Command {
 
 			result, err := service.CreateMagicURLToken(userId, email, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1521,7 +1522,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 
 			result, err := service.CreateOAuth2Token(provider, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1552,7 +1553,7 @@ func newAccountCreatePhoneTokenCommand() *cobra.Command {
 
 			result, err := service.CreatePhoneToken(userId, phone)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1581,7 +1582,7 @@ func newAccountCreateEmailVerificationCommand() *cobra.Command {
 
 			result, err := service.CreateEmailVerification(url)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1608,7 +1609,7 @@ func newAccountCreateVerificationCommand() *cobra.Command {
 
 			result, err := service.CreateVerification(url)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1636,7 +1637,7 @@ func newAccountUpdateEmailVerificationCommand() *cobra.Command {
 
 			result, err := service.UpdateEmailVerification(userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1666,7 +1667,7 @@ func newAccountUpdateVerificationCommand() *cobra.Command {
 
 			result, err := service.UpdateVerification(userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1694,7 +1695,7 @@ func newAccountCreatePhoneVerificationCommand() *cobra.Command {
 
 			result, err := service.CreatePhoneVerification()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1720,7 +1721,7 @@ func newAccountUpdatePhoneVerificationCommand() *cobra.Command {
 
 			result, err := service.UpdatePhoneVerification(userId, secret)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)

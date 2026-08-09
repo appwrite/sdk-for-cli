@@ -9,6 +9,7 @@ import (
 	sdkclient "github.com/appwrite/sdk-for-go/v6/client"
 
 	"github.com/appwrite/sdk-for-cli/internal/auth"
+	internalclient "github.com/appwrite/sdk-for-cli/internal/client"
 	"github.com/appwrite/sdk-for-cli/internal/config"
 )
 
@@ -49,13 +50,12 @@ func (c *Context) base(endpoint string) sdkclient.Client {
 	client := sdkclient.New()
 	client.Endpoint = endpoint
 	// Keeps the response body for --raw and --json, which must show what the
-	// API sent rather than the typed model re-encoded. See capture.go.
-	client.Client = recordingHTTPClient(client.Timeout)
-	// `client --self-signed true` is what a user running Appwrite behind its own
-	// certificate sets. The SDK honours this field; storing the preference and
-	// never passing it on left the flag inert and every request rejected on
-	// certificate validation.
-	client.SelfSigned = c.Global.CurrentBool(config.PreferenceSelfSigned)
+	// API sent rather than the typed model re-encoded. The underlying client is
+	// the CLI's phase-bounded transport, not the SDK's ten-second whole-request
+	// deadline. Self-signed verification is applied before response recording
+	// wraps the transport.
+	client.Client = recordingHTTPClient(internalclient.NewHTTPClient(
+		c.Global.CurrentBool(config.PreferenceSelfSigned)))
 	client.AddHeader("x-sdk-name", "Command Line")
 	client.AddHeader("x-sdk-platform", "console")
 	client.AddHeader("x-sdk-language", "cli")

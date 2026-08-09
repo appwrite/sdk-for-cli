@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewPresencesCommand builds the `presences` command tree.
@@ -85,7 +86,7 @@ func newPresencesListCommand() *cobra.Command {
 
 			result, err := service.List(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -122,7 +123,7 @@ func newPresencesGetCommand() *cobra.Command {
 
 			result, err := service.Get(presenceId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -149,7 +150,7 @@ func newPresencesDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(presenceId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)

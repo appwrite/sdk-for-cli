@@ -10,27 +10,10 @@ import (
 
 // Conversions between what a flag can hold and what an SDK parameter declares.
 //
-// A repeatable flag is []string but an untyped array parameter is
-// []interface{}; an object parameter arrives as a JSON string. The generated
-// call sites route through these so the conversion lives in one reviewable
-// place rather than in 600 inlined expressions.
-
-// ToAnySlice widens a repeatable string flag to an untyped slice.
-//
-// Returns nil for an empty input so an unset flag stays absent rather than
-// becoming an empty array, which the API treats differently.
-func ToAnySlice(values []string) []interface{} {
-	if len(values) == 0 {
-		return nil
-	}
-
-	widened := make([]interface{}, 0, len(values))
-	for _, value := range values {
-		widened = append(widened, value)
-	}
-
-	return widened
-}
+// A repeatable flag is []string but the SDK can declare a typed or untyped
+// slice; an object parameter arrives as a JSON string. The generated call sites
+// route through these so the conversion lives in one reviewable place rather
+// than in 600 inlined expressions.
 
 // JSONObject decodes a flag value that the SDK takes as an object.
 //
@@ -50,6 +33,36 @@ func JSONObject(raw string) (interface{}, error) {
 	}
 
 	return value, nil
+}
+
+// GraphQLRequest accepts the document users naturally type at --query while
+// preserving the SDK's existing JSON request-object contract. A request object
+// carries variables and an operation name; an array carries a batch.
+func GraphQLRequest(raw string) (interface{}, error) {
+	if strings.TrimSpace(raw) == "" {
+		return nil, fmt.Errorf("--query must be a GraphQL document or JSON request object or array")
+	}
+
+	if !json.Valid([]byte(raw)) {
+		return map[string]interface{}{"query": raw}, nil
+	}
+
+	decoder := json.NewDecoder(strings.NewReader(raw))
+	decoder.UseNumber()
+
+	var value interface{}
+	if err := decoder.Decode(&value); err != nil {
+		return nil, fmt.Errorf("invalid GraphQL JSON request: %w", err)
+	}
+
+	switch value := value.(type) {
+	case string:
+		return map[string]interface{}{"query": value}, nil
+	case map[string]interface{}, []interface{}:
+		return value, nil
+	default:
+		return nil, fmt.Errorf("--query must be a GraphQL document or JSON request object or array")
+	}
 }
 
 // WriteFile saves a downloaded file.
@@ -76,10 +89,10 @@ func WriteFile(destination string, content *[]byte) error {
 
 // DecodeSlice parses each value of a repeatable flag into T.
 //
-// Needed where the SDK declares a typed slice such as []float64 or
-// [][]interface{}. The TypeScript CLI hands the API raw strings and lets it
-// coerce them; Go's static typing does not allow that, so the parse happens
-// here instead. A malformed value therefore fails locally with a clear message
+// Needed where the SDK declares a slice such as []interface{}, []float64, or
+// [][]interface{}. Go's static typing does not allow the CLI to hand an API a
+// string where it declares an object or number, so the parse happens here
+// instead. A malformed value therefore fails locally with a clear message
 // rather than as a server-side validation error.
 func DecodeSlice[T any](raws []string) ([]T, error) {
 	if len(raws) == 0 {

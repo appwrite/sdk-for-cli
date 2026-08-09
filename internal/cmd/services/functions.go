@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewFunctionsCommand builds the `functions` command tree.
@@ -108,7 +109,7 @@ func newFunctionsListCommand() *cobra.Command {
 
 			result, err := service.List(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -227,7 +228,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 
 			result, err := service.Create(functionId, name, runtime, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -279,7 +280,7 @@ func newFunctionsListRuntimesCommand() *cobra.Command {
 
 			result, err := service.ListRuntimes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -311,14 +312,14 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 
 			result, err := service.ListSpecifications(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
 		},
 	}
 
-	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds.")
+	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds. Defaults to runtimes.")
 	return cmd
 }
 
@@ -337,7 +338,7 @@ func newFunctionsGetCommand() *cobra.Command {
 
 			result, err := service.Get(functionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -449,7 +450,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 
 			result, err := service.Update(functionId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -501,7 +502,7 @@ func newFunctionsDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(functionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -529,7 +530,7 @@ func newFunctionsUpdateFunctionDeploymentCommand() *cobra.Command {
 
 			result, err := service.UpdateFunctionDeployment(functionId, deploymentId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -606,7 +607,7 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 
 			result, err := service.ListDeployments(functionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -646,10 +647,11 @@ func newFunctionsCreateDeploymentCommand() *cobra.Command {
 				return err
 			}
 			service := functions.New(client)
-			codeFile, err := app.InputFile(code)
+			codeFile, codeFileCleanup, err := app.DeploymentInputFile(code)
 			if err != nil {
 				return err
 			}
+			defer codeFileCleanup()
 
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
@@ -663,7 +665,7 @@ func newFunctionsCreateDeploymentCommand() *cobra.Command {
 
 			result, err := service.CreateDeployment(functionId, codeFile, activate, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -705,7 +707,7 @@ func newFunctionsCreateDuplicateDeploymentCommand() *cobra.Command {
 
 			result, err := service.CreateDuplicateDeployment(functionId, deploymentId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -748,7 +750,7 @@ func newFunctionsCreateTemplateDeploymentCommand() *cobra.Command {
 
 			result, err := service.CreateTemplateDeployment(functionId, repository, owner, rootDirectory, typeArg, reference, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -797,7 +799,7 @@ func newFunctionsCreateVcsDeploymentCommand() *cobra.Command {
 
 			result, err := service.CreateVcsDeployment(functionId, typeArg, reference, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -831,7 +833,7 @@ func newFunctionsGetDeploymentCommand() *cobra.Command {
 
 			result, err := service.GetDeployment(functionId, deploymentId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -861,7 +863,7 @@ func newFunctionsDeleteDeploymentCommand() *cobra.Command {
 
 			result, err := service.DeleteDeployment(functionId, deploymentId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -904,7 +906,7 @@ func newFunctionsGetDeploymentDownloadCommand() *cobra.Command {
 
 			result, err := service.GetDeploymentDownload(functionId, deploymentId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			// A location method returns the file bytes, not a URL. The
@@ -940,7 +942,7 @@ func newFunctionsUpdateDeploymentStatusCommand() *cobra.Command {
 
 			result, err := service.UpdateDeploymentStatus(functionId, deploymentId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1013,7 +1015,7 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 
 			result, err := service.ListExecutions(functionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1083,7 +1085,7 @@ func newFunctionsCreateExecutionCommand() *cobra.Command {
 
 			result, err := service.CreateExecution(functionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1118,7 +1120,7 @@ func newFunctionsGetExecutionCommand() *cobra.Command {
 
 			result, err := service.GetExecution(functionId, executionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1148,7 +1150,7 @@ func newFunctionsDeleteExecutionCommand() *cobra.Command {
 
 			result, err := service.DeleteExecution(functionId, executionId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -1221,7 +1223,7 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 
 			result, err := service.ListVariables(functionId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1270,7 +1272,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 
 			result, err := service.CreateVariable(functionId, variableId, key, value, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1306,7 +1308,7 @@ func newFunctionsGetVariableCommand() *cobra.Command {
 
 			result, err := service.GetVariable(functionId, variableId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -1352,7 +1354,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 
 			result, err := service.UpdateVariable(functionId, variableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -1386,7 +1388,7 @@ func newFunctionsDeleteVariableCommand() *cobra.Command {
 
 			result, err := service.DeleteVariable(functionId, variableId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)

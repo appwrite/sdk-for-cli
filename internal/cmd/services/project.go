@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewProjectCommand builds the `project` command tree.
@@ -137,7 +138,7 @@ func newProjectGetCommand() *cobra.Command {
 
 			result, err := service.Get()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -163,7 +164,7 @@ func newProjectDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -191,7 +192,7 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 
 			result, err := service.UpdateAuthMethod(methodId, enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -265,7 +266,7 @@ func newProjectListKeysCommand() *cobra.Command {
 
 			result, err := service.ListKeys(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -313,7 +314,7 @@ func newProjectCreateKeyCommand() *cobra.Command {
 
 			result, err := service.CreateKey(keyId, name, scopes, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -348,7 +349,7 @@ func newProjectCreateEphemeralKeyCommand() *cobra.Command {
 
 			result, err := service.CreateEphemeralKey(scopes, duration)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -379,7 +380,7 @@ func newProjectGetKeyCommand() *cobra.Command {
 
 			result, err := service.GetKey(keyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -418,7 +419,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 
 			result, err := service.UpdateKey(keyId, name, scopes, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -452,7 +453,7 @@ func newProjectDeleteKeyCommand() *cobra.Command {
 
 			result, err := service.DeleteKey(keyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -481,7 +482,7 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 
 			result, err := service.UpdateLabels(labels)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -532,7 +533,7 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 
 			result, err := service.ListMockPhones(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -565,7 +566,7 @@ func newProjectCreateMockPhoneCommand() *cobra.Command {
 
 			result, err := service.CreateMockPhone(number, otp)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -596,7 +597,7 @@ func newProjectGetMockPhoneCommand() *cobra.Command {
 
 			result, err := service.GetMockPhone(number)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -626,7 +627,7 @@ func newProjectUpdateMockPhoneCommand() *cobra.Command {
 
 			result, err := service.UpdateMockPhone(number, otp)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -657,7 +658,7 @@ func newProjectDeleteMockPhoneCommand() *cobra.Command {
 
 			result, err := service.DeleteMockPhone(number)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -708,7 +709,7 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 
 			result, err := service.ListOAuth2Providers(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -797,7 +798,7 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Server(enabled, authorizationUrl, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -857,7 +858,7 @@ func newProjectUpdateOAuth2AmazonCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Amazon(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -911,7 +912,7 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Apple(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -959,7 +960,7 @@ func newProjectUpdateOAuth2AppwriteCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Appwrite(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1009,7 +1010,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Auth0(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1060,7 +1061,7 @@ func newProjectUpdateOAuth2AuthentikCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Authentik(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1107,7 +1108,7 @@ func newProjectUpdateOAuth2AutodeskCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Autodesk(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1153,7 +1154,7 @@ func newProjectUpdateOAuth2BitbucketCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Bitbucket(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1199,7 +1200,7 @@ func newProjectUpdateOAuth2BitlyCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Bitly(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1245,7 +1246,7 @@ func newProjectUpdateOAuth2BoxCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Box(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1291,7 +1292,7 @@ func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Dailymotion(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1337,7 +1338,7 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Discord(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1383,7 +1384,7 @@ func newProjectUpdateOAuth2DisqusCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Disqus(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1429,7 +1430,7 @@ func newProjectUpdateOAuth2DropboxCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Dropbox(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1475,7 +1476,7 @@ func newProjectUpdateOAuth2EtsyCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Etsy(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1521,7 +1522,7 @@ func newProjectUpdateOAuth2FacebookCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Facebook(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1567,7 +1568,7 @@ func newProjectUpdateOAuth2FigmaCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Figma(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1617,7 +1618,7 @@ func newProjectUpdateOAuth2FusionAuthCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2FusionAuth(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1664,7 +1665,7 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2GitHub(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1714,7 +1715,7 @@ func newProjectUpdateOAuth2GitlabCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Gitlab(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1765,7 +1766,7 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Google(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1820,7 +1821,7 @@ func newProjectUpdateOAuth2KeycloakCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Keycloak(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1868,7 +1869,7 @@ func newProjectUpdateOAuth2KickCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Kick(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1914,7 +1915,7 @@ func newProjectUpdateOAuth2LinkedinCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Linkedin(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1964,7 +1965,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Microsoft(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2011,7 +2012,7 @@ func newProjectUpdateOAuth2NotionCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Notion(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2081,7 +2082,7 @@ func newProjectUpdateOAuth2OidcCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Oidc(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2141,7 +2142,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Okta(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2189,7 +2190,7 @@ func newProjectUpdateOAuth2PaypalCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Paypal(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2235,7 +2236,7 @@ func newProjectUpdateOAuth2PaypalSandboxCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2PaypalSandbox(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2281,7 +2282,7 @@ func newProjectUpdateOAuth2PodioCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Podio(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2327,7 +2328,7 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Salesforce(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2373,7 +2374,7 @@ func newProjectUpdateOAuth2SlackCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Slack(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2419,7 +2420,7 @@ func newProjectUpdateOAuth2SpotifyCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Spotify(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2465,7 +2466,7 @@ func newProjectUpdateOAuth2StripeCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Stripe(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2511,7 +2512,7 @@ func newProjectUpdateOAuth2TradeshiftCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Tradeshift(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2557,7 +2558,7 @@ func newProjectUpdateOAuth2TradeshiftSandboxCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2TradeshiftSandbox(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2603,7 +2604,7 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Twitch(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2649,7 +2650,7 @@ func newProjectUpdateOAuth2WordPressCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2WordPress(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2695,7 +2696,7 @@ func newProjectUpdateOAuth2XCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2X(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2741,7 +2742,7 @@ func newProjectUpdateOAuth2YahooCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Yahoo(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2787,7 +2788,7 @@ func newProjectUpdateOAuth2YandexCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Yandex(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2833,7 +2834,7 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Zoho(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2879,7 +2880,7 @@ func newProjectUpdateOAuth2ZoomCommand() *cobra.Command {
 
 			result, err := service.UpdateOAuth2Zoom(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2910,7 +2911,7 @@ func newProjectGetOAuth2ProviderCommand() *cobra.Command {
 
 			result, err := service.GetOAuth2Provider(providerId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -2982,7 +2983,7 @@ func newProjectListPlatformsCommand() *cobra.Command {
 
 			result, err := service.ListPlatforms(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3022,7 +3023,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 
 			result, err := service.CreateAndroidPlatform(platformId, name, applicationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3057,7 +3058,7 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 
 			result, err := service.UpdateAndroidPlatform(platformId, name, applicationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3092,7 +3093,7 @@ func newProjectCreateApplePlatformCommand() *cobra.Command {
 
 			result, err := service.CreateApplePlatform(platformId, name, bundleIdentifier)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3127,7 +3128,7 @@ func newProjectUpdateApplePlatformCommand() *cobra.Command {
 
 			result, err := service.UpdateApplePlatform(platformId, name, bundleIdentifier)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3162,7 +3163,7 @@ func newProjectCreateLinuxPlatformCommand() *cobra.Command {
 
 			result, err := service.CreateLinuxPlatform(platformId, name, packageName)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3197,7 +3198,7 @@ func newProjectUpdateLinuxPlatformCommand() *cobra.Command {
 
 			result, err := service.UpdateLinuxPlatform(platformId, name, packageName)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3232,7 +3233,7 @@ func newProjectCreateWebPlatformCommand() *cobra.Command {
 
 			result, err := service.CreateWebPlatform(platformId, name, hostname)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3267,7 +3268,7 @@ func newProjectUpdateWebPlatformCommand() *cobra.Command {
 
 			result, err := service.UpdateWebPlatform(platformId, name, hostname)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3302,7 +3303,7 @@ func newProjectCreateWindowsPlatformCommand() *cobra.Command {
 
 			result, err := service.CreateWindowsPlatform(platformId, name, packageIdentifierName)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -3337,7 +3338,7 @@ func newProjectUpdateWindowsPlatformCommand() *cobra.Command {
 
 			result, err := service.UpdateWindowsPlatform(platformId, name, packageIdentifierName)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -3370,7 +3371,7 @@ func newProjectGetPlatformCommand() *cobra.Command {
 
 			result, err := service.GetPlatform(platformId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3399,7 +3400,7 @@ func newProjectDeletePlatformCommand() *cobra.Command {
 
 			result, err := service.DeletePlatform(platformId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -3450,7 +3451,7 @@ func newProjectListPoliciesCommand() *cobra.Command {
 
 			result, err := service.ListPolicies(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3482,7 +3483,7 @@ func newProjectUpdateDenyAliasedEmailPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateDenyAliasedEmailPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3511,7 +3512,7 @@ func newProjectUpdateDenyCorporateEmailPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateDenyCorporateEmailPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3540,7 +3541,7 @@ func newProjectUpdateDenyDisposableEmailPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateDenyDisposableEmailPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3569,7 +3570,7 @@ func newProjectUpdateDenyFreeEmailPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateDenyFreeEmailPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3625,7 +3626,7 @@ func newProjectUpdateMembershipPrivacyPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateMembershipPrivacyPolicy(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3664,7 +3665,7 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdatePasswordDictionaryPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3693,7 +3694,7 @@ func newProjectUpdatePasswordHistoryPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdatePasswordHistoryPolicy(total)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3722,7 +3723,7 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdatePasswordPersonalDataPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3774,7 +3775,7 @@ func newProjectUpdatePasswordStrengthPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdatePasswordStrengthPolicy(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3810,7 +3811,7 @@ func newProjectUpdateSessionAlertPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateSessionAlertPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3839,7 +3840,7 @@ func newProjectUpdateSessionDurationPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateSessionDurationPolicy(duration)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3868,7 +3869,7 @@ func newProjectUpdateSessionInvalidationPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateSessionInvalidationPolicy(enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3897,7 +3898,7 @@ func newProjectUpdateSessionLimitPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateSessionLimitPolicy(total)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3926,7 +3927,7 @@ func newProjectUpdateUserLimitPolicyCommand() *cobra.Command {
 
 			result, err := service.UpdateUserLimitPolicy(total)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -3955,7 +3956,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 
 			result, err := service.GetPolicy(policyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -3985,7 +3986,7 @@ func newProjectUpdateProtocolCommand() *cobra.Command {
 
 			result, err := service.UpdateProtocol(protocolId, enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -4017,7 +4018,7 @@ func newProjectUpdateServiceCommand() *cobra.Command {
 
 			result, err := service.UpdateService(serviceId, enabled)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -4091,7 +4092,7 @@ func newProjectUpdateSMTPCommand() *cobra.Command {
 
 			result, err := service.UpdateSMTP(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -4129,7 +4130,7 @@ func newProjectCreateSMTPTestCommand() *cobra.Command {
 
 			result, err := service.CreateSMTPTest(emails)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -4180,7 +4181,7 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 
 			result, err := service.ListEmailTemplates(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -4244,7 +4245,7 @@ func newProjectUpdateEmailTemplateCommand() *cobra.Command {
 
 			result, err := service.UpdateEmailTemplate(templateId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -4288,7 +4289,7 @@ func newProjectGetEmailTemplateCommand() *cobra.Command {
 
 			result, err := service.GetEmailTemplate(templateId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -4361,7 +4362,7 @@ func newProjectListVariablesCommand() *cobra.Command {
 
 			result, err := service.ListVariables(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -4409,7 +4410,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 
 			result, err := service.CreateVariable(variableId, key, value, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -4444,7 +4445,7 @@ func newProjectGetVariableCommand() *cobra.Command {
 
 			result, err := service.GetVariable(variableId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -4489,7 +4490,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 
 			result, err := service.UpdateVariable(variableId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -4522,7 +4523,7 @@ func newProjectDeleteVariableCommand() *cobra.Command {
 
 			result, err := service.DeleteVariable(variableId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+
+	"github.com/spf13/cobra"
 )
 
 // These assert the layout rather than a byte golden: the command set comes from
@@ -197,9 +199,9 @@ func TestOptionsFollowTheDeclaredOrder(t *testing.T) {
 	}
 }
 
-// --all is parsed at the root so `appwrite --all push` works, but it acts on
-// push and pull. Documenting it globally would offer it on every command.
-func TestAllIsHiddenAtTheRootAndDocumentedOnPush(t *testing.T) {
+// --all is parsed at the root so it can precede the command, but documenting it
+// globally would offer it on commands where it has no meaning.
+func TestAllIsHiddenAtTheRootAndDocumentedWhereUsed(t *testing.T) {
 	root := NewRootCommand()
 
 	if _, options, found := strings.Cut(RenderMainHelp(root), "\nOPTIONS\n"); found {
@@ -222,6 +224,53 @@ func TestAllIsHiddenAtTheRootAndDocumentedOnPush(t *testing.T) {
 	}
 	if flag.Shorthand != "a" {
 		t.Errorf("`push --all` shorthand = %q, want \"a\"", flag.Shorthand)
+	}
+}
+
+func TestInitSkillDocumentsHeadlessFlags(t *testing.T) {
+	command := resolveCommand(NewRootCommand(), "init skill")
+	if command == nil {
+		t.Fatal("`init skill` is missing")
+	}
+
+	for _, name := range []string{"all", "skill", "agent", "method"} {
+		flag := command.Flags().Lookup(name)
+		if flag == nil {
+			t.Errorf("`init skill` does not define --%s", name)
+			continue
+		}
+		if flag.Hidden {
+			t.Errorf("`init skill --%s` is hidden", name)
+		}
+	}
+}
+
+func TestGraphQLHelpDescribesDocumentsAndJSONRequests(t *testing.T) {
+	root := NewRootCommand()
+	query := resolveCommand(root, "graphql query")
+	mutation := resolveCommand(root, "graphql mutation")
+	if query == nil || mutation == nil {
+		t.Skip("the generation spec does not include GraphQL commands")
+	}
+
+	if query.Short != "Execute a GraphQL query." {
+		t.Errorf("query description = %q", query.Short)
+	}
+	if mutation.Short != "Execute a GraphQL mutation." {
+		t.Errorf("mutation description = %q", mutation.Short)
+	}
+
+	for _, command := range []*cobra.Command{query, mutation} {
+		flag := command.Flags().Lookup("query")
+		if flag == nil {
+			t.Errorf("`%s` has no --query flag", command.CommandPath())
+			continue
+		}
+		for _, token := range []string{"Raw GraphQL document", "JSON request object or array", "batching"} {
+			if !strings.Contains(flag.Usage, token) {
+				t.Errorf("`%s --query` help does not mention %q: %s", command.CommandPath(), token, flag.Usage)
+			}
+		}
 	}
 }
 

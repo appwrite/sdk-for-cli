@@ -6,6 +6,7 @@ import (
 	"github.com/appwrite/sdk-for-go/v6/embeddings"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewEmbeddingsCommand builds the `embeddings` command tree.
@@ -43,7 +44,7 @@ func newEmbeddingsCreateTextEmbeddingsCommand() *cobra.Command {
 
 			result, err := service.CreateTextEmbeddings(texts, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)

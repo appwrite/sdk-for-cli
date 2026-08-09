@@ -6,6 +6,7 @@ import (
 	"github.com/appwrite/sdk-for-go/v6/locale"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewLocaleCommand builds the `locale` command tree.
@@ -41,7 +42,7 @@ func newLocaleGetCommand() *cobra.Command {
 
 			result, err := service.Get()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -65,7 +66,7 @@ func newLocaleListCodesCommand() *cobra.Command {
 
 			result, err := service.ListCodes()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -89,7 +90,7 @@ func newLocaleListContinentsCommand() *cobra.Command {
 
 			result, err := service.ListContinents()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -113,7 +114,7 @@ func newLocaleListCountriesCommand() *cobra.Command {
 
 			result, err := service.ListCountries()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -137,7 +138,7 @@ func newLocaleListCountriesEUCommand() *cobra.Command {
 
 			result, err := service.ListCountriesEU()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -161,7 +162,7 @@ func newLocaleListCountriesPhonesCommand() *cobra.Command {
 
 			result, err := service.ListCountriesPhones()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -185,7 +186,7 @@ func newLocaleListCurrenciesCommand() *cobra.Command {
 
 			result, err := service.ListCurrencies()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -209,7 +210,7 @@ func newLocaleListLanguagesCommand() *cobra.Command {
 
 			result, err := service.ListLanguages()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)

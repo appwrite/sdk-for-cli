@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewTokensCommand builds the `tokens` command tree.
@@ -85,7 +86,7 @@ func newTokensListCommand() *cobra.Command {
 
 			result, err := service.List(bucketId, fileId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -134,7 +135,7 @@ func newTokensCreateFileTokenCommand() *cobra.Command {
 
 			result, err := service.CreateFileToken(bucketId, fileId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -164,7 +165,7 @@ func newTokensGetCommand() *cobra.Command {
 
 			result, err := service.Get(tokenId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -199,7 +200,7 @@ func newTokensUpdateCommand() *cobra.Command {
 
 			result, err := service.Update(tokenId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -227,7 +228,7 @@ func newTokensDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(tokenId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)

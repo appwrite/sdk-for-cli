@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewMessagingCommand builds the `messaging` command tree.
@@ -128,7 +129,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 
 			result, err := service.ListMessages(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -207,7 +208,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 
 			result, err := service.CreateEmail(messageId, subject, content, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -297,7 +298,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 
 			result, err := service.UpdateEmail(messageId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -417,7 +418,7 @@ func newMessagingCreatePushCommand() *cobra.Command {
 
 			result, err := service.CreatePush(messageId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -545,7 +546,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 
 			result, err := service.UpdatePush(messageId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -618,7 +619,7 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 
 			result, err := service.CreateSms(messageId, content, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -681,7 +682,7 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 
 			result, err := service.UpdateSms(messageId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -715,7 +716,7 @@ func newMessagingGetMessageCommand() *cobra.Command {
 
 			result, err := service.GetMessage(messageId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -742,7 +743,7 @@ func newMessagingDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete(messageId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -813,7 +814,7 @@ func newMessagingListTargetsCommand() *cobra.Command {
 
 			result, err := service.ListTargets(messageId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -898,7 +899,7 @@ func newMessagingListProvidersCommand() *cobra.Command {
 
 			result, err := service.ListProviders(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -964,7 +965,7 @@ func newMessagingCreateApnsProviderCommand() *cobra.Command {
 
 			result, err := service.CreateApnsProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1033,7 +1034,7 @@ func newMessagingUpdateApnsProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateApnsProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1086,7 +1087,7 @@ func newMessagingCreateFcmProviderCommand() *cobra.Command {
 
 			result, err := service.CreateFcmProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1138,7 +1139,7 @@ func newMessagingUpdateFcmProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateFcmProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1206,7 +1207,7 @@ func newMessagingCreateMailgunProviderCommand() *cobra.Command {
 
 			result, err := service.CreateMailgunProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1285,7 +1286,7 @@ func newMessagingUpdateMailgunProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateMailgunProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1344,7 +1345,7 @@ func newMessagingCreateMsg91ProviderCommand() *cobra.Command {
 
 			result, err := service.CreateMsg91Provider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1402,7 +1403,7 @@ func newMessagingUpdateMsg91ProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateMsg91Provider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1464,7 +1465,7 @@ func newMessagingCreateResendProviderCommand() *cobra.Command {
 
 			result, err := service.CreateResendProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1532,7 +1533,7 @@ func newMessagingUpdateResendProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateResendProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1596,7 +1597,7 @@ func newMessagingCreateSendgridProviderCommand() *cobra.Command {
 
 			result, err := service.CreateSendgridProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1664,7 +1665,7 @@ func newMessagingUpdateSendgridProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateSendgridProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1736,7 +1737,7 @@ func newMessagingCreateSesProviderCommand() *cobra.Command {
 
 			result, err := service.CreateSesProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -1814,7 +1815,7 @@ func newMessagingUpdateSesProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateSesProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -1901,7 +1902,7 @@ func newMessagingCreateSmtpProviderCommand() *cobra.Command {
 
 			result, err := service.CreateSmtpProvider(providerId, name, host, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2001,7 +2002,7 @@ func newMessagingUpdateSmtpProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateSmtpProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2064,7 +2065,7 @@ func newMessagingCreateTelesignProviderCommand() *cobra.Command {
 
 			result, err := service.CreateTelesignProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2122,7 +2123,7 @@ func newMessagingUpdateTelesignProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateTelesignProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2176,7 +2177,7 @@ func newMessagingCreateTextmagicProviderCommand() *cobra.Command {
 
 			result, err := service.CreateTextmagicProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2234,7 +2235,7 @@ func newMessagingUpdateTextmagicProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateTextmagicProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2288,7 +2289,7 @@ func newMessagingCreateTwilioProviderCommand() *cobra.Command {
 
 			result, err := service.CreateTwilioProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2346,7 +2347,7 @@ func newMessagingUpdateTwilioProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateTwilioProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2400,7 +2401,7 @@ func newMessagingCreateVonageProviderCommand() *cobra.Command {
 
 			result, err := service.CreateVonageProvider(providerId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2458,7 +2459,7 @@ func newMessagingUpdateVonageProviderCommand() *cobra.Command {
 
 			result, err := service.UpdateVonageProvider(providerId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2491,7 +2492,7 @@ func newMessagingGetProviderCommand() *cobra.Command {
 
 			result, err := service.GetProvider(providerId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -2518,7 +2519,7 @@ func newMessagingDeleteProviderCommand() *cobra.Command {
 
 			result, err := service.DeleteProvider(providerId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -2592,7 +2593,7 @@ func newMessagingListTopicsCommand() *cobra.Command {
 
 			result, err := service.ListTopics(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -2638,7 +2639,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 
 			result, err := service.CreateTopic(topicId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2668,7 +2669,7 @@ func newMessagingGetTopicCommand() *cobra.Command {
 
 			result, err := service.GetTopic(topicId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -2707,7 +2708,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 
 			result, err := service.UpdateTopic(topicId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -2736,7 +2737,7 @@ func newMessagingDeleteTopicCommand() *cobra.Command {
 
 			result, err := service.DeleteTopic(topicId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -2811,7 +2812,7 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 
 			result, err := service.ListSubscribers(topicId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -2852,7 +2853,7 @@ func newMessagingCreateSubscriberCommand() *cobra.Command {
 
 			result, err := service.CreateSubscriber(topicId, subscriberId, targetId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -2884,7 +2885,7 @@ func newMessagingGetSubscriberCommand() *cobra.Command {
 
 			result, err := service.GetSubscriber(topicId, subscriberId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -2914,7 +2915,7 @@ func newMessagingDeleteSubscriberCommand() *cobra.Command {
 
 			result, err := service.DeleteSubscriber(topicId, subscriberId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
+	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
 // NewOrganizationCommand builds the `organization` command tree.
@@ -53,7 +54,7 @@ func newOrganizationGetCommand() *cobra.Command {
 
 			result, err := app.GetOrganizationForSession(organizationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -80,7 +81,7 @@ func newOrganizationUpdateCommand() *cobra.Command {
 
 			result, err := service.Update(name)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -108,7 +109,7 @@ func newOrganizationDeleteCommand() *cobra.Command {
 
 			result, err := service.Delete()
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -178,7 +179,7 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 
 			result, err := service.ListInstallations(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -224,7 +225,7 @@ func newOrganizationCreateInstallationCommand() *cobra.Command {
 
 			result, err := service.CreateInstallation(appId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -254,7 +255,7 @@ func newOrganizationGetInstallationCommand() *cobra.Command {
 
 			result, err := service.GetInstallation(installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -291,7 +292,7 @@ func newOrganizationUpdateInstallationCommand() *cobra.Command {
 
 			result, err := service.UpdateInstallation(installationId, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -321,7 +322,7 @@ func newOrganizationDeleteInstallationCommand() *cobra.Command {
 
 			result, err := service.DeleteInstallation(installationId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -393,7 +394,7 @@ func newOrganizationListKeysCommand() *cobra.Command {
 
 			result, err := service.ListKeys(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -441,7 +442,7 @@ func newOrganizationCreateKeyCommand() *cobra.Command {
 
 			result, err := service.CreateKey(keyId, name, scopes, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -475,7 +476,7 @@ func newOrganizationGetKeyCommand() *cobra.Command {
 
 			result, err := service.GetKey(keyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -514,7 +515,7 @@ func newOrganizationUpdateKeyCommand() *cobra.Command {
 
 			result, err := service.UpdateKey(keyId, name, scopes, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PUT", err)
 			}
 
 			return app.Render(result)
@@ -548,7 +549,7 @@ func newOrganizationDeleteKeyCommand() *cobra.Command {
 
 			result, err := service.DeleteKey(keyId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -624,7 +625,7 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 
 			result, err := service.ListMemberships(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -687,7 +688,7 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 
 			result, err := service.CreateMembership(roles, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -721,7 +722,7 @@ func newOrganizationGetMembershipCommand() *cobra.Command {
 
 			result, err := service.GetMembership(membershipId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -751,7 +752,7 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 
 			result, err := service.UpdateMembership(membershipId, roles)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -782,7 +783,7 @@ func newOrganizationDeleteMembershipCommand() *cobra.Command {
 
 			result, err := service.DeleteMembership(membershipId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
@@ -858,7 +859,7 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 
 			result, err := service.ListProjects(options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -906,7 +907,7 @@ func newOrganizationCreateProjectCommand() *cobra.Command {
 
 			result, err := service.CreateProject(projectId, name, options...)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)
@@ -938,7 +939,7 @@ func newOrganizationGetProjectCommand() *cobra.Command {
 
 			result, err := service.GetProject(projectId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("GET", err)
 			}
 
 			return app.Render(result)
@@ -968,7 +969,7 @@ func newOrganizationUpdateProjectCommand() *cobra.Command {
 
 			result, err := service.UpdateProject(projectId, name)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("PATCH", err)
 			}
 
 			return app.Render(result)
@@ -999,7 +1000,7 @@ func newOrganizationDeleteProjectCommand() *cobra.Command {
 
 			result, err := service.DeleteProject(projectId)
 			if err != nil {
-				return err
+				return sdk.WrapMutationError("DELETE", err)
 			}
 
 			return app.Render(result)
