@@ -15,6 +15,10 @@ func NewSitesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "sites",
 		Short: "The Sites Service allows you view, create and manage your web applications.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newSitesListCommand())
@@ -62,6 +66,7 @@ func newSitesListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all the project's sites. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -158,6 +163,7 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new site.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -273,6 +279,7 @@ func newSitesListFrameworksCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-frameworks",
 		Short: "Get a list of all frameworks that are currently available on the server instance.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -298,6 +305,7 @@ func newSitesListSpecificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
 		Short: "List allowed site specifications for this instance.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -331,6 +339,7 @@ func newSitesGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a site by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -380,6 +389,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update site by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -498,6 +508,7 @@ func newSitesDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a site by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -526,6 +537,7 @@ func newSitesUpdateSiteDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-site-deployment",
 		Short: "Update the site active deployment. Use this endpoint to switch the code deployment that should be used when visitor opens your site.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -566,6 +578,7 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-deployments",
 		Short: "Get a list of all the site's code deployments. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -647,6 +660,7 @@ func newSitesCreateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-deployment",
 		Short: "Create a new site code deployment. Use this endpoint to upload a new version of your site code. To activate your newly uploaded code, you'll need to update the site's deployment to use your new deployment ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -703,6 +717,7 @@ func newSitesCreateDuplicateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-duplicate-deployment",
 		Short: "Create a new build for an existing site deployment. This endpoint allows you to rebuild a deployment with the updated site configuration, including its commands and output directory if they have been modified. The build process will be queued and executed asynchronously. The original deployment's code will be preserved and used for the new build.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -738,6 +753,7 @@ func newSitesCreateTemplateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-template-deployment",
 		Short: "Create a deployment based on a template.\n\nUse this endpoint with combination of listTemplates (https://appwrite.io/docs/products/sites/templates) to find the template details.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -787,6 +803,7 @@ func newSitesCreateVcsDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-vcs-deployment",
 		Short: "Create a deployment when a site is connected to VCS.\n\nThis endpoint lets you create deployment from a branch, commit, or a tag.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -828,6 +845,7 @@ func newSitesGetDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-deployment",
 		Short: "Get a site deployment by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -858,6 +876,7 @@ func newSitesDeleteDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-deployment",
 		Short: "Delete a site deployment by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -891,6 +910,7 @@ func newSitesGetDeploymentDownloadCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-deployment-download",
 		Short: "Get a site deployment content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -937,6 +957,7 @@ func newSitesUpdateDeploymentStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deployment-status",
 		Short: "Cancel an ongoing site deployment build. If the build is already in progress, it will be stopped and marked as canceled. If the build hasn't started yet, it will be marked as canceled without executing. You cannot cancel builds that have already completed (status 'ready') or failed. The response includes the final build status and details.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -976,6 +997,7 @@ func newSitesListLogsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-logs",
 		Short: "Get a list of all site logs. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1049,6 +1071,7 @@ func newSitesGetLogCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-log",
 		Short: "Get a site request log by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1079,6 +1102,7 @@ func newSitesDeleteLogCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-log",
 		Short: "Delete a site log by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1118,6 +1142,7 @@ func newSitesListVariablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-variables",
 		Short: "Get a list of all variables of a specific site.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1194,6 +1219,7 @@ func newSitesCreateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-variable",
 		Short: "Create a new site variable. These variables can be accessed during build and runtime (server-side rendering) as environment variables.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1237,6 +1263,7 @@ func newSitesGetVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-variable",
 		Short: "Get a variable by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1270,6 +1297,7 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-variable",
 		Short: "Update variable by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1317,6 +1345,7 @@ func newSitesDeleteVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-variable",
 		Short: "Delete a variable by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

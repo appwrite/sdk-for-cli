@@ -15,6 +15,10 @@ func NewMessagingCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "messaging",
 		Short: "The Messaging service allows you to send messages to any provider type (SMTP, push notification, SMS, etc.).",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newMessagingListMessagesCommand())
@@ -83,6 +87,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-messages",
 		Short: "Get a list of all messages from the current Appwrite project.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -168,6 +173,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email",
 		Short: "Create a new email message.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -252,6 +258,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email",
 		Short: "Update an email message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -347,6 +354,7 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-push",
 		Short: "Create a new push notification.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -475,6 +483,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-push",
 		Short: "Update a push notification by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -591,6 +600,7 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-sms",
 		Short: "Create a new SMS message.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -651,6 +661,7 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-sms",
 		Short: "Update an SMS message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -707,6 +718,7 @@ func newMessagingGetMessageCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-message",
 		Short: "Get a message by its unique ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -734,6 +746,7 @@ func newMessagingDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a message. If the message is not a draft or scheduled, but has been sent, this will not recall the message.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -771,6 +784,7 @@ func newMessagingListTargetsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-targets",
 		Short: "Get a list of the targets associated with a message.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -853,6 +867,7 @@ func newMessagingListProvidersCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-providers",
 		Short: "Get a list of all providers from the current Appwrite project.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -934,6 +949,7 @@ func newMessagingCreateApnsProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-apns-provider",
 		Short: "Create a new Apple Push Notification service provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1000,6 +1016,7 @@ func newMessagingUpdateApnsProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-apns-provider",
 		Short: "Update a Apple Push Notification service provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1064,6 +1081,7 @@ func newMessagingCreateFcmProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-fcm-provider",
 		Short: "Create a new Firebase Cloud Messaging provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1113,6 +1131,7 @@ func newMessagingUpdateFcmProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-fcm-provider",
 		Short: "Update a Firebase Cloud Messaging provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1170,6 +1189,7 @@ func newMessagingCreateMailgunProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mailgun-provider",
 		Short: "Create a new Mailgun provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1246,6 +1266,7 @@ func newMessagingUpdateMailgunProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mailgun-provider",
 		Short: "Update a Mailgun provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1320,6 +1341,7 @@ func newMessagingCreateMsg91ProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-msg-91-provider",
 		Short: "Create a new MSG91 provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1375,6 +1397,7 @@ func newMessagingUpdateMsg91ProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-msg-91-provider",
 		Short: "Update a MSG91 provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1434,6 +1457,7 @@ func newMessagingCreateResendProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-resend-provider",
 		Short: "Create a new Resend provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1499,6 +1523,7 @@ func newMessagingUpdateResendProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-resend-provider",
 		Short: "Update a Resend provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1566,6 +1591,7 @@ func newMessagingCreateSendgridProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-sendgrid-provider",
 		Short: "Create a new Sendgrid provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1631,6 +1657,7 @@ func newMessagingUpdateSendgridProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-sendgrid-provider",
 		Short: "Update a Sendgrid provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1700,6 +1727,7 @@ func newMessagingCreateSesProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ses-provider",
 		Short: "Create a new Amazon SES provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1775,6 +1803,7 @@ func newMessagingUpdateSesProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-ses-provider",
 		Short: "Update an Amazon SES provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1856,6 +1885,7 @@ func newMessagingCreateSmtpProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-smtp-provider",
 		Short: "Create a new SMTP provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1950,6 +1980,7 @@ func newMessagingUpdateSmtpProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-smtp-provider",
 		Short: "Update a SMTP provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2040,6 +2071,7 @@ func newMessagingCreateTelesignProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-telesign-provider",
 		Short: "Create a new Telesign provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2095,6 +2127,7 @@ func newMessagingUpdateTelesignProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-telesign-provider",
 		Short: "Update a Telesign provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2152,6 +2185,7 @@ func newMessagingCreateTextmagicProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-textmagic-provider",
 		Short: "Create a new Textmagic provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2207,6 +2241,7 @@ func newMessagingUpdateTextmagicProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-textmagic-provider",
 		Short: "Update a Textmagic provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2264,6 +2299,7 @@ func newMessagingCreateTwilioProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-twilio-provider",
 		Short: "Create a new Twilio provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2319,6 +2355,7 @@ func newMessagingUpdateTwilioProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-twilio-provider",
 		Short: "Update a Twilio provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2376,6 +2413,7 @@ func newMessagingCreateVonageProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-vonage-provider",
 		Short: "Create a new Vonage provider.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2431,6 +2469,7 @@ func newMessagingUpdateVonageProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-vonage-provider",
 		Short: "Update a Vonage provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2483,6 +2522,7 @@ func newMessagingGetProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-provider",
 		Short: "Get a provider by its unique ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2510,6 +2550,7 @@ func newMessagingDeleteProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-provider",
 		Short: "Delete a provider by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2547,6 +2588,7 @@ func newMessagingListTopicsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-topics",
 		Short: "Get a list of all topics from the current Appwrite project.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2623,6 +2665,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-topic",
 		Short: "Create a new topic.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2660,6 +2703,7 @@ func newMessagingGetTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-topic",
 		Short: "Get a topic by its unique ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2689,6 +2733,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-topic",
 		Short: "Update a topic by its unique ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2728,6 +2773,7 @@ func newMessagingDeleteTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-topic",
 		Short: "Delete a topic by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2766,6 +2812,7 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-subscribers",
 		Short: "Get a list of all subscribers from the current Appwrite project.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2844,6 +2891,7 @@ func newMessagingCreateSubscriberCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-subscriber",
 		Short: "Create a new subscriber.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2876,6 +2924,7 @@ func newMessagingGetSubscriberCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-subscriber",
 		Short: "Get a subscriber by its unique ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2906,6 +2955,7 @@ func newMessagingDeleteSubscriberCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-subscriber",
 		Short: "Delete a subscriber by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

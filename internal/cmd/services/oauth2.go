@@ -14,6 +14,10 @@ func NewOauth2Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "oauth2",
 		Short: "The OAuth2 service allows you to authorize apps and issue standards-based OAuth2 and OpenID Connect tokens.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newOauth2AuthorizeCommand())
@@ -69,6 +73,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "authorize",
 		Short: "Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of `application/json` to receive a JSON response instead of a redirect.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -167,6 +172,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "authorize-post",
 		Short: "Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of `application/json` to receive a JSON response instead of a redirect.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -256,6 +262,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-device-authorization",
 		Short: "Start the OAuth2 Device Authorization Grant. Returns the device code, user code, verification URL, expiration, and polling interval.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -305,6 +312,7 @@ func newOauth2CreateGrantCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-grant",
 		Short: "Exchange a device flow user code for an OAuth2 grant. The authenticated user is bound to the pending grant. Pass the returned grant ID to the get grant endpoint to render the consent screen, then to the approve or reject endpoint to complete the flow.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -332,6 +340,7 @@ func newOauth2GetGrantCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-grant",
 		Short: "Get an OAuth2 grant by its ID. Used by the consent screen to display the details of the authorization the user is being asked to approve. A grant can only be read by the user it belongs to, or by server SDK.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -362,6 +371,7 @@ func newOauth2ListOrganizationsCommand() *cobra.Command {
 		Use:    "list-organizations",
 		Short:  "List the organizations the OAuth2 access token can access. Resolves the token's `organization` authorization details, expanding the `*` wildcard into the concrete set of organizations the user can see.",
 		Hidden: true,
+		Args:   cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			result, err := app.ListOrganizationsForSession(
@@ -398,6 +408,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-par",
 		Short: "Store an OAuth2 authorization request server-side and receive a short-lived request_uri handle for the authorize endpoint.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -476,6 +487,7 @@ func newOauth2ListProjectsCommand() *cobra.Command {
 		Use:    "list-projects",
 		Short:  "List the projects the OAuth2 access token can access. Resolves the token's `project` authorization details, expanding the `*` wildcard into the concrete set of projects the user can see.",
 		Hidden: true,
+		Args:   cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			result, err := app.ListProjectsForSession("",
@@ -500,6 +512,7 @@ func newOauth2RejectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reject",
 		Short: "Reject an OAuth2 grant when the user denies consent. Returns the `redirectUrl` the end user should be sent to with an `access_denied` error. You can pass Accept header of `application/json` to receive a JSON response instead of a redirect.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -530,6 +543,7 @@ func newOauth2RevokeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoke",
 		Short: "Revoke an OAuth2 access token or refresh token.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -582,6 +596,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-token",
 		Short: "Exchange an OAuth2 authorization code, refresh token, or device code for access and refresh tokens.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

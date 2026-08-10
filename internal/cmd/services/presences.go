@@ -15,6 +15,10 @@ func NewPresencesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "presences",
 		Short: "The Presences service allows you to track and manage real-time user presence in your project.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newPresencesListCommand())
@@ -40,6 +44,7 @@ func newPresencesListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List presence logs. Expired entries are filtered out automatically.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -114,6 +119,7 @@ func newPresencesGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a presence log by its unique ID. Entries whose `expiresAt` is in the past are treated as not found.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -141,6 +147,7 @@ func newPresencesDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a presence log by its unique ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

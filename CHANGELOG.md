@@ -1,5 +1,14 @@
 # Change Log
 
+## 26.0.0-rc.3
+
+* Added: `appwrite-cli-wasm` package runs the CLI in a browser through WebAssembly
+* Added: `login --switch` takes `--endpoint` and `--email` to pick a stored account
+* Added: Optional boolean flags accept `--flag value` alongside `--flag=value`
+* Fixed: Commands reject stray positional arguments instead of ignoring them
+* Fixed: `update` no longer prints an update notice before it updates
+* Updated: Endpoint mismatch errors name the endpoint to pass to `login --switch`
+
 ## 26.0.0-rc.2
 
 * Added: `graphql query` and `graphql mutation` accept a raw GraphQL document at `--query`

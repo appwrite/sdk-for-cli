@@ -15,6 +15,10 @@ func NewTokensCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "tokens",
 		Short: "The Tokens service allows you to create and manage resource tokens for secure file access.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newTokensListCommand())
@@ -43,6 +47,7 @@ func newTokensListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all the tokens created for a specific file or bucket. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -119,6 +124,7 @@ func newTokensCreateFileTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-file-token",
 		Short: "Create a new token. A token is linked to a file. Token can be passed as a request URL search parameter.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -156,6 +162,7 @@ func newTokensGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a token by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -184,6 +191,7 @@ func newTokensUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a token by its unique ID. Use this endpoint to update a token's expiry date.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -219,6 +227,7 @@ func newTokensDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a token by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

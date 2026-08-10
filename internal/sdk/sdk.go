@@ -82,6 +82,11 @@ func (c *Context) base(endpoint string) sdkclient.Client {
 func (c *Context) authenticate(client *sdkclient.Client, allowAPIKey bool) error {
 	session := c.Global.Current()
 	if session == nil {
+		// A browser's own session needs nothing stored: see ambient_js.go.
+		if ambientCredentials(client, allowAPIKey) {
+			return nil
+		}
+
 		return c.noCredentials(allowAPIKey, "")
 	}
 
@@ -115,6 +120,12 @@ func (c *Context) authenticate(client *sdkclient.Client, allowAPIKey bool) error
 		return nil
 	}
 
+	// A stored session with nothing usable in it is still no credential, and a
+	// browser still has its own.
+	if ambientCredentials(client, allowAPIKey) {
+		return nil
+	}
+
 	return c.noCredentials(allowAPIKey, key)
 }
 
@@ -134,18 +145,22 @@ func (c *Context) noCredentials(allowAPIKey bool, key string) error {
 	return ErrNotLoggedIn
 }
 
-// endpoint returns the active session's endpoint.
+// endpoint returns the active session's endpoint, or the environment's when
+// the environment is the session -- see ambient_js.go. ambientEndpoint is empty
+// on every build but the browser one, so this is the same two checks it always
+// was.
 func (c *Context) endpoint() (string, error) {
-	session := c.Global.Current()
-	if session == nil {
-		return "", ErrNotLoggedIn
-	}
-	endpoint := session.GetString(config.PreferenceEndpoint)
-	if endpoint == "" {
-		return "", ErrNotLoggedIn
+	if session := c.Global.Current(); session != nil {
+		if endpoint := session.GetString(config.PreferenceEndpoint); endpoint != "" {
+			return endpoint, nil
+		}
 	}
 
-	return endpoint, nil
+	if endpoint := ambientEndpoint(); endpoint != "" {
+		return endpoint, nil
+	}
+
+	return "", ErrNotLoggedIn
 }
 
 // projectEndpoint returns the endpoint a PROJECT-scoped call should use.
@@ -175,8 +190,8 @@ func (c *Context) projectEndpoint() (string, error) {
 	if !config.EndpointsMatch(endpoint, sessionEndpoint) {
 		return "", fmt.Errorf(
 			"endpoint %s does not match the current login session endpoint %s. "+
-				"Switch to an account for this environment with `appwrite login --switch`",
-			endpoint, sessionEndpoint)
+				"Switch to an account for this environment with `appwrite login --switch --endpoint %s`",
+			endpoint, sessionEndpoint, endpoint)
 	}
 
 	return endpoint, nil

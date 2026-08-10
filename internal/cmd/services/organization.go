@@ -15,6 +15,10 @@ func NewOrganizationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "organization",
 		Short: "The Organization service allows you to manage organization-level projects.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newOrganizationGetCommand())
@@ -50,6 +54,7 @@ func newOrganizationGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get the current organization.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			result, err := app.GetOrganizationForSession(organizationId)
@@ -72,6 +77,7 @@ func newOrganizationUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update the current organization's name.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -100,6 +106,7 @@ func newOrganizationDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete the current organization. All projects that belong to the organization are deleted as well.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -136,6 +143,7 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-installations",
 		Short: "List app installations on the organization. Any organization member can read installations.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -209,6 +217,7 @@ func newOrganizationCreateInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-installation",
 		Short: "Install an app on the organization. Only organization members with the owner role can install apps. The installation is granted the scopes the app currently requests.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -246,6 +255,7 @@ func newOrganizationGetInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-installation",
 		Short: "Get an app installation on the organization by its unique ID. Any organization member can read installations.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -276,6 +286,7 @@ func newOrganizationUpdateInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-installation",
 		Short: "Update an app installation on the organization. Only organization members with the owner role can update installations. The installation's granted scopes are refreshed to the scopes the app currently requests; previously issued installation access tokens are revoked.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -313,6 +324,7 @@ func newOrganizationDeleteInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-installation",
 		Short: "Uninstall an app from the organization by its installation ID. Only organization members with the owner role can remove installations. Previously issued installation access tokens are revoked.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -351,6 +363,7 @@ func newOrganizationListKeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-keys",
 		Short: "Get a list of all API keys from the current organization.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -426,6 +439,7 @@ func newOrganizationCreateKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-key",
 		Short: "Create a new organization API key.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -467,6 +481,7 @@ func newOrganizationGetKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-key",
 		Short: "Get a key by its unique ID. This endpoint returns details about a specific API key in your organization including its scopes.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -499,6 +514,7 @@ func newOrganizationUpdateKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-key",
 		Short: "Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -540,6 +556,7 @@ func newOrganizationDeleteKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-key",
 		Short: "Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -579,6 +596,7 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-memberships",
 		Short: "Get a list of all memberships from the current organization.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -660,6 +678,7 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-membership",
 		Short: "Invite a new member to join the current organization. An email with a link to join the organization will be sent to the new member's email address. If member doesn't exist in the project it will be automatically created.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -713,6 +732,7 @@ func newOrganizationGetMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-membership",
 		Short: "Get a membership from the current organization by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -743,6 +763,7 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-membership",
 		Short: "Modify the roles of a member in the current organization.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -774,6 +795,7 @@ func newOrganizationDeleteMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-membership",
 		Short: "Remove a member from the current organization. The member is removed whether they accepted the invitation or not; a pending invitation is revoked.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -813,6 +835,7 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-projects",
 		Short: "Get a list of all projects. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -891,6 +914,7 @@ func newOrganizationCreateProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-project",
 		Short: "Create a new project.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -930,6 +954,7 @@ func newOrganizationGetProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-project",
 		Short: "Get a project.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -960,6 +985,7 @@ func newOrganizationUpdateProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-project",
 		Short: "Update a project by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -991,6 +1017,7 @@ func newOrganizationDeleteProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-project",
 		Short: "Delete a project by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {

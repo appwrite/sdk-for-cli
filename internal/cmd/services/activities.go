@@ -15,6 +15,10 @@ func NewActivitiesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "activities",
 		Short: "The Activities service allows you to list and inspect project activity events.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newActivitiesListEventsCommand())
@@ -37,6 +41,7 @@ func newActivitiesListEventsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-events",
 		Short: "List all events for selected filters.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -102,6 +107,7 @@ func newActivitiesGetEventCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-event",
 		Short: "Get event by ID.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
