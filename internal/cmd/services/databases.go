@@ -147,7 +147,7 @@ func newDatabasesListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.ListOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
 			}
 			if cmd.Flags().Changed("search") {
@@ -271,7 +271,7 @@ func newDatabasesListTransactionsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.ListTransactionsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTransactionsQueries(queries))
 			}
 
@@ -622,7 +622,7 @@ func newDatabasesListCollectionsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.ListCollectionsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListCollectionsQueries(queries))
 			}
 			if cmd.Flags().Changed("search") {
@@ -908,7 +908,7 @@ func newDatabasesListAttributesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.ListAttributesOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListAttributesQueries(queries))
 			}
 			if cmd.Flags().Changed("total") {
@@ -3018,7 +3018,7 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.ListDocumentsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListDocumentsQueries(queries))
 			}
 			if cmd.Flags().Changed("transaction-id") {
@@ -3270,7 +3270,7 @@ func newDatabasesUpdateDocumentsCommand() *cobra.Command {
 			if cmd.Flags().Changed("data") {
 				options = append(options, service.WithUpdateDocumentsData(dataValue))
 			}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithUpdateDocumentsQueries(queries))
 			}
 			if cmd.Flags().Changed("transaction-id") {
@@ -3356,7 +3356,7 @@ func newDatabasesDeleteDocumentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.DeleteDocumentsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithDeleteDocumentsQueries(queries))
 			}
 			if cmd.Flags().Changed("transaction-id") {
@@ -3419,7 +3419,7 @@ func newDatabasesGetDocumentCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.GetDocumentOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithGetDocumentQueries(queries))
 			}
 			if cmd.Flags().Changed("transaction-id") {
@@ -3768,7 +3768,7 @@ func newDatabasesListIndexesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []databases.ListIndexesOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListIndexesQueries(queries))
 			}
 			if cmd.Flags().Changed("total") {
