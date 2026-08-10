@@ -76,7 +76,7 @@ func newActivitiesListEventsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []activities.ListEventsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListEventsQueries(queries))
 			}
 

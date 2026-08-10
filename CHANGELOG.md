@@ -1,5 +1,18 @@
 # Change Log
 
+## 26.0.0
+
+The CLI is now a single Go binary. Day-to-day usage carries over, with no runtime to install and nothing downloaded on first run.
+
+* Breaking: Rewrote the CLI in Go, shipping one binary per platform
+* Breaking: Removed the commands the Go SDK has no counterpart for, listed in full under `26.0.0-rc.1`
+* Added: Homebrew, scoop, and `curl | bash` installs, alongside an npm package that carries the binary
+* Added: A WebAssembly build, so the same CLI runs in a browser
+* Added: `login --switch` picks a stored account by `--endpoint` and `--email`
+* Fixed: Query flags such as `--filter`, `--sort-asc`, and `--limit` take effect without `--queries`
+* Fixed: Large uploads complete instead of failing at a ten second deadline
+* Updated: Startup is around 9.5ms, down from around 173ms
+
 ## 26.0.0-rc.3
 
 * Added: `appwrite-cli-wasm` package runs the CLI in a browser through WebAssembly

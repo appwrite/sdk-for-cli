@@ -89,7 +89,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []storage.ListBucketsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListBucketsQueries(queries))
 			}
 			if cmd.Flags().Changed("search") {
@@ -401,7 +401,7 @@ func newStorageListFilesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []storage.ListFilesOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListFilesQueries(queries))
 			}
 			if cmd.Flags().Changed("search") {

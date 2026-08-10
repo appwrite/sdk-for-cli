@@ -102,7 +102,7 @@ func newFunctionsListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []functions.ListOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
 			}
 			if cmd.Flags().Changed("search") {
@@ -608,7 +608,7 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []functions.ListDeploymentsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListDeploymentsQueries(queries))
 			}
 			if cmd.Flags().Changed("search") {
@@ -1028,7 +1028,7 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []functions.ListExecutionsOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListExecutionsQueries(queries))
 			}
 			if cmd.Flags().Changed("total") {
@@ -1240,7 +1240,7 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value: the
 			// TypeScript passes undefined and the SDK drops it.
 			options := []functions.ListVariablesOption{}
-			if cmd.Flags().Changed("queries") {
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListVariablesQueries(queries))
 			}
 			if cmd.Flags().Changed("total") {
