@@ -15,6 +15,10 @@ func NewAppsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "apps",
 		Short: "The Apps service allows you to manage OAuth2 applications, their keys, secrets, scopes, and installations.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newAppsListCommand())
@@ -58,6 +62,7 @@ func newAppsListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List applications.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -146,6 +151,7 @@ func newAppsCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new application.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -246,6 +252,7 @@ func newAppsListInstallationScopesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-installation-scopes",
 		Short: "List scopes an application can request when installed on a team.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -270,6 +277,7 @@ func newAppsListOAuth2ScopesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-o-auth-2-scopes",
 		Short: "List scopes an application can request during the OAuth2 flow.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -295,6 +303,7 @@ func newAppsGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get an application by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -341,6 +350,7 @@ func newAppsUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update an application by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -448,6 +458,7 @@ func newAppsDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete an application by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -485,6 +496,7 @@ func newAppsListInstallationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-installations",
 		Short: "List installations of an application. Requires an app key sent in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header, or a caller with update access to the app.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -558,6 +570,7 @@ func newAppsGetInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-installation",
 		Short: "Get an installation of an application by its unique ID. Requires an app key sent in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header, or a caller with update access to the app.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -588,6 +601,7 @@ func newAppsDeleteInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-installation",
 		Short: "Delete an installation of an application by its unique ID. Requires a caller with update access to the app. Previously issued installation access tokens are revoked.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -618,6 +632,7 @@ func newAppsCreateInstallationTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-installation-token",
 		Short: "Create a token for an installation of an application. Requires an app key sent in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header, or a caller with update access to the app. The returned token carries the scopes and authorization details granted to the installation, and can be used as an `Authorization: Bearer` header everywhere OAuth2 access tokens are accepted. Multiple tokens can be active for the same installation at once; each token stays valid until it expires or the installation is updated or deleted.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -657,6 +672,7 @@ func newAppsListKeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-keys",
 		Short: "List app keys for an application.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -729,6 +745,7 @@ func newAppsCreateKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-key",
 		Short: "Create a new app key for an application. App keys carry no scopes; send one in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header to list the application's installations and create installation access tokens.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -757,6 +774,7 @@ func newAppsGetKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-key",
 		Short: "Get an app key by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -787,6 +805,7 @@ func newAppsDeleteKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-key",
 		Short: "Delete an app key by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -817,6 +836,7 @@ func newAppsUpdateLabelsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-labels",
 		Short: "Update the labels of an application. Labels are read-only for clients; only a server SDK using a project API key can set them. Replaces the previous labels.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -856,6 +876,7 @@ func newAppsListSecretsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-secrets",
 		Short: "List client secrets for an application.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -928,6 +949,7 @@ func newAppsCreateSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-secret",
 		Short: "Create a new client secret for an application.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -956,6 +978,7 @@ func newAppsGetSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-secret",
 		Short: "Get an application client secret by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -986,6 +1009,7 @@ func newAppsDeleteSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-secret",
 		Short: "Delete an application client secret by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1016,6 +1040,7 @@ func newAppsUpdateTeamCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-team",
 		Short: "Transfer an application to another team by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1045,6 +1070,7 @@ func newAppsDeleteTokensCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-tokens",
 		Short: "Revoke all tokens for an application by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

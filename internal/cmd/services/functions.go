@@ -15,6 +15,10 @@ func NewFunctionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "functions",
 		Short: "The Functions Service allows you view, create and manage your Cloud Functions.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newFunctionsListCommand())
@@ -63,6 +67,7 @@ func newFunctionsListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all the project's functions. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -158,6 +163,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new function. You can pass a list of permissions (https://appwrite.io/docs/permissions) to allow different project users or team with access to execute the function using the client API.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -271,6 +277,7 @@ func newFunctionsListRuntimesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-runtimes",
 		Short: "Get a list of all runtimes that are currently active on your instance.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -296,6 +303,7 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
 		Short: "List allowed function specifications for this instance.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -329,6 +337,7 @@ func newFunctionsGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a function by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -377,6 +386,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update function by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -493,6 +503,7 @@ func newFunctionsDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a function by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -521,6 +532,7 @@ func newFunctionsUpdateFunctionDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-function-deployment",
 		Short: "Update the function active deployment. Use this endpoint to switch the code deployment that should be used when visitor opens your function.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -561,6 +573,7 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-deployments",
 		Short: "Get a list of all the function's code deployments. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -641,6 +654,7 @@ func newFunctionsCreateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-deployment",
 		Short: "Create a new function code deployment. Use this endpoint to upload a new version of your code function. To execute your newly uploaded code, you'll need to update the function's deployment to use your new deployment UID.\n\nThis endpoint accepts a tar.gz file compressed with your code. Make sure to include any dependencies your code has within the compressed file. You can learn more about code packaging in the Appwrite Cloud Functions tutorial (https://appwrite.io/docs/functions).\n\nUse the \"command\" param to set the entrypoint used to execute your code.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -691,6 +705,7 @@ func newFunctionsCreateDuplicateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-duplicate-deployment",
 		Short: "Create a new build for an existing function deployment. This endpoint allows you to rebuild a deployment with the updated function configuration, including its entrypoint and build commands if they have been modified. The build process will be queued and executed asynchronously. The original deployment's code will be preserved and used for the new build.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -734,6 +749,7 @@ func newFunctionsCreateTemplateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-template-deployment",
 		Short: "Create a deployment based on a template.\n\nUse this endpoint with combination of listTemplates (https://appwrite.io/docs/products/functions/templates) to find the template details.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -783,6 +799,7 @@ func newFunctionsCreateVcsDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-vcs-deployment",
 		Short: "Create a deployment when a function is connected to VCS.\n\nThis endpoint lets you create deployment from a branch, commit, or a tag.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -824,6 +841,7 @@ func newFunctionsGetDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-deployment",
 		Short: "Get a function deployment by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -854,6 +872,7 @@ func newFunctionsDeleteDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-deployment",
 		Short: "Delete a code deployment by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -887,6 +906,7 @@ func newFunctionsGetDeploymentDownloadCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-deployment-download",
 		Short: "Get a function deployment content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -933,6 +953,7 @@ func newFunctionsUpdateDeploymentStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deployment-status",
 		Short: "Cancel an ongoing function deployment build. If the build is already in progress, it will be stopped and marked as canceled. If the build hasn't started yet, it will be marked as canceled without executing. You cannot cancel builds that have already completed (status 'ready') or failed. The response includes the final build status and details.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -972,6 +993,7 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-executions",
 		Short: "Get a list of all the current user function execution logs. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1050,6 +1072,7 @@ func newFunctionsCreateExecutionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-execution",
 		Short: "Trigger a function execution. The returned object will return you the current execution status. You can ping the `Get Execution` endpoint to get updates on the current execution status. Once this endpoint is called, your function execution process will start asynchronously.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1111,6 +1134,7 @@ func newFunctionsGetExecutionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-execution",
 		Short: "Get a function execution log by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1141,6 +1165,7 @@ func newFunctionsDeleteExecutionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-execution",
 		Short: "Delete a function execution by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1180,6 +1205,7 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-variables",
 		Short: "Get a list of all variables of a specific function.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1256,6 +1282,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-variable",
 		Short: "Create a new function environment variable. These variables can be accessed in the function at runtime as environment variables.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1299,6 +1326,7 @@ func newFunctionsGetVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-variable",
 		Short: "Get a variable by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1332,6 +1360,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-variable",
 		Short: "Update variable by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1379,6 +1408,7 @@ func newFunctionsDeleteVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-variable",
 		Short: "Delete a variable by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

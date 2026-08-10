@@ -15,6 +15,10 @@ func NewWebhooksCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "webhooks",
 		Short: "The Webhooks service allows you to manage your project webhooks.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newWebhooksListCommand())
@@ -42,6 +46,7 @@ func newWebhooksListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all webhooks belonging to the project. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -120,6 +125,7 @@ func newWebhooksCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new webhook. Use this endpoint to configure a URL that will receive events from Appwrite when specific events occur.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -179,6 +185,7 @@ func newWebhooksGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a webhook by its unique ID. This endpoint returns details about a specific webhook configured for a project. ",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -213,6 +220,7 @@ func newWebhooksUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a webhook by its unique ID. Use this endpoint to update the URL, events, or status of an existing webhook.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -268,6 +276,7 @@ func newWebhooksDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a webhook by its unique ID. Once deleted, the webhook will no longer receive project events. ",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -296,6 +305,7 @@ func newWebhooksUpdateSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-secret",
 		Short: "Update the webhook signing key. This endpoint can be used to regenerate the signing key used to sign and validate payload deliveries for a specific webhook.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

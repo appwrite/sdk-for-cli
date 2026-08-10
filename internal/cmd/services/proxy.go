@@ -15,6 +15,10 @@ func NewProxyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "proxy",
 		Short: "The Proxy Service allows you to configure actions for your domains beyond DNS configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newProxyCreateInvalidationCommand())
@@ -38,6 +42,7 @@ func newProxyCreateInvalidationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-invalidation",
 		Short: "Create a new CDN cache invalidation for a domain. Executes a hard purge of cached content.\n\nDepending on type, the invalidation purges a single cache tag, a single URL path, or all cached content for the domain.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -84,6 +89,7 @@ func newProxyListRulesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-rules",
 		Short: "Get a list of all the proxy rules. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -154,6 +160,7 @@ func newProxyCreateAPIRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-api-rule",
 		Short: "Create a new proxy rule for serving Appwrite's API on custom domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -183,6 +190,7 @@ func newProxyCreateFunctionRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-function-rule",
 		Short: "Create a new proxy rule for executing Appwrite Function on custom domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -224,6 +232,7 @@ func newProxyCreateRedirectRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-redirect-rule",
 		Short: "Create a new proxy rule for to redirect from custom domain to another domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -261,6 +270,7 @@ func newProxyCreateSiteRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-site-rule",
 		Short: "Create a new proxy rule for serving Appwrite Site on custom domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -298,6 +308,7 @@ func newProxyGetRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-rule",
 		Short: "Get a proxy rule by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -325,6 +336,7 @@ func newProxyDeleteRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-rule",
 		Short: "Delete a proxy rule by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -352,6 +364,7 @@ func newProxyUpdateRuleStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-rule-status",
 		Short: "If not succeeded yet, retry verification process of a proxy rule domain. This endpoint triggers domain verification by checking DNS records. If verification is successful, a TLS certificate will be automatically provisioned for the domain asynchronously in the background.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

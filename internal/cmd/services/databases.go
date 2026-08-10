@@ -15,6 +15,10 @@ func NewDatabasesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "databases",
 		Short: "The Databases service allows you to create structured collections of documents, query and filter lists of documents",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newDatabasesListCommand())
@@ -108,6 +112,7 @@ func newDatabasesListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -184,6 +189,7 @@ func newDatabasesCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new Database.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -230,6 +236,7 @@ func newDatabasesListTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-transactions",
 		Short: "List transactions across all databases.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -295,6 +302,7 @@ func newDatabasesCreateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-transaction",
 		Short: "Create a new transaction.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -328,6 +336,7 @@ func newDatabasesGetTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-transaction",
 		Short: "Get a transaction by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -357,6 +366,7 @@ func newDatabasesUpdateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-transaction",
 		Short: "Update a transaction, to either commit or roll back its operations.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -398,6 +408,7 @@ func newDatabasesDeleteTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-transaction",
 		Short: "Delete a transaction by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -426,6 +437,7 @@ func newDatabasesCreateOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-operations",
 		Short: "Create multiple operations in a single transaction.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -465,6 +477,7 @@ func newDatabasesGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -494,6 +507,7 @@ func newDatabasesUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a database by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -534,6 +548,7 @@ func newDatabasesDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -572,6 +587,7 @@ func newDatabasesListCollectionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-collections",
 		Short: "Get a list of all collections that belong to the provided databaseId. You can use the search parameter to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -655,6 +671,7 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-collection",
 		Short: "Create a new Collection. Before using this route, you should create a new database resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -721,6 +738,7 @@ func newDatabasesGetCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-collection",
 		Short: "Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -756,6 +774,7 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-collection",
 		Short: "Update a collection by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -813,6 +832,7 @@ func newDatabasesDeleteCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-collection",
 		Short: "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -853,6 +873,7 @@ func newDatabasesListAttributesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-attributes",
 		Short: "List attributes in the collection.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -934,6 +955,7 @@ func newDatabasesCreateBigIntAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-big-int-attribute",
 		Short: "Create a bigint attribute. Optionally, minimum and maximum values can be provided.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -995,6 +1017,7 @@ func newDatabasesUpdateBigIntAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-big-int-attribute",
 		Short: "Update a bigint attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1051,6 +1074,7 @@ func newDatabasesCreateBooleanAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-boolean-attribute",
 		Short: "Create a boolean attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1103,6 +1127,7 @@ func newDatabasesUpdateBooleanAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-boolean-attribute",
 		Short: "Update a boolean attribute. Changing the `default` value will not update already existing documents.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1151,6 +1176,7 @@ func newDatabasesCreateDatetimeAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-datetime-attribute",
 		Short: "Create a date time attribute according to the ISO 8601 standard.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1202,6 +1228,7 @@ func newDatabasesUpdateDatetimeAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-datetime-attribute",
 		Short: "Update a date time attribute. Changing the `default` value will not update already existing documents.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1250,6 +1277,7 @@ func newDatabasesCreateEmailAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-attribute",
 		Short: "Create an email attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1301,6 +1329,7 @@ func newDatabasesUpdateEmailAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-attribute",
 		Short: "Update an email attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1350,6 +1379,7 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-enum-attribute",
 		Short: "Create an enum attribute. The `elements` param acts as a white-list of accepted values for this attribute. \n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1404,6 +1434,7 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-enum-attribute",
 		Short: "Update an enum attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1456,6 +1487,7 @@ func newDatabasesCreateFloatAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-float-attribute",
 		Short: "Create a float attribute. Optionally, minimum and maximum values can be provided.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1517,6 +1549,7 @@ func newDatabasesUpdateFloatAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-float-attribute",
 		Short: "Update a float attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1575,6 +1608,7 @@ func newDatabasesCreateIntegerAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-integer-attribute",
 		Short: "Create an integer attribute. Optionally, minimum and maximum values can be provided.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1636,6 +1670,7 @@ func newDatabasesUpdateIntegerAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-integer-attribute",
 		Short: "Update an integer attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1692,6 +1727,7 @@ func newDatabasesCreateIpAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ip-attribute",
 		Short: "Create IP address attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1743,6 +1779,7 @@ func newDatabasesUpdateIpAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-ip-attribute",
 		Short: "Update an ip attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1790,6 +1827,7 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-line-attribute",
 		Short: "Create a geometric line attribute.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1840,6 +1878,7 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-line-attribute",
 		Short: "Update a line attribute. Changing the `default` value will not update already existing documents.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1895,6 +1934,7 @@ func newDatabasesCreateLongtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-longtext-attribute",
 		Short: "Create a longtext attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1951,6 +1991,7 @@ func newDatabasesUpdateLongtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-longtext-attribute",
 		Short: "Update a longtext attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2000,6 +2041,7 @@ func newDatabasesCreateMediumtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mediumtext-attribute",
 		Short: "Create a mediumtext attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2056,6 +2098,7 @@ func newDatabasesUpdateMediumtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mediumtext-attribute",
 		Short: "Update a mediumtext attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2103,6 +2146,7 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-point-attribute",
 		Short: "Create a geometric point attribute.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2153,6 +2197,7 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-point-attribute",
 		Short: "Update a point attribute. Changing the `default` value will not update already existing documents.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2206,6 +2251,7 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-polygon-attribute",
 		Short: "Create a geometric polygon attribute.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2256,6 +2302,7 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-polygon-attribute",
 		Short: "Update a polygon attribute. Changing the `default` value will not update already existing documents.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2312,6 +2359,7 @@ func newDatabasesCreateRelationshipAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-relationship-attribute",
 		Short: "Create relationship attribute. Learn more about relationship attributes (https://appwrite.io/docs/databases-relationships#relationship-attributes).\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2370,6 +2418,7 @@ func newDatabasesUpdateRelationshipAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-relationship-attribute",
 		Short: "Update relationship attribute. Learn more about relationship attributes (https://appwrite.io/docs/databases-relationships#relationship-attributes).\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2420,6 +2469,7 @@ func newDatabasesCreateStringAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-string-attribute",
 		Short: "Create a string attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2479,6 +2529,7 @@ func newDatabasesUpdateStringAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-string-attribute",
 		Short: "Update a string attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2532,6 +2583,7 @@ func newDatabasesCreateTextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-text-attribute",
 		Short: "Create a text attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2588,6 +2640,7 @@ func newDatabasesUpdateTextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-text-attribute",
 		Short: "Update a text attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2636,6 +2689,7 @@ func newDatabasesCreateUrlAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-url-attribute",
 		Short: "Create a URL attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2687,6 +2741,7 @@ func newDatabasesUpdateUrlAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-url-attribute",
 		Short: "Update an url attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2737,6 +2792,7 @@ func newDatabasesCreateVarcharAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-varchar-attribute",
 		Short: "Create a varchar attribute.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2796,6 +2852,7 @@ func newDatabasesUpdateVarcharAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-varchar-attribute",
 		Short: "Update a varchar attribute. Changing the `default` value will not update already existing documents.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2845,6 +2902,7 @@ func newDatabasesGetAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-attribute",
 		Short: "Get attribute by ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2878,6 +2936,7 @@ func newDatabasesDeleteAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-attribute",
 		Short: "Deletes an attribute.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2923,6 +2982,7 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-documents",
 		Short: "Get a list of all the user's documents in a given collection. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3012,6 +3072,7 @@ func newDatabasesCreateDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-document",
 		Short: "Create a new Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3064,6 +3125,7 @@ func newDatabasesCreateDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-documents",
 		Short: "Create new Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3110,6 +3172,7 @@ func newDatabasesUpsertDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-documents",
 		Short: "Create or update Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3165,6 +3228,7 @@ func newDatabasesUpdateDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-documents",
 		Short: "Update all documents that match your queries, if no queries are submitted then all documents are updated. You can pass only specific fields to be updated.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3257,6 +3321,7 @@ func newDatabasesDeleteDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-documents",
 		Short: "Bulk delete documents using queries, if no queries are passed then all documents are deleted.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3335,6 +3400,7 @@ func newDatabasesGetDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-document",
 		Short: "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3392,6 +3458,7 @@ func newDatabasesUpsertDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-document",
 		Short: "Create or update a Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3448,6 +3515,7 @@ func newDatabasesUpdateDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-document",
 		Short: "Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3502,6 +3570,7 @@ func newDatabasesDeleteDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-document",
 		Short: "Delete a document by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3547,6 +3616,7 @@ func newDatabasesDecrementDocumentAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "decrement-document-attribute",
 		Short: "Decrement a specific attribute of a document by a given value.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3602,6 +3672,7 @@ func newDatabasesIncrementDocumentAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "increment-document-attribute",
 		Short: "Increment a specific attribute of a document by a given value.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3662,6 +3733,7 @@ func newDatabasesListIndexesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-indexes",
 		Short: "List indexes in the collection.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3742,6 +3814,7 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-index",
 		Short: "Creates an index on the attributes listed. Your index should include all the attributes you will query in a single request.\nAttributes can be `key`, `fulltext`, and `unique`.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3795,6 +3868,7 @@ func newDatabasesGetIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-index",
 		Short: "Get an index by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3828,6 +3902,7 @@ func newDatabasesDeleteIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-index",
 		Short: "Delete an index.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

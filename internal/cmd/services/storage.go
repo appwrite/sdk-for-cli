@@ -15,6 +15,10 @@ func NewStorageCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "storage",
 		Short: "The Storage service allows you to manage your project files.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newStorageListBucketsCommand())
@@ -50,6 +54,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-buckets",
 		Short: "Get a list of all the storage buckets. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -134,6 +139,7 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-bucket",
 		Short: "Create a new storage bucket.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -208,6 +214,7 @@ func newStorageGetBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-bucket",
 		Short: "Get a storage bucket by its unique ID. This endpoint response returns a JSON object with the storage bucket metadata.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -245,6 +252,7 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-bucket",
 		Short: "Update a storage bucket by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -319,6 +327,7 @@ func newStorageDeleteBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-bucket",
 		Short: "Delete a storage bucket by its unique ID.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -357,6 +366,7 @@ func newStorageListFilesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-files",
 		Short: "Get a list of all the user files. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -437,6 +447,7 @@ func newStorageCreateFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-file",
 		Short: "Create a new file. Before using this route, you should create a new bucket resource using either a server integration (https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.\n\nLarger files should be uploaded using multiple requests with the content-range (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of `5MB`. The `content-range` header values should always be in bytes.\n\nWhen the first request is sent, the server will return the File object, and the subsequent part request must include the file's id in `x-appwrite-id` header to allow the server to know that the partial upload is for the existing file and not for a new one.\n\nIf you're creating a new file using one of the Appwrite SDKs, all the chunking logic will be managed by the SDK internally.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -485,6 +496,7 @@ func newStorageGetFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file",
 		Short: "Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -517,6 +529,7 @@ func newStorageUpdateFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-file",
 		Short: "Update a file by its unique ID. Only users with write permissions have access to update this resource.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -559,6 +572,7 @@ func newStorageDeleteFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-file",
 		Short: "Delete a file by its unique ID. Only users with write permissions have access to delete this resource.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -591,6 +605,7 @@ func newStorageGetFileDownloadCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file-download",
 		Short: "Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -646,6 +661,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file-preview",
 		Short: "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -734,6 +750,7 @@ func newStorageGetFileViewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file-view",
 		Short: "Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

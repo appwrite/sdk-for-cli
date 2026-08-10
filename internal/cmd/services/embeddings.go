@@ -14,6 +14,10 @@ func NewEmbeddingsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "embeddings",
 		Short: "",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newEmbeddingsCreateTextEmbeddingsCommand())
@@ -28,6 +32,7 @@ func newEmbeddingsCreateTextEmbeddingsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-text-embeddings",
 		Short: "Generate vector embeddings for an array of text using the selected embedding model. Use the returned vectors to power semantic search and similarity queries against your vector collections.\n",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

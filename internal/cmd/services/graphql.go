@@ -14,6 +14,10 @@ func NewGraphqlCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "graphql",
 		Short: "The GraphQL API allows you to query and mutate your Appwrite server using GraphQL.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return cmd.Help()
+		},
 	}
 
 	cmd.AddCommand(newGraphqlQueryCommand())
@@ -28,6 +32,7 @@ func newGraphqlQueryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",
 		Short: "Execute a GraphQL query.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -59,6 +64,7 @@ func newGraphqlMutationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "mutation",
 		Short: "Execute a GraphQL mutation.",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
