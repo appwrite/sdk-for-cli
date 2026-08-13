@@ -101,6 +101,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateDenyDisposableEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateDenyFreeEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateMembershipPrivacyPolicyCommand())
+	cmd.AddCommand(newProjectUpdateMFAFactorsPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordDictionaryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordHistoryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordPersonalDataPolicyCommand())
@@ -761,6 +762,7 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 	var userCodeFormat string
 	var deviceCodeDuration int
 	var defaultScopes []string
+	var installationScopes []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -816,6 +818,9 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 			if cmd.Flags().Changed("default-scopes") {
 				options = append(options, service.WithUpdateOAuth2ServerDefaultScopes(defaultScopes))
 			}
+			if cmd.Flags().Changed("installation-scopes") {
+				options = append(options, service.WithUpdateOAuth2ServerInstallationScopes(installationScopes))
+			}
 
 			result, err := service.UpdateOAuth2Server(enabled, authorizationUrl, options...)
 			if err != nil {
@@ -844,6 +849,7 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 	cmd.Flags().StringVar(&userCodeFormat, "user-code-format", "", "Character set for device flow user codes: `numeric` (digits only — best for numeric keypads and TV remotes), `alphabetic` (letters only), or `alphanumeric` (letters and digits — highest entropy per character). Defaults to `alphanumeric`.")
 	cmd.Flags().IntVar(&deviceCodeDuration, "device-code-duration", 0, "Lifetime in seconds of device flow device codes and user codes. Device codes are intentionally short-lived. Leave empty to use default 600.")
 	cmd.Flags().StringArrayVar(&defaultScopes, "default-scopes", nil, "List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long.")
+	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "List of scopes an application may request when installed on a team. Omitting the parameter clears the list, so no installation scopes can be granted. Maximum of 100 scopes are allowed, each up to 128 characters long.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3733,6 +3739,61 @@ func newProjectUpdateMembershipPrivacyPolicyCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateMFAFactorsPolicyCommand() *cobra.Command {
+	var totp bool
+	var email bool
+	var phone bool
+	var custom bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-mfa-factors-policy",
+		Short: "Updating this policy allows you to control which factors users can use to complete an MFA challenge. Disabled factors cannot be used to create a challenge and are reported as unavailable when listing factors. The custom factor is disabled by default; enable it to deliver challenge codes through your own channel. Recovery codes always remain available as a fallback.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value: the
+			// TypeScript passes undefined and the SDK drops it.
+			options := []project.UpdateMFAFactorsPolicyOption{}
+			if cmd.Flags().Changed("totp") {
+				options = append(options, service.WithUpdateMFAFactorsPolicyTotp(totp))
+			}
+			if cmd.Flags().Changed("email") {
+				options = append(options, service.WithUpdateMFAFactorsPolicyEmail(email))
+			}
+			if cmd.Flags().Changed("phone") {
+				options = append(options, service.WithUpdateMFAFactorsPolicyPhone(phone))
+			}
+			if cmd.Flags().Changed("custom") {
+				options = append(options, service.WithUpdateMFAFactorsPolicyCustom(custom))
+			}
+
+			result, err := service.UpdateMFAFactorsPolicy(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().BoolVar(&totp, "totp", false, "Set to true to allow TOTP to complete an MFA challenge, or false to disable it.")
+	cmd.Flags().Lookup("totp").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&email, "email", false, "Set to true to allow email to complete an MFA challenge, or false to disable it.")
+	cmd.Flags().Lookup("email").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&phone, "phone", false, "Set to true to allow phone (SMS) to complete an MFA challenge, or false to disable it.")
+	cmd.Flags().Lookup("phone").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&custom, "custom", false, "Set to true to allow the custom factor to complete an MFA challenge, or false to disable it.")
+	cmd.Flags().Lookup("custom").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 	var enabled bool
 	var projectId string
@@ -4057,7 +4118,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.")
+	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd

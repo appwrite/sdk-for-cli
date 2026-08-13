@@ -35,6 +35,7 @@ func NewTablesDBCommand() *cobra.Command {
 	cmd.AddCommand(newTablesDBUpdateCommand())
 	cmd.AddCommand(newTablesDBDeleteCommand())
 	cmd.AddCommand(newTablesDBCreateFailoverCommand())
+	cmd.AddCommand(newTablesDBCutoverMigrationCommand())
 	cmd.AddCommand(newTablesDBListOperationsCommand())
 	cmd.AddCommand(newTablesDBGetReplicasCommand())
 	cmd.AddCommand(newTablesDBGetStatusCommand())
@@ -668,6 +669,37 @@ func newTablesDBCreateFailoverCommand() *cobra.Command {
 	return cmd
 }
 
+func newTablesDBCutoverMigrationCommand() *cobra.Command {
+	var databaseId string
+	var migrationId string
+
+	cmd := &cobra.Command{
+		Use:   "cutover-migration",
+		Short: "Cut a verified TablesDB migration over to its dedicated compute. Only applies to a migration created with `autoCutover` disabled, which waits at `ready_to_cutover` until this is called. The routing flip happens shortly after this returns, with a brief read-only window. One call buys one attempt: a cutover that fails a check returns the migration to `verifying` and parks it again, so call this once more to retry.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := tablesdb.New(client)
+
+			result, err := service.CutoverMigration(databaseId, migrationId)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration ID.")
+	_ = cmd.MarkFlagRequired("migration-id")
+	return cmd
+}
+
 func newTablesDBListOperationsCommand() *cobra.Command {
 	var databaseId string
 	var status string
@@ -927,7 +959,7 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 	cmd.Flags().Lookup("row-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is table enabled? When set to 'disabled', users cannot access the table but Server SDKs with and API key can still read and write to the table. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of column definitions to create. Each column should contain: key (string), type (string: string, integer, float, boolean, datetime, relationship), size (integer, required for string type), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
+	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of column definitions to create. Each column should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
 	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial), attributes (array of column keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
 	return cmd
 }
@@ -2599,13 +2631,13 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&relatedTableId, "related-table-id", "", "Related Table ID.")
 	_ = cmd.MarkFlagRequired("related-table-id")
-	cmd.Flags().StringVar(&typeArg, "type", "", "Relation type")
+	cmd.Flags().StringVar(&typeArg, "type", "", "Relationship type. Possible values are: oneToOne, oneToMany, manyToOne, manyToMany.")
 	_ = cmd.MarkFlagRequired("type")
 	cmd.Flags().BoolVar(&twoWay, "two-way", false, "Is Two Way?")
 	cmd.Flags().Lookup("two-way").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
 	cmd.Flags().StringVar(&twoWayKey, "two-way-key", "", "Two Way Column Key.")
-	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Constraints option")
+	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
 	return cmd
 }
 
@@ -3158,7 +3190,7 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
 	_ = cmd.MarkFlagRequired("key")
-	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Constraints option")
+	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
 	return cmd
 }
