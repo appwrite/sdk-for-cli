@@ -320,7 +320,7 @@ func newAppsGetCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID or HTTPS client ID metadata document URL.")
+	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
 	return cmd
 }
@@ -447,7 +447,7 @@ func newAppsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&typeArg, "type", "", "OAuth2 client type. Use `public` for SPAs, mobile, and native apps that cannot keep a `client_secret` — PKCE is then required at the token endpoint. Use `confidential` for server-side clients that present a `client_secret`. Defaults to `confidential`.")
 	cmd.Flags().BoolVar(&deviceFlow, "device-flow", false, "Allow this client to use the OAuth2 Device Authorization Grant (RFC 8628) for input-constrained devices such as TVs and CLIs. Defaults to false.")
 	cmd.Flags().Lookup("device-flow").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "Scopes the application requests when installed on a team. Organization-level and project-level scopes only; use the list scopes endpoint with `type=installation` to discover available values. Maximum of 100 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "Scopes the application requests when installed on a team. Only scopes allowed by the project's OAuth2 server installation scopes configuration are accepted; use the list installation scopes endpoint to discover available values. Maximum of 100 scopes are allowed.")
 	cmd.Flags().StringVar(&installationRedirectUrl, "installation-redirect-url", "", "URL users are redirected to after creating or updating an installation of this application. Must be an https URL, an http loopback URL (localhost, 127.0.0.1, [::1]), or a private-use scheme URI, and must not contain a fragment. Leave empty for no redirect.")
 	return cmd
 }

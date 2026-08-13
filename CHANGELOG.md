@@ -1,5 +1,17 @@
 # Change Log
 
+## 26.1.0
+
+* Added: `project update-mfa-factors-policy` controls which factors can complete an MFA challenge
+* Added: `tablesdb cutover-migration` cuts a verified migration over to its dedicated compute
+* Added: `--installation-scopes` on `project update-o-auth-2-server`
+* Fixed: `--json` and `--raw` keep GraphQL responses whole instead of flattening the envelope away
+* Fixed: `push` rejects variable keys the API will not accept before deleting the remote set
+* Fixed: `run` reports a function ready without invoking it first
+* Updated: `login` defaults to production Cloud rather than whichever endpoint is current
+* Updated: `login` and `logout` name the account and endpoint they acted on
+* Updated: Help text lists the accepted column types, relationship types, and delete constraints
+
 ## 26.0.0
 
 The CLI is now a single Go binary. Day-to-day usage carries over, with no runtime to install and nothing downloaded on first run.
