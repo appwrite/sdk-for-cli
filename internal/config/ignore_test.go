@@ -11,7 +11,7 @@ import (
 //	json: cannot unmarshal array into Go struct field Function.ignore of type string
 //
 // against a config this CLI's own `init function` had written. The field was
-// typed as a string while both CLIs write an array, and a decode error there
+// typed as a string while all CLI builds write an array, and a decode error there
 // takes out the whole command, not just the field.
 func TestFunctionIgnoreAcceptsAnArray(t *testing.T) {
 	raw := `{
@@ -33,8 +33,7 @@ func TestFunctionIgnoreAcceptsAnArray(t *testing.T) {
 }
 
 // The schema documents a single newline-separated string, and a hand-written
-// config may still use it. The TypeScript accepts both because
-// `ignore().add()` does.
+// config may still use it. Both shapes are accepted.
 func TestFunctionIgnoreAcceptsAString(t *testing.T) {
 	raw := `{"$id": "fn", "ignore": "node_modules\n.npm\n\n  vendor  "}`
 

@@ -3,6 +3,7 @@ package output
 import (
 	"fmt"
 	"io"
+	"sync"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -19,6 +20,31 @@ var (
 	traceStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
 )
 
+// synchronizedWriter serializes whole writes to an underlying writer.
+type synchronizedWriter struct {
+	writer io.Writer
+	mutex  sync.Mutex
+}
+
+func (w *synchronizedWriter) Write(contents []byte) (int, error) {
+	w.mutex.Lock()
+	defer w.mutex.Unlock()
+
+	return w.writer.Write(contents)
+}
+
+// Synchronized returns a writer safe for concurrent status and build-log
+// lines. It intentionally hides whether the underlying writer is a terminal:
+// independent one-row spinners would otherwise redraw over each other, so a
+// parallel push falls back to plain progress lines.
+func Synchronized(writer io.Writer) io.Writer {
+	if _, ok := writer.(*synchronizedWriter); ok {
+		return writer
+	}
+
+	return &synchronizedWriter{writer: writer}
+}
+
 // Log writes an informational line.
 func Log(writer io.Writer, format string, arguments ...any) {
 	writeMessage(writer, infoStyle, "ℹ Info:", format, arguments...)
@@ -31,9 +57,9 @@ func Warn(writer io.Writer, format string, arguments ...any) {
 
 // Hint writes a suggested next command.
 //
-// Distinct from Log because it is advice rather than status: the TypeScript
-// gives it its own prefix and colour so a user who just saw "No buckets found."
-// can tell the follow-up apart from the report.
+// Distinct from Log because it is advice rather than status: its own prefix and
+// colour let a user who just saw "No buckets found." tell the follow-up apart
+// from the report.
 func Hint(writer io.Writer, format string, arguments ...any) {
 	writeMessage(writer, infoStyle, "♥ Hint:", format, arguments...)
 }
@@ -64,9 +90,9 @@ func Note(writer io.Writer, format string, arguments ...any) {
 
 // Heading styles a label that introduces a block rather than a line.
 //
-// Cyan and bold, which is `chalk.cyan.bold` in the TypeScript. Returned rather
-// than written because the caller decides the blank lines around it -- a
-// heading with nothing under it is worse than no heading.
+// Cyan and bold. Returned rather than written because the caller decides the
+// blank lines around it -- a heading with nothing under it is worse than no
+// heading.
 func Heading(text string) string {
 	return infoStyle.Bold(true).Render(text)
 }

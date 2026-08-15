@@ -14,8 +14,7 @@ import (
 // HiddenValue replaces a redacted value.
 const HiddenValue = "[hidden]"
 
-// sensitiveKeys is matched against a normalised key. Ports SENSITIVE_KEYS at
-// templates/cli/lib/parser.ts:54 -- keep in the same order for reviewability.
+// sensitiveKeys is matched against a normalised key.
 var sensitiveKeys = []string{
 	"secret",
 	"apikey",

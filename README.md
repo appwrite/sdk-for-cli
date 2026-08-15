@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-26.1.0
+27.0.0
 ```
 
 ### Install using prebuilt binaries
@@ -83,7 +83,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-26.1.0
+27.0.0
 ```
 
 ## Getting Started 
@@ -286,13 +286,13 @@ $ cd sdk-generator
 ```sh 
 $ docker run --rm --interactive --tty --volume "$(pwd)":/app composer install --ignore-platform-reqs --optimize-autoloader --no-plugins --no-scripts --prefer-dist
 
-# Generate the SDKs
-$ docker run --rm -v $(pwd):/app -w /app php:8.1-cli php example.php
+# Generate the CLI
+$ docker run --rm -v $(pwd):/app -w /app php:8.5-cli php example.php cli
 ```
 
 3. Head over to the generated SDK and build it.
 ```sh
-$ cd examples/go-cli
+$ cd examples/cli
 $ go mod tidy
 $ go build -ldflags="-s -w" -o appwrite .
 ```

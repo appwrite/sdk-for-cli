@@ -6,7 +6,7 @@ import (
 	"os"
 	"runtime"
 
-	sdkclient "github.com/appwrite/sdk-for-go/v6/client"
+	sdkclient "github.com/appwrite/sdk-for-go/v7/client"
 
 	"github.com/appwrite/sdk-for-cli/internal/auth"
 	internalclient "github.com/appwrite/sdk-for-cli/internal/client"
@@ -44,8 +44,7 @@ func Load(executableName, sdkVersion string) (*Context, error) {
 // identifying headers.
 //
 // The SDK stamps its own x-sdk-* headers; they are overwritten here so requests
-// are attributed to the CLI rather than to the SDK, matching what the
-// TypeScript CLI sends.
+// are attributed to the CLI rather than to the SDK.
 func (c *Context) base(endpoint string) sdkclient.Client {
 	client := sdkclient.New()
 	client.Endpoint = endpoint
@@ -74,7 +73,7 @@ func (c *Context) base(endpoint string) sdkclient.Client {
 // allowAPIKey distinguishes the two callers. A project call accepts an API key
 // -- that is how CI authenticates, via `appwrite client --key`. A console call
 // does not: an API key is scoped to one project and the console endpoints are
-// not, which is why the TypeScript's message for that case says so explicitly.
+// not, which is why the message for that case says so explicitly.
 // The mode header is set only for a PROJECT call. `X-Appwrite-Mode: admin` on
 // a console request is rejected outright -- "Admin mode is not allowed for
 // console project" -- so the two paths cannot share it, which an earlier
@@ -165,7 +164,7 @@ func (c *Context) endpoint() (string, error) {
 
 // projectEndpoint returns the endpoint a PROJECT-scoped call should use.
 //
-// Ports the `localConfig.getEndpoint() || globalConfig.getEndpoint() ||
+// Implements the `localConfig.getEndpoint() || globalConfig.getEndpoint() ||
 // DEFAULT_ENDPOINT` chain in sdkForProject(). This is not the same as
 // endpoint(): a repository pinned to a self-hosted instance must not be pushed
 // to whichever endpoint the user last logged into.

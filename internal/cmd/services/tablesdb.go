@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/tablesdb"
+	"github.com/appwrite/sdk-for-go/v7/tablesdb"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -35,6 +35,10 @@ func NewTablesDBCommand() *cobra.Command {
 	cmd.AddCommand(newTablesDBUpdateCommand())
 	cmd.AddCommand(newTablesDBDeleteCommand())
 	cmd.AddCommand(newTablesDBCreateFailoverCommand())
+	cmd.AddCommand(newTablesDBListMigrationsCommand())
+	cmd.AddCommand(newTablesDBCreateMigrationCommand())
+	cmd.AddCommand(newTablesDBGetMigrationCommand())
+	cmd.AddCommand(newTablesDBDeleteMigrationCommand())
 	cmd.AddCommand(newTablesDBCutoverMigrationCommand())
 	cmd.AddCommand(newTablesDBListOperationsCommand())
 	cmd.AddCommand(newTablesDBGetReplicasCommand())
@@ -151,8 +155,7 @@ func newTablesDBListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -207,8 +210,7 @@ func newTablesDBCreateCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
@@ -315,8 +317,7 @@ func newTablesDBListTransactionsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListTransactionsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTransactionsQueries(queries))
@@ -357,8 +358,7 @@ func newTablesDBCreateTransactionCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateTransactionOption{}
 			if cmd.Flags().Changed("ttl") {
 				options = append(options, service.WithCreateTransactionTtl(ttl))
@@ -421,8 +421,7 @@ func newTablesDBUpdateTransactionCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateTransactionOption{}
 			if cmd.Flags().Changed("commit") {
 				options = append(options, service.WithUpdateTransactionCommit(commit))
@@ -496,8 +495,7 @@ func newTablesDBCreateOperationsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateOperationsOption{}
 			if cmd.Flags().Changed("operations") {
 				options = append(options, service.WithCreateOperationsOperations(operationsDecoded))
@@ -565,8 +563,7 @@ func newTablesDBUpdateCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateName(name))
@@ -647,8 +644,7 @@ func newTablesDBCreateFailoverCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateFailoverOption{}
 			if cmd.Flags().Changed("target-replica-id") {
 				options = append(options, service.WithCreateFailoverTargetReplicaId(targetReplicaId))
@@ -666,6 +662,136 @@ func newTablesDBCreateFailoverCommand() *cobra.Command {
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&targetReplicaId, "target-replica-id", "", "Target replica ID to promote. If not specified, the healthiest replica is selected.")
+	return cmd
+}
+
+func newTablesDBListMigrationsCommand() *cobra.Command {
+	var databaseId string
+
+	cmd := &cobra.Command{
+		Use:   "list-migrations",
+		Short: "List the dedicated migrations for a TablesDB database. A database has at most one in-flight migration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := tablesdb.New(client)
+
+			result, err := service.ListMigrations(databaseId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	return cmd
+}
+
+func newTablesDBCreateMigrationCommand() *cobra.Command {
+	var databaseId string
+	var specification string
+	var autoCutover bool
+
+	cmd := &cobra.Command{
+		Use:   "create-migration",
+		Short: "Start migrating a serverless TablesDB database onto a dedicated MySQL compute. Data is copied to the target while the source stays live, with a brief read-only window during cutover.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := tablesdb.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []tablesdb.CreateMigrationOption{}
+			if cmd.Flags().Changed("auto-cutover") {
+				options = append(options, service.WithCreateMigrationAutoCutover(autoCutover))
+			}
+
+			result, err := service.CreateMigration(databaseId, specification, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&specification, "specification", "", "Dedicated compute specification to provision as the migration target (e.g. s-2vcpu-4gb). The migration always targets a dedicated compute, so `serverless` is not accepted.")
+	_ = cmd.MarkFlagRequired("specification")
+	cmd.Flags().BoolVar(&autoCutover, "auto-cutover", false, "Whether to cut over automatically once the copy is verified. When disabled the migration parks at ready_to_cutover and holds there until the cutover is performed manually.")
+	cmd.Flags().Lookup("auto-cutover").NoOptDefVal = "true"
+	return cmd
+}
+
+func newTablesDBGetMigrationCommand() *cobra.Command {
+	var databaseId string
+	var migrationId string
+
+	cmd := &cobra.Command{
+		Use:   "get-migration",
+		Short: "Get a single dedicated migration for a TablesDB database by its ID.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := tablesdb.New(client)
+
+			result, err := service.GetMigration(databaseId, migrationId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration ID.")
+	_ = cmd.MarkFlagRequired("migration-id")
+	return cmd
+}
+
+func newTablesDBDeleteMigrationCommand() *cobra.Command {
+	var databaseId string
+	var migrationId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-migration",
+		Short: "Abort an in-flight TablesDB dedicated migration. Only allowed before cutover; once the migration has cut over it cannot be aborted.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := tablesdb.New(client)
+
+			result, err := service.DeleteMigration(databaseId, migrationId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&migrationId, "migration-id", "", "Migration ID.")
+	_ = cmd.MarkFlagRequired("migration-id")
 	return cmd
 }
 
@@ -717,8 +843,7 @@ func newTablesDBListOperationsCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListOperationsOption{}
 			if cmd.Flags().Changed("status") {
 				options = append(options, service.WithListOperationsStatus(status))
@@ -852,8 +977,7 @@ func newTablesDBListTablesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListTablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTablesQueries(queries))
@@ -920,8 +1044,7 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateTableOption{}
 			if cmd.Flags().Changed("permissions") {
 				options = append(options, service.WithCreateTablePermissions(permissions))
@@ -1015,8 +1138,7 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateTableOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateTableName(name))
@@ -1138,8 +1260,7 @@ func newTablesDBListColumnsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListColumnsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListColumnsQueries(queries))
@@ -1196,8 +1317,7 @@ func newTablesDBCreateBigIntColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateBigIntColumnOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithCreateBigIntColumnMin(minArg))
@@ -1258,8 +1378,7 @@ func newTablesDBUpdateBigIntColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateBigIntColumnOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithUpdateBigIntColumnMin(minArg))
@@ -1315,8 +1434,7 @@ func newTablesDBCreateBooleanColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateBooleanColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateBooleanColumnDefault(xdefault))
@@ -1368,8 +1486,7 @@ func newTablesDBUpdateBooleanColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateBooleanColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateBooleanColumnNewKey(newKey))
@@ -1417,8 +1534,7 @@ func newTablesDBCreateDatetimeColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateDatetimeColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateDatetimeColumnDefault(xdefault))
@@ -1469,8 +1585,7 @@ func newTablesDBUpdateDatetimeColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateDatetimeColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateDatetimeColumnNewKey(newKey))
@@ -1518,8 +1633,7 @@ func newTablesDBCreateEmailColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateEmailColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateEmailColumnDefault(xdefault))
@@ -1570,8 +1684,7 @@ func newTablesDBUpdateEmailColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateEmailColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateEmailColumnNewKey(newKey))
@@ -1620,8 +1733,7 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateEnumColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateEnumColumnDefault(xdefault))
@@ -1675,8 +1787,7 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateEnumColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateEnumColumnNewKey(newKey))
@@ -1728,8 +1839,7 @@ func newTablesDBCreateFloatColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateFloatColumnOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithCreateFloatColumnMin(minArg))
@@ -1790,8 +1900,7 @@ func newTablesDBUpdateFloatColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateFloatColumnOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithUpdateFloatColumnMin(minArg))
@@ -1849,8 +1958,7 @@ func newTablesDBCreateIntegerColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateIntegerColumnOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithCreateIntegerColumnMin(minArg))
@@ -1911,8 +2019,7 @@ func newTablesDBUpdateIntegerColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateIntegerColumnOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithUpdateIntegerColumnMin(minArg))
@@ -1968,8 +2075,7 @@ func newTablesDBCreateIpColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateIpColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateIpColumnDefault(xdefault))
@@ -2020,8 +2126,7 @@ func newTablesDBUpdateIpColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateIpColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateIpColumnNewKey(newKey))
@@ -2072,8 +2177,7 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateLineColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateLineColumnDefault(xdefaultDecoded))
@@ -2123,8 +2227,7 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateLineColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithUpdateLineColumnDefault(xdefaultDecoded))
@@ -2175,8 +2278,7 @@ func newTablesDBCreateLongtextColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateLongtextColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateLongtextColumnDefault(xdefault))
@@ -2232,8 +2334,7 @@ func newTablesDBUpdateLongtextColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateLongtextColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateLongtextColumnNewKey(newKey))
@@ -2282,8 +2383,7 @@ func newTablesDBCreateMediumtextColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateMediumtextColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateMediumtextColumnDefault(xdefault))
@@ -2339,8 +2439,7 @@ func newTablesDBUpdateMediumtextColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateMediumtextColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateMediumtextColumnNewKey(newKey))
@@ -2391,8 +2490,7 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreatePointColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreatePointColumnDefault(xdefaultDecoded))
@@ -2442,8 +2540,7 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdatePointColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithUpdatePointColumnDefault(xdefaultDecoded))
@@ -2496,8 +2593,7 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreatePolygonColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreatePolygonColumnDefault(xdefaultDecoded))
@@ -2547,8 +2643,7 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdatePolygonColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithUpdatePolygonColumnDefault(xdefaultDecoded))
@@ -2600,8 +2695,7 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateRelationshipColumnOption{}
 			if cmd.Flags().Changed("two-way") {
 				options = append(options, service.WithCreateRelationshipColumnTwoWay(twoWay))
@@ -2662,8 +2756,7 @@ func newTablesDBCreateStringColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateStringColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateStringColumnDefault(xdefault))
@@ -2722,8 +2815,7 @@ func newTablesDBUpdateStringColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateStringColumnOption{}
 			if cmd.Flags().Changed("size") {
 				options = append(options, service.WithUpdateStringColumnSize(size))
@@ -2776,8 +2868,7 @@ func newTablesDBCreateTextColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateTextColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateTextColumnDefault(xdefault))
@@ -2833,8 +2924,7 @@ func newTablesDBUpdateTextColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateTextColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateTextColumnNewKey(newKey))
@@ -2882,8 +2972,7 @@ func newTablesDBCreateUrlColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateUrlColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateUrlColumnDefault(xdefault))
@@ -2934,8 +3023,7 @@ func newTablesDBUpdateUrlColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateUrlColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateUrlColumnNewKey(newKey))
@@ -2985,8 +3073,7 @@ func newTablesDBCreateVarcharColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateVarcharColumnOption{}
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateVarcharColumnDefault(xdefault))
@@ -3045,8 +3132,7 @@ func newTablesDBUpdateVarcharColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateVarcharColumnOption{}
 			if cmd.Flags().Changed("size") {
 				options = append(options, service.WithUpdateVarcharColumnSize(size))
@@ -3165,8 +3251,7 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateRelationshipColumnOption{}
 			if cmd.Flags().Changed("on-delete") {
 				options = append(options, service.WithUpdateRelationshipColumnOnDelete(onDelete))
@@ -3244,8 +3329,7 @@ func newTablesDBListIndexesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListIndexesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListIndexesQueries(queries))
@@ -3305,8 +3389,7 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateIndexOption{}
 			if cmd.Flags().Changed("orders") {
 				options = append(options, service.WithCreateIndexOrders(orders))
@@ -3460,8 +3543,7 @@ func newTablesDBListRowsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.ListRowsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListRowsQueries(queries))
@@ -3529,8 +3611,7 @@ func newTablesDBCreateRowCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateRowOption{}
 			if cmd.Flags().Changed("permissions") {
 				options = append(options, service.WithCreateRowPermissions(permissions))
@@ -3582,8 +3663,7 @@ func newTablesDBCreateRowsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.CreateRowsOption{}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithCreateRowsTransactionId(transactionId))
@@ -3629,8 +3709,7 @@ func newTablesDBUpsertRowsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpsertRowsOption{}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithUpsertRowsTransactionId(transactionId))
@@ -3709,8 +3788,7 @@ func newTablesDBUpdateRowsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateRowsOption{}
 			if cmd.Flags().Changed("data") {
 				options = append(options, service.WithUpdateRowsData(dataValue))
@@ -3798,8 +3876,7 @@ func newTablesDBDeleteRowsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.DeleteRowsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithDeleteRowsQueries(queries))
@@ -3861,8 +3938,7 @@ func newTablesDBGetRowCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.GetRowOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithGetRowQueries(queries))
@@ -3915,8 +3991,7 @@ func newTablesDBUpsertRowCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpsertRowOption{}
 			if cmd.Flags().Changed("data") {
 				options = append(options, service.WithUpsertRowData(dataValue))
@@ -3972,8 +4047,7 @@ func newTablesDBUpdateRowCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.UpdateRowOption{}
 			if cmd.Flags().Changed("data") {
 				options = append(options, service.WithUpdateRowData(dataValue))
@@ -4023,8 +4097,7 @@ func newTablesDBDeleteRowCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.DeleteRowOption{}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithDeleteRowTransactionId(transactionId))
@@ -4069,8 +4142,7 @@ func newTablesDBDecrementRowColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.DecrementRowColumnOption{}
 			if cmd.Flags().Changed("value") {
 				options = append(options, service.WithDecrementRowColumnValue(value))
@@ -4125,8 +4197,7 @@ func newTablesDBIncrementRowColumnCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tablesdb.IncrementRowColumnOption{}
 			if cmd.Flags().Changed("value") {
 				options = append(options, service.WithIncrementRowColumnValue(value))

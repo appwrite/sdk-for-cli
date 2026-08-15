@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/embeddings"
+	"github.com/appwrite/sdk-for-go/v7/embeddings"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/sdk"
@@ -40,8 +40,7 @@ func newEmbeddingsCreateTextEmbeddingsCommand() *cobra.Command {
 			}
 			service := embeddings.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []embeddings.CreateTextEmbeddingsOption{}
 			if cmd.Flags().Changed("model") {
 				options = append(options, service.WithCreateTextEmbeddingsModel(model))

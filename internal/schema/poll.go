@@ -61,7 +61,7 @@ func NewPoller(api *client.Client, out io.Writer, attempts int) *Poller {
 // scaleTimeout grows the attempt budget once, for a resource count that cannot
 // finish inside the default.
 //
-// Ports the `pollMaxDebounces === POLL_DEFAULT_VALUE` guard repeated in every
+// Implements the `pollMaxDebounces === POLL_DEFAULT_VALUE` guard repeated in every
 // pools.ts method. The comparison against the default is doing two jobs: it
 // leaves an explicit --attempts alone, and because the scaling assigns through
 // the same field it can only ever happen once.
@@ -106,7 +106,7 @@ func (p *Poller) expect(container Container, keys []string, isIndex bool) (bool,
 
 	// No early return for an empty key set, deliberately. pools.ts still makes
 	// one list request before concluding there is nothing to wait for, and a
-	// request trace is how the two CLIs are compared.
+	// request trace is how the CLI builds are compared.
 	for iteration := 1; iteration <= p.maxDebounces; iteration++ {
 		p.scaleTimeout(iteration, len(keys),
 			fmt.Sprintf("Creating a large number of %s, increasing timeout to ", noun))
@@ -148,8 +148,7 @@ func (p *Poller) expect(container Container, keys []string, isIndex bool) (bool,
 
 // WaitForDeletion waits until none of the keys are listed any more.
 //
-// Ports waitForAttributeDeletion and waitForIndexDeletion (pools.ts:98 and
-// :159), which differ only in the endpoint they poll.
+// Attributes and indexes differ only in the endpoint they poll.
 func (p *Poller) WaitForDeletion(container Container, keys []string, isIndex bool) (bool, error) {
 	noun, wrapper := "attributes", "attributes"
 	if isIndex {

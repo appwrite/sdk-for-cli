@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/tokens"
+	"github.com/appwrite/sdk-for-go/v7/tokens"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -79,8 +79,7 @@ func newTokensListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tokens.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -132,8 +131,7 @@ func newTokensCreateFileTokenCommand() *cobra.Command {
 			}
 			service := tokens.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tokens.CreateFileTokenOption{}
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithCreateFileTokenExpire(expire))
@@ -199,8 +197,7 @@ func newTokensUpdateCommand() *cobra.Command {
 			}
 			service := tokens.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []tokens.UpdateOption{}
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateExpire(expire))

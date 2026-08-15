@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/messaging"
+	"github.com/appwrite/sdk-for-go/v7/messaging"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -119,8 +119,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListMessagesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListMessagesQueries(queries))
@@ -181,8 +180,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateEmailOption{}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithCreateEmailTopics(topics))
@@ -266,8 +264,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateEmailOption{}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithUpdateEmailTopics(topics))
@@ -366,8 +363,7 @@ func newMessagingCreatePushCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreatePushOption{}
 			if cmd.Flags().Changed("title") {
 				options = append(options, service.WithCreatePushTitle(title))
@@ -495,8 +491,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdatePushOption{}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithUpdatePushTopics(topics))
@@ -608,8 +603,7 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateSmsOption{}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithCreateSmsTopics(topics))
@@ -669,8 +663,7 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateSmsOption{}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithUpdateSmsTopics(topics))
@@ -816,8 +809,7 @@ func newMessagingListTargetsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListTargetsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTargetsQueries(queries))
@@ -899,8 +891,7 @@ func newMessagingListProvidersCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListProvidersOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListProvidersQueries(queries))
@@ -957,8 +948,7 @@ func newMessagingCreateApnsProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateApnsProviderOption{}
 			if cmd.Flags().Changed("auth-key") {
 				options = append(options, service.WithCreateApnsProviderAuthKey(authKey))
@@ -1024,8 +1014,7 @@ func newMessagingUpdateApnsProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateApnsProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateApnsProviderName(name))
@@ -1093,8 +1082,7 @@ func newMessagingCreateFcmProviderCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateFcmProviderOption{}
 			if cmd.Flags().Changed("service-account-json") {
 				options = append(options, service.WithCreateFcmProviderServiceAccountJSON(serviceAccountJsonValue))
@@ -1143,8 +1131,7 @@ func newMessagingUpdateFcmProviderCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateFcmProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateFcmProviderName(name))
@@ -1197,8 +1184,7 @@ func newMessagingCreateMailgunProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateMailgunProviderOption{}
 			if cmd.Flags().Changed("api-key") {
 				options = append(options, service.WithCreateMailgunProviderApiKey(apiKey))
@@ -1274,8 +1260,7 @@ func newMessagingUpdateMailgunProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateMailgunProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateMailgunProviderName(name))
@@ -1349,8 +1334,7 @@ func newMessagingCreateMsg91ProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateMsg91ProviderOption{}
 			if cmd.Flags().Changed("template-id") {
 				options = append(options, service.WithCreateMsg91ProviderTemplateId(templateId))
@@ -1405,8 +1389,7 @@ func newMessagingUpdateMsg91ProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateMsg91ProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateMsg91ProviderName(name))
@@ -1465,8 +1448,7 @@ func newMessagingCreateResendProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateResendProviderOption{}
 			if cmd.Flags().Changed("api-key") {
 				options = append(options, service.WithCreateResendProviderApiKey(apiKey))
@@ -1531,8 +1513,7 @@ func newMessagingUpdateResendProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateResendProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateResendProviderName(name))
@@ -1599,8 +1580,7 @@ func newMessagingCreateSendgridProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateSendgridProviderOption{}
 			if cmd.Flags().Changed("api-key") {
 				options = append(options, service.WithCreateSendgridProviderApiKey(apiKey))
@@ -1665,8 +1645,7 @@ func newMessagingUpdateSendgridProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateSendgridProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateSendgridProviderName(name))
@@ -1735,8 +1714,7 @@ func newMessagingCreateSesProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateSesProviderOption{}
 			if cmd.Flags().Changed("access-key") {
 				options = append(options, service.WithCreateSesProviderAccessKey(accessKey))
@@ -1811,8 +1789,7 @@ func newMessagingUpdateSesProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateSesProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateSesProviderName(name))
@@ -1893,8 +1870,7 @@ func newMessagingCreateSmtpProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateSmtpProviderOption{}
 			if cmd.Flags().Changed("port") {
 				options = append(options, service.WithCreateSmtpProviderPort(port))
@@ -1988,8 +1964,7 @@ func newMessagingUpdateSmtpProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateSmtpProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateSmtpProviderName(name))
@@ -2079,8 +2054,7 @@ func newMessagingCreateTelesignProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateTelesignProviderOption{}
 			if cmd.Flags().Changed("from") {
 				options = append(options, service.WithCreateTelesignProviderFrom(from))
@@ -2135,8 +2109,7 @@ func newMessagingUpdateTelesignProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateTelesignProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateTelesignProviderName(name))
@@ -2193,8 +2166,7 @@ func newMessagingCreateTextmagicProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateTextmagicProviderOption{}
 			if cmd.Flags().Changed("from") {
 				options = append(options, service.WithCreateTextmagicProviderFrom(from))
@@ -2249,8 +2221,7 @@ func newMessagingUpdateTextmagicProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateTextmagicProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateTextmagicProviderName(name))
@@ -2307,8 +2278,7 @@ func newMessagingCreateTwilioProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateTwilioProviderOption{}
 			if cmd.Flags().Changed("from") {
 				options = append(options, service.WithCreateTwilioProviderFrom(from))
@@ -2363,8 +2333,7 @@ func newMessagingUpdateTwilioProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateTwilioProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateTwilioProviderName(name))
@@ -2421,8 +2390,7 @@ func newMessagingCreateVonageProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateVonageProviderOption{}
 			if cmd.Flags().Changed("from") {
 				options = append(options, service.WithCreateVonageProviderFrom(from))
@@ -2477,8 +2445,7 @@ func newMessagingUpdateVonageProviderCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateVonageProviderOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateVonageProviderName(name))
@@ -2620,8 +2587,7 @@ func newMessagingListTopicsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListTopicsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTopicsQueries(queries))
@@ -2673,8 +2639,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateTopicOption{}
 			if cmd.Flags().Changed("subscribe") {
 				options = append(options, service.WithCreateTopicSubscribe(subscribe))
@@ -2741,8 +2706,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 			}
 			service := messaging.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateTopicOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateTopicName(name))
@@ -2844,8 +2808,7 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListSubscribersOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListSubscribersQueries(queries))

@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/organization"
+	"github.com/appwrite/sdk-for-go/v7/organization"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -175,8 +175,7 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListInstallationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListInstallationsQueries(queries))
@@ -225,8 +224,7 @@ func newOrganizationCreateInstallationCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.CreateInstallationOption{}
 			if cmd.Flags().Changed("authorization-details") {
 				options = append(options, service.WithCreateInstallationAuthorizationDetails(authorizationDetails))
@@ -294,8 +292,7 @@ func newOrganizationUpdateInstallationCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.UpdateInstallationOption{}
 			if cmd.Flags().Changed("authorization-details") {
 				options = append(options, service.WithUpdateInstallationAuthorizationDetails(authorizationDetails))
@@ -395,8 +392,7 @@ func newOrganizationListKeysCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListKeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListKeysQueries(queries))
@@ -447,8 +443,7 @@ func newOrganizationCreateKeyCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.CreateKeyOption{}
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithCreateKeyExpire(expire))
@@ -522,8 +517,7 @@ func newOrganizationUpdateKeyCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.UpdateKeyOption{}
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateKeyExpire(expire))
@@ -628,8 +622,7 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListMembershipsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListMembershipsQueries(queries))
@@ -686,8 +679,7 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.CreateMembershipOption{}
 			if cmd.Flags().Changed("email") {
 				options = append(options, service.WithCreateMembershipEmail(email))
@@ -867,8 +859,7 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListProjectsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListProjectsQueries(queries))
@@ -922,8 +913,7 @@ func newOrganizationCreateProjectCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.CreateProjectOption{}
 			if cmd.Flags().Changed("region") {
 				options = append(options, service.WithCreateProjectRegion(region))

@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/account"
+	"github.com/appwrite/sdk-for-go/v7/account"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -32,7 +32,6 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountUpdateEmailCommand())
 	cmd.AddCommand(newAccountListIdentitiesCommand())
 	cmd.AddCommand(newAccountDeleteIdentityCommand())
-	cmd.AddCommand(newAccountCreateJWTCommand())
 	cmd.AddCommand(newAccountListLogsCommand())
 	cmd.AddCommand(newAccountUpdateMFACommand())
 	cmd.AddCommand(newAccountCreateMfaAuthenticatorCommand())
@@ -118,8 +117,7 @@ func newAccountCreateCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.CreateOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateName(name))
@@ -191,8 +189,7 @@ func newAccountListConsentsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListConsentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListConsentsQueries(queries))
@@ -328,8 +325,7 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListConsentTokensOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListConsentTokensQueries(queries))
@@ -503,8 +499,7 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListIdentitiesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListIdentitiesQueries(queries))
@@ -564,40 +559,6 @@ func newAccountDeleteIdentityCommand() *cobra.Command {
 	return cmd
 }
 
-func newAccountCreateJWTCommand() *cobra.Command {
-	var duration int
-
-	cmd := &cobra.Command{
-		Use:   "create-jwt",
-		Short: "Use this endpoint to create a JSON Web Token. You can use the resulting JWT to authenticate on behalf of the current user when working with the Appwrite server-side API and SDKs. The JWT secret is valid for 15 minutes from its creation and will be invalid if the user will logout in that time frame.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForConsole()
-			if err != nil {
-				return err
-			}
-			service := account.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []account.CreateJWTOption{}
-			if cmd.Flags().Changed("duration") {
-				options = append(options, service.WithCreateJWTDuration(duration))
-			}
-
-			result, err := service.CreateJWT(options...)
-			if err != nil {
-				return sdk.WrapMutationError("POST", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.")
-	return cmd
-}
-
 func newAccountListLogsCommand() *cobra.Command {
 	var queries []string
 	var total bool
@@ -624,8 +585,7 @@ func newAccountListLogsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListLogsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListLogsQueries(queries))
@@ -968,8 +928,7 @@ func newAccountUpdatePasswordCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.UpdatePasswordOption{}
 			if cmd.Flags().Changed("old-password") {
 				options = append(options, service.WithUpdatePasswordOldPassword(oldPassword))
@@ -1467,8 +1426,7 @@ func newAccountCreateEmailTokenCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.CreateEmailTokenOption{}
 			if cmd.Flags().Changed("phrase") {
 				options = append(options, service.WithCreateEmailTokenPhrase(phrase))
@@ -1509,8 +1467,7 @@ func newAccountCreateMagicURLTokenCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.CreateMagicURLTokenOption{}
 			if cmd.Flags().Changed("url") {
 				options = append(options, service.WithCreateMagicURLTokenUrl(url))
@@ -1555,8 +1512,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.CreateOAuth2TokenOption{}
 			if cmd.Flags().Changed("success") {
 				options = append(options, service.WithCreateOAuth2TokenSuccess(success))

@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// Every key in SENSITIVE_KEYS (templates/cli/lib/parser.ts:54) must be caught,
-// in each of the spellings the normaliser is supposed to collapse. A gap here
+// Every sensitive key must be caught in each spelling the normaliser is
+// supposed to collapse. A gap here
 // is a credential leak, not a formatting bug.
 func TestIsSensitiveKeyCoversEverySensitiveKey(t *testing.T) {
 	for _, base := range sensitiveKeys {

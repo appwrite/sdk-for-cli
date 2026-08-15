@@ -17,13 +17,13 @@
 # Appwrite CLI location
 APPWRITE_INSTALL_DIR="/usr/local/bin"
 
-# Appwrite CLI Executable name 
+# Appwrite CLI Executable name
 APPWRITE_EXECUTABLE_NAME=appwrite
 
-# Appwrite executable file path 
+# Appwrite executable file path
 APPWRITE_EXECUTABLE_FILEPATH="$APPWRITE_INSTALL_DIR/$APPWRITE_EXECUTABLE_NAME"
 
-# Appwrite CLI temp name 
+# Appwrite CLI temp name
 APPWRITE_TEMP_NAME=temp-$(date +%s)
 
 # Appwrite CLI image name
@@ -120,7 +120,7 @@ verifyMacOSCodeSignature() {
 downloadBinary() {
     echo "[2/5] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="26.1.0"
+    GITHUB_LATEST_VERSION="27.0.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -174,7 +174,7 @@ installCompletions() {
 
 cleanup() {
     printf "${GREEN}🧹 Cleaning up mess ... ${NC}\n"
-    rm $APPWRITE_TEMP_NAME 
+    rm $APPWRITE_TEMP_NAME
     if [ $? -ne 0 ]; then
         printf "${RED}❌ Failed to remove temporary file ... ${NC}\n"
         exit 1

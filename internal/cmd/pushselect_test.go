@@ -5,9 +5,11 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/config"
+	"github.com/appwrite/sdk-for-cli/internal/jsonx"
 	"github.com/appwrite/sdk-for-cli/internal/prompt"
 )
 
@@ -25,9 +27,8 @@ const configWithOneSite = `{
 // A multi-select starts with nothing ticked and Enter accepts that, so the
 // prompt handed back an empty list; the caller read that as "the config has
 // none" and pointed the reader at `init site` for a site already in front of
-// them. The TypeScript's checkbox carries
-// `validate: validateRequired("site", value)` (questions.ts:999), which the
-// port had as prompt.RequiredSelection and never wired up.
+// them. prompt.RequiredSelection exists for exactly this and was never wired
+// up.
 func TestPushSelectionRejectsAnEmptyChoice(t *testing.T) {
 	local := loadProbeConfig(t)
 
@@ -65,6 +66,103 @@ func TestPushSelectionKeepsTheChosenEntries(t *testing.T) {
 	}
 	if len(chosen) != 1 || chosen[0].GetString("$id") != "web" {
 		t.Errorf("chosen = %v, want the one site", chosen)
+	}
+}
+
+// Every selected deployment must start before any one of them finishes. The
+// sequential loop waited for a function's entire build before it even packaged
+// the next one, making a multi-function push take the sum of all build times.
+func TestSelectedDeploymentsStartInParallel(t *testing.T) {
+	entries := make([]*jsonx.Object, 2)
+	for index, id := range []string{"first", "second"} {
+		entry := jsonx.NewObject()
+		entry.Set("$id", id)
+		entries[index] = entry
+	}
+
+	started := make(chan string, len(entries))
+	release := make(chan struct{})
+	finished := make(chan pushSummary, 1)
+
+	go func() {
+		finished <- pushDeployablesInParallel(entries,
+			func(entry *jsonx.Object, summary *pushSummary) {
+				started <- entry.GetString("$id")
+				<-release
+				summary.Pushed++
+			})
+	}()
+
+	timer := time.NewTimer(5 * time.Second)
+	defer timer.Stop()
+
+	seen := map[string]bool{}
+	for range entries {
+		select {
+		case id := <-started:
+			seen[id] = true
+		case <-timer.C:
+			close(release)
+			t.Fatal("a selected deployment waited for the previous one to finish")
+		}
+	}
+	close(release)
+
+	summary := <-finished
+	if len(seen) != len(entries) {
+		t.Errorf("started %v, want both selected deployments", seen)
+	}
+	if summary.Pushed != len(entries) {
+		t.Errorf("summary counted %d pushes, want %d", summary.Pushed, len(entries))
+	}
+}
+
+// Packaging and uploading a large function can consume eight HTTP requests on
+// its own. Selecting a large project must not multiply that by every configured
+// function at once.
+func TestSelectedDeploymentConcurrencyIsBounded(t *testing.T) {
+	entries := make([]*jsonx.Object, functionPushConcurrency+2)
+	for index := range entries {
+		entries[index] = jsonx.NewObject()
+	}
+
+	started := make(chan struct{}, len(entries))
+	release := make(chan struct{})
+	finished := make(chan pushSummary, 1)
+
+	go func() {
+		finished <- pushDeployablesInParallel(entries,
+			func(_ *jsonx.Object, summary *pushSummary) {
+				started <- struct{}{}
+				<-release
+				summary.Pushed++
+			})
+	}()
+
+	timer := time.NewTimer(5 * time.Second)
+	defer timer.Stop()
+	for range functionPushConcurrency {
+		select {
+		case <-started:
+		case <-timer.C:
+			close(release)
+			t.Fatalf("only %d of %d deployment workers started",
+				len(started), functionPushConcurrency)
+		}
+	}
+
+	select {
+	case <-started:
+		close(release)
+		t.Fatalf("more than %d deployment workers ran concurrently",
+			functionPushConcurrency)
+	case <-time.After(100 * time.Millisecond):
+	}
+	close(release)
+
+	summary := <-finished
+	if summary.Pushed != len(entries) {
+		t.Errorf("summary counted %d pushes, want %d", summary.Pushed, len(entries))
 	}
 }
 

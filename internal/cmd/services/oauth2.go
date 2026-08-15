@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/oauth2"
+	"github.com/appwrite/sdk-for-go/v7/oauth2"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/sdk"
@@ -81,8 +81,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []oauth2.AuthorizeOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithAuthorizeClientId(clientId))
@@ -180,8 +179,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []oauth2.AuthorizePostOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithAuthorizePostClientId(clientId))
@@ -270,8 +268,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []oauth2.CreateDeviceAuthorizationOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithCreateDeviceAuthorizationClientId(clientId))
@@ -416,8 +413,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []oauth2.CreatePAROption{}
 			if cmd.Flags().Changed("scope") {
 				options = append(options, service.WithCreatePARScope(scope))
@@ -551,8 +547,7 @@ func newOauth2RevokeCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []oauth2.RevokeOption{}
 			if cmd.Flags().Changed("token-type-hint") {
 				options = append(options, service.WithRevokeTokenTypeHint(tokenTypeHint))
@@ -604,8 +599,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 			}
 			service := oauth2.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []oauth2.CreateTokenOption{}
 			if cmd.Flags().Changed("code") {
 				options = append(options, service.WithCreateTokenCode(code))

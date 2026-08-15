@@ -1,7 +1,7 @@
 package app
 
 import (
-	sdkclient "github.com/appwrite/sdk-for-go/v6/client"
+	sdkclient "github.com/appwrite/sdk-for-go/v7/client"
 
 	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )

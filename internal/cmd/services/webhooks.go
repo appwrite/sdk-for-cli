@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/webhooks"
+	"github.com/appwrite/sdk-for-go/v7/webhooks"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -78,8 +78,7 @@ func newWebhooksListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []webhooks.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -133,8 +132,7 @@ func newWebhooksCreateCommand() *cobra.Command {
 			}
 			service := webhooks.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []webhooks.CreateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
@@ -228,8 +226,7 @@ func newWebhooksUpdateCommand() *cobra.Command {
 			}
 			service := webhooks.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []webhooks.UpdateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateEnabled(enabled))
@@ -313,8 +310,7 @@ func newWebhooksUpdateSecretCommand() *cobra.Command {
 			}
 			service := webhooks.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []webhooks.UpdateSecretOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithUpdateSecretSecret(secret))

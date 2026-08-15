@@ -7,10 +7,9 @@ import (
 
 // The typegen templates, embedded so the binary carries them.
 //
-// These files are generated from the TypeScript CLI's own template directory --
-// one source, two outputs. Editing the copy under internal/typegen/templates has
-// no effect: change
-// templates/cli/lib/commands/generators/typescript/templates/ and regenerate.
+// These templates are embedded in the binary and rendered by `appwrite
+// generate`. Edit the source under templates/cli/internal/typegen/templates and
+// regenerate the CLI.
 
 //go:embed templates/*.hbs
 var templateFiles embed.FS

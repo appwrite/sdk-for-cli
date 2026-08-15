@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -147,6 +148,8 @@ func runFunction(command *cobra.Command, options runOptions) error {
 	ctx, stop := signal.NotifyContext(command.Context(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	go printRuntimeLogs(ctx, out, emulator.Directory)
+
 	keys, variables := collectVariables(command, local, function, options)
 
 	// The credentials collectVariables minted last an hour. A run outliving
@@ -203,6 +206,21 @@ func runFunction(command *cobra.Command, options runOptions) error {
 	queue.Unlock()
 
 	return serve(ctx, command, emulator, tool, queue, port, keys, variables, wait)
+}
+
+// printRuntimeLogs restores the live context.log() and context.error() output
+// that local functions had before the Go CLI. Both streams share stdout to
+// preserve that command's output contract; the heading is delayed so a function
+// that does not log leaves no empty section behind.
+func printRuntimeLogs(ctx context.Context, out io.Writer, functionDirectory string) {
+	shownHeading := false
+	docker.FollowRuntimeLogs(ctx, functionDirectory, func(line string) {
+		if !shownHeading {
+			output.Log(out, "Runtime logs:")
+			shownHeading = true
+		}
+		fmt.Fprintln(out, line)
+	})
 }
 
 // watchExit reports a container's own exit, once. Buffered by one so the
@@ -504,16 +522,16 @@ func collectVariables(
 	set("APPWRITE_FUNCTION_API_ENDPOINT", localEndpoint(local))
 	set("APPWRITE_FUNCTION_ID", function.ID)
 	set("APPWRITE_FUNCTION_NAME", function.Name)
-	// Empty in the TypeScript too -- there is no deployment when running
-	// locally, and the runtime expects the key to exist.
+	// Deliberately empty -- there is no deployment when running locally, and
+	// the runtime expects the key to exist.
 	set("APPWRITE_FUNCTION_DEPLOYMENT", "")
 	set("APPWRITE_FUNCTION_PROJECT_ID", projectID(local))
 	set("APPWRITE_FUNCTION_RUNTIME_NAME", docker.RuntimeNames[function.RuntimeName()])
 	set("APPWRITE_FUNCTION_RUNTIME_VERSION", function.Runtime)
 
 	// The credentials the function authenticates with. A failure here is a
-	// warning, not an error: the TypeScript runs the function anyway, and one
-	// that never calls the API does not need them.
+	// warning, not an error: the function runs anyway, and one that never calls
+	// the API does not need them.
 	credentials := runCredentials{}
 	if apiErr != nil {
 		output.Warn(out, "Dynamic API key not generated. Header x-appwrite-key "+
@@ -547,8 +565,8 @@ func collectVariables(
 
 // printMaskedVariables shows which variables were loaded without their values.
 //
-// The TypeScript prints a fixed run of asterisks capped at 16, so the length of
-// a short secret is not leaked either.
+// A fixed run of asterisks capped at 16, so the length of a short secret is not
+// leaked either.
 func printMaskedVariables(command *cobra.Command, keys []string, variables map[string]string) {
 	for _, key := range keys {
 		length := min(len(variables[key]), 16)
