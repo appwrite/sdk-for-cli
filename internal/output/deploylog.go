@@ -6,9 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// Ports createDeploymentLogPrinter
-// (templates/cli/lib/commands/utils/deployment.ts:178) and the writeLogChunk
-// (:145) it prints through.
+// DeploymentLogPrinter streams deployment log chunks.
 //
 // A deployment's build log arrives as ONE STRING that grows: every read returns
 // the whole log so far, not the part that is new. The printer's job is to turn
@@ -54,9 +52,9 @@ type BuildLogPrinter struct {
 
 // NewBuildLogPrinter returns a printer for one deployment's build log.
 //
-// showPrefix is the TypeScript's `functions.length > 1`: with a single
-// deployment the label is noise, with several it is the only way to tell whose
-// line is whose.
+// showPrefix is set when more than one deployment is being followed: with a
+// single deployment the label is noise, with several it is the only way to tell
+// whose line is whose.
 func NewBuildLogPrinter(emit func(string), label string, showPrefix bool) *BuildLogPrinter {
 	return &BuildLogPrinter{emit: emit, label: label, showPrefix: showPrefix}
 }

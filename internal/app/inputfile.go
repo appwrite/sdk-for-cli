@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	sdkfile "github.com/appwrite/sdk-for-go/v6/file"
+	sdkfile "github.com/appwrite/sdk-for-go/v7/file"
 
 	"github.com/appwrite/sdk-for-cli/internal/config"
 	"github.com/appwrite/sdk-for-cli/internal/deploy"
@@ -67,9 +67,9 @@ func DeploymentInputFile(path string) (sdkfile.InputFile, func(), error) {
 	return sdkfile.NewInputFile(packaged.Path, deploy.ArchiveName), cleanup, nil
 }
 
-// inputFileProjectRoot mirrors the TypeScript CLI's best-effort local config
-// lookup. It bounds followed symlinks when the command runs inside a project,
-// while still allowing a directory passed from outside any project.
+// inputFileProjectRoot is a best-effort local config lookup. It bounds followed
+// symlinks when the command runs inside a project, while still allowing a
+// directory passed from outside any project.
 func inputFileProjectRoot() string {
 	path := config.FindLocalPath()
 	info, err := os.Stat(path)

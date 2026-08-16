@@ -19,7 +19,7 @@ import (
 //
 // The groups, summaries and option order are generated from
 // CliCommandSurface::HELP_GROUPS, ::HELP_SUMMARIES and ::HELP_OPTION_ORDER --
-// the same tables help.ts is generated from, so the two screens cannot drift.
+// one set of tables, so the help screen cannot drift from the command tree.
 
 // helpGroup is one titled section of the listing.
 type helpGroup struct {
@@ -161,10 +161,9 @@ const helpLogo = "\n    _                            _ _           ___   __   __
 
 // helpDescription is the paragraph under the logo.
 //
-// shortDescription, not description: the TypeScript screen renders
-// `packageJson.description`, and package.json.twig fills that from
-// `sdk.shortDescription`. Reading the other one put a different paragraph on
-// the two screens.
+// shortDescription, not description: the npm package's description is filled
+// from `sdk.shortDescription`, and reading the other one puts a different
+// paragraph on the help screen than the one users see on the package page.
 const helpDescription = "Appwrite is an open-source self-hosted backend server that abstracts and simplifies complex and repetitive development tasks behind a very simple REST API"
 
 const (
@@ -300,10 +299,9 @@ func RenderMainHelp(root *cobra.Command) string {
 		for _, row := range section.rows {
 			// TrimRight because a command whose description the spec leaves empty
 			// has no summary, and the padded name would then end the line in
-			// whitespace. The TypeScript pads unconditionally, but it has a
-			// summary for everything it lists, so this cannot make the two
-			// screens differ -- it only keeps the Go one clean where a service
-			// arrives without a description.
+			// whitespace. Padding unconditionally would be fine for everything
+			// that has a summary; this only keeps the screen clean where a
+			// service arrives without a description.
 			line := strings.TrimRight(
 				helpIndent+output.Pad(row.name, nameWidth)+strings.Repeat(" ", helpGap)+row.summary, " ")
 			if section.dim {
@@ -331,7 +329,7 @@ func RenderMainHelp(root *cobra.Command) string {
 // Not one Render of the whole block: lipgloss pads every line of a multi-line
 // block out to the width of the widest one, which leaves trailing spaces on
 // most of the art. Invisible on a terminal, but it makes the screen impossible
-// to compare against the TypeScript CLI's byte for byte.
+// to compare byte for byte against a captured baseline.
 func renderLogo() string {
 	lines := strings.Split(strings.TrimRight(helpLogo, "\n"), "\n")
 	for index, line := range lines {
@@ -483,21 +481,21 @@ func optionTerm(flag *pflag.Flag) string {
 }
 
 // helpMinimumColumns is the narrowest column the paragraph is wrapped into.
-// help.ts passes 2 rather than commander's default 40, so the screen keeps
-// wrapping all the way down. Matching it also keeps a terminal reporting 3
-// columns from reaching the loop with a negative width.
+// 2 rather than a more usual 40, so the screen keeps wrapping all the way down.
+// It also keeps a terminal reporting 3 columns from reaching the loop with a
+// negative width.
 const helpMinimumColumns = 2
 
-// wrapHelpText reproduces commander's Help.wrap, including two quirks a
+// wrapHelpText reproduces the captured wrap, including two quirks a
 // from-scratch word wrap does not have: a line holds columns-1 characters, and
 // the first line carries two extra characters that were never measured because
-// commander wraps only the remainder after `indent`. Reproducing both is what
-// makes the two CLIs' screens identical at every width, not just at 80.
+// only the remainder after `indent` is wrapped. Reproducing both is what
+// makes the CLI's screens identical at every width, not just at 80.
 func wrapHelpText(text string, columns int, indent string) string {
-	// A DELIBERATE deviation: commander returns the indent for an empty or
-	// all-whitespace description, which puts a line of trailing spaces on the
-	// screen. Nothing generated has an empty description, and a blank line is
-	// worse than no line.
+	// A DELIBERATE deviation: the captured behaviour returns the indent for an
+	// empty or all-whitespace description, which puts a line of trailing spaces
+	// on the screen. Nothing generated has an empty description, and a blank
+	// line is worse than no line.
 	if strings.TrimSpace(text) == "" {
 		return ""
 	}
@@ -506,8 +504,7 @@ func wrapHelpText(text string, columns int, indent string) string {
 		return indent + text
 	}
 
-	// commander's `indent` argument, which help.ts passes as 2 -- the same width
-	// as the indent it prefixes the result with.
+	// 2 -- the same width as the indent the result is prefixed with.
 	unmeasured := len(indent)
 	if len(text) <= unmeasured {
 		return indent + text
@@ -523,7 +520,7 @@ func wrapHelpText(text string, columns int, indent string) string {
 	return wrapped
 }
 
-// wrapChunks splits text the way commander's regex does: at each position, the
+// wrapChunks splits text the way the captured wrap does: at each position, the
 // longest run of at most limit characters that is followed by a space or by the
 // end of the string; failing that, the next whole word, however long.
 func wrapChunks(text string, limit int) []string {
@@ -549,7 +546,7 @@ func wrapChunks(text string, limit int) []string {
 		}
 
 		// A run of consecutive spaces yields a chunk that is nothing but
-		// whitespace. commander never emits a blank line for one, so neither
+		// whitespace. The baseline never emits a blank line for one, so neither
 		// does this.
 		if chunk := strings.TrimRight(text[position:position+length], " "); chunk != "" {
 			chunks = append(chunks, chunk)

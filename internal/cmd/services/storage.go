@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/storage"
+	"github.com/appwrite/sdk-for-go/v7/storage"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -86,8 +86,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.ListBucketsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListBucketsQueries(queries))
@@ -147,8 +146,7 @@ func newStorageCreateBucketCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.CreateBucketOption{}
 			if cmd.Flags().Changed("permissions") {
 				options = append(options, service.WithCreateBucketPermissions(permissions))
@@ -260,8 +258,7 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.UpdateBucketOption{}
 			if cmd.Flags().Changed("permissions") {
 				options = append(options, service.WithUpdateBucketPermissions(permissions))
@@ -398,8 +395,7 @@ func newStorageListFilesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.ListFilesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListFilesQueries(queries))
@@ -459,8 +455,7 @@ func newStorageCreateFileCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.CreateFileOption{}
 			if cmd.Flags().Changed("permissions") {
 				options = append(options, service.WithCreateFilePermissions(permissions))
@@ -537,8 +532,7 @@ func newStorageUpdateFileCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.UpdateFileOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdateFileName(name))
@@ -613,8 +607,7 @@ func newStorageGetFileDownloadCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.GetFileDownloadOption{}
 			if cmd.Flags().Changed("token") {
 				options = append(options, service.WithGetFileDownloadToken(token))
@@ -625,8 +618,8 @@ func newStorageGetFileDownloadCommand() *cobra.Command {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			// A location method returns the file bytes, not a URL. The
-			// TypeScript fetches the URL itself; the SDK has already done that.
+			// A location method returns the file bytes, not a URL -- the SDK
+			// has already fetched them.
 			return app.WriteFile(destination, result)
 		},
 	}
@@ -669,8 +662,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.GetFilePreviewOption{}
 			if cmd.Flags().Changed("width") {
 				options = append(options, service.WithGetFilePreviewWidth(width))
@@ -714,8 +706,8 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			// A location method returns the file bytes, not a URL. The
-			// TypeScript fetches the URL itself; the SDK has already done that.
+			// A location method returns the file bytes, not a URL -- the SDK
+			// has already fetched them.
 			return app.WriteFile(destination, result)
 		},
 	}
@@ -758,8 +750,7 @@ func newStorageGetFileViewCommand() *cobra.Command {
 			}
 			service := storage.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.GetFileViewOption{}
 			if cmd.Flags().Changed("token") {
 				options = append(options, service.WithGetFileViewToken(token))
@@ -770,8 +761,8 @@ func newStorageGetFileViewCommand() *cobra.Command {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			// A location method returns the file bytes, not a URL. The
-			// TypeScript fetches the URL itself; the SDK has already done that.
+			// A location method returns the file bytes, not a URL -- the SDK
+			// has already fetched them.
 			return app.WriteFile(destination, result)
 		},
 	}

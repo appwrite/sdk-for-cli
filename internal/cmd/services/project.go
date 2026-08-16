@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/project"
+	"github.com/appwrite/sdk-for-go/v7/project"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -25,7 +25,6 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectDeleteCommand())
 	cmd.AddCommand(newProjectUpdateAuthMethodCommand())
 	cmd.AddCommand(newProjectListKeysCommand())
-	cmd.AddCommand(newProjectCreateKeyCommand())
 	cmd.AddCommand(newProjectCreateEphemeralKeyCommand())
 	cmd.AddCommand(newProjectGetKeyCommand())
 	cmd.AddCommand(newProjectUpdateKeyCommand())
@@ -263,8 +262,7 @@ func newProjectListKeysCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListKeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListKeysQueries(queries))
@@ -293,51 +291,6 @@ func newProjectListKeysCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
-	return cmd
-}
-
-func newProjectCreateKeyCommand() *cobra.Command {
-	var keyId string
-	var name string
-	var scopes []string
-	var expire string
-	var projectId string
-
-	cmd := &cobra.Command{
-		Use:   "create-key",
-		Short: "Create a new API key. It's recommended to have multiple API keys with strict scopes for separate functions within your project.\n\nYou can also create an ephemeral API key if you need a short-lived key instead.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject(projectId)
-			if err != nil {
-				return err
-			}
-			service := project.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
-			options := []project.CreateKeyOption{}
-			if cmd.Flags().Changed("expire") {
-				options = append(options, service.WithCreateKeyExpire(expire))
-			}
-
-			result, err := service.CreateKey(keyId, name, scopes, options...)
-			if err != nil {
-				return sdk.WrapMutationError("POST", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
-	_ = cmd.MarkFlagRequired("key-id")
-	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
-	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
-	_ = cmd.MarkFlagRequired("scopes")
-	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -423,8 +376,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateKeyOption{}
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateKeyExpire(expire))
@@ -537,8 +489,7 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListMockPhonesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListMockPhonesQueries(queries))
@@ -718,8 +669,7 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListOAuth2ProvidersOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListOAuth2ProvidersQueries(queries))
@@ -776,8 +726,7 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2ServerOption{}
 			if cmd.Flags().Changed("scopes") {
 				options = append(options, service.WithUpdateOAuth2ServerScopes(scopes))
@@ -871,8 +820,7 @@ func newProjectUpdateOAuth2AmazonCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2AmazonOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2AmazonClientId(clientId))
@@ -920,8 +868,7 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2AppleOption{}
 			if cmd.Flags().Changed("service-id") {
 				options = append(options, service.WithUpdateOAuth2AppleServiceId(serviceId))
@@ -975,8 +922,7 @@ func newProjectUpdateOAuth2AppwriteCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2AppwriteOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2AppwriteClientId(clientId))
@@ -1023,8 +969,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2Auth0Option{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2Auth0ClientId(clientId))
@@ -1075,8 +1020,7 @@ func newProjectUpdateOAuth2AuthentikCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2AuthentikOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2AuthentikClientId(clientId))
@@ -1126,8 +1070,7 @@ func newProjectUpdateOAuth2AutodeskCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2AutodeskOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2AutodeskClientId(clientId))
@@ -1173,8 +1116,7 @@ func newProjectUpdateOAuth2BitbucketCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2BitbucketOption{}
 			if cmd.Flags().Changed("key") {
 				options = append(options, service.WithUpdateOAuth2BitbucketKey(key))
@@ -1220,8 +1162,7 @@ func newProjectUpdateOAuth2BitlyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2BitlyOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2BitlyClientId(clientId))
@@ -1267,8 +1208,7 @@ func newProjectUpdateOAuth2BoxCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2BoxOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2BoxClientId(clientId))
@@ -1314,8 +1254,7 @@ func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2DailymotionOption{}
 			if cmd.Flags().Changed("api-key") {
 				options = append(options, service.WithUpdateOAuth2DailymotionApiKey(apiKey))
@@ -1361,8 +1300,7 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2DiscordOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2DiscordClientId(clientId))
@@ -1408,8 +1346,7 @@ func newProjectUpdateOAuth2DisqusCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2DisqusOption{}
 			if cmd.Flags().Changed("public-key") {
 				options = append(options, service.WithUpdateOAuth2DisqusPublicKey(publicKey))
@@ -1455,8 +1392,7 @@ func newProjectUpdateOAuth2DropboxCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2DropboxOption{}
 			if cmd.Flags().Changed("app-key") {
 				options = append(options, service.WithUpdateOAuth2DropboxAppKey(appKey))
@@ -1502,8 +1438,7 @@ func newProjectUpdateOAuth2EtsyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2EtsyOption{}
 			if cmd.Flags().Changed("key-string") {
 				options = append(options, service.WithUpdateOAuth2EtsyKeyString(keyString))
@@ -1549,8 +1484,7 @@ func newProjectUpdateOAuth2FacebookCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2FacebookOption{}
 			if cmd.Flags().Changed("app-id") {
 				options = append(options, service.WithUpdateOAuth2FacebookAppId(appId))
@@ -1596,8 +1530,7 @@ func newProjectUpdateOAuth2FigmaCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2FigmaOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2FigmaClientId(clientId))
@@ -1644,8 +1577,7 @@ func newProjectUpdateOAuth2FusionAuthCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2FusionAuthOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2FusionAuthClientId(clientId))
@@ -1695,8 +1627,7 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2GitHubOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2GitHubClientId(clientId))
@@ -1743,8 +1674,7 @@ func newProjectUpdateOAuth2GitlabCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2GitlabOption{}
 			if cmd.Flags().Changed("application-id") {
 				options = append(options, service.WithUpdateOAuth2GitlabApplicationId(applicationId))
@@ -1795,8 +1725,7 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2GoogleOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2GoogleClientId(clientId))
@@ -1848,8 +1777,7 @@ func newProjectUpdateOAuth2KeycloakCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2KeycloakOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2KeycloakClientId(clientId))
@@ -1903,8 +1831,7 @@ func newProjectUpdateOAuth2KickCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2KickOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2KickClientId(clientId))
@@ -1950,8 +1877,7 @@ func newProjectUpdateOAuth2LinkedinCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2LinkedinOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2LinkedinClientId(clientId))
@@ -1998,8 +1924,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2MicrosoftOption{}
 			if cmd.Flags().Changed("application-id") {
 				options = append(options, service.WithUpdateOAuth2MicrosoftApplicationId(applicationId))
@@ -2049,8 +1974,7 @@ func newProjectUpdateOAuth2NotionCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2NotionOption{}
 			if cmd.Flags().Changed("oauth-client-id") {
 				options = append(options, service.WithUpdateOAuth2NotionOauthClientId(oauthClientId))
@@ -2102,8 +2026,7 @@ func newProjectUpdateOAuth2OidcCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2OidcOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2OidcClientId(clientId))
@@ -2175,8 +2098,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2OktaOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2OktaClientId(clientId))
@@ -2230,8 +2152,7 @@ func newProjectUpdateOAuth2PaypalCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2PaypalOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2PaypalClientId(clientId))
@@ -2277,8 +2198,7 @@ func newProjectUpdateOAuth2PaypalSandboxCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2PaypalSandboxOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2PaypalSandboxClientId(clientId))
@@ -2324,8 +2244,7 @@ func newProjectUpdateOAuth2PodioCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2PodioOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2PodioClientId(clientId))
@@ -2371,8 +2290,7 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2SalesforceOption{}
 			if cmd.Flags().Changed("customer-key") {
 				options = append(options, service.WithUpdateOAuth2SalesforceCustomerKey(customerKey))
@@ -2418,8 +2336,7 @@ func newProjectUpdateOAuth2SlackCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2SlackOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2SlackClientId(clientId))
@@ -2465,8 +2382,7 @@ func newProjectUpdateOAuth2SpotifyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2SpotifyOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2SpotifyClientId(clientId))
@@ -2512,8 +2428,7 @@ func newProjectUpdateOAuth2StripeCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2StripeOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2StripeClientId(clientId))
@@ -2559,8 +2474,7 @@ func newProjectUpdateOAuth2TradeshiftCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2TradeshiftOption{}
 			if cmd.Flags().Changed("oauth-2-client-id") {
 				options = append(options, service.WithUpdateOAuth2TradeshiftOauth2ClientId(oauth2ClientId))
@@ -2606,8 +2520,7 @@ func newProjectUpdateOAuth2TradeshiftSandboxCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2TradeshiftSandboxOption{}
 			if cmd.Flags().Changed("oauth-2-client-id") {
 				options = append(options, service.WithUpdateOAuth2TradeshiftSandboxOauth2ClientId(oauth2ClientId))
@@ -2653,8 +2566,7 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2TwitchOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2TwitchClientId(clientId))
@@ -2700,8 +2612,7 @@ func newProjectUpdateOAuth2WordPressCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2WordPressOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2WordPressClientId(clientId))
@@ -2747,8 +2658,7 @@ func newProjectUpdateOAuth2XCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2XOption{}
 			if cmd.Flags().Changed("customer-key") {
 				options = append(options, service.WithUpdateOAuth2XCustomerKey(customerKey))
@@ -2794,8 +2704,7 @@ func newProjectUpdateOAuth2YahooCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2YahooOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2YahooClientId(clientId))
@@ -2841,8 +2750,7 @@ func newProjectUpdateOAuth2YandexCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2YandexOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2YandexClientId(clientId))
@@ -2888,8 +2796,7 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2ZohoOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2ZohoClientId(clientId))
@@ -2935,8 +2842,7 @@ func newProjectUpdateOAuth2ZoomCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2ZoomOption{}
 			if cmd.Flags().Changed("client-id") {
 				options = append(options, service.WithUpdateOAuth2ZoomClientId(clientId))
@@ -3043,8 +2949,7 @@ func newProjectListPlatformsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListPlatformsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListPlatformsQueries(queries))
@@ -3524,8 +3429,7 @@ func newProjectListPoliciesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListPoliciesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListPoliciesQueries(queries))
@@ -3692,8 +3596,7 @@ func newProjectUpdateMembershipPrivacyPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateMembershipPrivacyPolicyOption{}
 			if cmd.Flags().Changed("user-id") {
 				options = append(options, service.WithUpdateMembershipPrivacyPolicyUserId(userId))
@@ -3757,8 +3660,7 @@ func newProjectUpdateMFAFactorsPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateMFAFactorsPolicyOption{}
 			if cmd.Flags().Changed("totp") {
 				options = append(options, service.WithUpdateMFAFactorsPolicyTotp(totp))
@@ -3903,8 +3805,7 @@ func newProjectUpdatePasswordStrengthPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdatePasswordStrengthPolicyOption{}
 			if cmd.Flags().Changed("min") {
 				options = append(options, service.WithUpdatePasswordStrengthPolicyMin(minArg))
@@ -4214,8 +4115,7 @@ func newProjectUpdateSMTPCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateSMTPOption{}
 			if cmd.Flags().Changed("host") {
 				options = append(options, service.WithUpdateSMTPHost(host))
@@ -4329,8 +4229,7 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListEmailTemplatesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListEmailTemplatesQueries(queries))
@@ -4379,8 +4278,7 @@ func newProjectUpdateEmailTemplateCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateEmailTemplateOption{}
 			if cmd.Flags().Changed("locale") {
 				options = append(options, service.WithUpdateEmailTemplateLocale(locale))
@@ -4442,8 +4340,7 @@ func newProjectGetEmailTemplateCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.GetEmailTemplateOption{}
 			if cmd.Flags().Changed("locale") {
 				options = append(options, service.WithGetEmailTemplateLocale(locale))
@@ -4513,8 +4410,7 @@ func newProjectListVariablesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListVariablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListVariablesQueries(queries))
@@ -4565,8 +4461,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
@@ -4641,8 +4536,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateVariableOption{}
 			if cmd.Flags().Changed("key") {
 				options = append(options, service.WithUpdateVariableKey(key))

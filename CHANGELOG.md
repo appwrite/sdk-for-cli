@@ -1,5 +1,16 @@
 # Change Log
 
+## 27.0.0
+
+* Breaking: Removed `account create-jwt`, use `users create-jwt` instead
+* Breaking: Removed `project create-key`, use `organization create-key` instead
+* Added: `users get-mfa-challenge` retrieves a challenge code to deliver through your own channel
+* Added: `tablesdb list-migrations`, `create-migration`, `get-migration`, and `delete-migration`
+* Added: `--scopes` on `sites create` and `sites update` limits the auto-generated build key
+* Added: `push functions` uploads in parallel when more than one is selected
+* Added: `run function` streams `context.log()` and `context.error()` output live
+* Updated: Commands now call Go SDK 7.1.0
+
 ## 26.1.0
 
 * Added: `project update-mfa-factors-policy` controls which factors can complete an MFA challenge

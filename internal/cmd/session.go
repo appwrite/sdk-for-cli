@@ -17,8 +17,7 @@ import (
 	"github.com/appwrite/sdk-for-cli/internal/jsonx"
 )
 
-// Ports the session half of templates/cli/lib/sdks.ts and the `whoami` command
-// in templates/cli/lib/commands/generic.ts.
+// Implements session handling and the `whoami` command.
 
 // ErrNotLoggedIn is returned when a command needs a session and none is stored.
 var ErrNotLoggedIn = errors.New("no active session. Run `" + app.ExecutableName + " login` to sign in")

@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/graphql"
+	"github.com/appwrite/sdk-for-go/v7/graphql"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/sdk"

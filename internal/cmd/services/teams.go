@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/teams"
+	"github.com/appwrite/sdk-for-go/v7/teams"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -91,8 +91,7 @@ func newTeamsListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -144,8 +143,7 @@ func newTeamsCreateCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.CreateOption{}
 			if cmd.Flags().Changed("roles") {
 				options = append(options, service.WithCreateRoles(roles))
@@ -303,8 +301,7 @@ func newTeamsListInstallationsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.ListInstallationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListInstallationsQueries(queries))
@@ -354,8 +351,7 @@ func newTeamsCreateInstallationCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.CreateInstallationOption{}
 			if cmd.Flags().Changed("authorization-details") {
 				options = append(options, service.WithCreateInstallationAuthorizationDetails(authorizationDetails))
@@ -425,8 +421,7 @@ func newTeamsUpdateInstallationCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.UpdateInstallationOption{}
 			if cmd.Flags().Changed("authorization-details") {
 				options = append(options, service.WithUpdateInstallationAuthorizationDetails(authorizationDetails))
@@ -529,8 +524,7 @@ func newTeamsListMembershipsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.ListMembershipsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListMembershipsQueries(queries))
@@ -588,8 +582,7 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.CreateMembershipOption{}
 			if cmd.Flags().Changed("email") {
 				options = append(options, service.WithCreateMembershipEmail(email))

@@ -9,8 +9,7 @@ import (
 	"github.com/appwrite/sdk-for-cli/internal/jsonx"
 )
 
-// These two modes are scripted against, so the bytes must match the TypeScript
-// CLI's exactly.
+// These two modes are scripted against, so the bytes are contractual.
 
 // Mode selects how a response is rendered.
 type Mode int
@@ -60,7 +59,7 @@ func RenderJSON(writer io.Writer, value any) error {
 //
 // Responses must go through this rather than encoding/json's default
 // map[string]any: a map would re-emit keys sorted, which --json consumers would
-// see as the field order changing between the two CLIs. Arrays use the same
+// see as the field order changing between the CLI builds. Arrays use the same
 // ordered decoder because GraphQL batches put response objects at the top level.
 func DecodeOrdered(payload []byte) (any, error) {
 	trimmed := strings.TrimSpace(string(payload))

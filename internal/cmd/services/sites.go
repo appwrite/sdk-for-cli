@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/sites"
+	"github.com/appwrite/sdk-for-go/v7/sites"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -98,8 +98,7 @@ func newSitesListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -159,6 +158,7 @@ func newSitesCreateCommand() *cobra.Command {
 	var buildSpecification string
 	var runtimeSpecification string
 	var deploymentRetention int
+	var scopes []string
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -171,8 +171,7 @@ func newSitesCreateCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.CreateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
@@ -231,6 +230,9 @@ func newSitesCreateCommand() *cobra.Command {
 			if cmd.Flags().Changed("deployment-retention") {
 				options = append(options, service.WithCreateDeploymentRetention(deploymentRetention))
 			}
+			if cmd.Flags().Changed("scopes") {
+				options = append(options, service.WithCreateScopes(scopes))
+			}
 
 			result, err := service.Create(siteId, name, framework, buildRuntime, options...)
 			if err != nil {
@@ -271,6 +273,7 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
 	return cmd
 }
 
@@ -313,8 +316,7 @@ func newSitesListSpecificationsCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListSpecificationsOption{}
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithListSpecificationsType(typeArg))
@@ -385,6 +387,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	var buildSpecification string
 	var runtimeSpecification string
 	var deploymentRetention int
+	var scopes []string
 
 	cmd := &cobra.Command{
 		Use:   "update",
@@ -397,8 +400,7 @@ func newSitesUpdateCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.UpdateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateEnabled(enabled))
@@ -460,6 +462,9 @@ func newSitesUpdateCommand() *cobra.Command {
 			if cmd.Flags().Changed("deployment-retention") {
 				options = append(options, service.WithUpdateDeploymentRetention(deploymentRetention))
 			}
+			if cmd.Flags().Changed("scopes") {
+				options = append(options, service.WithUpdateScopes(scopes))
+			}
 
 			result, err := service.Update(siteId, name, framework, options...)
 			if err != nil {
@@ -499,6 +504,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
 	return cmd
 }
 
@@ -610,8 +616,7 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListDeploymentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListDeploymentsQueries(queries))
@@ -673,8 +678,7 @@ func newSitesCreateDeploymentCommand() *cobra.Command {
 			}
 			defer codeFileCleanup()
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.CreateDeploymentOption{}
 			if cmd.Flags().Changed("install-command") {
 				options = append(options, service.WithCreateDeploymentInstallCommand(installCommand))
@@ -761,8 +765,7 @@ func newSitesCreateTemplateDeploymentCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.CreateTemplateDeploymentOption{}
 			if cmd.Flags().Changed("activate") {
 				options = append(options, service.WithCreateTemplateDeploymentActivate(activate))
@@ -811,8 +814,7 @@ func newSitesCreateVcsDeploymentCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.CreateVcsDeploymentOption{}
 			if cmd.Flags().Changed("activate") {
 				options = append(options, service.WithCreateVcsDeploymentActivate(activate))
@@ -918,8 +920,7 @@ func newSitesGetDeploymentDownloadCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.GetDeploymentDownloadOption{}
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithGetDeploymentDownloadType(typeArg))
@@ -933,8 +934,8 @@ func newSitesGetDeploymentDownloadCommand() *cobra.Command {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			// A location method returns the file bytes, not a URL. The
-			// TypeScript fetches the URL itself; the SDK has already done that.
+			// A location method returns the file bytes, not a URL -- the SDK
+			// has already fetched them.
 			return app.WriteFile(destination, result)
 		},
 	}
@@ -1029,8 +1030,7 @@ func newSitesListLogsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListLogsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListLogsQueries(queries))
@@ -1174,8 +1174,7 @@ func newSitesListVariablesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListVariablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListVariablesQueries(queries))
@@ -1227,8 +1226,7 @@ func newSitesCreateVariableCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
@@ -1305,8 +1303,7 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.UpdateVariableOption{}
 			if cmd.Flags().Changed("key") {
 				options = append(options, service.WithUpdateVariableKey(key))

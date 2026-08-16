@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/backups"
+	"github.com/appwrite/sdk-for-go/v7/backups"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -83,8 +83,7 @@ func newBackupsListArchivesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.ListArchivesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListArchivesQueries(queries))
@@ -126,8 +125,7 @@ func newBackupsCreateArchiveCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.CreateArchiveOption{}
 			if cmd.Flags().Changed("resource-id") {
 				options = append(options, service.WithCreateArchiveResourceId(resourceId))
@@ -250,8 +248,7 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.ListPoliciesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListPoliciesQueries(queries))
@@ -298,8 +295,7 @@ func newBackupsCreatePolicyCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.CreatePolicyOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreatePolicyName(name))
@@ -381,8 +377,7 @@ func newBackupsUpdatePolicyCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.UpdatePolicyOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithUpdatePolicyName(name))
@@ -461,8 +456,7 @@ func newBackupsCreateRestorationCommand() *cobra.Command {
 			}
 			service := backups.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.CreateRestorationOption{}
 			if cmd.Flags().Changed("new-resource-id") {
 				options = append(options, service.WithCreateRestorationNewResourceId(newResourceId))
@@ -535,8 +529,7 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.ListRestorationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListRestorationsQueries(queries))

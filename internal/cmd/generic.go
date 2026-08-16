@@ -4,20 +4,19 @@ import (
 	"github.com/appwrite/sdk-for-cli/internal/appwrite"
 )
 
-// Ports the one piece of templates/cli/lib/commands/generic.ts that had no Go
-// equivalent: the legacy preferences migration.
+// migrate upgrades the legacy preferences format.
 
 // migrateLegacyPreferences moves a pre-sessions prefs.json into the sessions
 // array, and is why an upgrading user stays signed in.
 //
-// Ports the unconditional `await migrate()` at cli.ts:154. prefs.json used to
-// hold one endpoint and cookie at the top level; sessions replaced that with a
-// keyed array. The Go CLI reads per-session cookies correctly but had no
+// prefs.json used to hold one endpoint and cookie at the top level; sessions
+// replaced that with a
+// keyed array. The CLI reads per-session cookies correctly but had no
 // equivalent of this, so a user upgrading from an older CLI kept a valid cookie
 // in a shape nothing looked at, and the first command they ran told them to log
 // in again.
 //
-// Silent on every failure, like the TypeScript. This runs before every command,
+// Silent on every failure. This runs before every command,
 // including ones that never touch preferences, so a prefs.json that cannot be
 // read or written must not turn `appwrite --help` into an error. The cost of
 // staying quiet is that the user is asked to log in -- which is exactly what

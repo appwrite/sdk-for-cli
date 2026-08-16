@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/users"
+	"github.com/appwrite/sdk-for-go/v7/users"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -42,6 +42,7 @@ func NewUsersCommand() *cobra.Command {
 	cmd.AddCommand(newUsersListMembershipsCommand())
 	cmd.AddCommand(newUsersUpdateMfaCommand())
 	cmd.AddCommand(newUsersDeleteMfaAuthenticatorCommand())
+	cmd.AddCommand(newUsersGetMFAChallengeCommand())
 	cmd.AddCommand(newUsersListMfaFactorsCommand())
 	cmd.AddCommand(newUsersGetMfaRecoveryCodesCommand())
 	cmd.AddCommand(newUsersUpdateMfaRecoveryCodesCommand())
@@ -116,8 +117,7 @@ func newUsersListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -171,8 +171,7 @@ func newUsersCreateCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateOption{}
 			if cmd.Flags().Changed("email") {
 				options = append(options, service.WithCreateEmail(email))
@@ -222,8 +221,7 @@ func newUsersCreateArgon2UserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateArgon2UserOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateArgon2UserName(name))
@@ -265,8 +263,7 @@ func newUsersCreateBcryptUserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateBcryptUserOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateBcryptUserName(name))
@@ -339,8 +336,7 @@ func newUsersListIdentitiesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListIdentitiesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListIdentitiesQueries(queries))
@@ -421,8 +417,7 @@ func newUsersCreateMD5UserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateMD5UserOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateMD5UserName(name))
@@ -464,8 +459,7 @@ func newUsersCreatePHPassUserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreatePHPassUserOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreatePHPassUserName(name))
@@ -512,8 +506,7 @@ func newUsersCreateScryptUserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateScryptUserOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateScryptUserName(name))
@@ -568,8 +561,7 @@ func newUsersCreateScryptModifiedUserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateScryptModifiedUserOption{}
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateScryptModifiedUserName(name))
@@ -618,8 +610,7 @@ func newUsersCreateSHAUserCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateSHAUserOption{}
 			if cmd.Flags().Changed("password-version") {
 				options = append(options, service.WithCreateSHAUserPasswordVersion(passwordVersion))
@@ -782,8 +773,7 @@ func newUsersCreateJWTCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateJWTOption{}
 			if cmd.Flags().Changed("session-id") {
 				options = append(options, service.WithCreateJWTSessionId(sessionId))
@@ -866,8 +856,7 @@ func newUsersListLogsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListLogsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListLogsQueries(queries))
@@ -944,8 +933,7 @@ func newUsersListMembershipsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListMembershipsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListMembershipsQueries(queries))
@@ -1042,6 +1030,37 @@ func newUsersDeleteMfaAuthenticatorCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Type of authenticator.")
 	_ = cmd.MarkFlagRequired("type")
+	return cmd
+}
+
+func newUsersGetMFAChallengeCommand() *cobra.Command {
+	var userId string
+	var challengeId string
+
+	cmd := &cobra.Command{
+		Use:   "get-mfa-challenge",
+		Short: "Get a custom MFA challenge for a user, including the code to be delivered through your own channel.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := users.New(client)
+
+			result, err := service.GetMFAChallenge(userId, challengeId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
+	_ = cmd.MarkFlagRequired("user-id")
+	cmd.Flags().StringVar(&challengeId, "challenge-id", "", "ID of the challenge.")
+	_ = cmd.MarkFlagRequired("challenge-id")
 	return cmd
 }
 
@@ -1328,8 +1347,7 @@ func newUsersListSessionsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListSessionsOption{}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListSessionsTotal(total))
@@ -1517,8 +1535,7 @@ func newUsersListTargetsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListTargetsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTargetsQueries(queries))
@@ -1571,8 +1588,7 @@ func newUsersCreateTargetCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateTargetOption{}
 			if cmd.Flags().Changed("provider-id") {
 				options = append(options, service.WithCreateTargetProviderId(providerId))
@@ -1652,8 +1668,7 @@ func newUsersUpdateTargetCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.UpdateTargetOption{}
 			if cmd.Flags().Changed("identifier") {
 				options = append(options, service.WithUpdateTargetIdentifier(identifier))
@@ -1731,8 +1746,7 @@ func newUsersCreateTokenCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.CreateTokenOption{}
 			if cmd.Flags().Changed("length") {
 				options = append(options, service.WithCreateTokenLength(length))

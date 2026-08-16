@@ -8,8 +8,7 @@ import (
 	"github.com/appwrite/sdk-for-cli/internal/jsonx"
 )
 
-// Ports templates/cli/lib/type-generation/languages/typescript.ts and the
-// shared helper it delegates to, lib/shared/typescript-type-utils.ts.
+// Emits TypeScript definitions from project schemas.
 
 // TypeScript emits an appwrite.d.ts.
 type TypeScript struct {

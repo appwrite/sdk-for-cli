@@ -21,16 +21,15 @@ import (
 
 // runGit runs a git invocation with its output captured.
 //
-// Output is captured rather than streamed, matching the TypeScript's
-// `stdio: "pipe"`: a sparse checkout prints progress that means nothing to
-// someone running `init function`, and the text is only wanted when it fails.
+// Output is captured rather than streamed: a sparse checkout prints progress
+// that means nothing to someone running `init function`, and the text is only
+// wanted when it fails.
 func runGit(directory string, script string) error {
 	var command *exec.Cmd
 
 	switch {
 	case runtime.GOOS == "windows":
-		// cmd rather than PowerShell, which has no `&&`. The TypeScript wraps
-		// each command the same way for the same reason.
+		// cmd rather than PowerShell, which has no `&&`.
 		command = exec.Command("cmd", "/c", script)
 	default:
 		command = exec.Command("sh", "-c", script)
@@ -46,7 +45,7 @@ func runGit(directory string, script string) error {
 	return gitError(fmt.Sprintf("%s\n%s", err, strings.TrimSpace(string(output))))
 }
 
-// gitError translates a git failure into the suggestion the TypeScript adds.
+// gitError translates a git failure into an actionable suggestion.
 //
 // Two failures are common enough to be worth naming: a git too old for
 // `--sparse`, and no git at all. Both otherwise surface as a bare non-zero exit
@@ -133,7 +132,7 @@ func copyFile(source, destination string, mode fs.FileMode) error {
 
 // retitleReadme rewrites a template README's heading to the resource's name.
 //
-// Ports the `newReadmeFile.splice(1, 2)` dance: line 0 becomes the title and
+// Implements the `newReadmeFile.splice(1, 2)` dance: line 0 becomes the title and
 // the TWO lines after it are dropped, which is how the templates' badge row and
 // the blank line under it disappear. A README shorter than that is left with
 // whatever remains rather than erroring -- splice() on a short array simply

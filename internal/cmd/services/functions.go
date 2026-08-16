@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/functions"
+	"github.com/appwrite/sdk-for-go/v7/functions"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -99,8 +99,7 @@ func newFunctionsListCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
@@ -171,8 +170,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateOption{}
 			if cmd.Flags().Changed("execute") {
 				options = append(options, service.WithCreateExecute(execute))
@@ -311,8 +309,7 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListSpecificationsOption{}
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithListSpecificationsType(typeArg))
@@ -394,8 +391,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.UpdateOption{}
 			if cmd.Flags().Changed("runtime") {
 				options = append(options, service.WithUpdateRuntime(runtime))
@@ -605,8 +601,7 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListDeploymentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListDeploymentsQueries(queries))
@@ -667,8 +662,7 @@ func newFunctionsCreateDeploymentCommand() *cobra.Command {
 			}
 			defer codeFileCleanup()
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateDeploymentOption{}
 			if cmd.Flags().Changed("entrypoint") {
 				options = append(options, service.WithCreateDeploymentEntrypoint(entrypoint))
@@ -713,8 +707,7 @@ func newFunctionsCreateDuplicateDeploymentCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateDuplicateDeploymentOption{}
 			if cmd.Flags().Changed("build-id") {
 				options = append(options, service.WithCreateDuplicateDeploymentBuildId(buildId))
@@ -757,8 +750,7 @@ func newFunctionsCreateTemplateDeploymentCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateTemplateDeploymentOption{}
 			if cmd.Flags().Changed("activate") {
 				options = append(options, service.WithCreateTemplateDeploymentActivate(activate))
@@ -807,8 +799,7 @@ func newFunctionsCreateVcsDeploymentCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateVcsDeploymentOption{}
 			if cmd.Flags().Changed("activate") {
 				options = append(options, service.WithCreateVcsDeploymentActivate(activate))
@@ -914,8 +905,7 @@ func newFunctionsGetDeploymentDownloadCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.GetDeploymentDownloadOption{}
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithGetDeploymentDownloadType(typeArg))
@@ -929,8 +919,8 @@ func newFunctionsGetDeploymentDownloadCommand() *cobra.Command {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			// A location method returns the file bytes, not a URL. The
-			// TypeScript fetches the URL itself; the SDK has already done that.
+			// A location method returns the file bytes, not a URL -- the SDK
+			// has already fetched them.
 			return app.WriteFile(destination, result)
 		},
 	}
@@ -1025,8 +1015,7 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListExecutionsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListExecutionsQueries(queries))
@@ -1084,8 +1073,7 @@ func newFunctionsCreateExecutionCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateExecutionOption{}
 			if cmd.Flags().Changed("body") {
 				options = append(options, service.WithCreateExecutionBody(body))
@@ -1237,8 +1225,7 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListVariablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListVariablesQueries(queries))
@@ -1290,8 +1277,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
@@ -1368,8 +1354,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.UpdateVariableOption{}
 			if cmd.Flags().Changed("key") {
 				options = append(options, service.WithUpdateVariableKey(key))

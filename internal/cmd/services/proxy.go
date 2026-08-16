@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/appwrite/sdk-for-go/v6/proxy"
+	"github.com/appwrite/sdk-for-go/v7/proxy"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/query"
@@ -50,8 +50,7 @@ func newProxyCreateInvalidationCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []proxy.CreateInvalidationOption{}
 			if cmd.Flags().Changed("reference") {
 				options = append(options, service.WithCreateInvalidationReference(reference))
@@ -121,8 +120,7 @@ func newProxyListRulesCommand() *cobra.Command {
 				return err
 			}
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []proxy.ListRulesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListRulesQueries(queries))
@@ -198,8 +196,7 @@ func newProxyCreateFunctionRuleCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []proxy.CreateFunctionRuleOption{}
 			if cmd.Flags().Changed("branch") {
 				options = append(options, service.WithCreateFunctionRuleBranch(branch))
@@ -278,8 +275,7 @@ func newProxyCreateSiteRuleCommand() *cobra.Command {
 			}
 			service := proxy.New(client)
 
-			// An unset flag must be omitted, not sent as its zero value: the
-			// TypeScript passes undefined and the SDK drops it.
+			// An unset flag must be omitted, not sent as its zero value.
 			options := []proxy.CreateSiteRuleOption{}
 			if cmd.Flags().Changed("branch") {
 				options = append(options, service.WithCreateSiteRuleBranch(branch))

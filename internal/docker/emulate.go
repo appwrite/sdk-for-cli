@@ -12,8 +12,7 @@ import (
 
 // The build, hot-swap and cleanup flows that sit on top of Client.
 //
-// Ports the remaining halves of templates/cli/lib/emulation/docker.ts and the
-// reload branch of lib/commands/run.ts.
+// Implements Docker emulation and the reload branch of the run command.
 
 // Emulator runs one function locally.
 type Emulator struct {

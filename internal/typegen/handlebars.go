@@ -6,10 +6,10 @@ import (
 	"strings"
 )
 
-// A Handlebars subset, so both CLIs can render the same .hbs files.
+// A Handlebars subset, so all CLI builds can render the same .hbs files.
 //
-// The templates under templates/cli/lib/commands/generators/typescript/templates
-// use only `{{var}}`, `{{{raw}}}` and `{{#if}}/{{else}}/{{/if}}` -- no loops, no
+// The templates under internal/typegen/templates use only `{{var}}`,
+// `{{{raw}}}` and `{{#if}}/{{else}}/{{/if}}` -- no loops, no
 // helpers, no nested paths. Implementing that subset is a fraction of the work
 // of maintaining a second set of templates in Go syntax, and it removes the way
 // those two copies would drift.
@@ -62,8 +62,8 @@ func stripStandaloneTags(template string) string {
 // htmlEscaper matches Handlebars' escaping exactly.
 //
 // Note this escapes `&` in a URL: an endpoint with a query string is written
-// into generated TypeScript as `&amp;`. That is what the TypeScript CLI does
-// today, and byte-identical output is the requirement, so it is reproduced
+// into generated TypeScript as `&amp;`. This preserves established output, so it
+// is reproduced
 // rather than corrected here.
 var htmlEscaper = strings.NewReplacer(
 	"&", "&amp;",

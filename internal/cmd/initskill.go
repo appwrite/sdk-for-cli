@@ -17,8 +17,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Ports initSkill (templates/cli/lib/commands/init.ts:582) plus
-// fetchAvailableSkills and placeSkills (utils.ts:1080, 1183).
+// Initializes skills by fetching and placing the selected definitions.
 
 // skillsRepo holds the agent skills.
 const skillsRepo = "https://github.com/appwrite/skills"

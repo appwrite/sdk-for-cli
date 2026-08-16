@@ -17,15 +17,13 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Ports the packaging and upload half of
-// templates/cli/lib/commands/utils/deployment.ts -- listDeployableFiles (:422),
-// packageDirectory (:565) and pushDeployment (:736). downloadDeploymentCode
-// (:630) is ported in internal/cmd/pullfunction.go.
+// Implements deployment source packaging and upload. Downloading deployment
+// source belongs to pull and lives in internal/cmd/pullfunction.go.
 
 const (
-	// ChunkSize is Client.CHUNK_SIZE in the console SDK the TypeScript uploads
-	// through. An archive at or below it is sent as one request with no
-	// content-range, and the API answers without minting an upload id.
+	// ChunkSize is the SDK's own upload chunk size. An archive at or below it is
+	// sent as one request with no content-range, and the API answers without
+	// minting an upload id.
 	ChunkSize = 5 * 1024 * 1024
 
 	// UploadConcurrency is the console SDK's CONCURRENCY: the first chunk
@@ -39,7 +37,7 @@ const (
 	// ArchiveContentType is the type packageDirectory tags the File with.
 	ArchiveContentType = "application/gzip"
 
-	// pollInterval is POLL_DEBOUNCE * 1.5 (deployment.ts:775). The resource
+	// pollInterval is half again the deployment debounce. The resource
 	// commands poll on their own, faster, schedule; this one is only used when
 	// a caller asks pushDeployment itself to wait.
 	pollInterval = 3 * time.Second
@@ -230,7 +228,7 @@ func (w *walker) walk(relativeDirectory string, inherited []matcher) error {
 		}
 	}
 
-	// os.ReadDir sorts by name where readdirSync does not, so the two CLIs can
+	// os.ReadDir sorts by name where readdirSync does not, so the CLI builds can
 	// pack the same files in a different order. Archive ORDER is not part of
 	// the contract -- the build unpacks the whole thing -- and a deterministic
 	// order makes a packaging test worth writing.

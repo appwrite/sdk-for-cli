@@ -14,7 +14,7 @@ import (
 // The race is invisible without -race and does not need a console cookie to be
 // present in practice: the read and the write are what matter, not the value.
 // Guarding the assertion below is secondary -- the point of this test is that it
-// is run with -race, which the Go CLI CI job now does.
+// is run with -race, which the CLI CI job now does.
 func TestConcurrentCallsDoNotRaceOnTheSessionCookie(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Set-Cookie", "a_session_console=abc123; Path=/; HttpOnly")

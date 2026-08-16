@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	sdkclient "github.com/appwrite/sdk-for-go/v6/client"
-	"github.com/appwrite/sdk-for-go/v6/oauth2"
-	"github.com/appwrite/sdk-for-go/v6/organization"
-	"github.com/appwrite/sdk-for-go/v6/teams"
+	sdkclient "github.com/appwrite/sdk-for-go/v7/client"
+	"github.com/appwrite/sdk-for-go/v7/oauth2"
+	"github.com/appwrite/sdk-for-go/v7/organization"
+	"github.com/appwrite/sdk-for-go/v7/teams"
 
 	"github.com/appwrite/sdk-for-cli/internal/config"
 )

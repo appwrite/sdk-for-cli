@@ -8,11 +8,10 @@ import (
 
 // IgnoreRules is a resource's `ignore` field.
 //
-// IT IS BOTH SHAPES. `init function` writes a JSON array -- in this CLI and in
-// the TypeScript one -- while the config schema documents a single
-// newline-separated string, and a hand-written config may use either. The
-// TypeScript never notices because `ignore().add()` accepts a string or an
-// array, so both have always worked there.
+// IT IS BOTH SHAPES. `init function` writes a JSON array while the config
+// schema documents a single newline-separated string, and a hand-written config
+// may use either. Both have always worked, because the matcher accepts a string
+// or an array.
 //
 // A plain `string` field here does not just mis-read an array, it fails the
 // whole decode: `json: cannot unmarshal array into Go struct field
@@ -70,7 +69,7 @@ func (i *IgnoreRules) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("ignore must be a string or a list of strings, got %s", trimmed)
 }
 
-// MarshalJSON writes the array form, which is what both CLIs' `init` produces.
+// MarshalJSON writes the array form, which is what all CLI builds' `init` produces.
 //
 // Only reachable if something re-encodes the typed view; the ordered document
 // in Local is what actually gets written back to disk, so a user's chosen
