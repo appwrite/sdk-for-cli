@@ -1,5 +1,16 @@
 # Change Log
 
+## 27.1.0
+
+* Added: `list-projects` and `list-organizations` return the same results for OAuth2, cookie, and self-hosted logins
+* Added: `list-projects` lists every accessible organization, and `--organization-id` narrows it to one
+* Added: Both lists now carry names, member counts, organization, and region instead of bare IDs
+* Added: Table view for both lists shows `projects (1 of 224)`, an empty state, and a next-page command
+* Added: `appwrite update` prints the release notes URL for the installed version
+* Fixed: `--version` now reports when a newer version is available
+* Fixed: Enrichment requests no longer overwrite the rendered result of a list command
+* Updated: `prefs` is hidden from the table view and kept in `--json` output
+
 ## 27.0.0
 
 * Breaking: Removed `account create-jwt`, use `users create-jwt` instead

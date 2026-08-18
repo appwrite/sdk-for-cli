@@ -39,6 +39,17 @@ func ClientForProject(projectID string) (sdkclient.Client, error) {
 	return ctx.ForProject(projectID)
 }
 
+// ClientForSessionProject builds a project client from a discovered ID and
+// endpoint while ignoring unrelated local project configuration.
+func ClientForSessionProject(projectID, endpoint string) (sdkclient.Client, error) {
+	ctx, err := context()
+	if err != nil {
+		return sdkclient.Client{}, err
+	}
+
+	return ctx.ForSessionProject(projectID, endpoint)
+}
+
 // ClientForOrganization builds a console client scoped to an organization.
 func ClientForOrganization(organizationID string) (sdkclient.Client, error) {
 	ctx, err := context()
