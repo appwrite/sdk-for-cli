@@ -366,18 +366,21 @@ func newOauth2ListOrganizationsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:    "list-organizations",
-		Short:  "List the organizations the OAuth2 access token can access. Resolves the token's `organization` authorization details, expanding the `*` wildcard into the concrete set of organizations the user can see.",
+		Short:  "List the organizations the current session can access.",
 		Hidden: true,
-		Args:   cobra.NoArgs,
+		Example: "  " + app.ExecutableName + " list-organizations --search <NAME>\n" +
+			"  " + app.ExecutableName + " organization get --organization-id <ORGANIZATION_ID>",
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			result, err := app.ListOrganizationsForSession(
-				app.FlagInt(cmd, "limit", limit), app.FlagInt(cmd, "offset", offset), search)
+			limitFlag := app.FlagInt(cmd, "limit", limit)
+			offsetFlag := app.FlagInt(cmd, "offset", offset)
+			result, err := app.ListOrganizationsForSession(limitFlag, offsetFlag, search)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			return app.Render(result)
+			return app.RenderOrganizationList(result, limitFlag, offsetFlag, search)
 		},
 	}
 
@@ -478,27 +481,33 @@ func newOauth2ListProjectsCommand() *cobra.Command {
 	var limit int
 	var offset int
 	var search string
+	var organizationId string
 
 	cmd := &cobra.Command{
 		Use:    "list-projects",
-		Short:  "List the projects the OAuth2 access token can access. Resolves the token's `project` authorization details, expanding the `*` wildcard into the concrete set of projects the user can see.",
+		Short:  "List the projects the current session can access.",
 		Hidden: true,
-		Args:   cobra.NoArgs,
+		Example: "  " + app.ExecutableName + " list-projects --organization-id <ORGANIZATION_ID>\n" +
+			"  " + app.ExecutableName + " project get --project-id <PROJECT_ID>",
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			result, err := app.ListProjectsForSession("",
-				app.FlagInt(cmd, "limit", limit), app.FlagInt(cmd, "offset", offset), search)
+			limitFlag := app.FlagInt(cmd, "limit", limit)
+			offsetFlag := app.FlagInt(cmd, "offset", offset)
+			result, err := app.ListProjectsForSession(organizationId,
+				limitFlag, offsetFlag, search)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
 
-			return app.Render(result)
+			return app.RenderProjectList(result, limitFlag, offsetFlag, search, organizationId)
 		},
 	}
 
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of projects to return. Between 1 and 5000.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of projects to skip before returning results. Used for pagination.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Only show projects in this organization.")
 	return cmd
 }
 
