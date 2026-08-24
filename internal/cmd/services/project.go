@@ -57,6 +57,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2GitHubCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2GitlabCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2GoogleCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2HuggingFaceCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KeycloakCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KickCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2LinkedinCommand())
@@ -1752,6 +1753,52 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Google OAuth2 app. For example: 120000000095-92ifjb00000000000000000000g7ijfb.apps.googleusercontent.com")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Google OAuth2 app. For example: GOCSPX-2k8gsR0000000000000000VNahJj")
 	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Google OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. Must not be specified with other values. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2HuggingFaceCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-hugging-face",
+		Short: "Update the project OAuth2 Hugging Face configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2HuggingFaceOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2HuggingFaceClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2HuggingFaceClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2HuggingFaceEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2HuggingFace(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Hugging Face OAuth2 app. For example: 2ab9cff9-d711-40ad-a91e-b08a49c42d24")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Hugging Face OAuth2 app. For example: oauth_app_secret_wcLhRtl000000000000000000000xbNdLt")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")

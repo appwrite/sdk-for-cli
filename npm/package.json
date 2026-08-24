@@ -1,6 +1,6 @@
 {
   "name": "appwrite-cli",
-  "version": "27.1.0",
+  "version": "27.2.0",
   "description": "Appwrite is an open-source self-hosted backend server that abstracts and simplifies complex and repetitive development tasks behind a very simple REST API",
   "homepage": "https://appwrite.io/support",
   "license": "BSD-3-Clause",
@@ -15,12 +15,12 @@
     "run.js"
   ],
   "optionalDependencies": {
-    "appwrite-cli-darwin-arm64": "27.1.0",
-    "appwrite-cli-darwin-x64": "27.1.0",
-    "appwrite-cli-linux-arm64": "27.1.0",
-    "appwrite-cli-linux-x64": "27.1.0",
-    "appwrite-cli-win-arm64": "27.1.0",
-    "appwrite-cli-win-x64": "27.1.0"
+    "appwrite-cli-darwin-arm64": "27.2.0",
+    "appwrite-cli-darwin-x64": "27.2.0",
+    "appwrite-cli-linux-arm64": "27.2.0",
+    "appwrite-cli-linux-x64": "27.2.0",
+    "appwrite-cli-win-arm64": "27.2.0",
+    "appwrite-cli-win-x64": "27.2.0"
   },
   "engines": {
     "node": ">=18"

@@ -1,5 +1,17 @@
 # Change Log
 
+## 27.2.0
+
+* Added: `init function` accepts flags for non-interactive runs: `--name`, `--function-id`, `--runtime`, `--source`, `--env-file`, `--deploy`, and more
+* Added: `init function` can connect a GitHub repository as the function source, existing or newly created
+* Added: `init function` asks where the function runs and reserves its generated domain up front
+* Added: `project update-o-auth-2-hugging-face` configures the Hugging Face OAuth2 provider
+* Added: `pull functions` keeps preview domains, Git provider settings, and pending template coordinates in `appwrite.config.json`
+* Added: Endpoint mismatch and missing `appwrite.config.json` failures print the exact recovery command
+* Fixed: OAuth2 token endpoint errors are read from `error`/`error_description`, so device login polling and refresh failures report correctly
+* Fixed: A rejected refresh token names the affected session and suggests `appwrite login`
+* Updated: Commands now call Go SDK 7.2.0-rc.3
+
 ## 27.1.0
 
 * Added: `list-projects` and `list-organizations` return the same results for OAuth2, cookie, and self-hosted logins
