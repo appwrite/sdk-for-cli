@@ -1,5 +1,10 @@
 # Change Log
 
+## 27.2.1
+
+* Fixed: `init function` failed on templates pinned to a wildcard version tag such as `0.3.*`; the newest matching tag is now resolved
+* Fixed: template repository refs and paths are passed to Git literally instead of through a shell
+
 ## 27.2.0
 
 * Added: `init function` accepts flags for non-interactive runs: `--name`, `--function-id`, `--runtime`, `--source`, `--env-file`, `--deploy`, and more
