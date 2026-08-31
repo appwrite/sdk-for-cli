@@ -1,6 +1,6 @@
 ```bash
 appwrite proxy create-redirect-rule \
-    --domain '' \
+    --domain example.com \
     --url https://example.com \
     --status-code 301 \
     --resource-id <RESOURCE_ID> \

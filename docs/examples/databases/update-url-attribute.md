@@ -2,7 +2,7 @@
 appwrite databases update-url-attribute \
     --database-id <DATABASE_ID> \
     --collection-id <COLLECTION_ID> \
-    --key '' \
+    --key <KEY> \
     --required false \
     --default https://example.com
 ```

@@ -4,8 +4,8 @@ appwrite users create-scrypt-user \
     --email email@example.com \
     --password password \
     --password-salt <PASSWORD_SALT> \
-    --password-cpu null \
-    --password-memory null \
-    --password-parallel null \
-    --password-length null
+    --password-cpu 8 \
+    --password-memory 65536 \
+    --password-parallel 1 \
+    --password-length 64
 ```

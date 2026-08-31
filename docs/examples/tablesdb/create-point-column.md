@@ -2,6 +2,6 @@
 appwrite tablesdb create-point-column \
     --database-id <DATABASE_ID> \
     --table-id <TABLE_ID> \
-    --key '' \
+    --key <KEY> \
     --required false
 ```

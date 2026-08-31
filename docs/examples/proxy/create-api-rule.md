@@ -1,4 +1,4 @@
 ```bash
 appwrite proxy create-api-rule \
-    --domain ''
+    --domain example.com
 ```

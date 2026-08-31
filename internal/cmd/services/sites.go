@@ -1245,7 +1245,7 @@ func newSitesCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("variable-id")
-	cmd.Flags().StringVar(&key, "key", "", "Variable key. Max length: 255 chars.")
+	cmd.Flags().StringVar(&key, "key", "", "Variable key. Letters, digits and underscores only, must not start with a digit. Max length: 255 chars.")
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1328,7 +1328,7 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
-	cmd.Flags().StringVar(&key, "key", "", "Variable key. Max length: 255 chars.")
+	cmd.Flags().StringVar(&key, "key", "", "Variable key. Letters, digits and underscores only, must not start with a digit. Max length: 255 chars.")
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only sites can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"

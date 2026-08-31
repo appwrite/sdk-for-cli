@@ -2,7 +2,7 @@
 appwrite databases update-string-attribute \
     --database-id <DATABASE_ID> \
     --collection-id <COLLECTION_ID> \
-    --key '' \
+    --key <KEY> \
     --required false \
-    --default <DEFAULT>
+    --default Hello World
 ```

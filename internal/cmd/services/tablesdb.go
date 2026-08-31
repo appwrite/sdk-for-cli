@@ -39,7 +39,7 @@ func NewTablesDBCommand() *cobra.Command {
 	cmd.AddCommand(newTablesDBCreateMigrationCommand())
 	cmd.AddCommand(newTablesDBGetMigrationCommand())
 	cmd.AddCommand(newTablesDBDeleteMigrationCommand())
-	cmd.AddCommand(newTablesDBCutoverMigrationCommand())
+	cmd.AddCommand(newTablesDBCreateCutoverCommand())
 	cmd.AddCommand(newTablesDBListOperationsCommand())
 	cmd.AddCommand(newTablesDBGetReplicasCommand())
 	cmd.AddCommand(newTablesDBGetStatusCommand())
@@ -795,12 +795,12 @@ func newTablesDBDeleteMigrationCommand() *cobra.Command {
 	return cmd
 }
 
-func newTablesDBCutoverMigrationCommand() *cobra.Command {
+func newTablesDBCreateCutoverCommand() *cobra.Command {
 	var databaseId string
 	var migrationId string
 
 	cmd := &cobra.Command{
-		Use:   "cutover-migration",
+		Use:   "create-cutover",
 		Short: "Cut a verified TablesDB migration over to its dedicated compute. Only applies to a migration created with `autoCutover` disabled, which waits at `ready_to_cutover` until this is called. The routing flip happens shortly after this returns, with a brief read-only window. One call buys one attempt: a cutover that fails a check returns the migration to `verifying` and parks it again, so call this once more to retry.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -810,7 +810,7 @@ func newTablesDBCutoverMigrationCommand() *cobra.Command {
 			}
 			service := tablesdb.New(client)
 
-			result, err := service.CutoverMigration(databaseId, migrationId)
+			result, err := service.CreateCutover(databaseId, migrationId)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
