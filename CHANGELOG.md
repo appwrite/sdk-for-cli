@@ -1,12 +1,12 @@
 # Change Log
 
-## 28.0.0
+## 27.3.0
 
-* Breaking: `tablesdb cutover-migration` is now `tablesdb create-cutover`
 * Added: `project update-o-auth-2-cloudflare` configures the Cloudflare OAuth2 provider
 * Added: `project update-o-auth-2-resend` configures the Resend OAuth2 provider
 * Fixed: `dev` no longer reloads on a touch or chmod, only when file contents change
 * Fixed: `dev` now picks up files and directories created or deleted after it started
+* Updated: `tablesdb cutover-migration` is now `tablesdb create-cutover`
 * Updated: Commands now call Go SDK v7.2.0-rc.5
 * Updated: Help text covers variable key rules, `users create-jwt --session-id`, and the OAuth2 provider list
 
