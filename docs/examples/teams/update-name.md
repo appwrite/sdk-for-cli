@@ -1,5 +1,5 @@
 ```bash
 appwrite teams update-name \
-    --team-id <TEAM_ID> \
-    --name <NAME>
+    --team-id '<TEAM_ID>' \
+    --name '<NAME>'
 ```

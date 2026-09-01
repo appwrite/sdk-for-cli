@@ -1,4 +1,4 @@
 ```bash
 appwrite presences delete \
-    --presence-id <PRESENCE_ID>
+    --presence-id '<PRESENCE_ID>'
 ```

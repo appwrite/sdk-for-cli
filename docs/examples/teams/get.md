@@ -1,4 +1,4 @@
 ```bash
 appwrite teams get \
-    --team-id <TEAM_ID>
+    --team-id '<TEAM_ID>'
 ```

@@ -1,4 +1,4 @@
 ```bash
 appwrite users get-mfa-recovery-codes \
-    --user-id <USER_ID>
+    --user-id '<USER_ID>'
 ```

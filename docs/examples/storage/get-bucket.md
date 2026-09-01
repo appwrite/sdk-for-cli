@@ -1,4 +1,4 @@
 ```bash
 appwrite storage get-bucket \
-    --bucket-id <BUCKET_ID>
+    --bucket-id '<BUCKET_ID>'
 ```

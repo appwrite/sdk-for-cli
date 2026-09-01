@@ -1,4 +1,4 @@
 ```bash
 appwrite users create-token \
-    --user-id <USER_ID>
+    --user-id '<USER_ID>'
 ```

@@ -1,7 +1,7 @@
 ```bash
 appwrite tablesdb create-relationship-column \
-    --database-id <DATABASE_ID> \
-    --table-id <TABLE_ID> \
-    --related-table-id <RELATED_TABLE_ID> \
+    --database-id '<DATABASE_ID>' \
+    --table-id '<TABLE_ID>' \
+    --related-table-id '<RELATED_TABLE_ID>' \
     --type oneToOne
 ```

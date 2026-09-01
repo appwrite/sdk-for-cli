@@ -1,4 +1,4 @@
 ```bash
 appwrite databases create-operations \
-    --transaction-id <TRANSACTION_ID>
+    --transaction-id '<TRANSACTION_ID>'
 ```

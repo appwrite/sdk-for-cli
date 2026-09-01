@@ -1,4 +1,4 @@
 ```bash
 appwrite tokens get \
-    --token-id <TOKEN_ID>
+    --token-id '<TOKEN_ID>'
 ```

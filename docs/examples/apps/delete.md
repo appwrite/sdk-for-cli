@@ -1,4 +1,4 @@
 ```bash
 appwrite apps delete \
-    --app-id <APP_ID>
+    --app-id '<APP_ID>'
 ```

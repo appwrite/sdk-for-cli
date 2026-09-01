@@ -1,4 +1,4 @@
 ```bash
 appwrite organization delete-membership \
-    --membership-id <MEMBERSHIP_ID>
+    --membership-id '<MEMBERSHIP_ID>'
 ```

@@ -1,5 +1,5 @@
 ```bash
 appwrite account update-email-verification \
-    --user-id <USER_ID> \
-    --secret <SECRET>
+    --user-id '<USER_ID>' \
+    --secret '<SECRET>'
 ```

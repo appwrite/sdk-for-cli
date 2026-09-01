@@ -1,4 +1,4 @@
 ```bash
 appwrite account get-consent \
-    --consent-id <CONSENT_ID>
+    --consent-id '<CONSENT_ID>'
 ```

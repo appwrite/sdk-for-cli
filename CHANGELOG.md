@@ -9,6 +9,7 @@
 * Updated: `tablesdb cutover-migration` is now `tablesdb create-cutover`
 * Updated: Commands now call Go SDK v7.2.0-rc.5
 * Updated: Help text covers variable key rules, `users create-jwt --session-id`, and the OAuth2 provider list
+* Updated: Command examples quote string placeholders, so values with spaces or shell metacharacters are safe to copy
 
 ## 27.2.1
 

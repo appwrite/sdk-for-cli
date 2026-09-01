@@ -1,4 +1,4 @@
 ```bash
 appwrite messaging update-sendgrid-provider \
-    --provider-id <PROVIDER_ID>
+    --provider-id '<PROVIDER_ID>'
 ```

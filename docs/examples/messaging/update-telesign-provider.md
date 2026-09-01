@@ -1,4 +1,4 @@
 ```bash
 appwrite messaging update-telesign-provider \
-    --provider-id <PROVIDER_ID>
+    --provider-id '<PROVIDER_ID>'
 ```

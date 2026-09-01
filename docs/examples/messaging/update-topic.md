@@ -1,4 +1,4 @@
 ```bash
 appwrite messaging update-topic \
-    --topic-id <TOPIC_ID>
+    --topic-id '<TOPIC_ID>'
 ```
