@@ -1,5 +1,5 @@
 ```bash
 appwrite apps delete-secret \
-    --app-id <APP_ID> \
-    --secret-id <SECRET_ID>
+    --app-id '<APP_ID>' \
+    --secret-id '<SECRET_ID>'
 ```

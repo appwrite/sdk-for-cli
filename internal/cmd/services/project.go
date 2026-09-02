@@ -46,6 +46,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2BitbucketCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2BitlyCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2BoxCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2CloudflareCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2DailymotionCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2DiscordCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2DisqusCommand())
@@ -68,6 +69,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2PaypalCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2PaypalSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2PodioCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2ResendCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SalesforceCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SlackCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SpotifyCommand())
@@ -1238,6 +1240,52 @@ func newProjectUpdateOAuth2BoxCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2CloudflareCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-cloudflare",
+		Short: "Update the project OAuth2 Cloudflare configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2CloudflareOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2CloudflareClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2CloudflareClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2CloudflareEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Cloudflare(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Cloudflare OAuth2 app. For example: 4b866000000000000000000000c9e4e2")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Cloudflare OAuth2 app. For example: cfoc_5Q6YRl0000000000000000000000000000000000003d214f")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 	var apiKey string
 	var apiSecret string
@@ -2314,6 +2362,52 @@ func newProjectUpdateOAuth2PodioCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Podio OAuth2 app. For example: appwrite-o0000000st-app")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Podio OAuth2 app. For example: Rn247T0000000000000000000000000000000000000000000000000000W2zWTN")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2ResendCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-resend",
+		Short: "Update the project OAuth2 Resend configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2ResendOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2ResendClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2ResendClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2ResendEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Resend(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Resend OAuth2 app. For example: f47ac10b-58cc-4372-a567-0e02b2c3d479")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Resend OAuth2 app. For example: 9c1e4b00000000000000000000000000000000000000000000000000a72d5f4")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -4525,7 +4619,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("variable-id")
-	cmd.Flags().StringVar(&key, "key", "", "Variable key. Max length: 255 chars.")
+	cmd.Flags().StringVar(&key, "key", "", "Variable key. Letters, digits and underscores only, must not start with a digit. Max length: 255 chars.")
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	_ = cmd.MarkFlagRequired("value")
@@ -4606,7 +4700,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
-	cmd.Flags().StringVar(&key, "key", "", "Variable key. Max length: 255 chars.")
+	cmd.Flags().StringVar(&key, "key", "", "Variable key. Letters, digits and underscores only, must not start with a digit. Max length: 255 chars.")
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"

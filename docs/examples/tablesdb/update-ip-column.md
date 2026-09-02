@@ -1,8 +1,8 @@
 ```bash
 appwrite tablesdb update-ip-column \
-    --database-id <DATABASE_ID> \
-    --table-id <TABLE_ID> \
-    --key '' \
+    --database-id '<DATABASE_ID>' \
+    --table-id '<TABLE_ID>' \
+    --key '<KEY>' \
     --required false \
-    --default ''
+    --default 192.0.2.0
 ```

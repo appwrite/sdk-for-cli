@@ -1,4 +1,4 @@
 ```bash
 appwrite presences get \
-    --presence-id <PRESENCE_ID>
+    --presence-id '<PRESENCE_ID>'
 ```

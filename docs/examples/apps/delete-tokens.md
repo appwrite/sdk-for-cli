@@ -1,4 +1,4 @@
 ```bash
 appwrite apps delete-tokens \
-    --app-id <APP_ID>
+    --app-id '<APP_ID>'
 ```

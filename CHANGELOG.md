@@ -1,5 +1,16 @@
 # Change Log
 
+## 27.3.0
+
+* Added: `project update-o-auth-2-cloudflare` configures the Cloudflare OAuth2 provider
+* Added: `project update-o-auth-2-resend` configures the Resend OAuth2 provider
+* Fixed: `dev` no longer reloads on a touch or chmod, only when file contents change
+* Fixed: `dev` now picks up files and directories created or deleted after it started
+* Updated: `tablesdb cutover-migration` is now `tablesdb create-cutover`
+* Updated: Commands now call Go SDK v7.2.0-rc.5
+* Updated: Help text covers variable key rules, `users create-jwt --session-id`, and the OAuth2 provider list
+* Updated: Command examples quote string placeholders, so values with spaces or shell metacharacters are safe to copy
+
 ## 27.2.1
 
 * Fixed: `init function` failed on templates pinned to a wildcard version tag such as `0.3.*`; the newest matching tag is now resolved

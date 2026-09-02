@@ -1,5 +1,5 @@
 ```bash
 appwrite proxy create-invalidation \
-    --domain '' \
+    --domain example.com \
     --type tag
 ```

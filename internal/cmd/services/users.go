@@ -793,7 +793,7 @@ func newUsersCreateJWTCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'recent' to use the most recent session. Defaults to the most recent session.")
+	cmd.Flags().StringVar(&sessionId, "session-id", "", "Session ID. Use the string 'recent()' to use the most recent session, which is also the default.")
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before JWT expires. Default duration is 900 seconds, and maximum is 3600 seconds.")
 	return cmd
 }

@@ -1,5 +1,5 @@
 ```bash
 appwrite organization create-project \
-    --project-id '' \
-    --name <NAME>
+    --project-id '<PROJECT_ID>' \
+    --name '<NAME>'
 ```

@@ -1,8 +1,8 @@
 ```bash
 appwrite databases update-integer-attribute \
-    --database-id <DATABASE_ID> \
-    --collection-id <COLLECTION_ID> \
-    --key '' \
+    --database-id '<DATABASE_ID>' \
+    --collection-id '<COLLECTION_ID>' \
+    --key '<KEY>' \
     --required false \
-    --default null
+    --default 10
 ```

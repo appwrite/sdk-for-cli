@@ -1,4 +1,4 @@
 ```bash
 appwrite activities get-event \
-    --event-id <EVENT_ID>
+    --event-id '<EVENT_ID>'
 ```

@@ -1,4 +1,4 @@
 ```bash
 appwrite users get \
-    --user-id <USER_ID>
+    --user-id '<USER_ID>'
 ```

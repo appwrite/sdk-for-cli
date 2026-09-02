@@ -1,4 +1,4 @@
 ```bash
 appwrite tablesdb list-operations \
-    --database-id <DATABASE_ID>
+    --database-id '<DATABASE_ID>'
 ```

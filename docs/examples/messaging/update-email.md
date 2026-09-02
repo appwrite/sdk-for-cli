@@ -1,4 +1,4 @@
 ```bash
 appwrite messaging update-email \
-    --message-id <MESSAGE_ID>
+    --message-id '<MESSAGE_ID>'
 ```

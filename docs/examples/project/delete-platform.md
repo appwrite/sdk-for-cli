@@ -1,4 +1,4 @@
 ```bash
 appwrite project delete-platform \
-    --platform-id <PLATFORM_ID>
+    --platform-id '<PLATFORM_ID>'
 ```

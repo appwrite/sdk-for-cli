@@ -1,4 +1,4 @@
 ```bash
 appwrite storage delete-bucket \
-    --bucket-id <BUCKET_ID>
+    --bucket-id '<BUCKET_ID>'
 ```

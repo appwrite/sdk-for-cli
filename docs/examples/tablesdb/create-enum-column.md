@@ -1,8 +1,8 @@
 ```bash
 appwrite tablesdb create-enum-column \
-    --database-id <DATABASE_ID> \
-    --table-id <TABLE_ID> \
-    --key '' \
-    --elements one two three \
+    --database-id '<DATABASE_ID>' \
+    --table-id '<TABLE_ID>' \
+    --key '<KEY>' \
+    --elements "active"  "inactive" \
     --required false
 ```

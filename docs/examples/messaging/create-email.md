@@ -1,6 +1,6 @@
 ```bash
 appwrite messaging create-email \
-    --message-id <MESSAGE_ID> \
-    --subject <SUBJECT> \
-    --content <CONTENT>
+    --message-id '<MESSAGE_ID>' \
+    --subject '<SUBJECT>' \
+    --content '<CONTENT>'
 ```

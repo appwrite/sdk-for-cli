@@ -1,5 +1,5 @@
 ```bash
 appwrite proxy create-site-rule \
-    --domain '' \
-    --site-id <SITE_ID>
+    --domain example.com \
+    --site-id '<SITE_ID>'
 ```

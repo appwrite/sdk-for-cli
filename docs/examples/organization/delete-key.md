@@ -1,4 +1,4 @@
 ```bash
 appwrite organization delete-key \
-    --key-id <KEY_ID>
+    --key-id '<KEY_ID>'
 ```

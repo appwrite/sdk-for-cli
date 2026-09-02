@@ -1,5 +1,5 @@
 ```bash
 appwrite proxy create-function-rule \
-    --domain '' \
-    --function-id <FUNCTION_ID>
+    --domain example.com \
+    --function-id '<FUNCTION_ID>'
 ```
