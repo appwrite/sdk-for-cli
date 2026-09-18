@@ -398,6 +398,18 @@ func TestRuleDomainsKeepsEdgeGlobalAndRegionalisesCompute(t *testing.T) {
 	}
 }
 
+func TestRuleDomainsSelfHostedKeepsFunctionsSuffix(t *testing.T) {
+	variables := jsonx.NewObject()
+	variables.Set("_APP_DOMAIN_SITES", "sites.example.com")
+	variables.Set("_APP_DOMAIN_FUNCTIONS", "functions.example.com")
+	context := pushContext{api: client.New("https://appwrite.example.com/v1", "test")}
+
+	domains := context.ruleDomains(deployables[0], variables)
+	if len(domains) != 1 || domains[0] != "functions.example.com" {
+		t.Fatalf("domains = %#v", domains)
+	}
+}
+
 func TestFunctionDomainForTarget(t *testing.T) {
 	domains := []string{"fra.appwrite.run", "appwrite.network"}
 
