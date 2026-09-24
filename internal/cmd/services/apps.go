@@ -850,7 +850,7 @@ func newAppsUpdateLabelsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
-	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of application labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.")
+	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of application labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long. Reserved labels are rejected.")
 	_ = cmd.MarkFlagRequired("labels")
 	return cmd
 }

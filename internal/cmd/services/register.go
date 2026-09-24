@@ -12,6 +12,8 @@ func Register(root *cobra.Command) {
 	root.AddCommand(NewAppsCommand())
 	root.AddCommand(NewBackupsCommand())
 	root.AddCommand(NewDatabasesCommand())
+	root.AddCommand(NewDocumentsDBCommand())
+	root.AddCommand(NewDomainsCommand())
 	root.AddCommand(NewEmbeddingsCommand())
 	root.AddCommand(NewFunctionsCommand())
 	root.AddCommand(NewGraphqlCommand())
@@ -28,6 +30,7 @@ func Register(root *cobra.Command) {
 	root.AddCommand(NewTeamsCommand())
 	root.AddCommand(NewTokensCommand())
 	root.AddCommand(NewUsersCommand())
+	root.AddCommand(NewVectorsDBCommand())
 	root.AddCommand(NewWebhooksCommand())
 
 	root.AddCommand(NewOauth2RootCommands()...)

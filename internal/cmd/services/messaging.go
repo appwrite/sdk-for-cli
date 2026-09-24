@@ -34,6 +34,8 @@ func NewMessagingCommand() *cobra.Command {
 	cmd.AddCommand(newMessagingListProvidersCommand())
 	cmd.AddCommand(newMessagingCreateApnsProviderCommand())
 	cmd.AddCommand(newMessagingUpdateApnsProviderCommand())
+	cmd.AddCommand(newMessagingCreateAppwriteProviderCommand())
+	cmd.AddCommand(newMessagingUpdateAppwriteProviderCommand())
 	cmd.AddCommand(newMessagingCreateFcmProviderCommand())
 	cmd.AddCommand(newMessagingUpdateFcmProviderCommand())
 	cmd.AddCommand(newMessagingCreateMailgunProviderCommand())
@@ -165,6 +167,8 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	var cc []string
 	var bcc []string
 	var attachments []string
+	var replyToEmail string
+	var replyToName string
 	var draft bool
 	var html bool
 	var scheduledAt string
@@ -200,6 +204,12 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 			if cmd.Flags().Changed("attachments") {
 				options = append(options, service.WithCreateEmailAttachments(attachments))
 			}
+			if cmd.Flags().Changed("reply-to-email") {
+				options = append(options, service.WithCreateEmailReplyToEmail(replyToEmail))
+			}
+			if cmd.Flags().Changed("reply-to-name") {
+				options = append(options, service.WithCreateEmailReplyToName(replyToName))
+			}
 			if cmd.Flags().Changed("draft") {
 				options = append(options, service.WithCreateEmailDraft(draft))
 			}
@@ -231,6 +241,8 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC.")
 	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
 	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
+	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. If not set, defaults to the sender email address.")
+	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. If not set, defaults to the sender name.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&html, "html", false, "Is content of type HTML")
@@ -250,6 +262,8 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	var html bool
 	var cc []string
 	var bcc []string
+	var replyToEmail string
+	var replyToName string
 	var scheduledAt string
 	var attachments []string
 
@@ -293,6 +307,12 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 			if cmd.Flags().Changed("bcc") {
 				options = append(options, service.WithUpdateEmailBcc(bcc))
 			}
+			if cmd.Flags().Changed("reply-to-email") {
+				options = append(options, service.WithUpdateEmailReplyToEmail(replyToEmail))
+			}
+			if cmd.Flags().Changed("reply-to-name") {
+				options = append(options, service.WithUpdateEmailReplyToName(replyToName))
+			}
 			if cmd.Flags().Changed("scheduled-at") {
 				options = append(options, service.WithUpdateEmailScheduledAt(scheduledAt))
 			}
@@ -322,6 +342,8 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	cmd.Flags().Lookup("html").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC.")
 	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
+	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. Pass an empty string to restore the provider or sender default.")
+	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. Pass an empty string to restore the provider or sender default.")
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
 	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
 	return cmd
@@ -1058,6 +1080,108 @@ func newMessagingUpdateApnsProviderCommand() *cobra.Command {
 	cmd.Flags().StringVar(&bundleId, "bundle-id", "", "APNS bundle ID.")
 	cmd.Flags().BoolVar(&sandbox, "sandbox", false, "Use APNS sandbox environment.")
 	cmd.Flags().Lookup("sandbox").NoOptDefVal = "true"
+	return cmd
+}
+
+func newMessagingCreateAppwriteProviderCommand() *cobra.Command {
+	var providerId string
+	var name string
+	var enabled bool
+	var qos int
+	var expiry int
+
+	cmd := &cobra.Command{
+		Use:   "create-appwrite-provider",
+		Short: "Create a new Appwrite push provider.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := messaging.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []messaging.CreateAppwriteProviderOption{}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithCreateAppwriteProviderEnabled(enabled))
+			}
+			if cmd.Flags().Changed("qos") {
+				options = append(options, service.WithCreateAppwriteProviderQos(qos))
+			}
+			if cmd.Flags().Changed("expiry") {
+				options = append(options, service.WithCreateAppwriteProviderExpiry(expiry))
+			}
+
+			result, err := service.CreateAppwriteProvider(providerId, name, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().IntVar(&qos, "qos", 0, "Default QoS for topics on this provider (0 or 1). Null lets the subscriber choose.")
+	cmd.Flags().IntVar(&expiry, "expiry", 0, "Default message retention in seconds for offline delivery. Max 7 days (604800).")
+	return cmd
+}
+
+func newMessagingUpdateAppwriteProviderCommand() *cobra.Command {
+	var providerId string
+	var name string
+	var enabled bool
+	var qos int
+	var expiry int
+
+	cmd := &cobra.Command{
+		Use:   "update-appwrite-provider",
+		Short: "Update an Appwrite push provider by its unique ID.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := messaging.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []messaging.UpdateAppwriteProviderOption{}
+			if cmd.Flags().Changed("name") {
+				options = append(options, service.WithUpdateAppwriteProviderName(name))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateAppwriteProviderEnabled(enabled))
+			}
+			if cmd.Flags().Changed("qos") {
+				options = append(options, service.WithUpdateAppwriteProviderQos(qos))
+			}
+			if cmd.Flags().Changed("expiry") {
+				options = append(options, service.WithUpdateAppwriteProviderExpiry(expiry))
+			}
+
+			result, err := service.UpdateAppwriteProvider(providerId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID.")
+	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().IntVar(&qos, "qos", 0, "Default QoS for topics on this provider (0 or 1). Null lets the subscriber choose.")
+	cmd.Flags().IntVar(&expiry, "expiry", 0, "Default message retention in seconds for offline delivery. Max 7 days (604800).")
 	return cmd
 }
 
@@ -2306,7 +2430,7 @@ func newMessagingCreateTwilioProviderCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("provider-id")
 	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringVar(&from, "from", "", "Sender Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.")
+	cmd.Flags().StringVar(&from, "from", "", "Sender phone number or alphanumeric sender ID. Format phone numbers with a leading '+' and a country code, e.g., +16175551212.")
 	cmd.Flags().StringVar(&accountSid, "account-sid", "", "Twilio account secret ID.")
 	cmd.Flags().StringVar(&authToken, "auth-token", "", "Twilio authentication token.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
@@ -2367,7 +2491,7 @@ func newMessagingUpdateTwilioProviderCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&accountSid, "account-sid", "", "Twilio account secret ID.")
 	cmd.Flags().StringVar(&authToken, "auth-token", "", "Twilio authentication token.")
-	cmd.Flags().StringVar(&from, "from", "", "Sender number.")
+	cmd.Flags().StringVar(&from, "from", "", "Sender phone number or alphanumeric sender ID. Format phone numbers with a leading '+' and a country code, e.g., +16175551212.")
 	return cmd
 }
 
@@ -2627,6 +2751,8 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	var topicId string
 	var name string
 	var subscribe []string
+	var qos int
+	var expiry int
 
 	cmd := &cobra.Command{
 		Use:   "create-topic",
@@ -2644,6 +2770,12 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 			if cmd.Flags().Changed("subscribe") {
 				options = append(options, service.WithCreateTopicSubscribe(subscribe))
 			}
+			if cmd.Flags().Changed("qos") {
+				options = append(options, service.WithCreateTopicQos(qos))
+			}
+			if cmd.Flags().Changed("expiry") {
+				options = append(options, service.WithCreateTopicExpiry(expiry))
+			}
 
 			result, err := service.CreateTopic(topicId, name, options...)
 			if err != nil {
@@ -2659,6 +2791,8 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Topic Name.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
+	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
+	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800).")
 	return cmd
 }
 
@@ -2694,6 +2828,8 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	var topicId string
 	var name string
 	var subscribe []string
+	var qos int
+	var expiry int
 
 	cmd := &cobra.Command{
 		Use:   "update-topic",
@@ -2714,6 +2850,12 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 			if cmd.Flags().Changed("subscribe") {
 				options = append(options, service.WithUpdateTopicSubscribe(subscribe))
 			}
+			if cmd.Flags().Changed("qos") {
+				options = append(options, service.WithUpdateTopicQos(qos))
+			}
+			if cmd.Flags().Changed("expiry") {
+				options = append(options, service.WithUpdateTopicExpiry(expiry))
+			}
 
 			result, err := service.UpdateTopic(topicId, options...)
 			if err != nil {
@@ -2728,6 +2870,8 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("topic-id")
 	cmd.Flags().StringVar(&name, "name", "", "Topic Name.")
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
+	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
+	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800).")
 	return cmd
 }
 

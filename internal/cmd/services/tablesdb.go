@@ -76,6 +76,7 @@ func NewTablesDBCommand() *cobra.Command {
 	cmd.AddCommand(newTablesDBCreatePolygonColumnCommand())
 	cmd.AddCommand(newTablesDBUpdatePolygonColumnCommand())
 	cmd.AddCommand(newTablesDBCreateRelationshipColumnCommand())
+	cmd.AddCommand(newTablesDBUpdateRelationshipColumnCommand())
 	cmd.AddCommand(newTablesDBCreateStringColumnCommand())
 	cmd.AddCommand(newTablesDBUpdateStringColumnCommand())
 	cmd.AddCommand(newTablesDBCreateTextColumnCommand())
@@ -86,7 +87,6 @@ func NewTablesDBCommand() *cobra.Command {
 	cmd.AddCommand(newTablesDBUpdateVarcharColumnCommand())
 	cmd.AddCommand(newTablesDBGetColumnCommand())
 	cmd.AddCommand(newTablesDBDeleteColumnCommand())
-	cmd.AddCommand(newTablesDBUpdateRelationshipColumnCommand())
 	cmd.AddCommand(newTablesDBListIndexesCommand())
 	cmd.AddCommand(newTablesDBCreateIndexCommand())
 	cmd.AddCommand(newTablesDBGetIndexCommand())
@@ -250,7 +250,7 @@ func newTablesDBListSpecificationsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
-		Short: "List the dedicated database specifications available on the current plan. Each specification reports its resource limits, pricing, and whether it is enabled for the organization.",
+		Short: "List the dedicated database specifications available on the current plan. Each specification reports its resource limits, its own prices and overage rates, and whether it is enabled for the organization.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -2735,6 +2735,53 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 	return cmd
 }
 
+func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
+	var databaseId string
+	var tableId string
+	var key string
+	var onDelete string
+	var newKey string
+
+	cmd := &cobra.Command{
+		Use:   "update-relationship-column",
+		Short: "Update relationship column. Learn more about relationship columns (https://appwrite.io/docs/databases-relationships#relationship-columns).\n",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := tablesdb.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []tablesdb.UpdateRelationshipColumnOption{}
+			if cmd.Flags().Changed("on-delete") {
+				options = append(options, service.WithUpdateRelationshipColumnOnDelete(onDelete))
+			}
+			if cmd.Flags().Changed("new-key") {
+				options = append(options, service.WithUpdateRelationshipColumnNewKey(newKey))
+			}
+
+			result, err := service.UpdateRelationshipColumn(databaseId, tableId, key, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID.")
+	_ = cmd.MarkFlagRequired("table-id")
+	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
+	_ = cmd.MarkFlagRequired("key")
+	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
+	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	return cmd
+}
+
 func newTablesDBCreateStringColumnCommand() *cobra.Command {
 	var databaseId string
 	var tableId string
@@ -3230,53 +3277,6 @@ func newTablesDBDeleteColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
 	_ = cmd.MarkFlagRequired("key")
-	return cmd
-}
-
-func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
-	var databaseId string
-	var tableId string
-	var key string
-	var onDelete string
-	var newKey string
-
-	cmd := &cobra.Command{
-		Use:   "update-relationship-column",
-		Short: "Update relationship column. Learn more about relationship columns (https://appwrite.io/docs/databases-relationships#relationship-columns).\n",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := tablesdb.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value.
-			options := []tablesdb.UpdateRelationshipColumnOption{}
-			if cmd.Flags().Changed("on-delete") {
-				options = append(options, service.WithUpdateRelationshipColumnOnDelete(onDelete))
-			}
-			if cmd.Flags().Changed("new-key") {
-				options = append(options, service.WithUpdateRelationshipColumnNewKey(newKey))
-			}
-
-			result, err := service.UpdateRelationshipColumn(databaseId, tableId, key, options...)
-			if err != nil {
-				return sdk.WrapMutationError("PATCH", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
-	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID.")
-	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
-	_ = cmd.MarkFlagRequired("key")
-	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
-	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
 	return cmd
 }
 

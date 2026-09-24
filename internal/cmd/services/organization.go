@@ -29,11 +29,6 @@ func NewOrganizationCommand() *cobra.Command {
 	cmd.AddCommand(newOrganizationGetInstallationCommand())
 	cmd.AddCommand(newOrganizationUpdateInstallationCommand())
 	cmd.AddCommand(newOrganizationDeleteInstallationCommand())
-	cmd.AddCommand(newOrganizationListKeysCommand())
-	cmd.AddCommand(newOrganizationCreateKeyCommand())
-	cmd.AddCommand(newOrganizationGetKeyCommand())
-	cmd.AddCommand(newOrganizationUpdateKeyCommand())
-	cmd.AddCommand(newOrganizationDeleteKeyCommand())
 	cmd.AddCommand(newOrganizationListMembershipsCommand())
 	cmd.AddCommand(newOrganizationCreateMembershipCommand())
 	cmd.AddCommand(newOrganizationGetMembershipCommand())
@@ -44,6 +39,11 @@ func NewOrganizationCommand() *cobra.Command {
 	cmd.AddCommand(newOrganizationGetProjectCommand())
 	cmd.AddCommand(newOrganizationUpdateProjectCommand())
 	cmd.AddCommand(newOrganizationDeleteProjectCommand())
+	cmd.AddCommand(newOrganizationListProjectKeysCommand())
+	cmd.AddCommand(newOrganizationCreateEphemeralProjectKeyCommand())
+	cmd.AddCommand(newOrganizationGetProjectKeyCommand())
+	cmd.AddCommand(newOrganizationUpdateProjectKeyCommand())
+	cmd.AddCommand(newOrganizationDeleteProjectKeyCommand())
 
 	return cmd
 }
@@ -340,235 +340,6 @@ func newOrganizationDeleteInstallationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Installation unique ID.")
 	_ = cmd.MarkFlagRequired("installation-id")
-	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-	return cmd
-}
-
-func newOrganizationListKeysCommand() *cobra.Command {
-	var queries []string
-	var total bool
-	var filter []string
-	var where []string
-	var sortAsc []string
-	var sortDesc []string
-	var limit int
-	var offset int
-	var cursorAfter string
-	var cursorBefore string
-	var organizationId string
-
-	cmd := &cobra.Command{
-		Use:   "list-keys",
-		Short: "Get a list of all API keys from the current organization.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForOrganization(organizationId)
-			if err != nil {
-				return err
-			}
-			service := organization.New(client)
-
-			parsedFilter, err := query.ParseFilters(filter)
-			if err != nil {
-				return err
-			}
-			parsedWhere, err := query.ParseFilters(where)
-			if err != nil {
-				return err
-			}
-
-			queries, err := query.Build(query.Options{
-				Queries:      queries,
-				Filter:       parsedFilter,
-				Where:        parsedWhere,
-				SortAsc:      sortAsc,
-				SortDesc:     sortDesc,
-				Limit:        app.FlagInt(cmd, "limit", limit),
-				Offset:       app.FlagInt(cmd, "offset", offset),
-				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
-				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
-			})
-			if err != nil {
-				return err
-			}
-
-			// An unset flag must be omitted, not sent as its zero value.
-			options := []organization.ListKeysOption{}
-			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListKeysQueries(queries))
-			}
-			if cmd.Flags().Changed("total") {
-				options = append(options, service.WithListKeysTotal(total))
-			}
-
-			result, err := service.ListKeys(options...)
-			if err != nil {
-				return sdk.WrapMutationError("GET", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes")
-	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
-	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
-	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
-	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
-	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
-	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
-	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
-	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
-	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
-	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-	return cmd
-}
-
-func newOrganizationCreateKeyCommand() *cobra.Command {
-	var keyId string
-	var name string
-	var scopes []string
-	var expire string
-	var organizationId string
-
-	cmd := &cobra.Command{
-		Use:   "create-key",
-		Short: "Create a new organization API key.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForOrganization(organizationId)
-			if err != nil {
-				return err
-			}
-			service := organization.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value.
-			options := []organization.CreateKeyOption{}
-			if cmd.Flags().Changed("expire") {
-				options = append(options, service.WithCreateKeyExpire(expire))
-			}
-
-			result, err := service.CreateKey(keyId, name, scopes, options...)
-			if err != nil {
-				return sdk.WrapMutationError("POST", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
-	_ = cmd.MarkFlagRequired("key-id")
-	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
-	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
-	_ = cmd.MarkFlagRequired("scopes")
-	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
-	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-	return cmd
-}
-
-func newOrganizationGetKeyCommand() *cobra.Command {
-	var keyId string
-	var organizationId string
-
-	cmd := &cobra.Command{
-		Use:   "get-key",
-		Short: "Get a key by its unique ID. This endpoint returns details about a specific API key in your organization including its scopes.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForOrganization(organizationId)
-			if err != nil {
-				return err
-			}
-			service := organization.New(client)
-
-			result, err := service.GetKey(keyId)
-			if err != nil {
-				return sdk.WrapMutationError("GET", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
-	_ = cmd.MarkFlagRequired("key-id")
-	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-	return cmd
-}
-
-func newOrganizationUpdateKeyCommand() *cobra.Command {
-	var keyId string
-	var name string
-	var scopes []string
-	var expire string
-	var organizationId string
-
-	cmd := &cobra.Command{
-		Use:   "update-key",
-		Short: "Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForOrganization(organizationId)
-			if err != nil {
-				return err
-			}
-			service := organization.New(client)
-
-			// An unset flag must be omitted, not sent as its zero value.
-			options := []organization.UpdateKeyOption{}
-			if cmd.Flags().Changed("expire") {
-				options = append(options, service.WithUpdateKeyExpire(expire))
-			}
-
-			result, err := service.UpdateKey(keyId, name, scopes, options...)
-			if err != nil {
-				return sdk.WrapMutationError("PUT", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
-	_ = cmd.MarkFlagRequired("key-id")
-	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
-	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
-	_ = cmd.MarkFlagRequired("scopes")
-	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
-	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
-	return cmd
-}
-
-func newOrganizationDeleteKeyCommand() *cobra.Command {
-	var keyId string
-	var organizationId string
-
-	cmd := &cobra.Command{
-		Use:   "delete-key",
-		Short: "Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForOrganization(organizationId)
-			if err != nil {
-				return err
-			}
-			service := organization.New(client)
-
-			result, err := service.DeleteKey(keyId)
-			if err != nil {
-				return sdk.WrapMutationError("DELETE", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&keyId, "key-id", "", "Key unique ID.")
-	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
 	return cmd
 }
@@ -1026,6 +797,239 @@ func newOrganizationDeleteProjectCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
 	_ = cmd.MarkFlagRequired("project-id")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationListProjectKeysCommand() *cobra.Command {
+	var projectId string
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "list-project-keys",
+		Short: "Get a list of all API keys of a project in your organization.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []organization.ListProjectKeysOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListProjectKeysQueries(queries))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListProjectKeysTotal(total))
+			}
+
+			result, err := service.ListProjectKeys(projectId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
+	_ = cmd.MarkFlagRequired("project-id")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationCreateEphemeralProjectKeyCommand() *cobra.Command {
+	var projectId string
+	var scopes []string
+	var duration int
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "create-ephemeral-project-key",
+		Short: "Create a new ephemeral API key for a project in your organization. It's recommended to have multiple API keys with strict scopes for separate functions within your project.\n\nYou can also create a standard API key if you need a longer-lived key instead.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			result, err := service.CreateEphemeralProjectKey(projectId, scopes, duration)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
+	_ = cmd.MarkFlagRequired("project-id")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
+	_ = cmd.MarkFlagRequired("scopes")
+	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before ephemeral key expires. Maximum duration is 3600 seconds.")
+	_ = cmd.MarkFlagRequired("duration")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationGetProjectKeyCommand() *cobra.Command {
+	var projectId string
+	var keyId string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "get-project-key",
+		Short: "Get a project key by its unique ID.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			result, err := service.GetProjectKey(projectId, keyId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
+	_ = cmd.MarkFlagRequired("project-id")
+	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID.")
+	_ = cmd.MarkFlagRequired("key-id")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
+	var projectId string
+	var keyId string
+	var name string
+	var scopes []string
+	var expire string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "update-project-key",
+		Short: "Update a project key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []organization.UpdateProjectKeyOption{}
+			if cmd.Flags().Changed("expire") {
+				options = append(options, service.WithUpdateProjectKeyExpire(expire))
+			}
+
+			result, err := service.UpdateProjectKey(projectId, keyId, name, scopes, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PUT", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
+	_ = cmd.MarkFlagRequired("project-id")
+	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID.")
+	_ = cmd.MarkFlagRequired("key-id")
+	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
+	_ = cmd.MarkFlagRequired("scopes")
+	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationDeleteProjectKeyCommand() *cobra.Command {
+	var projectId string
+	var keyId string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-project-key",
+		Short: "Delete a project key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			result, err := service.DeleteProjectKey(projectId, keyId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
+	_ = cmd.MarkFlagRequired("project-id")
+	cmd.Flags().StringVar(&keyId, "key-id", "", "Key ID.")
+	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
 	return cmd
 }

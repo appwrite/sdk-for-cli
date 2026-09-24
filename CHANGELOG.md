@@ -1,5 +1,24 @@
 # Change Log
 
+## 28.0.0
+
+* Breaking: removed `account list-logs` and `users list-logs`
+* Breaking: removed `organization create-key`, `get-key`, `list-keys`, `update-key` and `delete-key`
+* Added: `documentsdb`, `vectorsdb` and `domains` commands
+* Added: `organization` project key commands: `create-ephemeral-project-key`, `get-project-key`, `list-project-keys`, `update-project-key`, `delete-project-key`
+* Added: `account create-id-token-session` and email verification and recovery OTP commands
+* Added: `messaging create-appwrite-provider` and `messaging update-appwrite-provider`
+* Added: `project update-o-auth-2-kakao`, `update-o-auth-2-tik-tok` and `update-password-pwned-policy`
+* Added: `--reply-to-email` and `--reply-to-name` on email messages, `--qos` and `--expiry` on topics
+* Added: `--native-client-ids` and `--native-enabled` on the Apple and Google OAuth2 providers
+* Fixed: `tablesdb get-column` and `databases get-attribute` decode varchar, text, bigint and spatial columns
+* Fixed: `run` no longer reloads when a file is saved unchanged, and still reloads while files keep changing
+* Fixed: `push functions` gives self-hosted functions a default domain under the Functions domain, not Sites
+* Fixed: `types` finds the TypeScript SDK in `devDependencies`
+* Updated: console links use the new console routes
+* Updated: `run` warnings call the key an ephemeral API key
+* Updated: commands call Go SDK v7.4.0
+
 ## 27.3.0
 
 * Added: `project update-o-auth-2-cloudflare` configures the Cloudflare OAuth2 provider

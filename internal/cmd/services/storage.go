@@ -718,7 +718,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("file-id")
 	cmd.Flags().IntVar(&width, "width", 0, "Resize preview image width, Pass an integer between 0 to 4000.")
 	cmd.Flags().IntVar(&height, "height", 0, "Resize preview image height, Pass an integer between 0 to 4000.")
-	cmd.Flags().StringVar(&gravity, "gravity", "", "Image crop gravity. Can be one of center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right")
+	cmd.Flags().StringVar(&gravity, "gravity", "", "Image crop gravity. Can be one of auto,center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right")
 	cmd.Flags().IntVar(&quality, "quality", 0, "Preview image quality. Pass an integer between 0 to 100. Defaults to keep existing image quality.")
 	cmd.Flags().IntVar(&borderWidth, "border-width", 0, "Preview image border in pixels. Pass an integer between 0 to 100. Defaults to 0.")
 	cmd.Flags().StringVar(&borderColor, "border-color", "", "Preview image border color. Use a valid HEX color, no # is needed for prefix.")
