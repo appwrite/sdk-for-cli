@@ -38,7 +38,6 @@ func NewUsersCommand() *cobra.Command {
 	cmd.AddCommand(newUsersUpdateImpersonatorCommand())
 	cmd.AddCommand(newUsersCreateJWTCommand())
 	cmd.AddCommand(newUsersUpdateLabelsCommand())
-	cmd.AddCommand(newUsersListLogsCommand())
 	cmd.AddCommand(newUsersListMembershipsCommand())
 	cmd.AddCommand(newUsersUpdateMfaCommand())
 	cmd.AddCommand(newUsersDeleteMfaAuthenticatorCommand())
@@ -138,7 +137,7 @@ func newUsersListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, labels, impersonator, accessedAt")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, passwordPwned, labels, impersonator, accessedAt")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -732,7 +731,7 @@ func newUsersUpdateImpersonatorCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update-impersonator",
-		Short: "Enable or disable whether a user can impersonate other users. When impersonation headers are used, the request runs as the target user for API behavior, while internal audit logs still attribute the action to the original impersonator and store the impersonated target details only in internal audit payload data.\n",
+		Short: "Enable or disable whether a user can impersonate other users. When impersonation headers are used, the request runs as the target user for API behavior, while internal audit logs still attribute the action to the original impersonator and store the impersonated target details only in internal audit payload data. Account endpoints are read-only while impersonating: they report the target's account, and anything that would change it is refused, so an impersonator cannot alter the target's credentials or delete their account.\n",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -826,61 +825,6 @@ func newUsersUpdateLabelsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of user labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.")
 	_ = cmd.MarkFlagRequired("labels")
-	return cmd
-}
-
-func newUsersListLogsCommand() *cobra.Command {
-	var userId string
-	var queries []string
-	var total bool
-	var limit int
-	var offset int
-
-	cmd := &cobra.Command{
-		Use:   "list-logs",
-		Short: "Get the user activity logs list by its unique ID.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := users.New(client)
-
-			queries, err := query.Build(query.Options{
-				Queries: queries,
-				Limit:   app.FlagInt(cmd, "limit", limit),
-				Offset:  app.FlagInt(cmd, "offset", offset),
-			})
-			if err != nil {
-				return err
-			}
-
-			// An unset flag must be omitted, not sent as its zero value.
-			options := []users.ListLogsOption{}
-			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListLogsQueries(queries))
-			}
-			if cmd.Flags().Changed("total") {
-				options = append(options, service.WithListLogsTotal(total))
-			}
-
-			result, err := service.ListLogs(userId, options...)
-			if err != nil {
-				return sdk.WrapMutationError("GET", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
-	_ = cmd.MarkFlagRequired("user-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
-	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
-	cmd.Flags().Lookup("total").NoOptDefVal = "true"
-	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
-	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	return cmd
 }
 

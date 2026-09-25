@@ -59,6 +59,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2GitlabCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2GoogleCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2HuggingFaceCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2KakaoCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KeycloakCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KickCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2LinkedinCommand())
@@ -74,6 +75,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2SlackCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SpotifyCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2StripeCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2TikTokCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TwitchCommand())
@@ -107,6 +109,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdatePasswordDictionaryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordHistoryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordPersonalDataPolicyCommand())
+	cmd.AddCommand(newProjectUpdatePasswordPwnedPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordStrengthPolicyCommand())
 	cmd.AddCommand(newProjectUpdateSessionAlertPolicyCommand())
 	cmd.AddCommand(newProjectUpdateSessionDurationPolicyCommand())
@@ -857,7 +860,9 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	var keyId string
 	var teamId string
 	var p8File string
+	var nativeClientIds []string
 	var enabled bool
+	var nativeEnabled bool
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -885,8 +890,14 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 			if cmd.Flags().Changed("p-8-file") {
 				options = append(options, service.WithUpdateOAuth2AppleP8File(p8File))
 			}
+			if cmd.Flags().Changed("native-client-ids") {
+				options = append(options, service.WithUpdateOAuth2AppleNativeClientIds(nativeClientIds))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2AppleEnabled(enabled))
+			}
+			if cmd.Flags().Changed("native-enabled") {
+				options = append(options, service.WithUpdateOAuth2AppleNativeEnabled(nativeEnabled))
 			}
 
 			result, err := service.UpdateOAuth2Apple(options...)
@@ -902,8 +913,11 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&keyId, "key-id", "", "'Key ID' of Apple OAuth2 app. For example: P4000000N8")
 	cmd.Flags().StringVar(&teamId, "team-id", "", "'Team ID' of Apple OAuth2 app. For example: D4000000R6")
 	cmd.Flags().StringVar(&p8File, "p-8-file", "", "Contents of the Apple OAuth2 app .p8 private key file. The secret key wrapped by the PEM markers is 200 characters long. For example: -----BEGIN PRIVATE KEY-----MIGTAg...jy2Xbna-----END PRIVATE KEY-----")
-	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "App bundle IDs accepted as ID token audiences for native Sign in with Apple. For example: com.example.app. Together with the Services ID, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Browser-based OAuth2 sign-in status. Set to true to enable new session creation through the redirect flow. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid. Has no effect on native sign-in, which is controlled by nativeEnabled only.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&nativeEnabled, "native-enabled", false, "Native Sign in with Apple status. This is the only switch for creating sessions from ID tokens obtained on device and is independent of enabled. Needs a Services ID or at least one native client ID to match tokens against, but no key or team ID: this method verifies a signature rather than redeeming an authorization code.")
+	cmd.Flags().Lookup("native-enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1760,7 +1774,9 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
 	var prompt []string
+	var nativeClientIds []string
 	var enabled bool
+	var nativeEnabled bool
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -1785,8 +1801,14 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 			if cmd.Flags().Changed("prompt") {
 				options = append(options, service.WithUpdateOAuth2GooglePrompt(prompt))
 			}
+			if cmd.Flags().Changed("native-client-ids") {
+				options = append(options, service.WithUpdateOAuth2GoogleNativeClientIds(nativeClientIds))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2GoogleEnabled(enabled))
+			}
+			if cmd.Flags().Changed("native-enabled") {
+				options = append(options, service.WithUpdateOAuth2GoogleNativeEnabled(nativeEnabled))
 			}
 
 			result, err := service.UpdateOAuth2Google(options...)
@@ -1801,8 +1823,11 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Google OAuth2 app. For example: 120000000095-92ifjb00000000000000000000g7ijfb.apps.googleusercontent.com")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Google OAuth2 app. For example: GOCSPX-2k8gsR0000000000000000VNahJj")
 	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Google OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. Must not be specified with other values. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account.")
-	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "Additional OAuth2 client IDs accepted as ID token audiences for native sign-in (Android and iOS client IDs). Together with the client ID, which is always accepted, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Browser-based OAuth2 sign-in status. Set to true to enable new session creation through the redirect flow. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid. Has no effect on native sign-in, which is controlled by nativeEnabled only.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&nativeEnabled, "native-enabled", false, "Native Google sign-in status. This is the only switch for creating sessions from ID tokens obtained on device and is independent of enabled. Needs a client ID or at least one native client ID to match tokens against, but no client secret: this method verifies a signature rather than redeeming an authorization code.")
+	cmd.Flags().Lookup("native-enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1847,6 +1872,52 @@ func newProjectUpdateOAuth2HuggingFaceCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Hugging Face OAuth2 app. For example: 2ab9cff9-d711-40ad-a91e-b08a49c42d24")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Hugging Face OAuth2 app. For example: oauth_app_secret_wcLhRtl000000000000000000000xbNdLt")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-kakao",
+		Short: "Update the project OAuth2 Kakao configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2KakaoOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2KakaoClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2KakaoClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2KakaoEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Kakao(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'REST API key' of Kakao OAuth2 app. For example: 839ff5000000000000000000013206de")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Kakao OAuth2 app. For example: jLNVOK00000000000000000000yJebea. Generate it under Kakao Login > Security and set its status to enabled")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -2592,6 +2663,52 @@ func newProjectUpdateOAuth2StripeCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Stripe OAuth2 app. For example: ca_UKibXX0000000000000000000006byvR")
 	cmd.Flags().StringVar(&apiSecretKey, "api-secret-key", "", "'API Secret Key' of Stripe OAuth2 app. For example: sk_51SfOd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000QGWYfp")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2TikTokCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-tik-tok",
+		Short: "Update the project OAuth2 TikTok configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2TikTokOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2TikTokClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2TikTokClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2TikTokEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2TikTok(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client key' of TikTok OAuth2 app. For example: awz000000000tyw0")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client secret' of TikTok OAuth2 app. For example: 6wXewM00000000000000000000yXnite")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -3927,6 +4044,54 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdatePasswordPwnedPolicyCommand() *cobra.Command {
+	var enabled bool
+	var sessions bool
+	var users bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-password-pwned-policy",
+		Short: "Updating this policy allows you to control if passwords are checked against the Have I Been Pwned breach database. When enabled, every password a user signs up, signs in or resets with is checked and the result is recorded on the user as `passwordPwned`. On its own the policy only records. Enable `users` to reject a breached password when a user signs up or sets a new password, and `sessions` to refuse a sign-in with a breached password until it is reset. Only the first five characters of the password hash are ever shared with the service. Options left out keep their current value.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdatePasswordPwnedPolicyOption{}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdatePasswordPwnedPolicyEnabled(enabled))
+			}
+			if cmd.Flags().Changed("sessions") {
+				options = append(options, service.WithUpdatePasswordPwnedPolicySessions(sessions))
+			}
+			if cmd.Flags().Changed("users") {
+				options = append(options, service.WithUpdatePasswordPwnedPolicyUsers(users))
+			}
+
+			result, err := service.UpdatePasswordPwnedPolicy(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password pwned policy. Set to true to check passwords against known data breaches and record the result on the user, or false to never check. Default is true. On its own this only records; use `users` and `sessions` to block. When changing this policy, existing passwords remain valid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&sessions, "sessions", false, "Whether a sign-in with a breached password is refused until the password is reset. Default is false, which allows the sign-in and only records the result.")
+	cmd.Flags().Lookup("sessions").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&users, "users", false, "Whether a breached password is rejected when a user signs up or sets a new password. Default is false, which allows the password and only records the result.")
+	cmd.Flags().Lookup("users").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdatePasswordStrengthPolicyCommand() *cobra.Command {
 	var minArg int
 	var uppercase bool
@@ -4160,7 +4325,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.")
+	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -4452,7 +4617,7 @@ func newProjectUpdateEmailTemplateCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&templateId, "template-id", "", "Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession")
+	cmd.Flags().StringVar(&templateId, "template-id", "", "Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession, otpVerification, otpRecovery")
 	_ = cmd.MarkFlagRequired("template-id")
 	cmd.Flags().StringVar(&locale, "locale", "", "Custom email template locale. If left empty, the fallback locale (en) will be used.")
 	cmd.Flags().StringVar(&subject, "subject", "", "Subject of the email template. Can be up to 255 characters.")
@@ -4496,7 +4661,7 @@ func newProjectGetEmailTemplateCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&templateId, "template-id", "", "Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession")
+	cmd.Flags().StringVar(&templateId, "template-id", "", "Custom email template type. Can be one of: verification, magicSession, recovery, invitation, mfaChallenge, sessionAlert, otpSession, otpVerification, otpRecovery")
 	_ = cmd.MarkFlagRequired("template-id")
 	cmd.Flags().StringVar(&locale, "locale", "", "Custom email template locale. If left empty, the fallback locale (en) will be used.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
