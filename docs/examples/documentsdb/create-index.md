@@ -4,5 +4,5 @@ appwrite documentsdb create-index \
     --collection-id '<COLLECTION_ID>' \
     --key '<KEY>' \
     --type key \
-    --attributes one two three
+    --attributes username
 ```

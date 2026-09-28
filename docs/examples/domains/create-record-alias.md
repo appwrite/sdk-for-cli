@@ -1,7 +1,7 @@
 ```bash
 appwrite domains create-record-alias \
     --domain-id '<DOMAIN_ID>' \
-    --name '' \
+    --name '<VALUE>' \
     --value '<VALUE>' \
     --ttl 1
 ```

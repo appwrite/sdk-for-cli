@@ -1,7 +1,7 @@
 ```bash
 appwrite backups create-policy \
     --policy-id '<POLICY_ID>' \
-    --services one two three \
+    --services databases \
     --retention 1 \
-    --schedule ''
+    --schedule '<VALUE>'
 ```

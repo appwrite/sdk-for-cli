@@ -29,7 +29,7 @@ Once the installation is complete, you can verify the install using
 
 ```sh
 $ appwrite -v
-28.0.0
+28.1.0
 ```
 
 ### Install using prebuilt binaries
@@ -83,7 +83,7 @@ $ scoop install https://raw.githubusercontent.com/appwrite/sdk-for-cli/master/sc
 Once the installation completes, you can verify your install using
 ```
 $ appwrite -v
-28.0.0
+28.1.0
 ```
 
 ## Getting Started 
@@ -269,6 +269,17 @@ Each included file contains only the array for that resource. Include paths are 
 ```
 
 JSON pointer fragments such as `./resources.json#/functions` are not supported.
+
+### Multiple environments
+
+Pass `--config-file` (or set `APPWRITE_CONFIG_FILE`) to use a config other than the nearest `appwrite.config.json`, so one repository can target several projects:
+
+```sh
+appwrite init project --config-file appwrite.config.prod.json
+appwrite push --config-file appwrite.config.prod.json
+```
+
+Includes and resource paths are resolved relative to the chosen file.
 
 ## Contribution
 

@@ -1,5 +1,5 @@
 ```bash
 appwrite project update-o-auth-2-server \
-    --enabled false \
+    --enabled=false \
     --authorization-url https://example.com
 ```

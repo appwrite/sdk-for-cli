@@ -1,5 +1,15 @@
 # Change Log
 
+## 28.1.0
+
+* Added: `--config-file` flag and `APPWRITE_CONFIG_FILE` to choose the project config file
+* Added: `oauth2 introspect` command
+* Added: `--prompt` on the Auth0, Discord, GitHub, Kakao, Microsoft, Okta, Salesforce and Zoho OAuth2 commands
+* Fixed: `types` reads tables and collections split out with `includes`
+* Fixed: help no longer prints backticks around flag value names
+* Updated: command examples are shell-safe and use realistic values
+* Updated: commands call Go SDK v7.5.0
+
 ## 28.0.0
 
 * Breaking: removed `account list-logs` and `users list-logs`

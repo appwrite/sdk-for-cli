@@ -4,5 +4,5 @@ appwrite databases create-string-attribute \
     --collection-id '<COLLECTION_ID>' \
     --key '<KEY>' \
     --size 1 \
-    --required false
+    --required=false
 ```
