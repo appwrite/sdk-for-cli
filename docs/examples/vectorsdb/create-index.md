@@ -4,5 +4,5 @@ appwrite vectorsdb create-index \
     --collection-id '<COLLECTION_ID>' \
     --key '<KEY>' \
     --type hnsw_euclidean \
-    --attributes one two three
+    --attributes embeddings
 ```

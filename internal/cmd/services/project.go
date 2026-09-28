@@ -972,6 +972,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	var clientId string
 	var clientSecret string
 	var endpoint string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -997,6 +998,9 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 			if cmd.Flags().Changed("endpoint") {
 				options = append(options, service.WithUpdateOAuth2Auth0Endpoint(endpoint))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2Auth0Prompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2Auth0Enabled(enabled))
 			}
@@ -1013,6 +1017,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Auth0 OAuth2 app. For example: OaOkIA000000000000000000005KLSYq")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Auth0 OAuth2 app. For example: zXz0000-00000000000000000000000000000-00000000000000000000PJafnF")
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Domain of Auth0 instance. For example: example.us.auth0.com")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Auth0 OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Auth0 default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -1349,6 +1354,7 @@ func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -1371,6 +1377,9 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2DiscordClientSecret(clientSecret))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2DiscordPrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2DiscordEnabled(enabled))
 			}
@@ -1386,6 +1395,7 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Discord OAuth2 app. For example: 950722000000343754")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Discord OAuth2 app. For example: YmPXnM000000000000000000002zFg5D")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array with at most one Discord OAuth2 prompt value. \"none\" means: skip the authorization screen for users who already authorized the app with the requested scopes. \"consent\" means: ask users who already authorized the app to approve it again. Pass an empty array to use the Discord default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -1676,6 +1686,7 @@ func newProjectUpdateOAuth2FusionAuthCommand() *cobra.Command {
 func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -1698,6 +1709,9 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2GitHubClientSecret(clientSecret))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2GitHubPrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2GitHubEnabled(enabled))
 			}
@@ -1713,6 +1727,7 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'OAuth2 app Client ID, or App ID' of GitHub OAuth2 app. For example: e4d87900000000540733. Example of wrong value: 370006")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of GitHub OAuth2 app. For example: 5e07c00000000000000000000000000000198bcc")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of GitHub OAuth2 prompt values. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the GitHub default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -1881,6 +1896,7 @@ func newProjectUpdateOAuth2HuggingFaceCommand() *cobra.Command {
 func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -1903,6 +1919,9 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2KakaoClientSecret(clientSecret))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2KakaoPrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2KakaoEnabled(enabled))
 			}
@@ -1918,6 +1937,7 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'REST API key' of Kakao OAuth2 app. For example: 839ff5000000000000000000013206de")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Kakao OAuth2 app. For example: jLNVOK00000000000000000000yJebea. Generate it under Kakao Login > Security and set its status to enabled")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Kakao OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"create\" means: prompt the user to sign up. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Kakao default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -2076,6 +2096,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	var applicationId string
 	var applicationSecret string
 	var tenant string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -2101,6 +2122,9 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 			if cmd.Flags().Changed("tenant") {
 				options = append(options, service.WithUpdateOAuth2MicrosoftTenant(tenant))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2MicrosoftPrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2MicrosoftEnabled(enabled))
 			}
@@ -2117,6 +2141,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "'Entra ID Application ID, also known as Client ID' of Microsoft OAuth2 app. For example: 00001111-aaaa-2222-bbbb-3333cccc4444")
 	cmd.Flags().StringVar(&applicationSecret, "application-secret", "", "'Entra ID Application Secret, also known as Client Secret' of Microsoft OAuth2 app. For example: A1bC2dE3fH4iJ5kL6mN7oP8qR9sT0u")
 	cmd.Flags().StringVar(&tenant, "tenant", "", "Microsoft Entra ID tenant identifier. Use 'common', 'organizations', 'consumers' or a specific tenant ID. For example: common")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Microsoft OAuth2 prompt values. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Microsoft default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -2250,6 +2275,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	var clientSecret string
 	var domain string
 	var authorizationServerId string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -2278,6 +2304,9 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 			if cmd.Flags().Changed("authorization-server-id") {
 				options = append(options, service.WithUpdateOAuth2OktaAuthorizationServerId(authorizationServerId))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2OktaPrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2OktaEnabled(enabled))
 			}
@@ -2295,6 +2324,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Okta OAuth2 app. For example: Kiq0000000000000000000000000000000000000-00000000000H2L5-3SJ-vRV")
 	cmd.Flags().StringVar(&domain, "domain", "", "Okta company domain. Required when enabling the provider. For example: trial-6400025.okta.com. Example of wrong value: trial-6400025-admin.okta.com, or https://trial-6400025.okta.com/")
 	cmd.Flags().StringVar(&authorizationServerId, "authorization-server-id", "", "Custom Authorization Servers. Optional, can be left empty or unconfigured. For example: aus000000000000000h7z")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Okta OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Okta default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -2488,6 +2518,7 @@ func newProjectUpdateOAuth2ResendCommand() *cobra.Command {
 func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 	var customerKey string
 	var customerSecret string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -2510,6 +2541,9 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 			if cmd.Flags().Changed("customer-secret") {
 				options = append(options, service.WithUpdateOAuth2SalesforceCustomerSecret(customerSecret))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2SalesforcePrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2SalesforceEnabled(enabled))
 			}
@@ -2525,6 +2559,7 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&customerKey, "customer-key", "", "'Consumer Key' of Salesforce OAuth2 app. For example: 3MVG9I0000000000000000000000000000000000000000000000000000000000000000000000000C5Aejq")
 	cmd.Flags().StringVar(&customerSecret, "customer-secret", "", "'Consumer Secret' of Salesforce OAuth2 app. For example: 3w000000000000e2")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Salesforce OAuth2 prompt values. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Salesforce default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -3040,6 +3075,7 @@ func newProjectUpdateOAuth2YandexCommand() *cobra.Command {
 func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
+	var prompt []string
 	var enabled bool
 	var projectId string
 
@@ -3062,6 +3098,9 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2ZohoClientSecret(clientSecret))
 			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2ZohoPrompt(prompt))
+			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2ZohoEnabled(enabled))
 			}
@@ -3077,6 +3116,7 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Zoho OAuth2 app. For example: 1000.83C178000000000000000000RPNX0B")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Zoho OAuth2 app. For example: fb5cac000000000000000000000000000000a68f6e")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Zoho OAuth2 prompt values. \"consent\" means: prompt the user for consent. Pass an empty array to use the Zoho default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")

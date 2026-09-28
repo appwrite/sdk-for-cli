@@ -25,6 +25,7 @@ func NewOauth2Command() *cobra.Command {
 	cmd.AddCommand(newOauth2CreateDeviceAuthorizationCommand())
 	cmd.AddCommand(newOauth2CreateGrantCommand())
 	cmd.AddCommand(newOauth2GetGrantCommand())
+	cmd.AddCommand(newOauth2IntrospectCommand())
 	cmd.AddCommand(newOauth2ListOrganizationsCommand())
 	cmd.AddCommand(newOauth2CreatePARCommand())
 	cmd.AddCommand(newOauth2ListProjectsCommand())
@@ -356,6 +357,52 @@ func newOauth2GetGrantCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&grantId, "grant-id", "", "Grant ID made during authorization, provided to consent screen in URL search params.")
 	_ = cmd.MarkFlagRequired("grant-id")
+	return cmd
+}
+
+func newOauth2IntrospectCommand() *cobra.Command {
+	var token string
+	var tokenTypeHint string
+	var clientId string
+	var clientSecret string
+
+	cmd := &cobra.Command{
+		Use:   "introspect",
+		Short: "Introspect an OAuth2 access token or refresh token. Authenticate with an API key holding the `oauth2.introspect` scope to introspect any token in the project, or with the client credentials of the app the token was issued to.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := oauth2.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []oauth2.IntrospectOption{}
+			if cmd.Flags().Changed("token-type-hint") {
+				options = append(options, service.WithIntrospectTokenTypeHint(tokenTypeHint))
+			}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithIntrospectClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithIntrospectClientSecret(clientSecret))
+			}
+
+			result, err := service.Introspect(token, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&token, "token", "", "The access token or refresh token to introspect.")
+	_ = cmd.MarkFlagRequired("token")
+	cmd.Flags().StringVar(&tokenTypeHint, "token-type-hint", "", "Type of token to introspect. Can be one of: `access_token` or `refresh_token`.")
+	cmd.Flags().StringVar(&clientId, "client-id", "", "OAuth2 client ID. Either a registered app ID or an HTTPS client ID metadata document URL.")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "OAuth2 client secret.")
 	return cmd
 }
 

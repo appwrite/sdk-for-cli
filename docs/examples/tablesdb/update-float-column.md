@@ -3,6 +3,6 @@ appwrite tablesdb update-float-column \
     --database-id '<DATABASE_ID>' \
     --table-id '<TABLE_ID>' \
     --key '<KEY>' \
-    --required false \
-    --default 10.5
+    --required=false \
+    --xdefault 10.5
 ```

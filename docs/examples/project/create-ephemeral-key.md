@@ -1,5 +1,5 @@
 ```bash
 appwrite project create-ephemeral-key \
-    --scopes one two three \
+    --scopes users.read \
     --duration 600
 ```

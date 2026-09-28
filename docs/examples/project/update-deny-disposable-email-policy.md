@@ -1,4 +1,4 @@
 ```bash
 appwrite project update-deny-disposable-email-policy \
-    --enabled false
+    --enabled=false
 ```

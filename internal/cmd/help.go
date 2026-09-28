@@ -153,6 +153,7 @@ var helpOptionOrder = []string{
 	"--force",
 	"--all",
 	"--id",
+	"--config-file",
 	"--report",
 }
 
@@ -429,9 +430,11 @@ func renderHelpOptions(root *cobra.Command) string {
 			}
 		}
 
+		// Unquoted like the term, so a backticked value name is not printed.
+		_, usage := pflag.UnquoteUsage(flag)
 		options = append(options, option{
 			term:  optionTerm(flag),
-			usage: flag.Usage,
+			usage: usage,
 			rank:  rank,
 			name:  flag.Name,
 		})

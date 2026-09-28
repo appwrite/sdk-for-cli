@@ -4,5 +4,5 @@ appwrite tablesdb create-varchar-column \
     --table-id '<TABLE_ID>' \
     --key '<KEY>' \
     --size 1 \
-    --required false
+    --required=false
 ```

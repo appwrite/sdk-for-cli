@@ -4,5 +4,5 @@ appwrite tablesdb create-index \
     --table-id '<TABLE_ID>' \
     --key '<KEY>' \
     --type key \
-    --columns one two three
+    --columns username
 ```

@@ -1,4 +1,4 @@
 ```bash
 appwrite account update-prefs \
-    --prefs '{ "key": "value" }'
+    --prefs '{"language":"en","timezone":"UTC","darkTheme":true}'
 ```

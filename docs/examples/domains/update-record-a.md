@@ -2,7 +2,7 @@
 appwrite domains update-record-a \
     --domain-id '<DOMAIN_ID>' \
     --record-id '<RECORD_ID>' \
-    --name '' \
-    --value '' \
+    --name '<VALUE>' \
+    --value '<VALUE>' \
     --ttl 1
 ```
