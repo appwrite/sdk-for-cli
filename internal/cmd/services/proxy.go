@@ -41,7 +41,7 @@ func newProxyCreateInvalidationCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "create-invalidation",
-		Short: "Create a new CDN cache invalidation for a domain. Executes a hard purge of cached content.\n\nDepending on type, the invalidation purges a single cache tag, a single URL path, or all cached content for the domain.",
+		Short: "Create a new CDN cache invalidation for a domain. Executes a hard purge of cached content.\n\nDepending on type, the invalidation purges a single cache tag, a single URL path, or all cached content for the domain.\n\nDomains that route to a function do not support cache invalidation.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")

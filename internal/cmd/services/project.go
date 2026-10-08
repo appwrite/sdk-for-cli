@@ -79,6 +79,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TwitchCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2WebflowCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2WordPressCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2XCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2YahooCommand())
@@ -212,7 +213,7 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&methodId, "method-id", "", "Auth Method ID. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone")
+	cmd.Flags().StringVar(&methodId, "method-id", "", "Auth Method ID. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone,passkey")
 	_ = cmd.MarkFlagRequired("method-id")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Auth method status.")
 	_ = cmd.MarkFlagRequired("enabled")
@@ -2888,6 +2889,52 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2WebflowCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-webflow",
+		Short: "Update the project OAuth2 Webflow configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2WebflowOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2WebflowClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2WebflowClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2WebflowEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Webflow(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Webflow OAuth2 app. For example: 8bb20000000000000000000000000000000000000000000000000000000040dd")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Webflow OAuth2 app. For example: 59bf00000000000000000000000000000000000000000000000000000000fe59")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2WordPressCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -4365,7 +4412,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email.")
+	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, passkey.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd

@@ -273,6 +273,7 @@ func newTablesDBListSpecificationsCommand() *cobra.Command {
 
 func newTablesDBListTransactionsCommand() *cobra.Command {
 	var queries []string
+	var total bool
 	var filter []string
 	var where []string
 	var sortAsc []string
@@ -322,6 +323,9 @@ func newTablesDBListTransactionsCommand() *cobra.Command {
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListTransactionsQueries(queries))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListTransactionsTotal(total))
+			}
 
 			result, err := service.ListTransactions(options...)
 			if err != nil {
@@ -333,6 +337,8 @@ func newTablesDBListTransactionsCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
 	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")

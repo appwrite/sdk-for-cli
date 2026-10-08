@@ -1126,6 +1126,7 @@ func newAccountUpdateRecoveryOTPCommand() *cobra.Command {
 }
 
 func newAccountListSessionsCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-sessions",
@@ -1138,7 +1139,13 @@ func newAccountListSessionsCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.ListSessions()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.ListSessionsOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListSessionsTotal(total))
+			}
+
+			result, err := service.ListSessions(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -1147,14 +1154,17 @@ func newAccountListSessionsCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newAccountDeleteSessionsCommand() *cobra.Command {
+	var current bool
 
 	cmd := &cobra.Command{
 		Use:   "delete-sessions",
-		Short: "Delete all sessions from the user account and remove any sessions cookies from the end client.",
+		Short: "Delete all sessions from the user account and remove any sessions cookies from the end client. Pass `current` as false to keep the session making the request and sign out of every other session.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
@@ -1163,7 +1173,13 @@ func newAccountDeleteSessionsCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.DeleteSessions()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.DeleteSessionsOption{}
+			if cmd.Flags().Changed("current") {
+				options = append(options, service.WithDeleteSessionsCurrent(current))
+			}
+
+			result, err := service.DeleteSessions(options...)
 			if err != nil {
 				return sdk.WrapMutationError("DELETE", err)
 			}
@@ -1172,6 +1188,8 @@ func newAccountDeleteSessionsCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&current, "current", false, "Delete the current session too. Use false to sign out of every other session while staying signed in on this one.")
+	cmd.Flags().Lookup("current").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -1203,10 +1221,11 @@ func newAccountCreateAnonymousSessionCommand() *cobra.Command {
 func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 	var email string
 	var password string
+	var duration int
 
 	cmd := &cobra.Command{
 		Use:   "create-email-password-session",
-		Short: "Allow the user to login into their account by providing a valid email and password combination. This route will create a new session for the user.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).",
+		Short: "Allow the user to login into their account by providing a valid email and password combination. This route will create a new session for the user. Use the optional `duration` parameter to create a shorter session, for example when the user doesn't choose \"remember me\". It must be at least 60 seconds and cannot exceed the project maximum session length.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
@@ -1215,7 +1234,13 @@ func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 			}
 			service := account.New(client)
 
-			result, err := service.CreateEmailPasswordSession(email, password)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.CreateEmailPasswordSessionOption{}
+			if cmd.Flags().Changed("duration") {
+				options = append(options, service.WithCreateEmailPasswordSessionDuration(duration))
+			}
+
+			result, err := service.CreateEmailPasswordSession(email, password, options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -1228,6 +1253,7 @@ func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("email")
 	cmd.Flags().StringVar(&password, "password", "", "User password. Must be at least 8 chars.")
 	_ = cmd.MarkFlagRequired("password")
+	cmd.Flags().IntVar(&duration, "duration", 0, "Session length in seconds. Minimum is 60 seconds, and it cannot exceed the project maximum session length. Defaults to the project maximum session length.")
 	return cmd
 }
 
@@ -1577,6 +1603,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 	var success string
 	var failure string
 	var scopes []string
+	var state string
 
 	cmd := &cobra.Command{
 		Use:   "create-o-auth-2-token",
@@ -1600,6 +1627,9 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 			if cmd.Flags().Changed("scopes") {
 				options = append(options, service.WithCreateOAuth2TokenScopes(scopes))
 			}
+			if cmd.Flags().Changed("state") {
+				options = append(options, service.WithCreateOAuth2TokenState(state))
+			}
 
 			result, err := service.CreateOAuth2Token(provider, options...)
 			if err != nil {
@@ -1610,11 +1640,12 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&provider, "provider", "", "OAuth2 Provider. Currently, supported providers are: amazon, apple, appwrite, auth0, authentik, autodesk, bitbucket, bitly, box, cloudflare, dailymotion, discord, disqus, dropbox, etsy, facebook, figma, fusionauth, github, gitlab, google, huggingface, kakao, keycloak, kick, linkedin, microsoft, notion, oidc, okta, paypal, paypalSandbox, podio, resend, salesforce, slack, spotify, stripe, tiktok, tradeshift, tradeshiftBox, twitch, wordpress, x, yahoo, yammer, yandex, zoho, zoom.")
+	cmd.Flags().StringVar(&provider, "provider", "", "OAuth2 Provider. Currently, supported providers are: amazon, apple, appwrite, auth0, authentik, autodesk, bitbucket, bitly, box, cloudflare, dailymotion, discord, disqus, dropbox, etsy, facebook, figma, fusionauth, github, gitlab, google, huggingface, kakao, keycloak, kick, linkedin, microsoft, notion, oidc, okta, paypal, paypalSandbox, podio, resend, salesforce, slack, spotify, stripe, tiktok, tradeshift, tradeshiftBox, twitch, webflow, wordpress, x, yahoo, yammer, yandex, zoho, zoom.")
 	_ = cmd.MarkFlagRequired("provider")
 	cmd.Flags().StringVar(&success, "success", "", "URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&state, "state", "", "An opaque value your app generates and keeps, for example in a cookie. It is returned unchanged as the `state` query parameter on the success and failure URLs, so your app can check that the sign-in it receives is one it started. Printable ASCII only (RFC 6749 Appendix A.5). Max length: 256 chars.")
 	return cmd
 }
 

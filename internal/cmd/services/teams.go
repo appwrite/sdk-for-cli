@@ -162,7 +162,7 @@ func newTeamsCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("team-id")
 	cmd.Flags().StringVar(&name, "name", "", "Team name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&roles, "roles", nil, "Array of strings. Use this param to set the roles in the team for the user who created it. The default role is owner. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 32 characters long.")
+	cmd.Flags().StringArrayVar(&roles, "roles", nil, "Array of strings. Use this param to set the roles in the team for the user who created it. The default role is owner. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.")
 	return cmd
 }
 

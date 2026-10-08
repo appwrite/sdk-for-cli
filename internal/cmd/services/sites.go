@@ -278,6 +278,7 @@ func newSitesCreateCommand() *cobra.Command {
 }
 
 func newSitesListFrameworksCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-frameworks",
@@ -290,7 +291,13 @@ func newSitesListFrameworksCommand() *cobra.Command {
 			}
 			service := sites.New(client)
 
-			result, err := service.ListFrameworks()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []sites.ListFrameworksOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListFrameworksTotal(total))
+			}
+
+			result, err := service.ListFrameworks(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -299,11 +306,14 @@ func newSitesListFrameworksCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newSitesListSpecificationsCommand() *cobra.Command {
 	var typeArg string
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
@@ -321,6 +331,9 @@ func newSitesListSpecificationsCommand() *cobra.Command {
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithListSpecificationsType(typeArg))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListSpecificationsTotal(total))
+			}
 
 			result, err := service.ListSpecifications(options...)
 			if err != nil {
@@ -332,6 +345,8 @@ func newSitesListSpecificationsCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds. Defaults to runtimes.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
