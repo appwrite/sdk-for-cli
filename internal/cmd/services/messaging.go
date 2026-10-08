@@ -142,7 +142,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType, users, targets")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -253,19 +253,19 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 
 func newMessagingUpdateEmailCommand() *cobra.Command {
 	var messageId string
+	var subject string
+	var content string
 	var topics []string
 	var users []string
 	var targets []string
-	var subject string
-	var content string
-	var draft bool
-	var html bool
 	var cc []string
 	var bcc []string
+	var attachments []string
 	var replyToEmail string
 	var replyToName string
+	var draft bool
+	var html bool
 	var scheduledAt string
-	var attachments []string
 
 	cmd := &cobra.Command{
 		Use:   "update-email",
@@ -280,6 +280,12 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateEmailOption{}
+			if cmd.Flags().Changed("subject") {
+				options = append(options, service.WithUpdateEmailSubject(subject))
+			}
+			if cmd.Flags().Changed("content") {
+				options = append(options, service.WithUpdateEmailContent(content))
+			}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithUpdateEmailTopics(topics))
 			}
@@ -289,23 +295,14 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 			if cmd.Flags().Changed("targets") {
 				options = append(options, service.WithUpdateEmailTargets(targets))
 			}
-			if cmd.Flags().Changed("subject") {
-				options = append(options, service.WithUpdateEmailSubject(subject))
-			}
-			if cmd.Flags().Changed("content") {
-				options = append(options, service.WithUpdateEmailContent(content))
-			}
-			if cmd.Flags().Changed("draft") {
-				options = append(options, service.WithUpdateEmailDraft(draft))
-			}
-			if cmd.Flags().Changed("html") {
-				options = append(options, service.WithUpdateEmailHtml(html))
-			}
 			if cmd.Flags().Changed("cc") {
 				options = append(options, service.WithUpdateEmailCc(cc))
 			}
 			if cmd.Flags().Changed("bcc") {
 				options = append(options, service.WithUpdateEmailBcc(bcc))
+			}
+			if cmd.Flags().Changed("attachments") {
+				options = append(options, service.WithUpdateEmailAttachments(attachments))
 			}
 			if cmd.Flags().Changed("reply-to-email") {
 				options = append(options, service.WithUpdateEmailReplyToEmail(replyToEmail))
@@ -313,11 +310,14 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 			if cmd.Flags().Changed("reply-to-name") {
 				options = append(options, service.WithUpdateEmailReplyToName(replyToName))
 			}
+			if cmd.Flags().Changed("draft") {
+				options = append(options, service.WithUpdateEmailDraft(draft))
+			}
+			if cmd.Flags().Changed("html") {
+				options = append(options, service.WithUpdateEmailHtml(html))
+			}
 			if cmd.Flags().Changed("scheduled-at") {
 				options = append(options, service.WithUpdateEmailScheduledAt(scheduledAt))
-			}
-			if cmd.Flags().Changed("attachments") {
-				options = append(options, service.WithUpdateEmailAttachments(attachments))
 			}
 
 			result, err := service.UpdateEmail(messageId, options...)
@@ -331,21 +331,21 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
+	cmd.Flags().StringVar(&subject, "subject", "", "Email Subject.")
+	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
 	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
 	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
 	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
-	cmd.Flags().StringVar(&subject, "subject", "", "Email Subject.")
-	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
+	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC.")
+	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
+	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
+	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. Pass an empty string to restore the provider or sender default.")
+	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. Pass an empty string to restore the provider or sender default.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&html, "html", false, "Is content of type HTML")
 	cmd.Flags().Lookup("html").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC.")
-	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
-	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. Pass an empty string to restore the provider or sender default.")
-	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. Pass an empty string to restore the provider or sender default.")
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
-	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
 	return cmd
 }
 
@@ -369,6 +369,7 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	var contentAvailable bool
 	var critical bool
 	var priority string
+	var channelId string
 
 	cmd := &cobra.Command{
 		Use:   "create-push",
@@ -441,6 +442,9 @@ func newMessagingCreatePushCommand() *cobra.Command {
 			if cmd.Flags().Changed("priority") {
 				options = append(options, service.WithCreatePushPriority(priority))
 			}
+			if cmd.Flags().Changed("channel-id") {
+				options = append(options, service.WithCreatePushChannelId(channelId))
+			}
 
 			result, err := service.CreatePush(messageId, options...)
 			if err != nil {
@@ -474,16 +478,17 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&critical, "critical", false, "If set to true, the notification will be marked as critical. This requires the app to have the critical notification entitlement. Available only for iOS Platform.")
 	cmd.Flags().Lookup("critical").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&priority, "priority", "", "Set the notification priority. \"normal\" will consider device state and may not deliver notifications immediately. \"high\" will always attempt to immediately deliver the notification.")
+	cmd.Flags().StringVar(&channelId, "channel-id", "", "ID of the notification channel to deliver the notification on. The app must have already created a channel with this ID, otherwise the channel from the app manifest is used. Available only for Android Platform.")
 	return cmd
 }
 
 func newMessagingUpdatePushCommand() *cobra.Command {
 	var messageId string
+	var title string
+	var body string
 	var topics []string
 	var users []string
 	var targets []string
-	var title string
-	var body string
 	var data string
 	var action string
 	var image string
@@ -497,6 +502,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	var contentAvailable bool
 	var critical bool
 	var priority string
+	var channelId string
 
 	cmd := &cobra.Command{
 		Use:   "update-push",
@@ -515,6 +521,12 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdatePushOption{}
+			if cmd.Flags().Changed("title") {
+				options = append(options, service.WithUpdatePushTitle(title))
+			}
+			if cmd.Flags().Changed("body") {
+				options = append(options, service.WithUpdatePushBody(body))
+			}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithUpdatePushTopics(topics))
 			}
@@ -523,12 +535,6 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("targets") {
 				options = append(options, service.WithUpdatePushTargets(targets))
-			}
-			if cmd.Flags().Changed("title") {
-				options = append(options, service.WithUpdatePushTitle(title))
-			}
-			if cmd.Flags().Changed("body") {
-				options = append(options, service.WithUpdatePushBody(body))
 			}
 			if cmd.Flags().Changed("data") {
 				options = append(options, service.WithUpdatePushData(dataValue))
@@ -569,6 +575,9 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 			if cmd.Flags().Changed("priority") {
 				options = append(options, service.WithUpdatePushPriority(priority))
 			}
+			if cmd.Flags().Changed("channel-id") {
+				options = append(options, service.WithUpdatePushChannelId(channelId))
+			}
 
 			result, err := service.UpdatePush(messageId, options...)
 			if err != nil {
@@ -581,11 +590,11 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
+	cmd.Flags().StringVar(&title, "title", "", "Title for push notification.")
+	cmd.Flags().StringVar(&body, "body", "", "Body for push notification.")
 	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
 	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
 	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
-	cmd.Flags().StringVar(&title, "title", "", "Title for push notification.")
-	cmd.Flags().StringVar(&body, "body", "", "Body for push notification.")
 	cmd.Flags().StringVar(&data, "data", "", "Additional Data for push notification.")
 	cmd.Flags().StringVar(&action, "action", "", "Action for push notification.")
 	cmd.Flags().StringVar(&image, "image", "", "Image for push notification. Must be a compound bucket ID to file ID of a jpeg, png, or bmp image in Appwrite Storage. It should be formatted as <BUCKET_ID>:<FILE_ID>.")
@@ -602,6 +611,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&critical, "critical", false, "If set to true, the notification will be marked as critical. This requires the app to have the critical notification entitlement. Available only for iOS Platform.")
 	cmd.Flags().Lookup("critical").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&priority, "priority", "", "Set the notification priority. \"normal\" will consider device battery state and may send notifications later. \"high\" will always attempt to immediately deliver the notification.")
+	cmd.Flags().StringVar(&channelId, "channel-id", "", "ID of the notification channel to deliver the notification on. The app must have already created a channel with this ID, otherwise the channel from the app manifest is used. Pass an empty string to clear it. Available only for Android platforms.")
 	return cmd
 }
 
@@ -667,10 +677,10 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 
 func newMessagingUpdateSmsCommand() *cobra.Command {
 	var messageId string
+	var content string
 	var topics []string
 	var users []string
 	var targets []string
-	var content string
 	var draft bool
 	var scheduledAt string
 
@@ -687,6 +697,9 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateSmsOption{}
+			if cmd.Flags().Changed("content") {
+				options = append(options, service.WithUpdateSmsContent(content))
+			}
 			if cmd.Flags().Changed("topics") {
 				options = append(options, service.WithUpdateSmsTopics(topics))
 			}
@@ -695,9 +708,6 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("targets") {
 				options = append(options, service.WithUpdateSmsTargets(targets))
-			}
-			if cmd.Flags().Changed("content") {
-				options = append(options, service.WithUpdateSmsContent(content))
 			}
 			if cmd.Flags().Changed("draft") {
 				options = append(options, service.WithUpdateSmsDraft(draft))
@@ -717,10 +727,10 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
+	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
 	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
 	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
 	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
-	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")

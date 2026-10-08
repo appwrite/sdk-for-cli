@@ -1,5 +1,15 @@
 # Change Log
 
+## 28.2.0
+
+* Added: `waf` commands to list, get and delete rules, and create or update bypass, challenge, deny, rate limit and redirect rules
+* Added: `advisor`, `analytics`, `mysql`, `postgresql` and `mongo` commands
+* Added: `presences upsert`, `presences update` and `project update-o-auth-2-webflow` commands
+* Added: `--state` on `account create-o-auth-2-token`, `--duration` on `account create-email-password-session` and `--current` on `account delete-sessions`
+* Added: `--total` on the remaining list commands and `--channel-id` on `messaging create-push` and `update-push`
+* Updated: `--resource` on the `oauth2` commands can be repeated to pass several resource URIs
+* Updated: commands call Go SDK v7.8.0
+
 ## 28.1.0
 
 * Added: `--config-file` flag and `APPWRITE_CONFIG_FILE` to choose the project config file

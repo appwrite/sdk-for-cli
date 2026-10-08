@@ -271,6 +271,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 }
 
 func newFunctionsListRuntimesCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-runtimes",
@@ -283,7 +284,13 @@ func newFunctionsListRuntimesCommand() *cobra.Command {
 			}
 			service := functions.New(client)
 
-			result, err := service.ListRuntimes()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []functions.ListRuntimesOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListRuntimesTotal(total))
+			}
+
+			result, err := service.ListRuntimes(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -292,11 +299,14 @@ func newFunctionsListRuntimesCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newFunctionsListSpecificationsCommand() *cobra.Command {
 	var typeArg string
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
@@ -314,6 +324,9 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithListSpecificationsType(typeArg))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListSpecificationsTotal(total))
+			}
 
 			result, err := service.ListSpecifications(options...)
 			if err != nil {
@@ -325,6 +338,8 @@ func newFunctionsListSpecificationsCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&typeArg, "type", "", "Specification type to list. Can be one of: runtimes, builds. Defaults to runtimes.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 

@@ -67,7 +67,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 	var prompt string
 	var maxAge int
 	var authorizationDetails string
-	var resource string
+	var resource []string
 	var audience string
 	var requestUri string
 
@@ -147,7 +147,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&prompt, "prompt", "", "OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "OIDC max_age paraleter for customization of consent screen. Maximum allowable elapsed time in seconds since the user last authenticated. If exceeded, re-authentication is required.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	cmd.Flags().StringVar(&requestUri, "request-uri", "", "OAuth2 authorization request handle returned by the pushed authorization request endpoint.")
 	return cmd
@@ -165,7 +165,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 	var prompt string
 	var maxAge int
 	var authorizationDetails string
-	var resource string
+	var resource []string
 	var audience string
 	var requestUri string
 
@@ -245,7 +245,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 	cmd.Flags().StringVar(&prompt, "prompt", "", "OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "OIDC max_age paraleter for customization of consent screen. Maximum allowable elapsed time in seconds since the user last authenticated. If exceeded, re-authentication is required.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	cmd.Flags().StringVar(&requestUri, "request-uri", "", "OAuth2 authorization request handle returned by the pushed authorization request endpoint.")
 	return cmd
@@ -255,7 +255,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 	var clientId string
 	var scope string
 	var authorizationDetails string
-	var resource string
+	var resource []string
 	var audience string
 
 	cmd := &cobra.Command{
@@ -299,7 +299,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "OAuth2 client ID. Either a registered app ID or an HTTPS client ID metadata document URL.")
 	cmd.Flags().StringVar(&scope, "scope", "", "Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: `openid`, `email`, `profile`.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	return cmd
 }
@@ -449,7 +449,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 	var prompt string
 	var maxAge int
 	var authorizationDetails string
-	var resource string
+	var resource []string
 	var audience string
 
 	cmd := &cobra.Command{
@@ -519,7 +519,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 	cmd.Flags().StringVar(&prompt, "prompt", "", "OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "OIDC max_age parameter for customization of consent screen.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	return cmd
 }
@@ -641,7 +641,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 	var clientSecret string
 	var codeVerifier string
 	var redirectUri string
-	var resource string
+	var resource []string
 	var audience string
 
 	cmd := &cobra.Command{
@@ -703,7 +703,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "OAuth2 client secret. Required for confidential apps.")
 	cmd.Flags().StringVar(&codeVerifier, "code-verifier", "", "PKCE code verifier. Required for public apps.")
 	cmd.Flags().StringVar(&redirectUri, "redirect-uri", "", "Redirect URI. Required for `authorization_code` grant type.")
-	cmd.Flags().StringVar(&resource, "resource", "", "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	return cmd
 }

@@ -58,6 +58,7 @@ func newLocaleGetCommand() *cobra.Command {
 }
 
 func newLocaleListCodesCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-codes",
@@ -70,7 +71,13 @@ func newLocaleListCodesCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListCodes()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListCodesOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListCodesTotal(total))
+			}
+
+			result, err := service.ListCodes(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -79,10 +86,13 @@ func newLocaleListCodesCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newLocaleListContinentsCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-continents",
@@ -95,7 +105,13 @@ func newLocaleListContinentsCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListContinents()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListContinentsOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListContinentsTotal(total))
+			}
+
+			result, err := service.ListContinents(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -104,10 +120,13 @@ func newLocaleListContinentsCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newLocaleListCountriesCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-countries",
@@ -120,7 +139,13 @@ func newLocaleListCountriesCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListCountries()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListCountriesOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListCountriesTotal(total))
+			}
+
+			result, err := service.ListCountries(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -129,10 +154,13 @@ func newLocaleListCountriesCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newLocaleListCountriesEUCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-countries-eu",
@@ -145,7 +173,13 @@ func newLocaleListCountriesEUCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListCountriesEU()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListCountriesEUOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListCountriesEUTotal(total))
+			}
+
+			result, err := service.ListCountriesEU(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -154,10 +188,13 @@ func newLocaleListCountriesEUCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newLocaleListCountriesPhonesCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-countries-phones",
@@ -170,7 +207,13 @@ func newLocaleListCountriesPhonesCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListCountriesPhones()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListCountriesPhonesOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListCountriesPhonesTotal(total))
+			}
+
+			result, err := service.ListCountriesPhones(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -179,10 +222,13 @@ func newLocaleListCountriesPhonesCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newLocaleListCurrenciesCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-currencies",
@@ -195,7 +241,13 @@ func newLocaleListCurrenciesCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListCurrencies()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListCurrenciesOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListCurrenciesTotal(total))
+			}
+
+			result, err := service.ListCurrencies(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -204,10 +256,13 @@ func newLocaleListCurrenciesCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
 
 func newLocaleListLanguagesCommand() *cobra.Command {
+	var total bool
 
 	cmd := &cobra.Command{
 		Use:   "list-languages",
@@ -220,7 +275,13 @@ func newLocaleListLanguagesCommand() *cobra.Command {
 			}
 			service := locale.New(client)
 
-			result, err := service.ListLanguages()
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []locale.ListLanguagesOption{}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListLanguagesTotal(total))
+			}
+
+			result, err := service.ListLanguages(options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -229,5 +290,7 @@ func newLocaleListLanguagesCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	return cmd
 }
