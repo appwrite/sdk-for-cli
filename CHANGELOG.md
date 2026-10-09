@@ -1,5 +1,12 @@
 # Change Log
 
+## 28.3.0
+
+* Added: `--interval` on `functions create` and `functions update` to run functions every N minutes
+* Added: `init`, `pull` and `push` read and write a function's `interval` in `appwrite.config.json`
+* Updated: `push` sends `interval` only when the function's config sets it
+* Updated: commands call Go SDK v7.9.0
+
 ## 28.2.0
 
 * Added: `waf` commands to list, get and delete rules, and create or update bypass, challenge, deny, rate limit and redirect rules
