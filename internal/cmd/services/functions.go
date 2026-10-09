@@ -158,6 +158,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	var buildSpecification string
 	var runtimeSpecification string
 	var deploymentRetention int
+	var interval int
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -229,6 +230,9 @@ func newFunctionsCreateCommand() *cobra.Command {
 			if cmd.Flags().Changed("deployment-retention") {
 				options = append(options, service.WithCreateDeploymentRetention(deploymentRetention))
 			}
+			if cmd.Flags().Changed("interval") {
+				options = append(options, service.WithCreateInterval(interval))
+			}
 
 			result, err := service.Create(functionId, name, runtime, options...)
 			if err != nil {
@@ -247,7 +251,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("runtime")
 	cmd.Flags().StringArrayVar(&execute, "execute", nil, "An array of role strings with execution permissions. By default no user is granted with any execute permissions. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
 	cmd.Flags().StringArrayVar(&events, "events", nil, "Events list. Maximum of 100 events are allowed.")
-	cmd.Flags().StringVar(&schedule, "schedule", "", "Schedule CRON syntax.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "Schedule CRON syntax. Cannot be combined with interval.")
 	cmd.Flags().IntVar(&timeout, "timeout", 0, "Function maximum execution time in seconds.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
@@ -267,6 +271,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the function deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule.")
 	return cmd
 }
 
@@ -394,6 +399,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	var buildSpecification string
 	var runtimeSpecification string
 	var deploymentRetention int
+	var interval int
 
 	cmd := &cobra.Command{
 		Use:   "update",
@@ -468,6 +474,9 @@ func newFunctionsUpdateCommand() *cobra.Command {
 			if cmd.Flags().Changed("deployment-retention") {
 				options = append(options, service.WithUpdateDeploymentRetention(deploymentRetention))
 			}
+			if cmd.Flags().Changed("interval") {
+				options = append(options, service.WithUpdateInterval(interval))
+			}
 
 			result, err := service.Update(functionId, name, options...)
 			if err != nil {
@@ -485,7 +494,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtime, "runtime", "", "Execution runtime.")
 	cmd.Flags().StringArrayVar(&execute, "execute", nil, "An array of role strings with execution permissions. By default no user is granted with any execute permissions. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
 	cmd.Flags().StringArrayVar(&events, "events", nil, "Events list. Maximum of 100 events are allowed.")
-	cmd.Flags().StringVar(&schedule, "schedule", "", "Schedule CRON syntax.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "Schedule CRON syntax. Cannot be combined with interval.")
 	cmd.Flags().IntVar(&timeout, "timeout", 0, "Maximum execution time in seconds.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
@@ -505,6 +514,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the function deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule. When omitted, the current interval is kept unless schedule is set.")
 	return cmd
 }
 
