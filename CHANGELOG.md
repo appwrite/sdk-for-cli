@@ -1,5 +1,13 @@
 # Change Log
 
+## 28.4.0
+
+* Added: `account` passkey commands `list-passkeys`, `create-passkey`, `get-passkey`, `update-passkey`, `delete-passkey` and `update-passkey-verification`
+* Added: `account create-passkey-token` and `account update-passkey-token` for passkey sign-in
+* Added: `users list-passkeys`, `get-passkey`, `update-passkey` and `delete-passkey` commands
+* Added: `project update-passkey-policy` command
+* Updated: built on Go SDK v7.10.0
+
 ## 28.3.0
 
 * Added: `--interval` on `functions create` and `functions update` to run functions every N minutes

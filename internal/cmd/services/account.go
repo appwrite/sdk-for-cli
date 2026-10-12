@@ -43,6 +43,12 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountCreateMfaRecoveryCodesCommand())
 	cmd.AddCommand(newAccountUpdateMfaRecoveryCodesCommand())
 	cmd.AddCommand(newAccountUpdateNameCommand())
+	cmd.AddCommand(newAccountListPasskeysCommand())
+	cmd.AddCommand(newAccountCreatePasskeyCommand())
+	cmd.AddCommand(newAccountGetPasskeyCommand())
+	cmd.AddCommand(newAccountUpdatePasskeyCommand())
+	cmd.AddCommand(newAccountDeletePasskeyCommand())
+	cmd.AddCommand(newAccountUpdatePasskeyVerificationCommand())
 	cmd.AddCommand(newAccountUpdatePasswordCommand())
 	cmd.AddCommand(newAccountUpdatePhoneCommand())
 	cmd.AddCommand(newAccountGetPrefsCommand())
@@ -66,6 +72,8 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountCreateEmailTokenCommand())
 	cmd.AddCommand(newAccountCreateMagicURLTokenCommand())
 	cmd.AddCommand(newAccountCreateOAuth2TokenCommand())
+	cmd.AddCommand(newAccountCreatePasskeyTokenCommand())
+	cmd.AddCommand(newAccountUpdatePasskeyTokenCommand())
 	cmd.AddCommand(newAccountCreatePhoneTokenCommand())
 	cmd.AddCommand(newAccountCreateEmailVerificationCommand())
 	cmd.AddCommand(newAccountCreateVerificationCommand())
@@ -865,6 +873,245 @@ func newAccountUpdateNameCommand() *cobra.Command {
 	return cmd
 }
 
+func newAccountListPasskeysCommand() *cobra.Command {
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+
+	cmd := &cobra.Command{
+		Use:   "list-passkeys",
+		Short: "Get the list of verified passkeys registered by the currently logged in user.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.ListPasskeysOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListPasskeysQueries(queries))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListPasskeysTotal(total))
+			}
+
+			result, err := service.ListPasskeys(options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter and order on the following attributes: $id, $createdAt, $updatedAt, name, accessedAt")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	return cmd
+}
+
+func newAccountCreatePasskeyCommand() *cobra.Command {
+	var passkeyId string
+	var name string
+
+	cmd := &cobra.Command{
+		Use:   "create-passkey",
+		Short: "Start registering a passkey for the currently logged in user. The session must have signed in or completed an MFA challenge within the last 10 minutes. Pass the returned `publicKey` options to `navigator.credentials.create()`, then complete the registration with Update passkey verification. The passkey stays pending until verified, and the challenge expires after 5 minutes.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.CreatePasskeyOption{}
+			if cmd.Flags().Changed("passkey-id") {
+				options = append(options, service.WithCreatePasskeyPasskeyId(passkeyId))
+			}
+			if cmd.Flags().Changed("name") {
+				options = append(options, service.WithCreatePasskeyName(name))
+			}
+
+			result, err := service.CreatePasskey(options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
+	cmd.Flags().StringVar(&name, "name", "", "Passkey name, shown when listing passkeys. Max length: 128 chars.")
+	return cmd
+}
+
+func newAccountGetPasskeyCommand() *cobra.Command {
+	var passkeyId string
+
+	cmd := &cobra.Command{
+		Use:   "get-passkey",
+		Short: "Get a verified passkey of the currently logged in user by its unique ID.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.GetPasskey(passkeyId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
+	return cmd
+}
+
+func newAccountUpdatePasskeyCommand() *cobra.Command {
+	var passkeyId string
+	var name string
+
+	cmd := &cobra.Command{
+		Use:   "update-passkey",
+		Short: "Rename a passkey of the currently logged in user.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.UpdatePasskey(passkeyId, name)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
+	cmd.Flags().StringVar(&name, "name", "", "Passkey name. Max length: 128 chars.")
+	_ = cmd.MarkFlagRequired("name")
+	return cmd
+}
+
+func newAccountDeletePasskeyCommand() *cobra.Command {
+	var passkeyId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-passkey",
+		Short: "Delete a passkey from the currently logged in user. The passkey can no longer be used to sign in, although it may remain stored on the user's device. The session must have signed in or completed an MFA challenge within the last 10 minutes.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.DeletePasskey(passkeyId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
+	return cmd
+}
+
+func newAccountUpdatePasskeyVerificationCommand() *cobra.Command {
+	var passkeyId string
+	var credential string
+
+	cmd := &cobra.Command{
+		Use:   "update-passkey-verification",
+		Short: "Complete a passkey registration started with Create passkey. Pass the JSON form of the credential returned by `navigator.credentials.create()`, for example `credential.toJSON()`. Each registration can be verified once; a failed attempt requires starting it again.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+			credentialValue, err := app.JSONObject(credential)
+			if err != nil {
+				return err
+			}
+
+			result, err := service.UpdatePasskeyVerification(passkeyId, credentialValue)
+			if err != nil {
+				return sdk.WrapMutationError("PUT", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
+	cmd.Flags().StringVar(&credential, "credential", "", "Registration credential returned by the authenticator, in the JSON form produced by `PublicKeyCredential.toJSON()`.")
+	_ = cmd.MarkFlagRequired("credential")
+	return cmd
+}
+
 func newAccountUpdatePasswordCommand() *cobra.Command {
 	var password string
 	var oldPassword string
@@ -1646,6 +1893,66 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long.")
 	cmd.Flags().StringVar(&state, "state", "", "An opaque value your app generates and keeps, for example in a cookie. It is returned unchanged as the `state` query parameter on the success and failure URLs, so your app can check that the sign-in it receives is one it started. Printable ASCII only (RFC 6749 Appendix A.5). Max length: 256 chars.")
+	return cmd
+}
+
+func newAccountCreatePasskeyTokenCommand() *cobra.Command {
+
+	cmd := &cobra.Command{
+		Use:   "create-passkey-token",
+		Short: "Start signing in with a passkey. No email or user ID is needed: pass the returned `publicKey` options to `navigator.credentials.get()` and the user picks one of their passkeys. Then call Update passkey token with the credential to receive a token, and exchange it with Create session. The challenge expires after 5 minutes.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.CreatePasskeyToken()
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	return cmd
+}
+
+func newAccountUpdatePasskeyTokenCommand() *cobra.Command {
+	var challengeId string
+	var credential string
+
+	cmd := &cobra.Command{
+		Use:   "update-passkey-token",
+		Short: "Complete a passkey sign-in started with Create passkey token. Pass the challenge ID and the JSON form of the credential returned by `navigator.credentials.get()`, for example `credential.toJSON()`. The returned token includes its secret and expires after 1 minute: exchange it for a session with Create session. Passkeys require user verification, so the session also satisfies MFA. Each challenge can only be used once.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+			credentialValue, err := app.JSONObject(credential)
+			if err != nil {
+				return err
+			}
+
+			result, err := service.UpdatePasskeyToken(challengeId, credentialValue)
+			if err != nil {
+				return sdk.WrapMutationError("PUT", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&challengeId, "challenge-id", "", "Challenge ID returned by createPasskeyToken.")
+	_ = cmd.MarkFlagRequired("challenge-id")
+	cmd.Flags().StringVar(&credential, "credential", "", "Authentication credential returned by the authenticator, in the JSON form produced by `PublicKeyCredential.toJSON()`.")
+	_ = cmd.MarkFlagRequired("credential")
 	return cmd
 }
 
