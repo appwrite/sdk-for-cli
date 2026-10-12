@@ -47,6 +47,10 @@ func NewUsersCommand() *cobra.Command {
 	cmd.AddCommand(newUsersUpdateMfaRecoveryCodesCommand())
 	cmd.AddCommand(newUsersCreateMfaRecoveryCodesCommand())
 	cmd.AddCommand(newUsersUpdateNameCommand())
+	cmd.AddCommand(newUsersListPasskeysCommand())
+	cmd.AddCommand(newUsersGetPasskeyCommand())
+	cmd.AddCommand(newUsersUpdatePasskeyCommand())
+	cmd.AddCommand(newUsersDeletePasskeyCommand())
 	cmd.AddCommand(newUsersUpdatePasswordCommand())
 	cmd.AddCommand(newUsersUpdatePhoneCommand())
 	cmd.AddCommand(newUsersGetPrefsCommand())
@@ -1148,6 +1152,184 @@ func newUsersUpdateNameCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
+	return cmd
+}
+
+func newUsersListPasskeysCommand() *cobra.Command {
+	var userId string
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+
+	cmd := &cobra.Command{
+		Use:   "list-passkeys",
+		Short: "Get the list of verified passkeys registered by a user.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := users.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []users.ListPasskeysOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListPasskeysQueries(queries))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListPasskeysTotal(total))
+			}
+
+			result, err := service.ListPasskeys(userId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
+	_ = cmd.MarkFlagRequired("user-id")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter and order on the following attributes: $id, $createdAt, $updatedAt, name, accessedAt")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	return cmd
+}
+
+func newUsersGetPasskeyCommand() *cobra.Command {
+	var userId string
+	var passkeyId string
+
+	cmd := &cobra.Command{
+		Use:   "get-passkey",
+		Short: "Get a verified passkey of a user by its unique ID.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := users.New(client)
+
+			result, err := service.GetPasskey(userId, passkeyId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
+	_ = cmd.MarkFlagRequired("user-id")
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
+	return cmd
+}
+
+func newUsersUpdatePasskeyCommand() *cobra.Command {
+	var userId string
+	var passkeyId string
+	var name string
+
+	cmd := &cobra.Command{
+		Use:   "update-passkey",
+		Short: "Rename a passkey of a user.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := users.New(client)
+
+			result, err := service.UpdatePasskey(userId, passkeyId, name)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
+	_ = cmd.MarkFlagRequired("user-id")
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
+	cmd.Flags().StringVar(&name, "name", "", "Passkey name. Max length: 128 chars.")
+	_ = cmd.MarkFlagRequired("name")
+	return cmd
+}
+
+func newUsersDeletePasskeyCommand() *cobra.Command {
+	var userId string
+	var passkeyId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-passkey",
+		Short: "Delete a passkey from a user, for example when a device is lost. The passkey can no longer be used to sign in.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := users.New(client)
+
+			result, err := service.DeletePasskey(userId, passkeyId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
+	_ = cmd.MarkFlagRequired("user-id")
+	cmd.Flags().StringVar(&passkeyId, "passkey-id", "", "Passkey ID.")
+	_ = cmd.MarkFlagRequired("passkey-id")
 	return cmd
 }
 

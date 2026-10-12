@@ -107,6 +107,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateDenyFreeEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateMembershipPrivacyPolicyCommand())
 	cmd.AddCommand(newProjectUpdateMFAFactorsPolicyCommand())
+	cmd.AddCommand(newProjectUpdatePasskeyPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordDictionaryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordHistoryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordPersonalDataPolicyCommand())
@@ -4037,6 +4038,36 @@ func newProjectUpdateMFAFactorsPolicyCommand() *cobra.Command {
 	cmd.Flags().Lookup("phone").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&custom, "custom", false, "Set to true to allow the custom factor to complete an MFA challenge, or false to disable it.")
 	cmd.Flags().Lookup("custom").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdatePasskeyPolicyCommand() *cobra.Command {
+	var rpId string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-passkey-policy",
+		Short: "Set the relying party ID passkeys are bound to: the domain of your application. Passkeys work on the project's web platforms on that domain or its subdomains, and on the domain itself for Apple apps. A localhost web platform enables passkeys for local development without a relying party ID. The relying party ID cannot change while users have passkeys, and any change invalidates ceremonies in progress.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.UpdatePasskeyPolicy(rpId)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&rpId, "rp-id", "", "Relying party ID: the domain of your application, such as `example.com`. Use `localhost` for local development, or an empty string to unset it.")
+	_ = cmd.MarkFlagRequired("rp-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
