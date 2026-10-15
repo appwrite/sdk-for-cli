@@ -101,7 +101,7 @@ func newAnalyticsListPropertiesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, domain, enabled, public")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, domain, enabled")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Matches the property ID, name and domain. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -121,7 +121,6 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 	var name string
 	var domain string
 	var enabled bool
-	var public bool
 	var allowedOrigins []string
 
 	cmd := &cobra.Command{
@@ -143,9 +142,6 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreatePropertyEnabled(enabled))
 			}
-			if cmd.Flags().Changed("public") {
-				options = append(options, service.WithCreatePropertyPublic(public))
-			}
 			if cmd.Flags().Changed("allowed-origins") {
 				options = append(options, service.WithCreatePropertyAllowedOrigins(allowedOrigins))
 			}
@@ -164,10 +160,8 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Human-readable name for this property.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). Optional for native apps.")
-	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether tracking is enabled.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().BoolVar(&public, "public", false, "Whether stats are publicly viewable.")
-	cmd.Flags().Lookup("public").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all.")
 	return cmd
 }
@@ -205,7 +199,6 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	var name string
 	var domain string
 	var enabled bool
-	var public bool
 	var allowedOrigins []string
 
 	cmd := &cobra.Command{
@@ -230,9 +223,6 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdatePropertyEnabled(enabled))
 			}
-			if cmd.Flags().Changed("public") {
-				options = append(options, service.WithUpdatePropertyPublic(public))
-			}
 			if cmd.Flags().Changed("allowed-origins") {
 				options = append(options, service.WithUpdatePropertyAllowedOrigins(allowedOrigins))
 			}
@@ -250,10 +240,8 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("property-id")
 	cmd.Flags().StringVar(&name, "name", "", "Human-readable name for this property.")
 	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). Pass an empty string to clear it.")
-	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether tracking is enabled.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().BoolVar(&public, "public", false, "Whether stats are publicly viewable.")
-	cmd.Flags().Lookup("public").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all.")
 	return cmd
 }

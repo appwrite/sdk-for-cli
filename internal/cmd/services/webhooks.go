@@ -171,8 +171,8 @@ func newWebhooksCreateCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&tls, "tls", false, "Certificate verification, false for disabled or true for enabled.")
 	cmd.Flags().Lookup("tls").NoOptDefVal = "true"
-	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 256 chars.")
-	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 256 chars.")
+	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 255 chars.")
+	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 2048 chars.")
 	cmd.Flags().StringVar(&secret, "secret", "", "Webhook secret key. If not provided, a new key will be generated automatically. Key must be at least 8 characters long, and at max 256 characters.")
 	return cmd
 }
@@ -262,8 +262,8 @@ func newWebhooksUpdateCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&tls, "tls", false, "Certificate verification, false for disabled or true for enabled.")
 	cmd.Flags().Lookup("tls").NoOptDefVal = "true"
-	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 256 chars.")
-	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 256 chars. Omit to keep the current password; it is cleared when the URL changes or TLS verification is disabled.")
+	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 255 chars.")
+	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 2048 chars. Omit to keep the current password; it is cleared when the URL changes or TLS verification is disabled.")
 	return cmd
 }
 

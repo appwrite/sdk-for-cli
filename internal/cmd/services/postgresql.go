@@ -56,6 +56,7 @@ func NewPostgresqlCommand() *cobra.Command {
 	cmd.AddCommand(newPostgresqlListRestorationsCommand())
 	cmd.AddCommand(newPostgresqlCreateRestorationCommand())
 	cmd.AddCommand(newPostgresqlGetRestorationCommand())
+	cmd.AddCommand(newPostgresqlPromoteRestorationCommand())
 	cmd.AddCommand(newPostgresqlGetStatusCommand())
 	cmd.AddCommand(newPostgresqlCreateUpgradeCommand())
 
@@ -1061,7 +1062,7 @@ func newPostgresqlCreateExecutionCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "create-execution",
-		Short: "Execute SQL through the console-facing Cloud endpoint. Cloud proxies through the edge platform to the per-database SQL API sidecar. Application traffic should bypass cloud entirely and POST directly to the per-database hostname: `https://db-{project}-{db}.{region}.appwrite.center/v1/sql/executions` with an `X-Appwrite-Key` header — that path scales to the whole DB fleet without a per-query cloud round-trip. The statement type must be on the database's configured allow-list. Use bound parameters for any user-supplied values — the API does not interpolate raw strings.",
+		Short: "Execute SQL through the console-facing Cloud endpoint. Cloud proxies through the edge platform to the per-database SQL API sidecar. Application traffic should bypass cloud entirely and POST directly to the per-database hostname: `https://db-{project}-{db}.{region}.appwrite.center/v1/sql/executions` with an `X-Appwrite-Key` header — that path scales to the whole DB fleet without a per-query cloud round-trip. The statement type must be on the database's configured allow-list. Use bound parameters for any user-supplied values — the API does not interpolate raw strings. Long-running statements (for example CREATE INDEX) can outlive the HTTP request: if the request ends before a result is returned, check the database before retrying, and prefer a direct connection for work that may take minutes.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -1097,7 +1098,7 @@ func newPostgresqlCreateExecutionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&sql, "sql", "", "SQL statement to execute. Exactly one statement per request.")
 	_ = cmd.MarkFlagRequired("sql")
 	cmd.Flags().StringVar(&bindings, "bindings", "", "Optional bound parameters. Pass either a positional list or a name => value map matching the placeholder style used in the SQL.")
-	cmd.Flags().IntVar(&timeoutSeconds, "timeout-seconds", 0, "Per-call execution timeout override. Must be less than or equal to the database's configured sqlApiTimeoutSeconds.")
+	cmd.Flags().IntVar(&timeoutSeconds, "timeout-seconds", 0, "Per-call execution timeout override. Must be less than or equal to the database's configured sqlApiTimeoutSeconds. Statements that may exceed this — or the HTTP request timeout in front of Cloud — should use a direct connection instead.")
 	return cmd
 }
 
@@ -1465,7 +1466,7 @@ func newPostgresqlUpdatePoolerCommand() *cobra.Command {
 	cmd.Flags().StringVar(&mode, "mode", "", "Connection pool mode. Allowed values: transaction, session. Transaction mode returns connections to the pool after each transaction; session mode holds connections for the entire session lifetime.")
 	cmd.Flags().IntVar(&maxConnections, "max-connections", 0, "Client-connection ceiling the pooler accepts. Supported on MySQL and MariaDB only; the PostgreSQL pooler has no client cap, so set networkMaxConnections on the database instead.")
 	cmd.Flags().IntVar(&defaultPoolSize, "default-pool-size", 0, "Default pool size per user.")
-	cmd.Flags().BoolVar(&readWriteSplitting, "read-write-splitting", false, "Route SELECTs to HA replicas, writes and locked reads to the primary. Defaults to true when HA is enabled.")
+	cmd.Flags().BoolVar(&readWriteSplitting, "read-write-splitting", false, "Route SELECTs to HA replicas, writes and locked reads to the primary. Off by default, and only takes effect while HA is enabled. Replication is asynchronous, so a read issued immediately after a write may not observe it.")
 	cmd.Flags().Lookup("read-write-splitting").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&poolerCpuRequest, "pooler-cpu-request", "", "Pooler sidecar CPU request override (Kubernetes quantity, e.g. \"250m\" or \"1\"). Leave null for the proportional default (5% of DB CPU, floor 100m).")
 	cmd.Flags().StringVar(&poolerCpuLimit, "pooler-cpu-limit", "", "Pooler sidecar CPU limit override (Kubernetes quantity, e.g. \"500m\" or \"1\"). Leave null for the proportional default (10% of DB CPU, floor 200m). Changing this field rolls the database pod.")
@@ -1559,10 +1560,13 @@ func newPostgresqlCreateRestorationCommand() *cobra.Command {
 	var backupId string
 	var targetDatabaseId string
 	var targetTime string
+	var restoreMode string
+	var targetName string
+	var autoPromote bool
 
 	cmd := &cobra.Command{
 		Use:   "create-restoration",
-		Short: "Restore a database from a backup or to a specific point in time (PITR). For backup restoration, provide a backupId. For PITR, provide a targetTime as an ISO 8601 datetime. PITR requires the database to have PITR enabled and is only available for enterprise databases.",
+		Short: "Restore a database from a backup or to a specific point in time (PITR). For backup restoration, provide a backupId. For PITR, provide a targetTime as an ISO 8601 datetime. PITR requires the database to have PITR enabled and is only available for enterprise databases.\n\nBy default the backup is replayed over the database it was taken from. Pass `restoreMode` as `clone` to recover it onto a second workload beside this database instead: this database keeps serving its own data while the clone is filled, and the switch happens as soon as the clone is ready, on the endpoint and credentials it already had. Pass `autoPromote` as false to hold the clone until you promote it yourself. Pass `restoreMode` as `copy` to recover onto a separate database with its own endpoint, either one you name with `targetDatabaseId` or one provisioned as a copy of this database's engine, version, specification and replicas. Neither mode is available for a point-in-time recovery or an incremental backup.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -1585,6 +1589,15 @@ func newPostgresqlCreateRestorationCommand() *cobra.Command {
 			if cmd.Flags().Changed("target-time") {
 				options = append(options, service.WithCreateRestorationTargetTime(targetTime))
 			}
+			if cmd.Flags().Changed("restore-mode") {
+				options = append(options, service.WithCreateRestorationRestoreMode(restoreMode))
+			}
+			if cmd.Flags().Changed("target-name") {
+				options = append(options, service.WithCreateRestorationTargetName(targetName))
+			}
+			if cmd.Flags().Changed("auto-promote") {
+				options = append(options, service.WithCreateRestorationAutoPromote(autoPromote))
+			}
 
 			result, err := service.CreateRestoration(databaseId, options...)
 			if err != nil {
@@ -1599,8 +1612,12 @@ func newPostgresqlCreateRestorationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Restoration type. Allowed values: backup, pitr. Use \"backup\" to restore from a specific backup, or \"pitr\" for point-in-time recovery.")
 	cmd.Flags().StringVar(&backupId, "backup-id", "", "Backup ID to restore from (required for backup type).")
-	cmd.Flags().StringVar(&targetDatabaseId, "target-database-id", "", "Existing database ID to restore into. The target must be distinct, ready, and use the same engine and version.")
+	cmd.Flags().StringVar(&targetDatabaseId, "target-database-id", "", "Existing database ID to restore into. The target must be distinct, ready, and use the same engine and version. Omit it on a copy restoration to have one provisioned. Not accepted for a clone, which is recovered inside this database.")
 	cmd.Flags().StringVar(&targetTime, "target-time", "", "Target time for PITR (required for pitr type) as an ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) datetime.")
+	cmd.Flags().StringVar(&restoreMode, "restore-mode", "", "Where the backup is restored. Allowed values: in_place, clone, copy. Use \"clone\" to recover onto a second workload beside this database and leave it serving until you promote — the endpoint and credentials do not change. Use \"copy\" to recover onto a separate database with its own endpoint, either one you name with targetDatabaseId or one Cloud provisions. Use \"in_place\" to replay the backup over this database. Defaults to \"copy\" when a targetDatabaseId is given, \"in_place\" otherwise.")
+	cmd.Flags().StringVar(&targetName, "target-name", "", "Display name for the database a copy restoration provisions. Defaults to this database's name followed by \"(restored)\". Max length: 128 chars.")
+	cmd.Flags().BoolVar(&autoPromote, "auto-promote", false, "Whether a clone restoration switches the database over as soon as the recovery is ready. Default true: the restore finishes with the database serving the recovery point on the endpoint it already had, and the side it replaced kept briefly so the switch can be reversed. Pass false to hold the recovery until you call the promotion endpoint yourself.")
+	cmd.Flags().Lookup("auto-promote").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -1622,6 +1639,37 @@ func newPostgresqlGetRestorationCommand() *cobra.Command {
 			result, err := service.GetRestoration(databaseId, restorationId)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&restorationId, "restoration-id", "", "Restoration ID.")
+	_ = cmd.MarkFlagRequired("restoration-id")
+	return cmd
+}
+
+func newPostgresqlPromoteRestorationCommand() *cobra.Command {
+	var databaseId string
+	var restorationId string
+
+	cmd := &cobra.Command{
+		Use:   "promote-restoration",
+		Short: "Switch the database over to the clone a restoration recovered. The database keeps\nits endpoint and credentials; clients reconnect once. Writes made after the\nrecovery point are discarded, and the side being replaced is retained briefly so\nthe switch can be reversed.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := postgresql.New(client)
+
+			result, err := service.PromoteRestoration(databaseId, restorationId)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)

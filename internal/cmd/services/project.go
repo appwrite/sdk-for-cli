@@ -24,6 +24,11 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectGetCommand())
 	cmd.AddCommand(newProjectDeleteCommand())
 	cmd.AddCommand(newProjectUpdateAuthMethodCommand())
+	cmd.AddCommand(newProjectListEnvironmentsCommand())
+	cmd.AddCommand(newProjectCreateEnvironmentCommand())
+	cmd.AddCommand(newProjectGetEnvironmentCommand())
+	cmd.AddCommand(newProjectUpdateEnvironmentCommand())
+	cmd.AddCommand(newProjectDeleteEnvironmentCommand())
 	cmd.AddCommand(newProjectListKeysCommand())
 	cmd.AddCommand(newProjectCreateEphemeralKeyCommand())
 	cmd.AddCommand(newProjectGetKeyCommand())
@@ -112,6 +117,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdatePasswordHistoryPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordPersonalDataPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordPwnedPolicyCommand())
+	cmd.AddCommand(newProjectUpdatePasswordRotationPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasswordStrengthPolicyCommand())
 	cmd.AddCommand(newProjectUpdateSessionAlertPolicyCommand())
 	cmd.AddCommand(newProjectUpdateSessionDurationPolicyCommand())
@@ -218,6 +224,213 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("method-id")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Auth method status.")
 	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectListEnvironmentsCommand() *cobra.Command {
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "list-environments",
+		Short: "Get a list of all environments of the project. You can use the query params to filter your results.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.ListEnvironmentsOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListEnvironmentsQueries(queries))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListEnvironmentsTotal(total))
+			}
+
+			result, err := service.ListEnvironments(options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search, accessedAt, status, parentId")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectCreateEnvironmentCommand() *cobra.Command {
+	var environmentId string
+	var name string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "create-environment",
+		Short: "Create a new environment of the project. An environment is a separate project in the same organization and region, with its own resources and users. Its usage is billed under the project it belongs to.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.CreateEnvironment(environmentId, name)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Unique Id. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, and hyphen. Can't start with a special char. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("environment-id")
+	cmd.Flags().StringVar(&name, "name", "", "Environment name. Max length: 128 chars.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectGetEnvironmentCommand() *cobra.Command {
+	var environmentId string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "get-environment",
+		Short: "Get an environment of the project by its unique ID.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.GetEnvironment(environmentId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment unique ID.")
+	_ = cmd.MarkFlagRequired("environment-id")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateEnvironmentCommand() *cobra.Command {
+	var environmentId string
+	var name string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-environment",
+		Short: "Update the name of an environment of the project.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.UpdateEnvironment(environmentId, name)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment unique ID.")
+	_ = cmd.MarkFlagRequired("environment-id")
+	cmd.Flags().StringVar(&name, "name", "", "Environment name. Max length: 128 chars.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectDeleteEnvironmentCommand() *cobra.Command {
+	var environmentId string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-environment",
+		Short: "Delete an environment of the project, with all of its resources and users.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.DeleteEnvironment(environmentId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment unique ID.")
+	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -862,8 +1075,8 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	var keyId string
 	var teamId string
 	var p8File string
-	var nativeClientIds []string
 	var enabled bool
+	var nativeClientIds []string
 	var nativeEnabled bool
 	var projectId string
 
@@ -892,11 +1105,11 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 			if cmd.Flags().Changed("p-8-file") {
 				options = append(options, service.WithUpdateOAuth2AppleP8File(p8File))
 			}
-			if cmd.Flags().Changed("native-client-ids") {
-				options = append(options, service.WithUpdateOAuth2AppleNativeClientIds(nativeClientIds))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2AppleEnabled(enabled))
+			}
+			if cmd.Flags().Changed("native-client-ids") {
+				options = append(options, service.WithUpdateOAuth2AppleNativeClientIds(nativeClientIds))
 			}
 			if cmd.Flags().Changed("native-enabled") {
 				options = append(options, service.WithUpdateOAuth2AppleNativeEnabled(nativeEnabled))
@@ -915,9 +1128,9 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&keyId, "key-id", "", "'Key ID' of Apple OAuth2 app. For example: P4000000N8")
 	cmd.Flags().StringVar(&teamId, "team-id", "", "'Team ID' of Apple OAuth2 app. For example: D4000000R6")
 	cmd.Flags().StringVar(&p8File, "p-8-file", "", "Contents of the Apple OAuth2 app .p8 private key file. The secret key wrapped by the PEM markers is 200 characters long. For example: -----BEGIN PRIVATE KEY-----MIGTAg...jy2Xbna-----END PRIVATE KEY-----")
-	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "App bundle IDs accepted as ID token audiences for native Sign in with Apple. For example: com.example.app. Together with the Services ID, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Browser-based OAuth2 sign-in status. Set to true to enable new session creation through the redirect flow. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid. Has no effect on native sign-in, which is controlled by nativeEnabled only.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "App bundle IDs accepted as ID token audiences for native Sign in with Apple. For example: com.example.app. Together with the Services ID, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
 	cmd.Flags().BoolVar(&nativeEnabled, "native-enabled", false, "Native Sign in with Apple status. This is the only switch for creating sessions from ID tokens obtained on device and is independent of enabled. Needs a Services ID or at least one native client ID to match tokens against, but no key or team ID: this method verifies a signature rather than redeeming an authorization code.")
 	cmd.Flags().Lookup("native-enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -974,8 +1187,8 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	var clientId string
 	var clientSecret string
 	var endpoint string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -1000,11 +1213,11 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 			if cmd.Flags().Changed("endpoint") {
 				options = append(options, service.WithUpdateOAuth2Auth0Endpoint(endpoint))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2Auth0Prompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2Auth0Enabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2Auth0Prompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Auth0(options...)
@@ -1019,9 +1232,9 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Auth0 OAuth2 app. For example: OaOkIA000000000000000000005KLSYq")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Auth0 OAuth2 app. For example: zXz0000-00000000000000000000000000000-00000000000000000000PJafnF")
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Domain of Auth0 instance. For example: example.us.auth0.com")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Auth0 OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Auth0 default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Auth0 OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Auth0 default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1356,8 +1569,8 @@ func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -1379,11 +1592,11 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2DiscordClientSecret(clientSecret))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2DiscordPrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2DiscordEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2DiscordPrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Discord(options...)
@@ -1397,9 +1610,9 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Discord OAuth2 app. For example: 950722000000343754")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Discord OAuth2 app. For example: YmPXnM000000000000000000002zFg5D")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array with at most one Discord OAuth2 prompt value. \"none\" means: skip the authorization screen for users who already authorized the app with the requested scopes. \"consent\" means: ask users who already authorized the app to approve it again. Pass an empty array to use the Discord default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array with at most one Discord OAuth2 prompt value. \"none\" means: skip the authorization screen for users who already authorized the app with the requested scopes. \"consent\" means: ask users who already authorized the app to approve it again. Pass an empty array to use the Discord default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1688,8 +1901,8 @@ func newProjectUpdateOAuth2FusionAuthCommand() *cobra.Command {
 func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -1711,11 +1924,11 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2GitHubClientSecret(clientSecret))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2GitHubPrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2GitHubEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2GitHubPrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2GitHub(options...)
@@ -1729,9 +1942,9 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'OAuth2 app Client ID, or App ID' of GitHub OAuth2 app. For example: e4d87900000000540733. Example of wrong value: 370006")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of GitHub OAuth2 app. For example: 5e07c00000000000000000000000000000198bcc")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of GitHub OAuth2 prompt values. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the GitHub default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of GitHub OAuth2 prompt values. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the GitHub default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1791,8 +2004,8 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
 	var prompt []string
-	var nativeClientIds []string
 	var enabled bool
+	var nativeClientIds []string
 	var nativeEnabled bool
 	var projectId string
 
@@ -1818,11 +2031,11 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 			if cmd.Flags().Changed("prompt") {
 				options = append(options, service.WithUpdateOAuth2GooglePrompt(prompt))
 			}
-			if cmd.Flags().Changed("native-client-ids") {
-				options = append(options, service.WithUpdateOAuth2GoogleNativeClientIds(nativeClientIds))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2GoogleEnabled(enabled))
+			}
+			if cmd.Flags().Changed("native-client-ids") {
+				options = append(options, service.WithUpdateOAuth2GoogleNativeClientIds(nativeClientIds))
 			}
 			if cmd.Flags().Changed("native-enabled") {
 				options = append(options, service.WithUpdateOAuth2GoogleNativeEnabled(nativeEnabled))
@@ -1840,9 +2053,9 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Google OAuth2 app. For example: 120000000095-92ifjb00000000000000000000g7ijfb.apps.googleusercontent.com")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Google OAuth2 app. For example: GOCSPX-2k8gsR0000000000000000VNahJj")
 	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Google OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. Must not be specified with other values. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account.")
-	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "Additional OAuth2 client IDs accepted as ID token audiences for native sign-in (Android and iOS client IDs). Together with the client ID, which is always accepted, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Browser-based OAuth2 sign-in status. Set to true to enable new session creation through the redirect flow. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid. Has no effect on native sign-in, which is controlled by nativeEnabled only.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "Additional OAuth2 client IDs accepted as ID token audiences for native sign-in (Android and iOS client IDs). Together with the client ID, which is always accepted, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
 	cmd.Flags().BoolVar(&nativeEnabled, "native-enabled", false, "Native Google sign-in status. This is the only switch for creating sessions from ID tokens obtained on device and is independent of enabled. Needs a client ID or at least one native client ID to match tokens against, but no client secret: this method verifies a signature rather than redeeming an authorization code.")
 	cmd.Flags().Lookup("native-enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -1898,8 +2111,8 @@ func newProjectUpdateOAuth2HuggingFaceCommand() *cobra.Command {
 func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -1921,11 +2134,11 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2KakaoClientSecret(clientSecret))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2KakaoPrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2KakaoEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2KakaoPrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Kakao(options...)
@@ -1939,9 +2152,9 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'REST API key' of Kakao OAuth2 app. For example: 839ff5000000000000000000013206de")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Kakao OAuth2 app. For example: jLNVOK00000000000000000000yJebea. Generate it under Kakao Login > Security and set its status to enabled")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Kakao OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"create\" means: prompt the user to sign up. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Kakao default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Kakao OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"create\" means: prompt the user to sign up. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Kakao default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2098,8 +2311,8 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	var applicationId string
 	var applicationSecret string
 	var tenant string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -2124,11 +2337,11 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 			if cmd.Flags().Changed("tenant") {
 				options = append(options, service.WithUpdateOAuth2MicrosoftTenant(tenant))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2MicrosoftPrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2MicrosoftEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2MicrosoftPrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Microsoft(options...)
@@ -2143,9 +2356,9 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "'Entra ID Application ID, also known as Client ID' of Microsoft OAuth2 app. For example: 00001111-aaaa-2222-bbbb-3333cccc4444")
 	cmd.Flags().StringVar(&applicationSecret, "application-secret", "", "'Entra ID Application Secret, also known as Client Secret' of Microsoft OAuth2 app. For example: A1bC2dE3fH4iJ5kL6mN7oP8qR9sT0u")
 	cmd.Flags().StringVar(&tenant, "tenant", "", "Microsoft Entra ID tenant identifier. Use 'common', 'organizations', 'consumers' or a specific tenant ID. For example: common")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Microsoft OAuth2 prompt values. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Microsoft default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Microsoft OAuth2 prompt values. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Microsoft default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2277,8 +2490,8 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	var clientSecret string
 	var domain string
 	var authorizationServerId string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -2306,11 +2519,11 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 			if cmd.Flags().Changed("authorization-server-id") {
 				options = append(options, service.WithUpdateOAuth2OktaAuthorizationServerId(authorizationServerId))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2OktaPrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2OktaEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2OktaPrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Okta(options...)
@@ -2326,9 +2539,9 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Okta OAuth2 app. For example: Kiq0000000000000000000000000000000000000-00000000000H2L5-3SJ-vRV")
 	cmd.Flags().StringVar(&domain, "domain", "", "Okta company domain. Required when enabling the provider. For example: trial-6400025.okta.com. Example of wrong value: trial-6400025-admin.okta.com, or https://trial-6400025.okta.com/")
 	cmd.Flags().StringVar(&authorizationServerId, "authorization-server-id", "", "Custom Authorization Servers. Optional, can be left empty or unconfigured. For example: aus000000000000000h7z")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Okta OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Okta default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Okta OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Okta default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2520,8 +2733,8 @@ func newProjectUpdateOAuth2ResendCommand() *cobra.Command {
 func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 	var customerKey string
 	var customerSecret string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -2543,11 +2756,11 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 			if cmd.Flags().Changed("customer-secret") {
 				options = append(options, service.WithUpdateOAuth2SalesforceCustomerSecret(customerSecret))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2SalesforcePrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2SalesforceEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2SalesforcePrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Salesforce(options...)
@@ -2561,9 +2774,9 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&customerKey, "customer-key", "", "'Consumer Key' of Salesforce OAuth2 app. For example: 3MVG9I0000000000000000000000000000000000000000000000000000000000000000000000000C5Aejq")
 	cmd.Flags().StringVar(&customerSecret, "customer-secret", "", "'Consumer Secret' of Salesforce OAuth2 app. For example: 3w000000000000e2")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Salesforce OAuth2 prompt values. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Salesforce default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Salesforce OAuth2 prompt values. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Salesforce default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3123,8 +3336,8 @@ func newProjectUpdateOAuth2YandexCommand() *cobra.Command {
 func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
-	var prompt []string
 	var enabled bool
+	var prompt []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -3146,11 +3359,11 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 			if cmd.Flags().Changed("client-secret") {
 				options = append(options, service.WithUpdateOAuth2ZohoClientSecret(clientSecret))
 			}
-			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2ZohoPrompt(prompt))
-			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2ZohoEnabled(enabled))
+			}
+			if cmd.Flags().Changed("prompt") {
+				options = append(options, service.WithUpdateOAuth2ZohoPrompt(prompt))
 			}
 
 			result, err := service.UpdateOAuth2Zoho(options...)
@@ -3164,9 +3377,9 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Zoho OAuth2 app. For example: 1000.83C178000000000000000000RPNX0B")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Zoho OAuth2 app. For example: fb5cac000000000000000000000000000000a68f6e")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Zoho OAuth2 prompt values. \"consent\" means: prompt the user for consent. Pass an empty array to use the Zoho default.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Zoho OAuth2 prompt values. \"consent\" means: prompt the user for consent. Pass an empty array to use the Zoho default.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3332,6 +3545,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 	var platformId string
 	var name string
 	var applicationId string
+	var fingerprints []string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -3345,7 +3559,13 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateAndroidPlatform(platformId, name, applicationId)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.CreateAndroidPlatformOption{}
+			if cmd.Flags().Changed("fingerprints") {
+				options = append(options, service.WithCreateAndroidPlatformFingerprints(fingerprints))
+			}
+
+			result, err := service.CreateAndroidPlatform(platformId, name, applicationId, options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -3360,6 +3580,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "Android application ID. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("application-id")
+	cmd.Flags().StringArrayVar(&fingerprints, "fingerprints", nil, "SHA-256 fingerprints of the certificates your app is signed with, such as \"14:6D:E9:...:2B:6A\". Passkeys created in the app are accepted when its signature matches one. Find them under App signing in Play Console, or with `./gradlew signingReport`.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3368,11 +3589,12 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 	var platformId string
 	var name string
 	var applicationId string
+	var fingerprints []string
 	var projectId string
 
 	cmd := &cobra.Command{
 		Use:   "update-android-platform",
-		Short: "Update an Android platform by its unique ID. Use this endpoint to update the platform's name or application ID.",
+		Short: "Update an Android platform by its unique ID. Use this endpoint to update the platform's name, application ID or signing certificate fingerprints.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -3381,7 +3603,13 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateAndroidPlatform(platformId, name, applicationId)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateAndroidPlatformOption{}
+			if cmd.Flags().Changed("fingerprints") {
+				options = append(options, service.WithUpdateAndroidPlatformFingerprints(fingerprints))
+			}
+
+			result, err := service.UpdateAndroidPlatform(platformId, name, applicationId, options...)
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -3396,6 +3624,7 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "Android application ID. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("application-id")
+	cmd.Flags().StringArrayVar(&fingerprints, "fingerprints", nil, "SHA-256 fingerprints of the certificates your app is signed with, such as \"14:6D:E9:...:2B:6A\". Passkeys created in the app are accepted when its signature matches one. Find them under App signing in Play Console, or with `./gradlew signingReport`. Omit to keep the current list, or pass an empty array to clear it.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4210,6 +4439,47 @@ func newProjectUpdatePasswordPwnedPolicyCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdatePasswordRotationPolicyCommand() *cobra.Command {
+	var enabled bool
+	var maxAge int
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-password-rotation-policy",
+		Short: "Require a password reset when an email/password sign-in uses a password older than the configured maximum age. Options left out keep their current value.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdatePasswordRotationPolicyOption{}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdatePasswordRotationPolicyEnabled(enabled))
+			}
+			if cmd.Flags().Changed("max-age") {
+				options = append(options, service.WithUpdatePasswordRotationPolicyMaxAge(maxAge))
+			}
+
+			result, err := service.UpdatePasswordRotationPolicy(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Enable password rotation. Disabled by default.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().IntVar(&maxAge, "max-age", 0, "Maximum password age in seconds. Minimum allowed value is 86400 seconds (1 day), and maximum is 10 years, which is 315360000 seconds. Defaults to 1 year, which is 31536000 seconds.")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdatePasswordStrengthPolicyCommand() *cobra.Command {
 	var minArg int
 	var uppercase bool
@@ -4443,7 +4713,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, passkey.")
+	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, password-rotation, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, passkey.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd

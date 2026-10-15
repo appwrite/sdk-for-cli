@@ -1,5 +1,18 @@
 # Change Log
 
+## 28.5.0
+
+* Breaking: built on Go SDK v7.12.0; requests send response format `2.5.0` and JSON output follows the 2.5 shapes
+* Breaking: removed `--public` from `analytics create-property` and `analytics update-property`
+* Added: `appwrite init apns` to set up Apple Push Notification service for Appwrite Push
+* Added: `mongo`, `mysql` and `postgresql` `promote-restoration`, and `--restore-mode`, `--target-name` and `--auto-promote` on `create-restoration`
+* Added: `proxy create-smtp-rule`
+* Added: `--email-enabled` on `functions update`
+* Added: `project` commands `list-environments`, `create-environment`, `get-environment`, `update-environment` and `delete-environment`
+* Added: `project update-password-rotation-policy`
+* Added: `--fingerprints` on `project create-android-platform` and `update-android-platform`
+* Updated: generated TypeScript types take a typed `QueryBuilder` for queries
+
 ## 28.4.0
 
 * Added: `account` passkey commands `list-passkeys`, `create-passkey`, `get-passkey`, `update-passkey`, `delete-passkey` and `update-passkey-verification`

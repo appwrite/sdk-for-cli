@@ -570,6 +570,7 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 	var phone string
 	var url string
 	var name string
+	var membershipId string
 
 	cmd := &cobra.Command{
 		Use:   "create-membership",
@@ -599,6 +600,9 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 			if cmd.Flags().Changed("name") {
 				options = append(options, service.WithCreateMembershipName(name))
 			}
+			if cmd.Flags().Changed("membership-id") {
+				options = append(options, service.WithCreateMembershipMembershipId(membershipId))
+			}
 
 			result, err := service.CreateMembership(teamId, roles, options...)
 			if err != nil {
@@ -618,6 +622,7 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 	cmd.Flags().StringVar(&phone, "phone", "", "Phone number. Format this number with a leading '+' and a country code, e.g., +16175551212.")
 	cmd.Flags().StringVar(&url, "url", "", "URL to redirect the user back to your app from the invitation email. This parameter is not required when an API key is supplied. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&name, "name", "", "Name of the new team member. Max length: 128 chars.")
+	cmd.Flags().StringVar(&membershipId, "membership-id", "", "Membership ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	return cmd
 }
 
