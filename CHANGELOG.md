@@ -1,5 +1,10 @@
 # Change Log
 
+## 28.6.0
+
+* Added: `analytics` in `appwrite.config.json`, synced by `pull analytics`, `push analytics`, `pull all` and `push all`
+* Added: `pull analytics` and `pull all` skip analytics on servers that do not offer it
+
 ## 28.5.0
 
 * Breaking: built on Go SDK v7.12.0; requests send response format `2.5.0` and JSON output follows the 2.5 shapes
