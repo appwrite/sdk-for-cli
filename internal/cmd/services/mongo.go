@@ -50,6 +50,7 @@ func NewMongoCommand() *cobra.Command {
 	cmd.AddCommand(newMongoListRestorationsCommand())
 	cmd.AddCommand(newMongoCreateRestorationCommand())
 	cmd.AddCommand(newMongoGetRestorationCommand())
+	cmd.AddCommand(newMongoPromoteRestorationCommand())
 	cmd.AddCommand(newMongoGetStatusCommand())
 	cmd.AddCommand(newMongoCreateUpgradeCommand())
 
@@ -1315,10 +1316,13 @@ func newMongoCreateRestorationCommand() *cobra.Command {
 	var backupId string
 	var targetDatabaseId string
 	var targetTime string
+	var restoreMode string
+	var targetName string
+	var autoPromote bool
 
 	cmd := &cobra.Command{
 		Use:   "create-restoration",
-		Short: "Restore a database from a backup or to a specific point in time (PITR). For backup restoration, provide a backupId. For PITR, provide a targetTime as an ISO 8601 datetime. PITR requires the database to have PITR enabled and is only available for enterprise databases.",
+		Short: "Restore a database from a backup or to a specific point in time (PITR). For backup restoration, provide a backupId. For PITR, provide a targetTime as an ISO 8601 datetime. PITR requires the database to have PITR enabled and is only available for enterprise databases.\n\nBy default the backup is replayed over the database it was taken from. Pass `restoreMode` as `clone` to recover it onto a second workload beside this database instead: this database keeps serving its own data while the clone is filled, and the switch happens as soon as the clone is ready, on the endpoint and credentials it already had. Pass `autoPromote` as false to hold the clone until you promote it yourself. Pass `restoreMode` as `copy` to recover onto a separate database with its own endpoint, either one you name with `targetDatabaseId` or one provisioned as a copy of this database's engine, version, specification and replicas. Neither mode is available for a point-in-time recovery or an incremental backup.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -1341,6 +1345,15 @@ func newMongoCreateRestorationCommand() *cobra.Command {
 			if cmd.Flags().Changed("target-time") {
 				options = append(options, service.WithCreateRestorationTargetTime(targetTime))
 			}
+			if cmd.Flags().Changed("restore-mode") {
+				options = append(options, service.WithCreateRestorationRestoreMode(restoreMode))
+			}
+			if cmd.Flags().Changed("target-name") {
+				options = append(options, service.WithCreateRestorationTargetName(targetName))
+			}
+			if cmd.Flags().Changed("auto-promote") {
+				options = append(options, service.WithCreateRestorationAutoPromote(autoPromote))
+			}
 
 			result, err := service.CreateRestoration(databaseId, options...)
 			if err != nil {
@@ -1355,8 +1368,12 @@ func newMongoCreateRestorationCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Restoration type. Allowed values: backup, pitr. Use \"backup\" to restore from a specific backup, or \"pitr\" for point-in-time recovery.")
 	cmd.Flags().StringVar(&backupId, "backup-id", "", "Backup ID to restore from (required for backup type).")
-	cmd.Flags().StringVar(&targetDatabaseId, "target-database-id", "", "Existing database ID to restore into. The target must be distinct, ready, and use the same engine and version.")
+	cmd.Flags().StringVar(&targetDatabaseId, "target-database-id", "", "Existing database ID to restore into. The target must be distinct, ready, and use the same engine and version. Omit it on a copy restoration to have one provisioned. Not accepted for a clone, which is recovered inside this database.")
 	cmd.Flags().StringVar(&targetTime, "target-time", "", "Target time for PITR (required for pitr type) as an ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) datetime.")
+	cmd.Flags().StringVar(&restoreMode, "restore-mode", "", "Where the backup is restored. Allowed values: in_place, clone, copy. Use \"clone\" to recover onto a second workload beside this database and leave it serving until you promote — the endpoint and credentials do not change. Use \"copy\" to recover onto a separate database with its own endpoint, either one you name with targetDatabaseId or one Cloud provisions. Use \"in_place\" to replay the backup over this database. Defaults to \"copy\" when a targetDatabaseId is given, \"in_place\" otherwise.")
+	cmd.Flags().StringVar(&targetName, "target-name", "", "Display name for the database a copy restoration provisions. Defaults to this database's name followed by \"(restored)\". Max length: 128 chars.")
+	cmd.Flags().BoolVar(&autoPromote, "auto-promote", false, "Whether a clone restoration switches the database over as soon as the recovery is ready. Default true: the restore finishes with the database serving the recovery point on the endpoint it already had, and the side it replaced kept briefly so the switch can be reversed. Pass false to hold the recovery until you call the promotion endpoint yourself.")
+	cmd.Flags().Lookup("auto-promote").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -1378,6 +1395,37 @@ func newMongoGetRestorationCommand() *cobra.Command {
 			result, err := service.GetRestoration(databaseId, restorationId)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&restorationId, "restoration-id", "", "Restoration ID.")
+	_ = cmd.MarkFlagRequired("restoration-id")
+	return cmd
+}
+
+func newMongoPromoteRestorationCommand() *cobra.Command {
+	var databaseId string
+	var restorationId string
+
+	cmd := &cobra.Command{
+		Use:   "promote-restoration",
+		Short: "Switch the database over to the clone a restoration recovered. The database keeps\nits endpoint and credentials; clients reconnect once. Writes made after the\nrecovery point are discarded, and the side being replaced is retained briefly so\nthe switch can be reversed.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := mongo.New(client)
+
+			result, err := service.PromoteRestoration(databaseId, restorationId)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
 			}
 
 			return app.Render(result)

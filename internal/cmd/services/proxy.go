@@ -27,6 +27,7 @@ func NewProxyCommand() *cobra.Command {
 	cmd.AddCommand(newProxyCreateFunctionRuleCommand())
 	cmd.AddCommand(newProxyCreateRedirectRuleCommand())
 	cmd.AddCommand(newProxyCreateSiteRuleCommand())
+	cmd.AddCommand(newProxyCreateSMTPRuleCommand())
 	cmd.AddCommand(newProxyGetRuleCommand())
 	cmd.AddCommand(newProxyDeleteRuleCommand())
 	cmd.AddCommand(newProxyUpdateRuleStatusCommand())
@@ -138,7 +139,7 @@ func newProxyListRulesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: domain, type, trigger, deploymentResourceType, deploymentResourceId, deploymentId, deploymentVcsProviderBranch")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: domain, type, trigger, deploymentResourceType, deploymentResourceId, deploymentId, deploymentVcsProviderBranch, protocol")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -295,6 +296,45 @@ func newProxyCreateSiteRuleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&siteId, "site-id", "", "ID of site to be executed.")
 	_ = cmd.MarkFlagRequired("site-id")
 	cmd.Flags().StringVar(&branch, "branch", "", "Name of VCS branch to deploy changes automatically")
+	return cmd
+}
+
+func newProxyCreateSMTPRuleCommand() *cobra.Command {
+	var domain string
+	var functionId string
+	var branch string
+
+	cmd := &cobra.Command{
+		Use:   "create-smtp-rule",
+		Short: "Create an SMTP ingress rule that asynchronously executes an Appwrite Function for incoming email.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := proxy.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []proxy.CreateSMTPRuleOption{}
+			if cmd.Flags().Changed("branch") {
+				options = append(options, service.WithCreateSMTPRuleBranch(branch))
+			}
+
+			result, err := service.CreateSMTPRule(domain, functionId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&domain, "domain", "", "Domain that receives email.")
+	_ = cmd.MarkFlagRequired("domain")
+	cmd.Flags().StringVar(&functionId, "function-id", "", "ID of function to execute.")
+	_ = cmd.MarkFlagRequired("function-id")
+	cmd.Flags().StringVar(&branch, "branch", "", "Name of VCS branch to deploy changes automatically.")
 	return cmd
 }
 
