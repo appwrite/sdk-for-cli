@@ -59,6 +59,7 @@ func NewMongoCommand() *cobra.Command {
 
 func newMongoListCommand() *cobra.Command {
 	var queries []string
+	var total bool
 	var filter []string
 	var where []string
 	var sortAsc []string
@@ -108,6 +109,9 @@ func newMongoListCommand() *cobra.Command {
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListQueries(queries))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListTotal(total))
+			}
 
 			result, err := service.List(options...)
 			if err != nil {
@@ -119,6 +123,8 @@ func newMongoListCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
 	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
@@ -444,6 +450,7 @@ func newMongoDeleteCommand() *cobra.Command {
 func newMongoListBackupsCommand() *cobra.Command {
 	var databaseId string
 	var queries []string
+	var total bool
 	var filter []string
 	var where []string
 	var sortAsc []string
@@ -493,6 +500,9 @@ func newMongoListBackupsCommand() *cobra.Command {
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListBackupsQueries(queries))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListBackupsTotal(total))
+			}
 
 			result, err := service.ListBackups(databaseId, options...)
 			if err != nil {
@@ -506,6 +516,8 @@ func newMongoListBackupsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, type, databaseId")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
 	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
@@ -556,6 +568,7 @@ func newMongoCreateBackupCommand() *cobra.Command {
 func newMongoListBackupPoliciesCommand() *cobra.Command {
 	var databaseId string
 	var queries []string
+	var total bool
 	var filter []string
 	var where []string
 	var sortAsc []string
@@ -605,6 +618,9 @@ func newMongoListBackupPoliciesCommand() *cobra.Command {
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
 				options = append(options, service.WithListBackupPoliciesQueries(queries))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListBackupPoliciesTotal(total))
+			}
 
 			result, err := service.ListBackupPolicies(databaseId, options...)
 			if err != nil {
@@ -618,6 +634,8 @@ func newMongoListBackupPoliciesCommand() *cobra.Command {
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
 	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")

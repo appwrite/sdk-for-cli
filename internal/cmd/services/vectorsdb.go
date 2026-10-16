@@ -1283,6 +1283,7 @@ func newVectorsDBCreateQueryCommand() *cobra.Command {
 	var offset int
 	var cursorAfter string
 	var cursorBefore string
+	var selectAttributes []string
 
 	cmd := &cobra.Command{
 		Use:   "create-query",
@@ -1314,6 +1315,7 @@ func newVectorsDBCreateQueryCommand() *cobra.Command {
 				Offset:       app.FlagInt(cmd, "offset", offset),
 				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
 				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+				Select:       selectAttributes,
 			})
 			if err != nil {
 				return err
@@ -1360,6 +1362,7 @@ func newVectorsDBCreateQueryCommand() *cobra.Command {
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
 	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
 	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	cmd.Flags().StringArrayVar(&selectAttributes, "select", nil, "Attribute to include in the response. Repeat for multiple attributes.")
 	return cmd
 }
 

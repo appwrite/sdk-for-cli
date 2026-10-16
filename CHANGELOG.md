@@ -1,5 +1,17 @@
 # Change Log
 
+## 28.7.0
+
+* Added: `appwrite types -l python` generates Pydantic models for tables
+* Added: `--enum-style const` on `types` and `generate` emits erasable `as const` objects instead of TypeScript enums
+* Added: config directory follows `XDG_CONFIG_HOME` when `~/.appwrite` does not exist
+* Added: `create-query` on `databases`, `documentsdb` and `tablesdb` to send queries in the request body, with `--select`
+* Added: `--total` on list commands in `activities`, `analytics`, `backups`, `domains`, `mongo`, `mysql` and `postgresql`
+* Added: `--emails` on `messaging create-email` and `messaging update-email`
+* Fixed: `login` completes MFA when the account requires more factors
+* Fixed: `init site` downloads templates on Windows and no longer changes the global git config
+* Updated: built on Go SDK v7.13.0
+
 ## 28.6.0
 
 * Added: `analytics` in `appwrite.config.json`, synced by `pull analytics`, `push analytics`, `pull all` and `push all`
