@@ -44,6 +44,7 @@ func NewDocumentsDBCommand() *cobra.Command {
 	cmd.AddCommand(newDocumentsDBUpsertDocumentsCommand())
 	cmd.AddCommand(newDocumentsDBUpdateDocumentsCommand())
 	cmd.AddCommand(newDocumentsDBDeleteDocumentsCommand())
+	cmd.AddCommand(newDocumentsDBCreateQueryCommand())
 	cmd.AddCommand(newDocumentsDBGetDocumentCommand())
 	cmd.AddCommand(newDocumentsDBUpsertDocumentCommand())
 	cmd.AddCommand(newDocumentsDBUpdateDocumentCommand())
@@ -1274,6 +1275,101 @@ func newDocumentsDBDeleteDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	return cmd
+}
+
+func newDocumentsDBCreateQueryCommand() *cobra.Command {
+	var databaseId string
+	var collectionId string
+	var queries []string
+	var transactionId string
+	var total bool
+	var ttl int
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+
+	cmd := &cobra.Command{
+		Use:   "create-query",
+		Short: "Get a list of all the user's documents in a given collection using a POST request. This behaves identically to the list documents endpoint but accepts the queries in the request body, allowing much larger `queries` arrays than can fit in a URL query string.\n",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := documentsdb.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []documentsdb.CreateQueryOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithCreateQueryQueries(queries))
+			}
+			if cmd.Flags().Changed("transaction-id") {
+				options = append(options, service.WithCreateQueryTransactionId(transactionId))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithCreateQueryTotal(total))
+			}
+			if cmd.Flags().Changed("ttl") {
+				options = append(options, service.WithCreateQueryTtl(ttl))
+			}
+
+			result, err := service.CreateQuery(databaseId, collectionId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
+	_ = cmd.MarkFlagRequired("database-id")
+	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
+	_ = cmd.MarkFlagRequired("collection-id")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().IntVar(&ttl, "ttl", 0, "TTL (seconds) for cached responses when caching is enabled for select queries. Must be between 0 and 86400 (24 hours).")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
 	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")

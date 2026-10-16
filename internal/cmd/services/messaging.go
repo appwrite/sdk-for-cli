@@ -172,6 +172,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	var scheduledAt string
 	var replyToEmail string
 	var replyToName string
+	var emails []string
 
 	cmd := &cobra.Command{
 		Use:   "create-email",
@@ -219,6 +220,9 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 			if cmd.Flags().Changed("reply-to-name") {
 				options = append(options, service.WithCreateEmailReplyToName(replyToName))
 			}
+			if cmd.Flags().Changed("emails") {
+				options = append(options, service.WithCreateEmailEmails(emails))
+			}
 
 			result, err := service.CreateEmail(messageId, subject, content, options...)
 			if err != nil {
@@ -248,6 +252,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. If not set, defaults to the sender email address.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. If not set, defaults to the sender name.")
+	cmd.Flags().StringArrayVar(&emails, "emails", nil, "List of email addresses to send the message to. Use this to deliver to recipients that are not backed by an Appwrite user, target, or topic.")
 	return cmd
 }
 
@@ -266,6 +271,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	var attachments []string
 	var replyToEmail string
 	var replyToName string
+	var emails []string
 
 	cmd := &cobra.Command{
 		Use:   "update-email",
@@ -319,6 +325,9 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 			if cmd.Flags().Changed("reply-to-name") {
 				options = append(options, service.WithUpdateEmailReplyToName(replyToName))
 			}
+			if cmd.Flags().Changed("emails") {
+				options = append(options, service.WithUpdateEmailEmails(emails))
+			}
 
 			result, err := service.UpdateEmail(messageId, options...)
 			if err != nil {
@@ -346,6 +355,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. Pass an empty string to restore the provider or sender default.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. Pass an empty string to restore the provider or sender default.")
+	cmd.Flags().StringArrayVar(&emails, "emails", nil, "List of email addresses to send the message to. Use this to deliver to recipients that are not backed by an Appwrite user, target, or topic.")
 	return cmd
 }
 

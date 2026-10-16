@@ -370,6 +370,7 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 	var startAt string
 	var endAt string
 	var limit int
+	var total bool
 	var filter []string
 	var where []string
 	var sortAsc []string
@@ -433,6 +434,9 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 			if cmd.Flags().Changed("limit") {
 				options = append(options, service.WithListMetricsLimit(limit))
 			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListMetricsTotal(total))
+			}
 
 			result, err := service.ListMetrics(propertyId, options...)
 			if err != nil {
@@ -452,6 +456,8 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&startAt, "start-at", "", "Explicit window start in ISO 8601. Defaults to endAt minus dateRange.")
 	cmd.Flags().StringVar(&endAt, "end-at", "", "Explicit window end in ISO 8601. Defaults to the current time.")
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of ranked values to return.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
 	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
