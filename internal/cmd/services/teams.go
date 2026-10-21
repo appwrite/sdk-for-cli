@@ -94,7 +94,7 @@ func newTeamsListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListSearch(search))
@@ -146,7 +146,7 @@ func newTeamsCreateCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.CreateOption{}
 			if cmd.Flags().Changed("roles") {
-				options = append(options, service.WithCreateRoles(roles))
+				options = append(options, service.WithCreateRoles(app.StringSlice(roles)))
 			}
 
 			result, err := service.Create(teamId, name, options...)
@@ -304,7 +304,7 @@ func newTeamsListInstallationsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.ListInstallationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListInstallationsQueries(queries))
+				options = append(options, service.WithListInstallationsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListInstallationsTotal(total))
@@ -527,7 +527,7 @@ func newTeamsListMembershipsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []teams.ListMembershipsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListMembershipsQueries(queries))
+				options = append(options, service.WithListMembershipsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListMembershipsSearch(search))
@@ -604,7 +604,7 @@ func newTeamsCreateMembershipCommand() *cobra.Command {
 				options = append(options, service.WithCreateMembershipMembershipId(membershipId))
 			}
 
-			result, err := service.CreateMembership(teamId, roles, options...)
+			result, err := service.CreateMembership(teamId, app.StringSlice(roles), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -673,7 +673,7 @@ func newTeamsUpdateMembershipCommand() *cobra.Command {
 			}
 			service := teams.New(client)
 
-			result, err := service.UpdateMembership(teamId, membershipId, roles)
+			result, err := service.UpdateMembership(teamId, membershipId, app.StringSlice(roles))
 			if err != nil {
 				return sdk.WrapMutationError("PATCH", err)
 			}

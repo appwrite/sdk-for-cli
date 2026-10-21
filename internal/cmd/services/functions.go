@@ -102,7 +102,7 @@ func newFunctionsListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListSearch(search))
@@ -159,6 +159,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	var runtimeSpecification string
 	var deploymentRetention int
 	var interval int
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -174,10 +175,10 @@ func newFunctionsCreateCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.CreateOption{}
 			if cmd.Flags().Changed("execute") {
-				options = append(options, service.WithCreateExecute(execute))
+				options = append(options, service.WithCreateExecute(app.StringSlice(execute)))
 			}
 			if cmd.Flags().Changed("events") {
-				options = append(options, service.WithCreateEvents(events))
+				options = append(options, service.WithCreateEvents(app.StringSlice(events)))
 			}
 			if cmd.Flags().Changed("schedule") {
 				options = append(options, service.WithCreateSchedule(schedule))
@@ -198,7 +199,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateCommands(commands))
 			}
 			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithCreateScopes(scopes))
+				options = append(options, service.WithCreateScopes(app.StringSlice(scopes)))
 			}
 			if cmd.Flags().Changed("installation-id") {
 				options = append(options, service.WithCreateInstallationId(installationId))
@@ -216,10 +217,10 @@ func newFunctionsCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateProviderRootDirectory(providerRootDirectory))
 			}
 			if cmd.Flags().Changed("provider-branches") {
-				options = append(options, service.WithCreateProviderBranches(providerBranches))
+				options = append(options, service.WithCreateProviderBranches(app.StringSlice(providerBranches)))
 			}
 			if cmd.Flags().Changed("provider-paths") {
-				options = append(options, service.WithCreateProviderPaths(providerPaths))
+				options = append(options, service.WithCreateProviderPaths(app.StringSlice(providerPaths)))
 			}
 			if cmd.Flags().Changed("build-specification") {
 				options = append(options, service.WithCreateBuildSpecification(buildSpecification))
@@ -232,6 +233,9 @@ func newFunctionsCreateCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("interval") {
 				options = append(options, service.WithCreateInterval(interval))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
 			}
 
 			result, err := service.Create(functionId, name, runtime, options...)
@@ -272,6 +276,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
 	return cmd
 }
 
@@ -400,6 +405,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	var runtimeSpecification string
 	var deploymentRetention int
 	var interval int
+	var description string
 	var emailEnabled bool
 
 	cmd := &cobra.Command{
@@ -419,10 +425,10 @@ func newFunctionsUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateRuntime(runtime))
 			}
 			if cmd.Flags().Changed("execute") {
-				options = append(options, service.WithUpdateExecute(execute))
+				options = append(options, service.WithUpdateExecute(app.StringSlice(execute)))
 			}
 			if cmd.Flags().Changed("events") {
-				options = append(options, service.WithUpdateEvents(events))
+				options = append(options, service.WithUpdateEvents(app.StringSlice(events)))
 			}
 			if cmd.Flags().Changed("schedule") {
 				options = append(options, service.WithUpdateSchedule(schedule))
@@ -443,7 +449,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateCommands(commands))
 			}
 			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithUpdateScopes(scopes))
+				options = append(options, service.WithUpdateScopes(app.StringSlice(scopes)))
 			}
 			if cmd.Flags().Changed("installation-id") {
 				options = append(options, service.WithUpdateInstallationId(installationId))
@@ -461,10 +467,10 @@ func newFunctionsUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateProviderRootDirectory(providerRootDirectory))
 			}
 			if cmd.Flags().Changed("provider-branches") {
-				options = append(options, service.WithUpdateProviderBranches(providerBranches))
+				options = append(options, service.WithUpdateProviderBranches(app.StringSlice(providerBranches)))
 			}
 			if cmd.Flags().Changed("provider-paths") {
-				options = append(options, service.WithUpdateProviderPaths(providerPaths))
+				options = append(options, service.WithUpdateProviderPaths(app.StringSlice(providerPaths)))
 			}
 			if cmd.Flags().Changed("build-specification") {
 				options = append(options, service.WithUpdateBuildSpecification(buildSpecification))
@@ -477,6 +483,9 @@ func newFunctionsUpdateCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("interval") {
 				options = append(options, service.WithUpdateInterval(interval))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
 			}
 			if cmd.Flags().Changed("email-enabled") {
 				options = append(options, service.WithUpdateEmailEnabled(emailEnabled))
@@ -519,6 +528,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule. When omitted, the current interval is kept unless schedule is set.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
 	cmd.Flags().BoolVar(&emailEnabled, "email-enabled", false, "Enable inbound email triggering for this function. When false or omitted on create, SMTP recipients are rejected. Opt-in; default is off.")
 	cmd.Flags().Lookup("email-enabled").NoOptDefVal = "true"
 	return cmd
@@ -635,7 +645,7 @@ func newFunctionsListDeploymentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListDeploymentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListDeploymentsQueries(queries))
+				options = append(options, service.WithListDeploymentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListDeploymentsSearch(search))
@@ -1049,7 +1059,7 @@ func newFunctionsListExecutionsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListExecutionsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListExecutionsQueries(queries))
+				options = append(options, service.WithListExecutionsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListExecutionsTotal(total))
@@ -1259,7 +1269,7 @@ func newFunctionsListVariablesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []functions.ListVariablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListVariablesQueries(queries))
+				options = append(options, service.WithListVariablesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListVariablesTotal(total))
@@ -1296,6 +1306,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-variable",
@@ -1312,6 +1323,9 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 			options := []functions.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVariableDescription(description))
 			}
 
 			result, err := service.CreateVariable(functionId, variableId, key, value, options...)
@@ -1333,6 +1347,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only functions can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	return cmd
 }
 
@@ -1373,6 +1388,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-variable",
@@ -1396,6 +1412,9 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithUpdateVariableSecret(secret))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVariableDescription(description))
+			}
 
 			result, err := service.UpdateVariable(functionId, variableId, options...)
 			if err != nil {
@@ -1414,6 +1433,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only functions can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	return cmd
 }
 

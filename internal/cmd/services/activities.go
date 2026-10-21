@@ -77,7 +77,7 @@ func newActivitiesListEventsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []activities.ListEventsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListEventsQueries(queries))
+				options = append(options, service.WithListEventsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListEventsTotal(total))

@@ -80,7 +80,7 @@ func newAdvisorListReportsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []advisor.ListReportsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListReportsQueries(queries))
+				options = append(options, service.WithListReportsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListReportsTotal(total))
@@ -216,7 +216,7 @@ func newAdvisorListInsightsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []advisor.ListInsightsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListInsightsQueries(queries))
+				options = append(options, service.WithListInsightsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListInsightsTotal(total))

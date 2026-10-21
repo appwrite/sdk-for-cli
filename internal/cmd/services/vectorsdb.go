@@ -111,7 +111,7 @@ func newVectorsDBListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTotal(total))
@@ -144,6 +144,7 @@ func newVectorsDBCreateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 	var specification string
 	var replicas int
 	var syncMode string
@@ -163,6 +164,9 @@ func newVectorsDBCreateCommand() *cobra.Command {
 			options := []vectorsdb.CreateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
 			}
 			if cmd.Flags().Changed("specification") {
 				options = append(options, service.WithCreateSpecification(specification))
@@ -189,6 +193,7 @@ func newVectorsDBCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is the database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Database specification. Defaults to `serverless`, which creates the database on the shared pool. Any other value provisions a dedicated database on that specification.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5) for the dedicated database backing this database. Requires a dedicated `specification`; must be 0 for a serverless database. High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode for the dedicated database backing this database. Requires a dedicated `specification`; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.")
@@ -270,7 +275,7 @@ func newVectorsDBListTransactionsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.ListTransactionsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListTransactionsQueries(queries))
+				options = append(options, service.WithListTransactionsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTransactionsTotal(total))
@@ -503,6 +508,7 @@ func newVectorsDBUpdateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 	var specification string
 	var replicas int
 	var syncMode string
@@ -522,6 +528,9 @@ func newVectorsDBUpdateCommand() *cobra.Command {
 			options := []vectorsdb.UpdateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
 			}
 			if cmd.Flags().Changed("specification") {
 				options = append(options, service.WithUpdateSpecification(specification))
@@ -548,6 +557,7 @@ func newVectorsDBUpdateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Database specification. Resizing between dedicated specifications changes cpu, memory, storage and the connection ceiling via a rolling cutover with zero downtime. Moving a `serverless` database onto a dedicated specification is a data migration, not a resize.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5) for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification. High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.")
@@ -634,7 +644,7 @@ func newVectorsDBListCollectionsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.ListCollectionsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListCollectionsQueries(queries))
+				options = append(options, service.WithListCollectionsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListCollectionsSearch(search))
@@ -677,6 +687,7 @@ func newVectorsDBCreateCollectionCommand() *cobra.Command {
 	var permissions []string
 	var documentSecurity bool
 	var enabled bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-collection",
@@ -692,13 +703,16 @@ func newVectorsDBCreateCollectionCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.CreateCollectionOption{}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithCreateCollectionPermissions(permissions))
+				options = append(options, service.WithCreateCollectionPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("document-security") {
 				options = append(options, service.WithCreateCollectionDocumentSecurity(documentSecurity))
 			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateCollectionEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateCollectionDescription(description))
 			}
 
 			result, err := service.CreateCollection(databaseId, collectionId, name, dimension, options...)
@@ -723,6 +737,7 @@ func newVectorsDBCreateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("document-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is collection enabled? When set to 'disabled', users cannot access the collection but Server SDKs with and API key can still read and write to the collection. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
 
@@ -765,6 +780,7 @@ func newVectorsDBUpdateCollectionCommand() *cobra.Command {
 	var permissions []string
 	var documentSecurity bool
 	var enabled bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-collection",
@@ -783,13 +799,16 @@ func newVectorsDBUpdateCollectionCommand() *cobra.Command {
 				options = append(options, service.WithUpdateCollectionDimension(dimension))
 			}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpdateCollectionPermissions(permissions))
+				options = append(options, service.WithUpdateCollectionPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("document-security") {
 				options = append(options, service.WithUpdateCollectionDocumentSecurity(documentSecurity))
 			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateCollectionEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateCollectionDescription(description))
 			}
 
 			result, err := service.UpdateCollection(databaseId, collectionId, name, options...)
@@ -813,6 +832,7 @@ func newVectorsDBUpdateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("document-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is collection enabled? When set to 'disabled', users cannot access the collection but Server SDKs with and API key can still read and write to the collection. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
 
@@ -903,7 +923,7 @@ func newVectorsDBListDocumentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.ListDocumentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListDocumentsQueries(queries))
+				options = append(options, service.WithListDocumentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithListDocumentsTransactionId(transactionId))
@@ -971,7 +991,7 @@ func newVectorsDBCreateDocumentCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.CreateDocumentOption{}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithCreateDocumentPermissions(permissions))
+				options = append(options, service.WithCreateDocumentPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithCreateDocumentTransactionId(transactionId))
@@ -1151,7 +1171,7 @@ func newVectorsDBUpdateDocumentsCommand() *cobra.Command {
 				options = append(options, service.WithUpdateDocumentsData(dataValue))
 			}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithUpdateDocumentsQueries(queries))
+				options = append(options, service.WithUpdateDocumentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithUpdateDocumentsTransactionId(transactionId))
@@ -1236,7 +1256,7 @@ func newVectorsDBDeleteDocumentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.DeleteDocumentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithDeleteDocumentsQueries(queries))
+				options = append(options, service.WithDeleteDocumentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithDeleteDocumentsTransactionId(transactionId))
@@ -1324,7 +1344,7 @@ func newVectorsDBCreateQueryCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.CreateQueryOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithCreateQueryQueries(queries))
+				options = append(options, service.WithCreateQueryQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithCreateQueryTransactionId(transactionId))
@@ -1396,7 +1416,7 @@ func newVectorsDBGetDocumentCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.GetDocumentOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithGetDocumentQueries(queries))
+				options = append(options, service.WithGetDocumentQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithGetDocumentTransactionId(transactionId))
@@ -1452,7 +1472,7 @@ func newVectorsDBUpsertDocumentCommand() *cobra.Command {
 				options = append(options, service.WithUpsertDocumentData(dataValue))
 			}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpsertDocumentPermissions(permissions))
+				options = append(options, service.WithUpsertDocumentPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithUpsertDocumentTransactionId(transactionId))
@@ -1508,7 +1528,7 @@ func newVectorsDBUpdateDocumentCommand() *cobra.Command {
 				options = append(options, service.WithUpdateDocumentData(dataValue))
 			}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpdateDocumentPermissions(permissions))
+				options = append(options, service.WithUpdateDocumentPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("transaction-id") {
 				options = append(options, service.WithUpdateDocumentTransactionId(transactionId))
@@ -1629,7 +1649,7 @@ func newVectorsDBListIndexesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.ListIndexesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListIndexesQueries(queries))
+				options = append(options, service.WithListIndexesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListIndexesTotal(total))
@@ -1670,6 +1690,7 @@ func newVectorsDBCreateIndexCommand() *cobra.Command {
 	var attributes []string
 	var orders []string
 	var lengths []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-index",
@@ -1689,13 +1710,16 @@ func newVectorsDBCreateIndexCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []vectorsdb.CreateIndexOption{}
 			if cmd.Flags().Changed("orders") {
-				options = append(options, service.WithCreateIndexOrders(orders))
+				options = append(options, service.WithCreateIndexOrders(app.StringSlice(orders)))
 			}
 			if cmd.Flags().Changed("lengths") {
 				options = append(options, service.WithCreateIndexLengths(lengthsDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIndexDescription(description))
+			}
 
-			result, err := service.CreateIndex(databaseId, collectionId, key, typeArg, attributes, options...)
+			result, err := service.CreateIndex(databaseId, collectionId, key, typeArg, app.StringSlice(attributes), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -1716,6 +1740,7 @@ func newVectorsDBCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("attributes")
 	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
 	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
 

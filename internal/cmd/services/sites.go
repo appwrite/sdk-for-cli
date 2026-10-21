@@ -101,7 +101,7 @@ func newSitesListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListSearch(search))
@@ -159,6 +159,7 @@ func newSitesCreateCommand() *cobra.Command {
 	var runtimeSpecification string
 	var deploymentRetention int
 	var scopes []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -216,10 +217,10 @@ func newSitesCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateProviderRootDirectory(providerRootDirectory))
 			}
 			if cmd.Flags().Changed("provider-branches") {
-				options = append(options, service.WithCreateProviderBranches(providerBranches))
+				options = append(options, service.WithCreateProviderBranches(app.StringSlice(providerBranches)))
 			}
 			if cmd.Flags().Changed("provider-paths") {
-				options = append(options, service.WithCreateProviderPaths(providerPaths))
+				options = append(options, service.WithCreateProviderPaths(app.StringSlice(providerPaths)))
 			}
 			if cmd.Flags().Changed("build-specification") {
 				options = append(options, service.WithCreateBuildSpecification(buildSpecification))
@@ -231,7 +232,10 @@ func newSitesCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateDeploymentRetention(deploymentRetention))
 			}
 			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithCreateScopes(scopes))
+				options = append(options, service.WithCreateScopes(app.StringSlice(scopes)))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
 			}
 
 			result, err := service.Create(siteId, name, framework, buildRuntime, options...)
@@ -274,6 +278,7 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the site.")
 	return cmd
 }
 
@@ -403,6 +408,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	var runtimeSpecification string
 	var deploymentRetention int
 	var scopes []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update",
@@ -463,10 +469,10 @@ func newSitesUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateProviderRootDirectory(providerRootDirectory))
 			}
 			if cmd.Flags().Changed("provider-branches") {
-				options = append(options, service.WithUpdateProviderBranches(providerBranches))
+				options = append(options, service.WithUpdateProviderBranches(app.StringSlice(providerBranches)))
 			}
 			if cmd.Flags().Changed("provider-paths") {
-				options = append(options, service.WithUpdateProviderPaths(providerPaths))
+				options = append(options, service.WithUpdateProviderPaths(app.StringSlice(providerPaths)))
 			}
 			if cmd.Flags().Changed("build-specification") {
 				options = append(options, service.WithUpdateBuildSpecification(buildSpecification))
@@ -478,7 +484,10 @@ func newSitesUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateDeploymentRetention(deploymentRetention))
 			}
 			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithUpdateScopes(scopes))
+				options = append(options, service.WithUpdateScopes(app.StringSlice(scopes)))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
 			}
 
 			result, err := service.Update(siteId, name, framework, options...)
@@ -520,6 +529,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the site.")
 	return cmd
 }
 
@@ -634,7 +644,7 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListDeploymentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListDeploymentsQueries(queries))
+				options = append(options, service.WithListDeploymentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListDeploymentsSearch(search))
@@ -1048,7 +1058,7 @@ func newSitesListLogsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListLogsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListLogsQueries(queries))
+				options = append(options, service.WithListLogsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListLogsTotal(total))
@@ -1192,7 +1202,7 @@ func newSitesListVariablesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []sites.ListVariablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListVariablesQueries(queries))
+				options = append(options, service.WithListVariablesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListVariablesTotal(total))
@@ -1229,6 +1239,7 @@ func newSitesCreateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-variable",
@@ -1245,6 +1256,9 @@ func newSitesCreateVariableCommand() *cobra.Command {
 			options := []sites.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVariableDescription(description))
 			}
 
 			result, err := service.CreateVariable(siteId, variableId, key, value, options...)
@@ -1266,6 +1280,7 @@ func newSitesCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only sites can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	return cmd
 }
 
@@ -1306,6 +1321,7 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-variable",
@@ -1329,6 +1345,9 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithUpdateVariableSecret(secret))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVariableDescription(description))
+			}
 
 			result, err := service.UpdateVariable(siteId, variableId, options...)
 			if err != nil {
@@ -1347,6 +1366,7 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only sites can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	return cmd
 }
 

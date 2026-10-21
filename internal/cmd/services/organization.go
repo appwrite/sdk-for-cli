@@ -178,7 +178,7 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListInstallationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListInstallationsQueries(queries))
+				options = append(options, service.WithListInstallationsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListInstallationsTotal(total))
@@ -396,7 +396,7 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListMembershipsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListMembershipsQueries(queries))
+				options = append(options, service.WithListMembershipsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListMembershipsSearch(search))
@@ -468,7 +468,7 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 				options = append(options, service.WithCreateMembershipName(name))
 			}
 
-			result, err := service.CreateMembership(roles, options...)
+			result, err := service.CreateMembership(app.StringSlice(roles), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -534,7 +534,7 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.UpdateMembership(membershipId, roles)
+			result, err := service.UpdateMembership(membershipId, app.StringSlice(roles))
 			if err != nil {
 				return sdk.WrapMutationError("PATCH", err)
 			}
@@ -633,7 +633,7 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListProjectsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListProjectsQueries(queries))
+				options = append(options, service.WithListProjectsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListProjectsSearch(search))
@@ -853,7 +853,7 @@ func newOrganizationListProjectKeysCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []organization.ListProjectKeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListProjectKeysQueries(queries))
+				options = append(options, service.WithListProjectKeysQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListProjectKeysTotal(total))
@@ -902,7 +902,7 @@ func newOrganizationCreateEphemeralProjectKeyCommand() *cobra.Command {
 			}
 			service := organization.New(client)
 
-			result, err := service.CreateEphemeralProjectKey(projectId, scopes, duration)
+			result, err := service.CreateEphemeralProjectKey(projectId, app.StringSlice(scopes), duration)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -960,6 +960,7 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 	var name string
 	var scopes []string
 	var expire string
+	var description string
 	var organizationId string
 
 	cmd := &cobra.Command{
@@ -978,8 +979,11 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateProjectKeyExpire(expire))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateProjectKeyDescription(description))
+			}
 
-			result, err := service.UpdateProjectKey(projectId, keyId, name, scopes, options...)
+			result, err := service.UpdateProjectKey(projectId, keyId, name, app.StringSlice(scopes), options...)
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -997,6 +1001,7 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the key.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
 	return cmd
 }

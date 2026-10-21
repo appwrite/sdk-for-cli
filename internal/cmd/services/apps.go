@@ -97,7 +97,7 @@ func newAppsListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []apps.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTotal(total))
@@ -176,16 +176,16 @@ func newAppsCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateTermsUrl(termsUrl))
 			}
 			if cmd.Flags().Changed("contacts") {
-				options = append(options, service.WithCreateContacts(contacts))
+				options = append(options, service.WithCreateContacts(app.StringSlice(contacts)))
 			}
 			if cmd.Flags().Changed("tagline") {
 				options = append(options, service.WithCreateTagline(tagline))
 			}
 			if cmd.Flags().Changed("tags") {
-				options = append(options, service.WithCreateTags(tags))
+				options = append(options, service.WithCreateTags(app.StringSlice(tags)))
 			}
 			if cmd.Flags().Changed("images") {
-				options = append(options, service.WithCreateImages(images))
+				options = append(options, service.WithCreateImages(app.StringSlice(images)))
 			}
 			if cmd.Flags().Changed("support-url") {
 				options = append(options, service.WithCreateSupportUrl(supportUrl))
@@ -194,7 +194,7 @@ func newAppsCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateDataDeletionUrl(dataDeletionUrl))
 			}
 			if cmd.Flags().Changed("post-logout-redirect-uris") {
-				options = append(options, service.WithCreatePostLogoutRedirectUris(postLogoutRedirectUris))
+				options = append(options, service.WithCreatePostLogoutRedirectUris(app.StringSlice(postLogoutRedirectUris)))
 			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
@@ -209,7 +209,7 @@ func newAppsCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateTeamId(teamId))
 			}
 
-			result, err := service.Create(appId, name, redirectUris, options...)
+			result, err := service.Create(appId, name, app.StringSlice(redirectUris), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -374,16 +374,16 @@ func newAppsUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateTermsUrl(termsUrl))
 			}
 			if cmd.Flags().Changed("contacts") {
-				options = append(options, service.WithUpdateContacts(contacts))
+				options = append(options, service.WithUpdateContacts(app.StringSlice(contacts)))
 			}
 			if cmd.Flags().Changed("tagline") {
 				options = append(options, service.WithUpdateTagline(tagline))
 			}
 			if cmd.Flags().Changed("tags") {
-				options = append(options, service.WithUpdateTags(tags))
+				options = append(options, service.WithUpdateTags(app.StringSlice(tags)))
 			}
 			if cmd.Flags().Changed("images") {
-				options = append(options, service.WithUpdateImages(images))
+				options = append(options, service.WithUpdateImages(app.StringSlice(images)))
 			}
 			if cmd.Flags().Changed("support-url") {
 				options = append(options, service.WithUpdateSupportUrl(supportUrl))
@@ -395,10 +395,10 @@ func newAppsUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateEnabled(enabled))
 			}
 			if cmd.Flags().Changed("redirect-uris") {
-				options = append(options, service.WithUpdateRedirectUris(redirectUris))
+				options = append(options, service.WithUpdateRedirectUris(app.StringSlice(redirectUris)))
 			}
 			if cmd.Flags().Changed("post-logout-redirect-uris") {
-				options = append(options, service.WithUpdatePostLogoutRedirectUris(postLogoutRedirectUris))
+				options = append(options, service.WithUpdatePostLogoutRedirectUris(app.StringSlice(postLogoutRedirectUris)))
 			}
 			if cmd.Flags().Changed("type") {
 				options = append(options, service.WithUpdateType(typeArg))
@@ -407,7 +407,7 @@ func newAppsUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateDeviceFlow(deviceFlow))
 			}
 			if cmd.Flags().Changed("installation-scopes") {
-				options = append(options, service.WithUpdateInstallationScopes(installationScopes))
+				options = append(options, service.WithUpdateInstallationScopes(app.StringSlice(installationScopes)))
 			}
 			if cmd.Flags().Changed("installation-redirect-url") {
 				options = append(options, service.WithUpdateInstallationRedirectUrl(installationRedirectUrl))
@@ -528,7 +528,7 @@ func newAppsListInstallationsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []apps.ListInstallationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListInstallationsQueries(queries))
+				options = append(options, service.WithListInstallationsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListInstallationsTotal(total))
@@ -703,7 +703,7 @@ func newAppsListKeysCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []apps.ListKeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListKeysQueries(queries))
+				options = append(options, service.WithListKeysQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListKeysTotal(total))
@@ -839,7 +839,7 @@ func newAppsUpdateLabelsCommand() *cobra.Command {
 			}
 			service := apps.New(client)
 
-			result, err := service.UpdateLabels(appId, labels)
+			result, err := service.UpdateLabels(appId, app.StringSlice(labels))
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -906,7 +906,7 @@ func newAppsListSecretsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []apps.ListSecretsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListSecretsQueries(queries))
+				options = append(options, service.WithListSecretsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListSecretsTotal(total))

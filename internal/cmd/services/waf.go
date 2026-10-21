@@ -89,7 +89,7 @@ func newWafListRulesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.ListRulesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListRulesQueries(queries))
+				options = append(options, service.WithListRulesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListRulesSearch(search))
@@ -158,7 +158,7 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 				options = append(options, service.WithCreateBypassRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithCreateBypassRuleConditions(conditions))
+				options = append(options, service.WithCreateBypassRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.CreateBypassRule(ruleId, resourceType, name, options...)
@@ -227,7 +227,7 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateBypassRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithUpdateBypassRuleConditions(conditions))
+				options = append(options, service.WithUpdateBypassRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.UpdateBypassRule(ruleId, options...)
@@ -294,7 +294,7 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 				options = append(options, service.WithCreateChallengeRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithCreateChallengeRuleConditions(conditions))
+				options = append(options, service.WithCreateChallengeRuleConditions(app.StringSlice(conditions)))
 			}
 			if cmd.Flags().Changed("difficulty") {
 				options = append(options, service.WithCreateChallengeRuleDifficulty(difficulty))
@@ -378,7 +378,7 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateChallengeRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithUpdateChallengeRuleConditions(conditions))
+				options = append(options, service.WithUpdateChallengeRuleConditions(app.StringSlice(conditions)))
 			}
 			if cmd.Flags().Changed("difficulty") {
 				options = append(options, service.WithUpdateChallengeRuleDifficulty(difficulty))
@@ -448,7 +448,7 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 				options = append(options, service.WithCreateDenyRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithCreateDenyRuleConditions(conditions))
+				options = append(options, service.WithCreateDenyRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.CreateDenyRule(ruleId, resourceType, name, options...)
@@ -517,7 +517,7 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateDenyRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithUpdateDenyRuleConditions(conditions))
+				options = append(options, service.WithUpdateDenyRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.UpdateDenyRule(ruleId, options...)
@@ -592,7 +592,7 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 				options = append(options, service.WithCreateRateLimitRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithCreateRateLimitRuleConditions(conditions))
+				options = append(options, service.WithCreateRateLimitRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.CreateRateLimitRule(ruleId, resourceType, name, limit, interval, options...)
@@ -684,7 +684,7 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateRateLimitRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithUpdateRateLimitRuleConditions(conditions))
+				options = append(options, service.WithUpdateRateLimitRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.UpdateRateLimitRule(ruleId, options...)
@@ -751,7 +751,7 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 				options = append(options, service.WithCreateRedirectRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithCreateRedirectRuleConditions(conditions))
+				options = append(options, service.WithCreateRedirectRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.CreateRedirectRule(ruleId, resourceType, name, location, statusCode, options...)
@@ -832,7 +832,7 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateRedirectRuleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("conditions") {
-				options = append(options, service.WithUpdateRedirectRuleConditions(conditions))
+				options = append(options, service.WithUpdateRedirectRuleConditions(app.StringSlice(conditions)))
 			}
 
 			result, err := service.UpdateRedirectRule(ruleId, options...)

@@ -123,7 +123,7 @@ func newDomainsListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []domains.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListSearch(search))
@@ -253,7 +253,7 @@ func newDomainsListPricesCommand() *cobra.Command {
 				options = append(options, service.WithListPricesRegistrationType(registrationType))
 			}
 
-			result, err := service.ListPrices(domainsArg, options...)
+			result, err := service.ListPrices(app.StringSlice(domainsArg), options...)
 			if err != nil {
 				return sdk.WrapMutationError("GET", err)
 			}
@@ -343,7 +343,7 @@ func newDomainsUpdateNameserversCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []domains.UpdateNameserversOption{}
 			if cmd.Flags().Changed("nameservers") {
-				options = append(options, service.WithUpdateNameserversNameservers(nameservers))
+				options = append(options, service.WithUpdateNameserversNameservers(app.StringSlice(nameservers)))
 			}
 
 			result, err := service.UpdateNameservers(domainId, options...)
@@ -776,7 +776,7 @@ func newDomainsListRecordsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []domains.ListRecordsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListRecordsQueries(queries))
+				options = append(options, service.WithListRecordsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListRecordsTotal(total))

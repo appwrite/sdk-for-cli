@@ -118,7 +118,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 				options = append(options, service.WithAuthorizeAuthorizationDetails(authorizationDetails))
 			}
 			if cmd.Flags().Changed("resource") {
-				options = append(options, service.WithAuthorizeResource(resource))
+				options = append(options, service.WithAuthorizeResource(app.StringSlice(resource)))
 			}
 			if cmd.Flags().Changed("audience") {
 				options = append(options, service.WithAuthorizeAudience(audience))
@@ -216,7 +216,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 				options = append(options, service.WithAuthorizePostAuthorizationDetails(authorizationDetails))
 			}
 			if cmd.Flags().Changed("resource") {
-				options = append(options, service.WithAuthorizePostResource(resource))
+				options = append(options, service.WithAuthorizePostResource(app.StringSlice(resource)))
 			}
 			if cmd.Flags().Changed("audience") {
 				options = append(options, service.WithAuthorizePostAudience(audience))
@@ -281,7 +281,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 				options = append(options, service.WithCreateDeviceAuthorizationAuthorizationDetails(authorizationDetails))
 			}
 			if cmd.Flags().Changed("resource") {
-				options = append(options, service.WithCreateDeviceAuthorizationResource(resource))
+				options = append(options, service.WithCreateDeviceAuthorizationResource(app.StringSlice(resource)))
 			}
 			if cmd.Flags().Changed("audience") {
 				options = append(options, service.WithCreateDeviceAuthorizationAudience(audience))
@@ -490,7 +490,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 				options = append(options, service.WithCreatePARAuthorizationDetails(authorizationDetails))
 			}
 			if cmd.Flags().Changed("resource") {
-				options = append(options, service.WithCreatePARResource(resource))
+				options = append(options, service.WithCreatePARResource(app.StringSlice(resource)))
 			}
 			if cmd.Flags().Changed("audience") {
 				options = append(options, service.WithCreatePARAudience(audience))
@@ -679,7 +679,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 				options = append(options, service.WithCreateTokenRedirectUri(redirectUri))
 			}
 			if cmd.Flags().Changed("resource") {
-				options = append(options, service.WithCreateTokenResource(resource))
+				options = append(options, service.WithCreateTokenResource(app.StringSlice(resource)))
 			}
 			if cmd.Flags().Changed("audience") {
 				options = append(options, service.WithCreateTokenAudience(audience))

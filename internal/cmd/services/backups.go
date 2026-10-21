@@ -87,7 +87,7 @@ func newBackupsListArchivesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.ListArchivesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListArchivesQueries(queries))
+				options = append(options, service.WithListArchivesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListArchivesTotal(total))
@@ -137,7 +137,7 @@ func newBackupsCreateArchiveCommand() *cobra.Command {
 				options = append(options, service.WithCreateArchiveResourceId(resourceId))
 			}
 
-			result, err := service.CreateArchive(services, options...)
+			result, err := service.CreateArchive(app.StringSlice(services), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -258,7 +258,7 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.ListPoliciesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListPoliciesQueries(queries))
+				options = append(options, service.WithListPoliciesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListPoliciesTotal(total))
@@ -319,7 +319,7 @@ func newBackupsCreatePolicyCommand() *cobra.Command {
 				options = append(options, service.WithCreatePolicyEnabled(enabled))
 			}
 
-			result, err := service.CreatePolicy(policyId, services, retention, schedule, options...)
+			result, err := service.CreatePolicy(policyId, app.StringSlice(services), retention, schedule, options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -477,7 +477,7 @@ func newBackupsCreateRestorationCommand() *cobra.Command {
 				options = append(options, service.WithCreateRestorationNewResourceName(newResourceName))
 			}
 
-			result, err := service.CreateRestoration(archiveId, services, options...)
+			result, err := service.CreateRestoration(archiveId, app.StringSlice(services), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -545,7 +545,7 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []backups.ListRestorationsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListRestorationsQueries(queries))
+				options = append(options, service.WithListRestorationsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListRestorationsTotal(total))

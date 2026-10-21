@@ -123,7 +123,7 @@ func newUsersListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListSearch(search))
@@ -342,7 +342,7 @@ func newUsersListIdentitiesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListIdentitiesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListIdentitiesQueries(queries))
+				options = append(options, service.WithListIdentitiesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListIdentitiesSearch(search))
@@ -816,7 +816,7 @@ func newUsersUpdateLabelsCommand() *cobra.Command {
 			}
 			service := users.New(client)
 
-			result, err := service.UpdateLabels(userId, labels)
+			result, err := service.UpdateLabels(userId, app.StringSlice(labels))
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -884,7 +884,7 @@ func newUsersListMembershipsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListMembershipsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListMembershipsQueries(queries))
+				options = append(options, service.WithListMembershipsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListMembershipsSearch(search))
@@ -1206,7 +1206,7 @@ func newUsersListPasskeysCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListPasskeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListPasskeysQueries(queries))
+				options = append(options, service.WithListPasskeysQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListPasskeysTotal(total))
@@ -1664,7 +1664,7 @@ func newUsersListTargetsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []users.ListTargetsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListTargetsQueries(queries))
+				options = append(options, service.WithListTargetsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTargetsTotal(total))

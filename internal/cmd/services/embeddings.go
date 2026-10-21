@@ -46,7 +46,7 @@ func newEmbeddingsCreateTextEmbeddingsCommand() *cobra.Command {
 				options = append(options, service.WithCreateTextEmbeddingsModel(model))
 			}
 
-			result, err := service.CreateTextEmbeddings(texts, options...)
+			result, err := service.CreateTextEmbeddings(app.StringSlice(texts), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}

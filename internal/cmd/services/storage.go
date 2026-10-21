@@ -89,7 +89,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.ListBucketsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListBucketsQueries(queries))
+				options = append(options, service.WithListBucketsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListBucketsSearch(search))
@@ -107,7 +107,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations, stripMetadata")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -134,6 +134,8 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	var encryption bool
 	var antivirus bool
 	var transformations bool
+	var description string
+	var stripMetadata bool
 
 	cmd := &cobra.Command{
 		Use:   "create-bucket",
@@ -149,7 +151,7 @@ func newStorageCreateBucketCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.CreateBucketOption{}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithCreateBucketPermissions(permissions))
+				options = append(options, service.WithCreateBucketPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("file-security") {
 				options = append(options, service.WithCreateBucketFileSecurity(fileSecurity))
@@ -161,7 +163,7 @@ func newStorageCreateBucketCommand() *cobra.Command {
 				options = append(options, service.WithCreateBucketMaximumFileSize(maximumFileSize))
 			}
 			if cmd.Flags().Changed("allowed-file-extensions") {
-				options = append(options, service.WithCreateBucketAllowedFileExtensions(allowedFileExtensions))
+				options = append(options, service.WithCreateBucketAllowedFileExtensions(app.StringSlice(allowedFileExtensions)))
 			}
 			if cmd.Flags().Changed("compression") {
 				options = append(options, service.WithCreateBucketCompression(compression))
@@ -174,6 +176,12 @@ func newStorageCreateBucketCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("transformations") {
 				options = append(options, service.WithCreateBucketTransformations(transformations))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateBucketDescription(description))
+			}
+			if cmd.Flags().Changed("strip-metadata") {
+				options = append(options, service.WithCreateBucketStripMetadata(stripMetadata))
 			}
 
 			result, err := service.CreateBucket(bucketId, name, options...)
@@ -203,6 +211,9 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&transformations, "transformations", false, "Are image transformations enabled?")
 	cmd.Flags().Lookup("transformations").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the bucket.")
+	cmd.Flags().BoolVar(&stripMetadata, "strip-metadata", false, "Remove metadata such as location, device and capture time from uploaded images. The color profile and orientation are kept. For file size above 20MB metadata is not removed even if it's enabled.")
+	cmd.Flags().Lookup("strip-metadata").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -246,6 +257,8 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	var encryption bool
 	var antivirus bool
 	var transformations bool
+	var description string
+	var stripMetadata bool
 
 	cmd := &cobra.Command{
 		Use:   "update-bucket",
@@ -261,7 +274,7 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.UpdateBucketOption{}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpdateBucketPermissions(permissions))
+				options = append(options, service.WithUpdateBucketPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("file-security") {
 				options = append(options, service.WithUpdateBucketFileSecurity(fileSecurity))
@@ -273,7 +286,7 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 				options = append(options, service.WithUpdateBucketMaximumFileSize(maximumFileSize))
 			}
 			if cmd.Flags().Changed("allowed-file-extensions") {
-				options = append(options, service.WithUpdateBucketAllowedFileExtensions(allowedFileExtensions))
+				options = append(options, service.WithUpdateBucketAllowedFileExtensions(app.StringSlice(allowedFileExtensions)))
 			}
 			if cmd.Flags().Changed("compression") {
 				options = append(options, service.WithUpdateBucketCompression(compression))
@@ -286,6 +299,12 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("transformations") {
 				options = append(options, service.WithUpdateBucketTransformations(transformations))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateBucketDescription(description))
+			}
+			if cmd.Flags().Changed("strip-metadata") {
+				options = append(options, service.WithUpdateBucketStripMetadata(stripMetadata))
 			}
 
 			result, err := service.UpdateBucket(bucketId, name, options...)
@@ -315,6 +334,9 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&transformations, "transformations", false, "Are image transformations enabled?")
 	cmd.Flags().Lookup("transformations").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the bucket.")
+	cmd.Flags().BoolVar(&stripMetadata, "strip-metadata", false, "Remove metadata such as location, device and capture time from uploaded images. The color profile and orientation are kept. For file size above 20MB metadata is not removed even if it's enabled. By default, the current setting is kept.")
+	cmd.Flags().Lookup("strip-metadata").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -398,7 +420,7 @@ func newStorageListFilesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.ListFilesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListFilesQueries(queries))
+				options = append(options, service.WithListFilesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListFilesSearch(search))
@@ -458,7 +480,7 @@ func newStorageCreateFileCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []storage.CreateFileOption{}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithCreateFilePermissions(permissions))
+				options = append(options, service.WithCreateFilePermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("folder") {
 				options = append(options, service.WithCreateFileFolder(folder))
@@ -538,7 +560,7 @@ func newStorageUpdateFileCommand() *cobra.Command {
 				options = append(options, service.WithUpdateFileName(name))
 			}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpdateFilePermissions(permissions))
+				options = append(options, service.WithUpdateFilePermissions(app.StringSlice(permissions)))
 			}
 
 			result, err := service.UpdateFile(bucketId, fileId, options...)
