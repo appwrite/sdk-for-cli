@@ -82,7 +82,7 @@ func newTokensListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []tokens.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTotal(total))

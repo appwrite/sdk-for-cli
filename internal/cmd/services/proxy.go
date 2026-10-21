@@ -124,7 +124,7 @@ func newProxyListRulesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []proxy.ListRulesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListRulesQueries(queries))
+				options = append(options, service.WithListRulesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListRulesTotal(total))

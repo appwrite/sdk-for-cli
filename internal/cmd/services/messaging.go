@@ -124,7 +124,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListMessagesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListMessagesQueries(queries))
+				options = append(options, service.WithListMessagesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListMessagesSearch(search))
@@ -188,22 +188,22 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateEmailOption{}
 			if cmd.Flags().Changed("topics") {
-				options = append(options, service.WithCreateEmailTopics(topics))
+				options = append(options, service.WithCreateEmailTopics(app.StringSlice(topics)))
 			}
 			if cmd.Flags().Changed("users") {
-				options = append(options, service.WithCreateEmailUsers(users))
+				options = append(options, service.WithCreateEmailUsers(app.StringSlice(users)))
 			}
 			if cmd.Flags().Changed("targets") {
-				options = append(options, service.WithCreateEmailTargets(targets))
+				options = append(options, service.WithCreateEmailTargets(app.StringSlice(targets)))
 			}
 			if cmd.Flags().Changed("cc") {
-				options = append(options, service.WithCreateEmailCc(cc))
+				options = append(options, service.WithCreateEmailCc(app.StringSlice(cc)))
 			}
 			if cmd.Flags().Changed("bcc") {
-				options = append(options, service.WithCreateEmailBcc(bcc))
+				options = append(options, service.WithCreateEmailBcc(app.StringSlice(bcc)))
 			}
 			if cmd.Flags().Changed("attachments") {
-				options = append(options, service.WithCreateEmailAttachments(attachments))
+				options = append(options, service.WithCreateEmailAttachments(app.StringSlice(attachments)))
 			}
 			if cmd.Flags().Changed("draft") {
 				options = append(options, service.WithCreateEmailDraft(draft))
@@ -221,7 +221,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 				options = append(options, service.WithCreateEmailReplyToName(replyToName))
 			}
 			if cmd.Flags().Changed("emails") {
-				options = append(options, service.WithCreateEmailEmails(emails))
+				options = append(options, service.WithCreateEmailEmails(app.StringSlice(emails)))
 			}
 
 			result, err := service.CreateEmail(messageId, subject, content, options...)
@@ -287,13 +287,13 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateEmailOption{}
 			if cmd.Flags().Changed("topics") {
-				options = append(options, service.WithUpdateEmailTopics(topics))
+				options = append(options, service.WithUpdateEmailTopics(app.StringSlice(topics)))
 			}
 			if cmd.Flags().Changed("users") {
-				options = append(options, service.WithUpdateEmailUsers(users))
+				options = append(options, service.WithUpdateEmailUsers(app.StringSlice(users)))
 			}
 			if cmd.Flags().Changed("targets") {
-				options = append(options, service.WithUpdateEmailTargets(targets))
+				options = append(options, service.WithUpdateEmailTargets(app.StringSlice(targets)))
 			}
 			if cmd.Flags().Changed("subject") {
 				options = append(options, service.WithUpdateEmailSubject(subject))
@@ -308,16 +308,16 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 				options = append(options, service.WithUpdateEmailHtml(html))
 			}
 			if cmd.Flags().Changed("cc") {
-				options = append(options, service.WithUpdateEmailCc(cc))
+				options = append(options, service.WithUpdateEmailCc(app.StringSlice(cc)))
 			}
 			if cmd.Flags().Changed("bcc") {
-				options = append(options, service.WithUpdateEmailBcc(bcc))
+				options = append(options, service.WithUpdateEmailBcc(app.StringSlice(bcc)))
 			}
 			if cmd.Flags().Changed("scheduled-at") {
 				options = append(options, service.WithUpdateEmailScheduledAt(scheduledAt))
 			}
 			if cmd.Flags().Changed("attachments") {
-				options = append(options, service.WithUpdateEmailAttachments(attachments))
+				options = append(options, service.WithUpdateEmailAttachments(app.StringSlice(attachments)))
 			}
 			if cmd.Flags().Changed("reply-to-email") {
 				options = append(options, service.WithUpdateEmailReplyToEmail(replyToEmail))
@@ -326,7 +326,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 				options = append(options, service.WithUpdateEmailReplyToName(replyToName))
 			}
 			if cmd.Flags().Changed("emails") {
-				options = append(options, service.WithUpdateEmailEmails(emails))
+				options = append(options, service.WithUpdateEmailEmails(app.StringSlice(emails)))
 			}
 
 			result, err := service.UpdateEmail(messageId, options...)
@@ -405,13 +405,13 @@ func newMessagingCreatePushCommand() *cobra.Command {
 				options = append(options, service.WithCreatePushBody(body))
 			}
 			if cmd.Flags().Changed("topics") {
-				options = append(options, service.WithCreatePushTopics(topics))
+				options = append(options, service.WithCreatePushTopics(app.StringSlice(topics)))
 			}
 			if cmd.Flags().Changed("users") {
-				options = append(options, service.WithCreatePushUsers(users))
+				options = append(options, service.WithCreatePushUsers(app.StringSlice(users)))
 			}
 			if cmd.Flags().Changed("targets") {
-				options = append(options, service.WithCreatePushTargets(targets))
+				options = append(options, service.WithCreatePushTargets(app.StringSlice(targets)))
 			}
 			if cmd.Flags().Changed("data") {
 				options = append(options, service.WithCreatePushData(dataValue))
@@ -532,13 +532,13 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdatePushOption{}
 			if cmd.Flags().Changed("topics") {
-				options = append(options, service.WithUpdatePushTopics(topics))
+				options = append(options, service.WithUpdatePushTopics(app.StringSlice(topics)))
 			}
 			if cmd.Flags().Changed("users") {
-				options = append(options, service.WithUpdatePushUsers(users))
+				options = append(options, service.WithUpdatePushUsers(app.StringSlice(users)))
 			}
 			if cmd.Flags().Changed("targets") {
-				options = append(options, service.WithUpdatePushTargets(targets))
+				options = append(options, service.WithUpdatePushTargets(app.StringSlice(targets)))
 			}
 			if cmd.Flags().Changed("title") {
 				options = append(options, service.WithUpdatePushTitle(title))
@@ -648,13 +648,13 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateSmsOption{}
 			if cmd.Flags().Changed("topics") {
-				options = append(options, service.WithCreateSmsTopics(topics))
+				options = append(options, service.WithCreateSmsTopics(app.StringSlice(topics)))
 			}
 			if cmd.Flags().Changed("users") {
-				options = append(options, service.WithCreateSmsUsers(users))
+				options = append(options, service.WithCreateSmsUsers(app.StringSlice(users)))
 			}
 			if cmd.Flags().Changed("targets") {
-				options = append(options, service.WithCreateSmsTargets(targets))
+				options = append(options, service.WithCreateSmsTargets(app.StringSlice(targets)))
 			}
 			if cmd.Flags().Changed("draft") {
 				options = append(options, service.WithCreateSmsDraft(draft))
@@ -708,13 +708,13 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.UpdateSmsOption{}
 			if cmd.Flags().Changed("topics") {
-				options = append(options, service.WithUpdateSmsTopics(topics))
+				options = append(options, service.WithUpdateSmsTopics(app.StringSlice(topics)))
 			}
 			if cmd.Flags().Changed("users") {
-				options = append(options, service.WithUpdateSmsUsers(users))
+				options = append(options, service.WithUpdateSmsUsers(app.StringSlice(users)))
 			}
 			if cmd.Flags().Changed("targets") {
-				options = append(options, service.WithUpdateSmsTargets(targets))
+				options = append(options, service.WithUpdateSmsTargets(app.StringSlice(targets)))
 			}
 			if cmd.Flags().Changed("content") {
 				options = append(options, service.WithUpdateSmsContent(content))
@@ -854,7 +854,7 @@ func newMessagingListTargetsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListTargetsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListTargetsQueries(queries))
+				options = append(options, service.WithListTargetsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTargetsTotal(total))
@@ -936,7 +936,7 @@ func newMessagingListProvidersCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListProvidersOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListProvidersQueries(queries))
+				options = append(options, service.WithListProvidersQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListProvidersSearch(search))
@@ -2734,7 +2734,7 @@ func newMessagingListTopicsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListTopicsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListTopicsQueries(queries))
+				options = append(options, service.WithListTopicsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListTopicsSearch(search))
@@ -2773,6 +2773,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	var subscribe []string
 	var qos int
 	var expiry int
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-topic",
@@ -2788,13 +2789,16 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.CreateTopicOption{}
 			if cmd.Flags().Changed("subscribe") {
-				options = append(options, service.WithCreateTopicSubscribe(subscribe))
+				options = append(options, service.WithCreateTopicSubscribe(app.StringSlice(subscribe)))
 			}
 			if cmd.Flags().Changed("qos") {
 				options = append(options, service.WithCreateTopicQos(qos))
 			}
 			if cmd.Flags().Changed("expiry") {
 				options = append(options, service.WithCreateTopicExpiry(expiry))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateTopicDescription(description))
 			}
 
 			result, err := service.CreateTopic(topicId, name, options...)
@@ -2813,6 +2817,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
 	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800). Null inherits the lowest expiry of the project's enabled Appwrite providers, or the 7-day ledger window if none sets one.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the topic.")
 	return cmd
 }
 
@@ -2850,6 +2855,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	var subscribe []string
 	var qos int
 	var expiry int
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-topic",
@@ -2868,13 +2874,16 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 				options = append(options, service.WithUpdateTopicName(name))
 			}
 			if cmd.Flags().Changed("subscribe") {
-				options = append(options, service.WithUpdateTopicSubscribe(subscribe))
+				options = append(options, service.WithUpdateTopicSubscribe(app.StringSlice(subscribe)))
 			}
 			if cmd.Flags().Changed("qos") {
 				options = append(options, service.WithUpdateTopicQos(qos))
 			}
 			if cmd.Flags().Changed("expiry") {
 				options = append(options, service.WithUpdateTopicExpiry(expiry))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateTopicDescription(description))
 			}
 
 			result, err := service.UpdateTopic(topicId, options...)
@@ -2892,6 +2901,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
 	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800). Null inherits the lowest expiry of the project's enabled Appwrite providers, or the 7-day ledger window if none sets one.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the topic.")
 	return cmd
 }
 
@@ -2975,7 +2985,7 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []messaging.ListSubscribersOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListSubscribersQueries(queries))
+				options = append(options, service.WithListSubscribersQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListSubscribersSearch(search))

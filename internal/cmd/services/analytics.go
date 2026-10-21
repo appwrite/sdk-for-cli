@@ -83,7 +83,7 @@ func newAnalyticsListPropertiesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []analytics.ListPropertiesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListPropertiesQueries(queries))
+				options = append(options, service.WithListPropertiesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("search") {
 				options = append(options, service.WithListPropertiesSearch(search))
@@ -143,7 +143,7 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 				options = append(options, service.WithCreatePropertyEnabled(enabled))
 			}
 			if cmd.Flags().Changed("allowed-origins") {
-				options = append(options, service.WithCreatePropertyAllowedOrigins(allowedOrigins))
+				options = append(options, service.WithCreatePropertyAllowedOrigins(app.StringSlice(allowedOrigins)))
 			}
 
 			result, err := service.CreateProperty(propertyId, name, options...)
@@ -224,7 +224,7 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 				options = append(options, service.WithUpdatePropertyEnabled(enabled))
 			}
 			if cmd.Flags().Changed("allowed-origins") {
-				options = append(options, service.WithUpdatePropertyAllowedOrigins(allowedOrigins))
+				options = append(options, service.WithUpdatePropertyAllowedOrigins(app.StringSlice(allowedOrigins)))
 			}
 
 			result, err := service.UpdateProperty(propertyId, options...)
@@ -321,7 +321,7 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 				options = append(options, service.WithCreateEventEngagementTime(engagementTime))
 			}
 			if cmd.Flags().Changed("props") {
-				options = append(options, service.WithCreateEventProps(props))
+				options = append(options, service.WithCreateEventProps(app.StringSlice(props)))
 			}
 			if cmd.Flags().Changed("user-id") {
 				options = append(options, service.WithCreateEventUserId(userId))
@@ -414,13 +414,13 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []analytics.ListMetricsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListMetricsQueries(queries))
+				options = append(options, service.WithListMetricsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("interval") {
 				options = append(options, service.WithListMetricsInterval(interval))
 			}
 			if cmd.Flags().Changed("dimensions") {
-				options = append(options, service.WithListMetricsDimensions(dimensions))
+				options = append(options, service.WithListMetricsDimensions(app.StringSlice(dimensions)))
 			}
 			if cmd.Flags().Changed("date-range") {
 				options = append(options, service.WithListMetricsDateRange(dateRange))

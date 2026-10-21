@@ -279,7 +279,7 @@ func newProjectListEnvironmentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListEnvironmentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListEnvironmentsQueries(queries))
+				options = append(options, service.WithListEnvironmentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListEnvironmentsTotal(total))
@@ -486,7 +486,7 @@ func newProjectListKeysCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListKeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListKeysQueries(queries))
+				options = append(options, service.WithListKeysQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListKeysTotal(total))
@@ -532,7 +532,7 @@ func newProjectCreateEphemeralKeyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateEphemeralKey(scopes, duration)
+			result, err := service.CreateEphemeralKey(app.StringSlice(scopes), duration)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -584,6 +584,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	var name string
 	var scopes []string
 	var expire string
+	var description string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -602,8 +603,11 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateKeyExpire(expire))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateKeyDescription(description))
+			}
 
-			result, err := service.UpdateKey(keyId, name, scopes, options...)
+			result, err := service.UpdateKey(keyId, name, app.StringSlice(scopes), options...)
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -619,6 +623,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the key.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -668,7 +673,7 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdateLabels(labels)
+			result, err := service.UpdateLabels(app.StringSlice(labels))
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -713,7 +718,7 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListMockPhonesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListMockPhonesQueries(queries))
+				options = append(options, service.WithListMockPhonesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListMockPhonesTotal(total))
@@ -893,7 +898,7 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListOAuth2ProvidersOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListOAuth2ProvidersQueries(queries))
+				options = append(options, service.WithListOAuth2ProvidersQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListOAuth2ProvidersTotal(total))
@@ -950,10 +955,10 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateOAuth2ServerOption{}
 			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithUpdateOAuth2ServerScopes(scopes))
+				options = append(options, service.WithUpdateOAuth2ServerScopes(app.StringSlice(scopes)))
 			}
 			if cmd.Flags().Changed("authorization-details-types") {
-				options = append(options, service.WithUpdateOAuth2ServerAuthorizationDetailsTypes(authorizationDetailsTypes))
+				options = append(options, service.WithUpdateOAuth2ServerAuthorizationDetailsTypes(app.StringSlice(authorizationDetailsTypes)))
 			}
 			if cmd.Flags().Changed("access-token-duration") {
 				options = append(options, service.WithUpdateOAuth2ServerAccessTokenDuration(accessTokenDuration))
@@ -986,10 +991,10 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2ServerDeviceCodeDuration(deviceCodeDuration))
 			}
 			if cmd.Flags().Changed("default-scopes") {
-				options = append(options, service.WithUpdateOAuth2ServerDefaultScopes(defaultScopes))
+				options = append(options, service.WithUpdateOAuth2ServerDefaultScopes(app.StringSlice(defaultScopes)))
 			}
 			if cmd.Flags().Changed("installation-scopes") {
-				options = append(options, service.WithUpdateOAuth2ServerInstallationScopes(installationScopes))
+				options = append(options, service.WithUpdateOAuth2ServerInstallationScopes(app.StringSlice(installationScopes)))
 			}
 
 			result, err := service.UpdateOAuth2Server(enabled, authorizationUrl, options...)
@@ -1109,7 +1114,7 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2AppleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("native-client-ids") {
-				options = append(options, service.WithUpdateOAuth2AppleNativeClientIds(nativeClientIds))
+				options = append(options, service.WithUpdateOAuth2AppleNativeClientIds(app.StringSlice(nativeClientIds)))
 			}
 			if cmd.Flags().Changed("native-enabled") {
 				options = append(options, service.WithUpdateOAuth2AppleNativeEnabled(nativeEnabled))
@@ -1217,7 +1222,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2Auth0Enabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2Auth0Prompt(prompt))
+				options = append(options, service.WithUpdateOAuth2Auth0Prompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Auth0(options...)
@@ -1596,7 +1601,7 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2DiscordEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2DiscordPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2DiscordPrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Discord(options...)
@@ -1928,7 +1933,7 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2GitHubEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2GitHubPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2GitHubPrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2GitHub(options...)
@@ -2029,13 +2034,13 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2GoogleClientSecret(clientSecret))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2GooglePrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2GooglePrompt(app.StringSlice(prompt)))
 			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateOAuth2GoogleEnabled(enabled))
 			}
 			if cmd.Flags().Changed("native-client-ids") {
-				options = append(options, service.WithUpdateOAuth2GoogleNativeClientIds(nativeClientIds))
+				options = append(options, service.WithUpdateOAuth2GoogleNativeClientIds(app.StringSlice(nativeClientIds)))
 			}
 			if cmd.Flags().Changed("native-enabled") {
 				options = append(options, service.WithUpdateOAuth2GoogleNativeEnabled(nativeEnabled))
@@ -2138,7 +2143,7 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2KakaoEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2KakaoPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2KakaoPrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Kakao(options...)
@@ -2341,7 +2346,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2MicrosoftEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2MicrosoftPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2MicrosoftPrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Microsoft(options...)
@@ -2453,7 +2458,7 @@ func newProjectUpdateOAuth2OidcCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2OidcUserInfoURL(userInfoUrl))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2OidcPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2OidcPrompt(app.StringSlice(prompt)))
 			}
 			if cmd.Flags().Changed("max-age") {
 				options = append(options, service.WithUpdateOAuth2OidcMaxAge(maxAge))
@@ -2523,7 +2528,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2OktaEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2OktaPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2OktaPrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Okta(options...)
@@ -2760,7 +2765,7 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2SalesforceEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2SalesforcePrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2SalesforcePrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Salesforce(options...)
@@ -3363,7 +3368,7 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 				options = append(options, service.WithUpdateOAuth2ZohoEnabled(enabled))
 			}
 			if cmd.Flags().Changed("prompt") {
-				options = append(options, service.WithUpdateOAuth2ZohoPrompt(prompt))
+				options = append(options, service.WithUpdateOAuth2ZohoPrompt(app.StringSlice(prompt)))
 			}
 
 			result, err := service.UpdateOAuth2Zoho(options...)
@@ -3511,7 +3516,7 @@ func newProjectListPlatformsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListPlatformsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListPlatformsQueries(queries))
+				options = append(options, service.WithListPlatformsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListPlatformsTotal(total))
@@ -3562,7 +3567,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.CreateAndroidPlatformOption{}
 			if cmd.Flags().Changed("fingerprints") {
-				options = append(options, service.WithCreateAndroidPlatformFingerprints(fingerprints))
+				options = append(options, service.WithCreateAndroidPlatformFingerprints(app.StringSlice(fingerprints)))
 			}
 
 			result, err := service.CreateAndroidPlatform(platformId, name, applicationId, options...)
@@ -3606,7 +3611,7 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.UpdateAndroidPlatformOption{}
 			if cmd.Flags().Changed("fingerprints") {
-				options = append(options, service.WithUpdateAndroidPlatformFingerprints(fingerprints))
+				options = append(options, service.WithUpdateAndroidPlatformFingerprints(app.StringSlice(fingerprints)))
 			}
 
 			result, err := service.UpdateAndroidPlatform(platformId, name, applicationId, options...)
@@ -4007,7 +4012,7 @@ func newProjectListPoliciesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListPoliciesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListPoliciesQueries(queries))
+				options = append(options, service.WithListPoliciesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListPoliciesTotal(total))
@@ -4303,11 +4308,12 @@ func newProjectUpdatePasskeyPolicyCommand() *cobra.Command {
 
 func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 	var enabled bool
+	var denyList []string
 	var projectId string
 
 	cmd := &cobra.Command{
 		Use:   "update-password-dictionary-policy",
-		Short: "Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.",
+		Short: "Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.\n\nCustom denyList entries use case-sensitive equality and apply only while this policy is enabled. Omit denyList or pass null to preserve it, pass an array to replace it, or pass [] to clear it. Entries are stored without trimming or deduplication. Existing passwords remain valid for sign-in and password confirmation. The combined serialized project authentication configuration must fit within 16,384 characters, even when each list meets its entry limits.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -4316,7 +4322,13 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordDictionaryPolicy(enabled)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdatePasswordDictionaryPolicyOption{}
+			if cmd.Flags().Changed("deny-list") {
+				options = append(options, service.WithUpdatePasswordDictionaryPolicyDenyList(app.StringSlice(denyList)))
+			}
+
+			result, err := service.UpdatePasswordDictionaryPolicy(enabled, options...)
 			if err != nil {
 				return sdk.WrapMutationError("PATCH", err)
 			}
@@ -4327,6 +4339,7 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password dictionary policy. Set to true if you want password change to block passwords in the dictionary, or false to allow them. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-sensitive equality. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4363,11 +4376,12 @@ func newProjectUpdatePasswordHistoryPolicyCommand() *cobra.Command {
 
 func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 	var enabled bool
+	var denyList []string
 	var projectId string
 
 	cmd := &cobra.Command{
 		Use:   "update-password-personal-data-policy",
-		Short: "Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.",
+		Short: "Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.\n\nCustom denyList entries use case-insensitive substring matching and apply only while this policy is enabled. Omit denyList or pass null to preserve it, pass an array to replace it, or pass [] to clear it. Entries are stored without trimming or deduplication. Existing passwords remain valid for sign-in and password confirmation. The combined serialized project authentication configuration must fit within 16,384 characters, even when each list meets its entry limits.\nPassword recovery also checks the recovered user profile, closing the previous gap in profile-based personal-data validation.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -4376,7 +4390,13 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordPersonalDataPolicy(enabled)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdatePasswordPersonalDataPolicyOption{}
+			if cmd.Flags().Changed("deny-list") {
+				options = append(options, service.WithUpdatePasswordPersonalDataPolicyDenyList(app.StringSlice(denyList)))
+			}
+
+			result, err := service.UpdatePasswordPersonalDataPolicy(enabled, options...)
 			if err != nil {
 				return sdk.WrapMutationError("PATCH", err)
 			}
@@ -4387,6 +4407,7 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password personal data policy. Set to true if you want to block passwords including user's personal data, or false to allow it. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-insensitive substring matching. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4881,7 +4902,7 @@ func newProjectCreateSMTPTestCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateSMTPTest(emails)
+			result, err := service.CreateSMTPTest(app.StringSlice(emails))
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -4926,7 +4947,7 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListEmailTemplatesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListEmailTemplatesQueries(queries))
+				options = append(options, service.WithListEmailTemplatesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListEmailTemplatesTotal(total))
@@ -5107,7 +5128,7 @@ func newProjectListVariablesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []project.ListVariablesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListVariablesQueries(queries))
+				options = append(options, service.WithListVariablesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListVariablesTotal(total))
@@ -5142,6 +5163,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -5159,6 +5181,9 @@ func newProjectCreateVariableCommand() *cobra.Command {
 			options := []project.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVariableDescription(description))
 			}
 
 			result, err := service.CreateVariable(variableId, key, value, options...)
@@ -5178,6 +5203,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -5217,6 +5243,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -5241,6 +5268,9 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithUpdateVariableSecret(secret))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVariableDescription(description))
+			}
 
 			result, err := service.UpdateVariable(variableId, options...)
 			if err != nil {
@@ -5257,6 +5287,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }

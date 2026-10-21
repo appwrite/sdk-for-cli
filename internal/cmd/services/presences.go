@@ -81,7 +81,7 @@ func newPresencesListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []presences.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTotal(total))
@@ -168,7 +168,7 @@ func newPresencesUpsertCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []presences.UpsertOption{}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpsertPermissions(permissions))
+				options = append(options, service.WithUpsertPermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("expires-at") {
 				options = append(options, service.WithUpsertExpiresAt(expiresAt))
@@ -234,7 +234,7 @@ func newPresencesUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateMetadata(metadataValue))
 			}
 			if cmd.Flags().Changed("permissions") {
-				options = append(options, service.WithUpdatePermissions(permissions))
+				options = append(options, service.WithUpdatePermissions(app.StringSlice(permissions)))
 			}
 			if cmd.Flags().Changed("purge") {
 				options = append(options, service.WithUpdatePurge(purge))

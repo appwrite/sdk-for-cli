@@ -81,7 +81,7 @@ func newWebhooksListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []webhooks.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTotal(total))
@@ -120,6 +120,7 @@ func newWebhooksCreateCommand() *cobra.Command {
 	var authUsername string
 	var authPassword string
 	var secret string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -149,8 +150,11 @@ func newWebhooksCreateCommand() *cobra.Command {
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateSecret(secret))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
+			}
 
-			result, err := service.Create(webhookId, url, name, events, options...)
+			result, err := service.Create(webhookId, url, name, app.StringSlice(events), options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -174,6 +178,7 @@ func newWebhooksCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 255 chars.")
 	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 2048 chars.")
 	cmd.Flags().StringVar(&secret, "secret", "", "Webhook secret key. If not provided, a new key will be generated automatically. Key must be at least 8 characters long, and at max 256 characters.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the webhook.")
 	return cmd
 }
 
@@ -214,6 +219,7 @@ func newWebhooksUpdateCommand() *cobra.Command {
 	var tls bool
 	var authUsername string
 	var authPassword string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update",
@@ -240,8 +246,11 @@ func newWebhooksUpdateCommand() *cobra.Command {
 			if cmd.Flags().Changed("auth-password") {
 				options = append(options, service.WithUpdateAuthPassword(authPassword))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
+			}
 
-			result, err := service.Update(webhookId, name, url, events, options...)
+			result, err := service.Update(webhookId, name, url, app.StringSlice(events), options...)
 			if err != nil {
 				return sdk.WrapMutationError("PUT", err)
 			}
@@ -264,6 +273,7 @@ func newWebhooksUpdateCommand() *cobra.Command {
 	cmd.Flags().Lookup("tls").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&authUsername, "auth-username", "", "Webhook HTTP user. Max length: 255 chars.")
 	cmd.Flags().StringVar(&authPassword, "auth-password", "", "Webhook HTTP password. Max length: 2048 chars. Omit to keep the current password; it is cleared when the URL changes or TLS verification is disabled.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the webhook.")
 	return cmd
 }
 

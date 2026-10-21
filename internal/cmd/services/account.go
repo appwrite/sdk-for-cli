@@ -32,6 +32,7 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountUpdateEmailCommand())
 	cmd.AddCommand(newAccountListIdentitiesCommand())
 	cmd.AddCommand(newAccountDeleteIdentityCommand())
+	cmd.AddCommand(newAccountListMembershipsCommand())
 	cmd.AddCommand(newAccountUpdateMFACommand())
 	cmd.AddCommand(newAccountCreateMfaAuthenticatorCommand())
 	cmd.AddCommand(newAccountUpdateMfaAuthenticatorCommand())
@@ -204,7 +205,7 @@ func newAccountListConsentsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListConsentsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListConsentsQueries(queries))
+				options = append(options, service.WithListConsentsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListConsentsTotal(total))
@@ -340,7 +341,7 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListConsentTokensOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListConsentTokensQueries(queries))
+				options = append(options, service.WithListConsentTokensQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListConsentTokensTotal(total))
@@ -514,7 +515,7 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListIdentitiesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListIdentitiesQueries(queries))
+				options = append(options, service.WithListIdentitiesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListIdentitiesTotal(total))
@@ -568,6 +569,85 @@ func newAccountDeleteIdentityCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&identityId, "identity-id", "", "Identity ID.")
 	_ = cmd.MarkFlagRequired("identity-id")
+	return cmd
+}
+
+func newAccountListMembershipsCommand() *cobra.Command {
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+
+	cmd := &cobra.Command{
+		Use:   "list-memberships",
+		Short: "Get the team memberships of the currently logged in user.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.ListMembershipsOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListMembershipsQueries(app.StringSlice(queries)))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListMembershipsTotal(total))
+			}
+
+			result, err := service.ListMemberships(options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
 	return cmd
 }
 
@@ -923,7 +1003,7 @@ func newAccountListPasskeysCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []account.ListPasskeysOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListPasskeysQueries(queries))
+				options = append(options, service.WithListPasskeysQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListPasskeysTotal(total))
@@ -1274,7 +1354,7 @@ func newAccountUpdateRecoveryCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update-recovery",
-		Short: "Use this endpoint to complete the user account password reset. Both the userId and secret arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the POST /account/recovery (https://appwrite.io/docs/references/cloud/client-web/account#createRecovery) endpoint.\n\nPlease note that in order to avoid a Redirect Attack (https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.",
+		Short: "Use this endpoint to complete the user account password reset. Both the userId and secret arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the POST /account/recovery (https://appwrite.io/docs/references/cloud/client-web/account#createRecovery) endpoint.\n\nPlease note that in order to avoid a Redirect Attack (https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.\n\nThe new password must satisfy the project's enabled password policies, including custom deny lists. Dictionary entries match the entire password case-sensitively; personal-data terms match substrings case-insensitively. Personal-data validation runs after token verification against the recovered user's ID, name, email, and phone, closing the previous recovery gap for profile-based checks. A rejected password leaves the existing credentials unchanged and the recovery token usable.\n",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
@@ -1345,7 +1425,7 @@ func newAccountUpdateRecoveryOTPCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update-recovery-otp",
-		Short: "Use this endpoint to complete the user password recovery process using the 6-digit code that was emailed by createRecoveryOTP (https://appwrite.io/docs/references/cloud/client-web/account#createRecoveryOTP). Pass the userId of the user along with the secret code from the email and the new password to set. If confirmed, this route will return a 200 status code, the code is consumed and the user's password is updated.\n",
+		Short: "Use this endpoint to complete the user password recovery process using the 6-digit code that was emailed by createRecoveryOTP (https://appwrite.io/docs/references/cloud/client-web/account#createRecoveryOTP). Pass the userId of the user along with the secret code from the email and the new password to set. If confirmed, this route will return a 200 status code, the code is consumed and the user's password is updated.\n\nThe new password must satisfy the project's enabled password policies, including custom deny lists. Dictionary entries match the entire password case-sensitively; personal-data terms match substrings case-insensitively. Personal-data validation runs after token verification against the recovered user's ID, name, email, and phone, closing the previous recovery gap for profile-based checks. A rejected password leaves the existing credentials unchanged and the recovery token usable.\n",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
@@ -1872,7 +1952,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 				options = append(options, service.WithCreateOAuth2TokenFailure(failure))
 			}
 			if cmd.Flags().Changed("scopes") {
-				options = append(options, service.WithCreateOAuth2TokenScopes(scopes))
+				options = append(options, service.WithCreateOAuth2TokenScopes(app.StringSlice(scopes)))
 			}
 			if cmd.Flags().Changed("state") {
 				options = append(options, service.WithCreateOAuth2TokenState(state))

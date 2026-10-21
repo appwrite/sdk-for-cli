@@ -107,7 +107,7 @@ func newMongoListCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []mongo.ListOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListQueries(queries))
+				options = append(options, service.WithListQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListTotal(total))
@@ -181,7 +181,7 @@ func newMongoCreateCommand() *cobra.Command {
 				options = append(options, service.WithCreateNetworkIdleTimeoutSeconds(networkIdleTimeoutSeconds))
 			}
 			if cmd.Flags().Changed("network-ip-allowlist") {
-				options = append(options, service.WithCreateNetworkIPAllowlist(networkIpAllowlist))
+				options = append(options, service.WithCreateNetworkIPAllowlist(app.StringSlice(networkIpAllowlist)))
 			}
 			if cmd.Flags().Changed("idle-timeout-minutes") {
 				options = append(options, service.WithCreateIdleTimeoutMinutes(idleTimeoutMinutes))
@@ -340,7 +340,7 @@ func newMongoUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateNetworkIdleTimeoutSeconds(networkIdleTimeoutSeconds))
 			}
 			if cmd.Flags().Changed("network-ip-allowlist") {
-				options = append(options, service.WithUpdateNetworkIPAllowlist(networkIpAllowlist))
+				options = append(options, service.WithUpdateNetworkIPAllowlist(app.StringSlice(networkIpAllowlist)))
 			}
 			if cmd.Flags().Changed("idle-timeout-minutes") {
 				options = append(options, service.WithUpdateIdleTimeoutMinutes(idleTimeoutMinutes))
@@ -370,7 +370,7 @@ func newMongoUpdateCommand() *cobra.Command {
 				options = append(options, service.WithUpdateSqlApiEnabled(sqlApiEnabled))
 			}
 			if cmd.Flags().Changed("sql-api-allowed-statements") {
-				options = append(options, service.WithUpdateSqlApiAllowedStatements(sqlApiAllowedStatements))
+				options = append(options, service.WithUpdateSqlApiAllowedStatements(app.StringSlice(sqlApiAllowedStatements)))
 			}
 			if cmd.Flags().Changed("sql-api-max-rows") {
 				options = append(options, service.WithUpdateSqlApiMaxRows(sqlApiMaxRows))
@@ -498,7 +498,7 @@ func newMongoListBackupsCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []mongo.ListBackupsOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListBackupsQueries(queries))
+				options = append(options, service.WithListBackupsQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListBackupsTotal(total))
@@ -616,7 +616,7 @@ func newMongoListBackupPoliciesCommand() *cobra.Command {
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []mongo.ListBackupPoliciesOption{}
 			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
-				options = append(options, service.WithListBackupPoliciesQueries(queries))
+				options = append(options, service.WithListBackupPoliciesQueries(app.StringSlice(queries)))
 			}
 			if cmd.Flags().Changed("total") {
 				options = append(options, service.WithListBackupPoliciesTotal(total))
