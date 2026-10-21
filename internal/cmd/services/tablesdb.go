@@ -196,6 +196,7 @@ func newTablesDBCreateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 	var specification string
 	var replicas int
 	var syncMode string
@@ -215,6 +216,9 @@ func newTablesDBCreateCommand() *cobra.Command {
 			options := []tablesdb.CreateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
 			}
 			if cmd.Flags().Changed("specification") {
 				options = append(options, service.WithCreateSpecification(specification))
@@ -241,6 +245,7 @@ func newTablesDBCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is the database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Database specification. Defaults to `serverless`, which creates the database on the shared pool. Any other value provisions a dedicated database on that specification.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5) for the dedicated database backing this database. Requires a dedicated `specification`; must be 0 for a serverless database. High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode for the dedicated database backing this database. Requires a dedicated `specification`; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.")
@@ -555,6 +560,7 @@ func newTablesDBUpdateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 	var specification string
 	var replicas int
 	var syncMode string
@@ -577,6 +583,9 @@ func newTablesDBUpdateCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
 			}
 			if cmd.Flags().Changed("specification") {
 				options = append(options, service.WithUpdateSpecification(specification))
@@ -602,6 +611,7 @@ func newTablesDBUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Database name. Max length: 128 chars.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Database specification. Resizing between dedicated specifications changes cpu, memory, storage and the connection ceiling via a rolling cutover with zero downtime. Moving a `serverless` database onto a dedicated specification is a data migration, not a resize.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5) for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification. High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.")
@@ -1031,6 +1041,7 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 	var enabled bool
 	var columns []string
 	var indexes []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-table",
@@ -1068,6 +1079,9 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 			if cmd.Flags().Changed("indexes") {
 				options = append(options, service.WithCreateTableIndexes(indexesDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateTableDescription(description))
+			}
 
 			result, err := service.CreateTable(databaseId, tableId, name, options...)
 			if err != nil {
@@ -1091,6 +1105,7 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of column definitions to create. Each column should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
 	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial, trigram), attributes (array of column keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the table.")
 	return cmd
 }
 
@@ -1133,6 +1148,7 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 	var rowSecurity bool
 	var enabled bool
 	var purge bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-table",
@@ -1162,6 +1178,9 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 			if cmd.Flags().Changed("purge") {
 				options = append(options, service.WithUpdateTablePurge(purge))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateTableDescription(description))
+			}
 
 			result, err := service.UpdateTable(databaseId, tableId, options...)
 			if err != nil {
@@ -1184,6 +1203,7 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge all cached list responses for this table as part of the update. Use this to force readers to see fresh data immediately instead of waiting for the cache TTL to expire.")
 	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the table.")
 	return cmd
 }
 
@@ -1312,6 +1332,7 @@ func newTablesDBCreateBigIntColumnCommand() *cobra.Command {
 	var maxArg int
 	var xdefault int
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-big-int-column",
@@ -1338,6 +1359,9 @@ func newTablesDBCreateBigIntColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateBigIntColumnArray(array))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateBigIntColumnDescription(description))
+			}
 
 			result, err := service.CreateBigIntColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -1361,6 +1385,7 @@ func newTablesDBCreateBigIntColumnCommand() *cobra.Command {
 	cmd.Flags().IntVar(&xdefault, "xdefault", 0, "Default value. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1373,6 +1398,7 @@ func newTablesDBUpdateBigIntColumnCommand() *cobra.Command {
 	var minArg int
 	var maxArg int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-big-int-column",
@@ -1395,6 +1421,9 @@ func newTablesDBUpdateBigIntColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateBigIntColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateBigIntColumnDescription(description))
 			}
 
 			result, err := service.UpdateBigIntColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -1419,6 +1448,7 @@ func newTablesDBUpdateBigIntColumnCommand() *cobra.Command {
 	cmd.Flags().IntVar(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().IntVar(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1429,6 +1459,7 @@ func newTablesDBCreateBooleanColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault bool
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-boolean-column",
@@ -1448,6 +1479,9 @@ func newTablesDBCreateBooleanColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateBooleanColumnArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateBooleanColumnDescription(description))
 			}
 
 			result, err := service.CreateBooleanColumn(databaseId, tableId, key, required, options...)
@@ -1471,6 +1505,7 @@ func newTablesDBCreateBooleanColumnCommand() *cobra.Command {
 	cmd.Flags().Lookup("xdefault").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1481,6 +1516,7 @@ func newTablesDBUpdateBooleanColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault bool
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-boolean-column",
@@ -1497,6 +1533,9 @@ func newTablesDBUpdateBooleanColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateBooleanColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateBooleanColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateBooleanColumnDescription(description))
 			}
 
 			result, err := service.UpdateBooleanColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -1519,6 +1558,7 @@ func newTablesDBUpdateBooleanColumnCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&xdefault, "xdefault", false, "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1529,6 +1569,7 @@ func newTablesDBCreateDatetimeColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-datetime-column",
@@ -1548,6 +1589,9 @@ func newTablesDBCreateDatetimeColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateDatetimeColumnArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDatetimeColumnDescription(description))
 			}
 
 			result, err := service.CreateDatetimeColumn(databaseId, tableId, key, required, options...)
@@ -1570,6 +1614,7 @@ func newTablesDBCreateDatetimeColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for the column in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1580,6 +1625,7 @@ func newTablesDBUpdateDatetimeColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-datetime-column",
@@ -1596,6 +1642,9 @@ func newTablesDBUpdateDatetimeColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateDatetimeColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateDatetimeColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDatetimeColumnDescription(description))
 			}
 
 			result, err := service.UpdateDatetimeColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -1618,6 +1667,7 @@ func newTablesDBUpdateDatetimeColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1628,6 +1678,7 @@ func newTablesDBCreateEmailColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-email-column",
@@ -1647,6 +1698,9 @@ func newTablesDBCreateEmailColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateEmailColumnArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateEmailColumnDescription(description))
 			}
 
 			result, err := service.CreateEmailColumn(databaseId, tableId, key, required, options...)
@@ -1669,6 +1723,7 @@ func newTablesDBCreateEmailColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1679,6 +1734,7 @@ func newTablesDBUpdateEmailColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-email-column",
@@ -1695,6 +1751,9 @@ func newTablesDBUpdateEmailColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateEmailColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateEmailColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateEmailColumnDescription(description))
 			}
 
 			result, err := service.UpdateEmailColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -1717,6 +1776,7 @@ func newTablesDBUpdateEmailColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1728,6 +1788,7 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-enum-column",
@@ -1747,6 +1808,9 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateEnumColumnArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateEnumColumnDescription(description))
 			}
 
 			result, err := service.CreateEnumColumn(databaseId, tableId, key, elements, required, options...)
@@ -1771,6 +1835,7 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1782,6 +1847,7 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-enum-column",
@@ -1798,6 +1864,9 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateEnumColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateEnumColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateEnumColumnDescription(description))
 			}
 
 			result, err := service.UpdateEnumColumn(databaseId, tableId, key, elements, required, xdefault, options...)
@@ -1822,6 +1891,7 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1834,6 +1904,7 @@ func newTablesDBCreateFloatColumnCommand() *cobra.Command {
 	var maxArg float64
 	var xdefault float64
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-float-column",
@@ -1860,6 +1931,9 @@ func newTablesDBCreateFloatColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateFloatColumnArray(array))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateFloatColumnDescription(description))
+			}
 
 			result, err := service.CreateFloatColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -1883,6 +1957,7 @@ func newTablesDBCreateFloatColumnCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&xdefault, "xdefault", 0, "Default value. Cannot be set when required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1895,6 +1970,7 @@ func newTablesDBUpdateFloatColumnCommand() *cobra.Command {
 	var minArg float64
 	var maxArg float64
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-float-column",
@@ -1917,6 +1993,9 @@ func newTablesDBUpdateFloatColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateFloatColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateFloatColumnDescription(description))
 			}
 
 			result, err := service.UpdateFloatColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -1941,6 +2020,7 @@ func newTablesDBUpdateFloatColumnCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().Float64Var(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -1953,6 +2033,7 @@ func newTablesDBCreateIntegerColumnCommand() *cobra.Command {
 	var maxArg int
 	var xdefault int
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-integer-column",
@@ -1979,6 +2060,9 @@ func newTablesDBCreateIntegerColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateIntegerColumnArray(array))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIntegerColumnDescription(description))
+			}
 
 			result, err := service.CreateIntegerColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2002,6 +2086,7 @@ func newTablesDBCreateIntegerColumnCommand() *cobra.Command {
 	cmd.Flags().IntVar(&xdefault, "xdefault", 0, "Default value. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2014,6 +2099,7 @@ func newTablesDBUpdateIntegerColumnCommand() *cobra.Command {
 	var minArg int
 	var maxArg int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-integer-column",
@@ -2036,6 +2122,9 @@ func newTablesDBUpdateIntegerColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateIntegerColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateIntegerColumnDescription(description))
 			}
 
 			result, err := service.UpdateIntegerColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -2060,6 +2149,7 @@ func newTablesDBUpdateIntegerColumnCommand() *cobra.Command {
 	cmd.Flags().IntVar(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().IntVar(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2070,6 +2160,7 @@ func newTablesDBCreateIpColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-ip-column",
@@ -2089,6 +2180,9 @@ func newTablesDBCreateIpColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateIpColumnArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIpColumnDescription(description))
 			}
 
 			result, err := service.CreateIpColumn(databaseId, tableId, key, required, options...)
@@ -2111,6 +2205,7 @@ func newTablesDBCreateIpColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2121,6 +2216,7 @@ func newTablesDBUpdateIpColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-ip-column",
@@ -2137,6 +2233,9 @@ func newTablesDBUpdateIpColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateIpColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateIpColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateIpColumnDescription(description))
 			}
 
 			result, err := service.UpdateIpColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -2159,6 +2258,7 @@ func newTablesDBUpdateIpColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2168,6 +2268,7 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 	var key string
 	var required bool
 	var xdefault []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-line-column",
@@ -2189,6 +2290,9 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateLineColumnDefault(xdefaultDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateLineColumnDescription(description))
+			}
 
 			result, err := service.CreateLineColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2208,6 +2312,7 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2218,6 +2323,7 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault []string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-line-column",
@@ -2242,6 +2348,9 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateLineColumnNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateLineColumnDescription(description))
+			}
 
 			result, err := service.UpdateLineColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2262,6 +2371,7 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2273,6 +2383,7 @@ func newTablesDBCreateLongtextColumnCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-longtext-column",
@@ -2295,6 +2406,9 @@ func newTablesDBCreateLongtextColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateLongtextColumnEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateLongtextColumnDescription(description))
 			}
 
 			result, err := service.CreateLongtextColumn(databaseId, tableId, key, required, options...)
@@ -2319,6 +2433,7 @@ func newTablesDBCreateLongtextColumnCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2329,6 +2444,7 @@ func newTablesDBUpdateLongtextColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-longtext-column",
@@ -2345,6 +2461,9 @@ func newTablesDBUpdateLongtextColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateLongtextColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateLongtextColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateLongtextColumnDescription(description))
 			}
 
 			result, err := service.UpdateLongtextColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -2367,6 +2486,7 @@ func newTablesDBUpdateLongtextColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2378,6 +2498,7 @@ func newTablesDBCreateMediumtextColumnCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-mediumtext-column",
@@ -2400,6 +2521,9 @@ func newTablesDBCreateMediumtextColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateMediumtextColumnEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateMediumtextColumnDescription(description))
 			}
 
 			result, err := service.CreateMediumtextColumn(databaseId, tableId, key, required, options...)
@@ -2424,6 +2548,7 @@ func newTablesDBCreateMediumtextColumnCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2434,6 +2559,7 @@ func newTablesDBUpdateMediumtextColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-mediumtext-column",
@@ -2450,6 +2576,9 @@ func newTablesDBUpdateMediumtextColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateMediumtextColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateMediumtextColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateMediumtextColumnDescription(description))
 			}
 
 			result, err := service.UpdateMediumtextColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -2472,6 +2601,7 @@ func newTablesDBUpdateMediumtextColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2481,6 +2611,7 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 	var key string
 	var required bool
 	var xdefault []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-point-column",
@@ -2502,6 +2633,9 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreatePointColumnDefault(xdefaultDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreatePointColumnDescription(description))
+			}
 
 			result, err := service.CreatePointColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2521,6 +2655,7 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2531,6 +2666,7 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault []string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-point-column",
@@ -2555,6 +2691,9 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdatePointColumnNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdatePointColumnDescription(description))
+			}
 
 			result, err := service.UpdatePointColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2575,6 +2714,7 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2584,6 +2724,7 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 	var key string
 	var required bool
 	var xdefault []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-polygon-column",
@@ -2605,6 +2746,9 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreatePolygonColumnDefault(xdefaultDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreatePolygonColumnDescription(description))
+			}
 
 			result, err := service.CreatePolygonColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2624,6 +2768,7 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2634,6 +2779,7 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault []string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-polygon-column",
@@ -2658,6 +2804,9 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdatePolygonColumnNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdatePolygonColumnDescription(description))
+			}
 
 			result, err := service.UpdatePolygonColumn(databaseId, tableId, key, required, options...)
 			if err != nil {
@@ -2678,6 +2827,7 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2690,6 +2840,7 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 	var key string
 	var twoWayKey string
 	var onDelete string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-relationship-column",
@@ -2716,6 +2867,9 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("on-delete") {
 				options = append(options, service.WithCreateRelationshipColumnOnDelete(onDelete))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateRelationshipColumnDescription(description))
+			}
 
 			result, err := service.CreateRelationshipColumn(databaseId, tableId, relatedTableId, typeArg, options...)
 			if err != nil {
@@ -2739,6 +2893,7 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
 	cmd.Flags().StringVar(&twoWayKey, "two-way-key", "", "Two Way Column Key.")
 	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2748,6 +2903,7 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 	var key string
 	var onDelete string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-relationship-column",
@@ -2768,6 +2924,9 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateRelationshipColumnNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateRelationshipColumnDescription(description))
+			}
 
 			result, err := service.UpdateRelationshipColumn(databaseId, tableId, key, options...)
 			if err != nil {
@@ -2786,6 +2945,7 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2798,6 +2958,7 @@ func newTablesDBCreateStringColumnCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-string-column",
@@ -2820,6 +2981,9 @@ func newTablesDBCreateStringColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateStringColumnEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateStringColumnDescription(description))
 			}
 
 			result, err := service.CreateStringColumn(databaseId, tableId, key, size, required, options...)
@@ -2846,6 +3010,7 @@ func newTablesDBCreateStringColumnCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2857,6 +3022,7 @@ func newTablesDBUpdateStringColumnCommand() *cobra.Command {
 	var xdefault string
 	var size int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-string-column",
@@ -2876,6 +3042,9 @@ func newTablesDBUpdateStringColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateStringColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateStringColumnDescription(description))
 			}
 
 			result, err := service.UpdateStringColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -2899,6 +3068,7 @@ func newTablesDBUpdateStringColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().IntVar(&size, "size", 0, "Maximum size of the string column.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2910,6 +3080,7 @@ func newTablesDBCreateTextColumnCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-text-column",
@@ -2932,6 +3103,9 @@ func newTablesDBCreateTextColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateTextColumnEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateTextColumnDescription(description))
 			}
 
 			result, err := service.CreateTextColumn(databaseId, tableId, key, required, options...)
@@ -2956,6 +3130,7 @@ func newTablesDBCreateTextColumnCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -2966,6 +3141,7 @@ func newTablesDBUpdateTextColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-text-column",
@@ -2982,6 +3158,9 @@ func newTablesDBUpdateTextColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateTextColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateTextColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateTextColumnDescription(description))
 			}
 
 			result, err := service.UpdateTextColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -3004,6 +3183,7 @@ func newTablesDBUpdateTextColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -3014,6 +3194,7 @@ func newTablesDBCreateUrlColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-url-column",
@@ -3033,6 +3214,9 @@ func newTablesDBCreateUrlColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateUrlColumnArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateUrlColumnDescription(description))
 			}
 
 			result, err := service.CreateUrlColumn(databaseId, tableId, key, required, options...)
@@ -3055,6 +3239,7 @@ func newTablesDBCreateUrlColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is column an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -3065,6 +3250,7 @@ func newTablesDBUpdateUrlColumnCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-url-column",
@@ -3081,6 +3267,9 @@ func newTablesDBUpdateUrlColumnCommand() *cobra.Command {
 			options := []tablesdb.UpdateUrlColumnOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateUrlColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateUrlColumnDescription(description))
 			}
 
 			result, err := service.UpdateUrlColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -3103,6 +3292,7 @@ func newTablesDBUpdateUrlColumnCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for column when not provided. Cannot be set when column is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -3115,6 +3305,7 @@ func newTablesDBCreateVarcharColumnCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-varchar-column",
@@ -3137,6 +3328,9 @@ func newTablesDBCreateVarcharColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateVarcharColumnEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVarcharColumnDescription(description))
 			}
 
 			result, err := service.CreateVarcharColumn(databaseId, tableId, key, size, required, options...)
@@ -3163,6 +3357,7 @@ func newTablesDBCreateVarcharColumnCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the column. Encryption enhances security by not storing any plain text values in the database. However, encrypted columns cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -3174,6 +3369,7 @@ func newTablesDBUpdateVarcharColumnCommand() *cobra.Command {
 	var xdefault string
 	var size int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-varchar-column",
@@ -3193,6 +3389,9 @@ func newTablesDBUpdateVarcharColumnCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateVarcharColumnNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVarcharColumnDescription(description))
 			}
 
 			result, err := service.UpdateVarcharColumn(databaseId, tableId, key, required, xdefault, options...)
@@ -3216,6 +3415,7 @@ func newTablesDBUpdateVarcharColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().IntVar(&size, "size", 0, "Maximum size of the varchar column.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
 
@@ -3380,6 +3580,7 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 	var columns []string
 	var orders []string
 	var lengths []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-index",
@@ -3404,6 +3605,9 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 			if cmd.Flags().Changed("lengths") {
 				options = append(options, service.WithCreateIndexLengths(lengthsDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIndexDescription(description))
+			}
 
 			result, err := service.CreateIndex(databaseId, tableId, key, typeArg, columns, options...)
 			if err != nil {
@@ -3426,6 +3630,7 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("columns")
 	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
 	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
 
@@ -3516,7 +3721,7 @@ func newTablesDBListRowsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list-rows",
-		Short: "Get a list of all the user's rows in a given table. You can use the query params to filter your results.\n\nRows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). They have no `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` or `$tableId` unless they select or group it, and neither does a right or full join row that no row of this table matched.",
+		Short: "Get a list of all the user's rows in a given table. You can use the query params to filter your results.\n\nRows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$tableId` unless they select or group it, and those of a right or full join row that no row of this table matched. SDK row models fill omitted system columns with empty values.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")

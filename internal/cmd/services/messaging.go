@@ -2773,6 +2773,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	var subscribe []string
 	var qos int
 	var expiry int
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-topic",
@@ -2796,6 +2797,9 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 			if cmd.Flags().Changed("expiry") {
 				options = append(options, service.WithCreateTopicExpiry(expiry))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateTopicDescription(description))
+			}
 
 			result, err := service.CreateTopic(topicId, name, options...)
 			if err != nil {
@@ -2813,6 +2817,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
 	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800). Null inherits the lowest expiry of the project's enabled Appwrite providers, or the 7-day ledger window if none sets one.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the topic.")
 	return cmd
 }
 
@@ -2850,6 +2855,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	var subscribe []string
 	var qos int
 	var expiry int
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-topic",
@@ -2876,6 +2882,9 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 			if cmd.Flags().Changed("expiry") {
 				options = append(options, service.WithUpdateTopicExpiry(expiry))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateTopicDescription(description))
+			}
 
 			result, err := service.UpdateTopic(topicId, options...)
 			if err != nil {
@@ -2892,6 +2901,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
 	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800). Null inherits the lowest expiry of the project's enabled Appwrite providers, or the 7-day ledger window if none sets one.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the topic.")
 	return cmd
 }
 

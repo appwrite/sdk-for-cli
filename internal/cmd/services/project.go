@@ -584,6 +584,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	var name string
 	var scopes []string
 	var expire string
+	var description string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -602,6 +603,9 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateKeyExpire(expire))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateKeyDescription(description))
+			}
 
 			result, err := service.UpdateKey(keyId, name, scopes, options...)
 			if err != nil {
@@ -619,6 +623,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the key.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4303,11 +4308,12 @@ func newProjectUpdatePasskeyPolicyCommand() *cobra.Command {
 
 func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 	var enabled bool
+	var denyList []string
 	var projectId string
 
 	cmd := &cobra.Command{
 		Use:   "update-password-dictionary-policy",
-		Short: "Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.",
+		Short: "Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.\n\nCustom denyList entries use case-sensitive equality and apply only while this policy is enabled. Omit denyList or pass null to preserve it, pass an array to replace it, or pass [] to clear it. Entries are stored without trimming or deduplication. Existing passwords remain valid for sign-in and password confirmation. The combined serialized project authentication configuration must fit within 16,384 characters, even when each list meets its entry limits.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -4316,7 +4322,13 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordDictionaryPolicy(enabled)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdatePasswordDictionaryPolicyOption{}
+			if cmd.Flags().Changed("deny-list") {
+				options = append(options, service.WithUpdatePasswordDictionaryPolicyDenyList(denyList))
+			}
+
+			result, err := service.UpdatePasswordDictionaryPolicy(enabled, options...)
 			if err != nil {
 				return sdk.WrapMutationError("PATCH", err)
 			}
@@ -4327,6 +4339,7 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password dictionary policy. Set to true if you want password change to block passwords in the dictionary, or false to allow them. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-sensitive equality. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4363,11 +4376,12 @@ func newProjectUpdatePasswordHistoryPolicyCommand() *cobra.Command {
 
 func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 	var enabled bool
+	var denyList []string
 	var projectId string
 
 	cmd := &cobra.Command{
 		Use:   "update-password-personal-data-policy",
-		Short: "Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.",
+		Short: "Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.\n\nCustom denyList entries use case-insensitive substring matching and apply only while this policy is enabled. Omit denyList or pass null to preserve it, pass an array to replace it, or pass [] to clear it. Entries are stored without trimming or deduplication. Existing passwords remain valid for sign-in and password confirmation. The combined serialized project authentication configuration must fit within 16,384 characters, even when each list meets its entry limits.\nPassword recovery also checks the recovered user profile, closing the previous gap in profile-based personal-data validation.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -4376,7 +4390,13 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.UpdatePasswordPersonalDataPolicy(enabled)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdatePasswordPersonalDataPolicyOption{}
+			if cmd.Flags().Changed("deny-list") {
+				options = append(options, service.WithUpdatePasswordPersonalDataPolicyDenyList(denyList))
+			}
+
+			result, err := service.UpdatePasswordPersonalDataPolicy(enabled, options...)
 			if err != nil {
 				return sdk.WrapMutationError("PATCH", err)
 			}
@@ -4387,6 +4407,7 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password personal data policy. Set to true if you want to block passwords including user's personal data, or false to allow it. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-insensitive substring matching. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -5142,6 +5163,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -5159,6 +5181,9 @@ func newProjectCreateVariableCommand() *cobra.Command {
 			options := []project.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVariableDescription(description))
 			}
 
 			result, err := service.CreateVariable(variableId, key, value, options...)
@@ -5178,6 +5203,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -5217,6 +5243,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 	var projectId string
 
 	cmd := &cobra.Command{
@@ -5241,6 +5268,9 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithUpdateVariableSecret(secret))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVariableDescription(description))
+			}
 
 			result, err := service.UpdateVariable(variableId, options...)
 			if err != nil {
@@ -5257,6 +5287,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only projects can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }

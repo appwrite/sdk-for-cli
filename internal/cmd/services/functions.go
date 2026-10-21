@@ -159,6 +159,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	var runtimeSpecification string
 	var deploymentRetention int
 	var interval int
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -233,6 +234,9 @@ func newFunctionsCreateCommand() *cobra.Command {
 			if cmd.Flags().Changed("interval") {
 				options = append(options, service.WithCreateInterval(interval))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
+			}
 
 			result, err := service.Create(functionId, name, runtime, options...)
 			if err != nil {
@@ -272,6 +276,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
 	return cmd
 }
 
@@ -400,6 +405,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	var runtimeSpecification string
 	var deploymentRetention int
 	var interval int
+	var description string
 	var emailEnabled bool
 
 	cmd := &cobra.Command{
@@ -478,6 +484,9 @@ func newFunctionsUpdateCommand() *cobra.Command {
 			if cmd.Flags().Changed("interval") {
 				options = append(options, service.WithUpdateInterval(interval))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
+			}
 			if cmd.Flags().Changed("email-enabled") {
 				options = append(options, service.WithUpdateEmailEnabled(emailEnabled))
 			}
@@ -519,6 +528,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule. When omitted, the current interval is kept unless schedule is set.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
 	cmd.Flags().BoolVar(&emailEnabled, "email-enabled", false, "Enable inbound email triggering for this function. When false or omitted on create, SMTP recipients are rejected. Opt-in; default is off.")
 	cmd.Flags().Lookup("email-enabled").NoOptDefVal = "true"
 	return cmd
@@ -1296,6 +1306,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-variable",
@@ -1312,6 +1323,9 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 			options := []functions.CreateVariableOption{}
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithCreateVariableSecret(secret))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVariableDescription(description))
 			}
 
 			result, err := service.CreateVariable(functionId, variableId, key, value, options...)
@@ -1333,6 +1347,7 @@ func newFunctionsCreateVariableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("value")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only functions can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	return cmd
 }
 
@@ -1373,6 +1388,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 	var key string
 	var value string
 	var secret bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-variable",
@@ -1396,6 +1412,9 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 			if cmd.Flags().Changed("secret") {
 				options = append(options, service.WithUpdateVariableSecret(secret))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVariableDescription(description))
+			}
 
 			result, err := service.UpdateVariable(functionId, variableId, options...)
 			if err != nil {
@@ -1414,6 +1433,7 @@ func newFunctionsUpdateVariableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&value, "value", "", "Variable value. Max length: 8192 chars.")
 	cmd.Flags().BoolVar(&secret, "secret", false, "Secret variables can be updated or deleted, but only functions can read them during build and runtime.")
 	cmd.Flags().Lookup("secret").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the variable.")
 	return cmd
 }
 

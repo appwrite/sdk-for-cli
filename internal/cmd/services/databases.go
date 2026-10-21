@@ -185,6 +185,7 @@ func newDatabasesCreateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -202,6 +203,9 @@ func newDatabasesCreateCommand() *cobra.Command {
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
+			}
 
 			result, err := service.Create(databaseId, name, options...)
 			if err != nil {
@@ -218,6 +222,7 @@ func newDatabasesCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is the database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	return cmd
 }
 
@@ -504,6 +509,7 @@ func newDatabasesUpdateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update",
@@ -524,6 +530,9 @@ func newDatabasesUpdateCommand() *cobra.Command {
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateEnabled(enabled))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
+			}
 
 			result, err := service.Update(databaseId, options...)
 			if err != nil {
@@ -539,6 +548,7 @@ func newDatabasesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Database name. Max length: 128 chars.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	return cmd
 }
 
@@ -666,6 +676,7 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 	var enabled bool
 	var attributes []string
 	var indexes []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-collection",
@@ -703,6 +714,9 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 			if cmd.Flags().Changed("indexes") {
 				options = append(options, service.WithCreateCollectionIndexes(indexesDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateCollectionDescription(description))
+			}
 
 			result, err := service.CreateCollection(databaseId, collectionId, name, options...)
 			if err != nil {
@@ -726,6 +740,7 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attribute definitions to create. Each attribute should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
 	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial, trigram), attributes (array of attribute keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
 
@@ -768,6 +783,7 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 	var documentSecurity bool
 	var enabled bool
 	var purge bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-collection",
@@ -797,6 +813,9 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 			if cmd.Flags().Changed("purge") {
 				options = append(options, service.WithUpdateCollectionPurge(purge))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateCollectionDescription(description))
+			}
 
 			result, err := service.UpdateCollection(databaseId, collectionId, options...)
 			if err != nil {
@@ -819,6 +838,7 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge all cached list responses for this collection as part of the update. Use this to force readers to see fresh data immediately instead of waiting for the cache TTL to expire.")
 	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
 
@@ -947,6 +967,7 @@ func newDatabasesCreateBigIntAttributeCommand() *cobra.Command {
 	var maxArg int
 	var xdefault int
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-big-int-attribute",
@@ -973,6 +994,9 @@ func newDatabasesCreateBigIntAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateBigIntAttributeArray(array))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateBigIntAttributeDescription(description))
+			}
 
 			result, err := service.CreateBigIntAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -996,6 +1020,7 @@ func newDatabasesCreateBigIntAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&xdefault, "xdefault", 0, "Default value. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1008,6 +1033,7 @@ func newDatabasesUpdateBigIntAttributeCommand() *cobra.Command {
 	var minArg int
 	var maxArg int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-big-int-attribute",
@@ -1030,6 +1056,9 @@ func newDatabasesUpdateBigIntAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateBigIntAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateBigIntAttributeDescription(description))
 			}
 
 			result, err := service.UpdateBigIntAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1054,6 +1083,7 @@ func newDatabasesUpdateBigIntAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().IntVar(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1064,6 +1094,7 @@ func newDatabasesCreateBooleanAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault bool
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-boolean-attribute",
@@ -1083,6 +1114,9 @@ func newDatabasesCreateBooleanAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateBooleanAttributeArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateBooleanAttributeDescription(description))
 			}
 
 			result, err := service.CreateBooleanAttribute(databaseId, collectionId, key, required, options...)
@@ -1106,6 +1140,7 @@ func newDatabasesCreateBooleanAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("xdefault").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1116,6 +1151,7 @@ func newDatabasesUpdateBooleanAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault bool
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-boolean-attribute",
@@ -1132,6 +1168,9 @@ func newDatabasesUpdateBooleanAttributeCommand() *cobra.Command {
 			options := []databases.UpdateBooleanAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateBooleanAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateBooleanAttributeDescription(description))
 			}
 
 			result, err := service.UpdateBooleanAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1154,6 +1193,7 @@ func newDatabasesUpdateBooleanAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&xdefault, "xdefault", false, "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1164,6 +1204,7 @@ func newDatabasesCreateDatetimeAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-datetime-attribute",
@@ -1183,6 +1224,9 @@ func newDatabasesCreateDatetimeAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateDatetimeAttributeArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDatetimeAttributeDescription(description))
 			}
 
 			result, err := service.CreateDatetimeAttribute(databaseId, collectionId, key, required, options...)
@@ -1205,6 +1249,7 @@ func newDatabasesCreateDatetimeAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for the attribute in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1215,6 +1260,7 @@ func newDatabasesUpdateDatetimeAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-datetime-attribute",
@@ -1231,6 +1277,9 @@ func newDatabasesUpdateDatetimeAttributeCommand() *cobra.Command {
 			options := []databases.UpdateDatetimeAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateDatetimeAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDatetimeAttributeDescription(description))
 			}
 
 			result, err := service.UpdateDatetimeAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1253,6 +1302,7 @@ func newDatabasesUpdateDatetimeAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1263,6 +1313,7 @@ func newDatabasesCreateEmailAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-email-attribute",
@@ -1282,6 +1333,9 @@ func newDatabasesCreateEmailAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateEmailAttributeArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateEmailAttributeDescription(description))
 			}
 
 			result, err := service.CreateEmailAttribute(databaseId, collectionId, key, required, options...)
@@ -1304,6 +1358,7 @@ func newDatabasesCreateEmailAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1314,6 +1369,7 @@ func newDatabasesUpdateEmailAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-email-attribute",
@@ -1330,6 +1386,9 @@ func newDatabasesUpdateEmailAttributeCommand() *cobra.Command {
 			options := []databases.UpdateEmailAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateEmailAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateEmailAttributeDescription(description))
 			}
 
 			result, err := service.UpdateEmailAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1352,6 +1411,7 @@ func newDatabasesUpdateEmailAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1363,6 +1423,7 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-enum-attribute",
@@ -1382,6 +1443,9 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateEnumAttributeArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateEnumAttributeDescription(description))
 			}
 
 			result, err := service.CreateEnumAttribute(databaseId, collectionId, key, elements, required, options...)
@@ -1406,6 +1470,7 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1417,6 +1482,7 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-enum-attribute",
@@ -1433,6 +1499,9 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 			options := []databases.UpdateEnumAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateEnumAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateEnumAttributeDescription(description))
 			}
 
 			result, err := service.UpdateEnumAttribute(databaseId, collectionId, key, elements, required, xdefault, options...)
@@ -1457,6 +1526,7 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1469,6 +1539,7 @@ func newDatabasesCreateFloatAttributeCommand() *cobra.Command {
 	var maxArg float64
 	var xdefault float64
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-float-attribute",
@@ -1495,6 +1566,9 @@ func newDatabasesCreateFloatAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateFloatAttributeArray(array))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateFloatAttributeDescription(description))
+			}
 
 			result, err := service.CreateFloatAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -1518,6 +1592,7 @@ func newDatabasesCreateFloatAttributeCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&xdefault, "xdefault", 0, "Default value. Cannot be set when required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1530,6 +1605,7 @@ func newDatabasesUpdateFloatAttributeCommand() *cobra.Command {
 	var minArg float64
 	var maxArg float64
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-float-attribute",
@@ -1552,6 +1628,9 @@ func newDatabasesUpdateFloatAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateFloatAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateFloatAttributeDescription(description))
 			}
 
 			result, err := service.UpdateFloatAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1576,6 +1655,7 @@ func newDatabasesUpdateFloatAttributeCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&minArg, "min", 0, "Minimum value.")
 	cmd.Flags().Float64Var(&maxArg, "max", 0, "Maximum value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1588,6 +1668,7 @@ func newDatabasesCreateIntegerAttributeCommand() *cobra.Command {
 	var maxArg int
 	var xdefault int
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-integer-attribute",
@@ -1614,6 +1695,9 @@ func newDatabasesCreateIntegerAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateIntegerAttributeArray(array))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIntegerAttributeDescription(description))
+			}
 
 			result, err := service.CreateIntegerAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -1637,6 +1721,7 @@ func newDatabasesCreateIntegerAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&xdefault, "xdefault", 0, "Default value. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1649,6 +1734,7 @@ func newDatabasesUpdateIntegerAttributeCommand() *cobra.Command {
 	var minArg int
 	var maxArg int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-integer-attribute",
@@ -1671,6 +1757,9 @@ func newDatabasesUpdateIntegerAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateIntegerAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateIntegerAttributeDescription(description))
 			}
 
 			result, err := service.UpdateIntegerAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1695,6 +1784,7 @@ func newDatabasesUpdateIntegerAttributeCommand() *cobra.Command {
 	cmd.Flags().IntVar(&minArg, "min", 0, "Minimum value")
 	cmd.Flags().IntVar(&maxArg, "max", 0, "Maximum value")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1705,6 +1795,7 @@ func newDatabasesCreateIpAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-ip-attribute",
@@ -1724,6 +1815,9 @@ func newDatabasesCreateIpAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateIpAttributeArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIpAttributeDescription(description))
 			}
 
 			result, err := service.CreateIpAttribute(databaseId, collectionId, key, required, options...)
@@ -1746,6 +1840,7 @@ func newDatabasesCreateIpAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1756,6 +1851,7 @@ func newDatabasesUpdateIpAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-ip-attribute",
@@ -1772,6 +1868,9 @@ func newDatabasesUpdateIpAttributeCommand() *cobra.Command {
 			options := []databases.UpdateIpAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateIpAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateIpAttributeDescription(description))
 			}
 
 			result, err := service.UpdateIpAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -1794,6 +1893,7 @@ func newDatabasesUpdateIpAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1803,6 +1903,7 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 	var key string
 	var required bool
 	var xdefault []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-line-attribute",
@@ -1824,6 +1925,9 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreateLineAttributeDefault(xdefaultDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateLineAttributeDescription(description))
+			}
 
 			result, err := service.CreateLineAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -1843,6 +1947,7 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1853,6 +1958,7 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault []string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-line-attribute",
@@ -1877,6 +1983,9 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateLineAttributeNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateLineAttributeDescription(description))
+			}
 
 			result, err := service.UpdateLineAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -1897,6 +2006,7 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1908,6 +2018,7 @@ func newDatabasesCreateLongtextAttributeCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-longtext-attribute",
@@ -1930,6 +2041,9 @@ func newDatabasesCreateLongtextAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateLongtextAttributeEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateLongtextAttributeDescription(description))
 			}
 
 			result, err := service.CreateLongtextAttribute(databaseId, collectionId, key, required, options...)
@@ -1954,6 +2068,7 @@ func newDatabasesCreateLongtextAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -1964,6 +2079,7 @@ func newDatabasesUpdateLongtextAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-longtext-attribute",
@@ -1980,6 +2096,9 @@ func newDatabasesUpdateLongtextAttributeCommand() *cobra.Command {
 			options := []databases.UpdateLongtextAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateLongtextAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateLongtextAttributeDescription(description))
 			}
 
 			result, err := service.UpdateLongtextAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -2002,6 +2121,7 @@ func newDatabasesUpdateLongtextAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2013,6 +2133,7 @@ func newDatabasesCreateMediumtextAttributeCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-mediumtext-attribute",
@@ -2035,6 +2156,9 @@ func newDatabasesCreateMediumtextAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateMediumtextAttributeEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateMediumtextAttributeDescription(description))
 			}
 
 			result, err := service.CreateMediumtextAttribute(databaseId, collectionId, key, required, options...)
@@ -2059,6 +2183,7 @@ func newDatabasesCreateMediumtextAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2069,6 +2194,7 @@ func newDatabasesUpdateMediumtextAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-mediumtext-attribute",
@@ -2085,6 +2211,9 @@ func newDatabasesUpdateMediumtextAttributeCommand() *cobra.Command {
 			options := []databases.UpdateMediumtextAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateMediumtextAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateMediumtextAttributeDescription(description))
 			}
 
 			result, err := service.UpdateMediumtextAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -2107,6 +2236,7 @@ func newDatabasesUpdateMediumtextAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2116,6 +2246,7 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 	var key string
 	var required bool
 	var xdefault []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-point-attribute",
@@ -2137,6 +2268,9 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreatePointAttributeDefault(xdefaultDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreatePointAttributeDescription(description))
+			}
 
 			result, err := service.CreatePointAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -2156,6 +2290,7 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2166,6 +2301,7 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault []string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-point-attribute",
@@ -2190,6 +2326,9 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdatePointAttributeNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdatePointAttributeDescription(description))
+			}
 
 			result, err := service.UpdatePointAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -2210,6 +2349,7 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2219,6 +2359,7 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 	var key string
 	var required bool
 	var xdefault []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-polygon-attribute",
@@ -2240,6 +2381,9 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("xdefault") {
 				options = append(options, service.WithCreatePolygonAttributeDefault(xdefaultDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreatePolygonAttributeDescription(description))
+			}
 
 			result, err := service.CreatePolygonAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -2259,6 +2403,7 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2269,6 +2414,7 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault []string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-polygon-attribute",
@@ -2293,6 +2439,9 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdatePolygonAttributeNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdatePolygonAttributeDescription(description))
+			}
 
 			result, err := service.UpdatePolygonAttribute(databaseId, collectionId, key, required, options...)
 			if err != nil {
@@ -2313,6 +2462,7 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("required")
 	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2325,6 +2475,7 @@ func newDatabasesCreateRelationshipAttributeCommand() *cobra.Command {
 	var key string
 	var twoWayKey string
 	var onDelete string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-relationship-attribute",
@@ -2351,6 +2502,9 @@ func newDatabasesCreateRelationshipAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("on-delete") {
 				options = append(options, service.WithCreateRelationshipAttributeOnDelete(onDelete))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateRelationshipAttributeDescription(description))
+			}
 
 			result, err := service.CreateRelationshipAttribute(databaseId, collectionId, relatedCollectionId, typeArg, options...)
 			if err != nil {
@@ -2374,6 +2528,7 @@ func newDatabasesCreateRelationshipAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&key, "key", "", "Attribute Key.")
 	cmd.Flags().StringVar(&twoWayKey, "two-way-key", "", "Two Way Attribute Key.")
 	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2383,6 +2538,7 @@ func newDatabasesUpdateRelationshipAttributeCommand() *cobra.Command {
 	var key string
 	var onDelete string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-relationship-attribute",
@@ -2403,6 +2559,9 @@ func newDatabasesUpdateRelationshipAttributeCommand() *cobra.Command {
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateRelationshipAttributeNewKey(newKey))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateRelationshipAttributeDescription(description))
+			}
 
 			result, err := service.UpdateRelationshipAttribute(databaseId, collectionId, key, options...)
 			if err != nil {
@@ -2421,6 +2580,7 @@ func newDatabasesUpdateRelationshipAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&onDelete, "on-delete", "", "Delete constraint. Possible values are: cascade, restrict, setNull.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2433,6 +2593,7 @@ func newDatabasesCreateStringAttributeCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-string-attribute",
@@ -2455,6 +2616,9 @@ func newDatabasesCreateStringAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateStringAttributeEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateStringAttributeDescription(description))
 			}
 
 			result, err := service.CreateStringAttribute(databaseId, collectionId, key, size, required, options...)
@@ -2481,6 +2645,7 @@ func newDatabasesCreateStringAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2492,6 +2657,7 @@ func newDatabasesUpdateStringAttributeCommand() *cobra.Command {
 	var xdefault string
 	var size int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-string-attribute",
@@ -2511,6 +2677,9 @@ func newDatabasesUpdateStringAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateStringAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateStringAttributeDescription(description))
 			}
 
 			result, err := service.UpdateStringAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -2534,6 +2703,7 @@ func newDatabasesUpdateStringAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().IntVar(&size, "size", 0, "Maximum size of the string attribute.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2545,6 +2715,7 @@ func newDatabasesCreateTextAttributeCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-text-attribute",
@@ -2567,6 +2738,9 @@ func newDatabasesCreateTextAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateTextAttributeEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateTextAttributeDescription(description))
 			}
 
 			result, err := service.CreateTextAttribute(databaseId, collectionId, key, required, options...)
@@ -2591,6 +2765,7 @@ func newDatabasesCreateTextAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2601,6 +2776,7 @@ func newDatabasesUpdateTextAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-text-attribute",
@@ -2617,6 +2793,9 @@ func newDatabasesUpdateTextAttributeCommand() *cobra.Command {
 			options := []databases.UpdateTextAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateTextAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateTextAttributeDescription(description))
 			}
 
 			result, err := service.UpdateTextAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -2639,6 +2818,7 @@ func newDatabasesUpdateTextAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2649,6 +2829,7 @@ func newDatabasesCreateUrlAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var array bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-url-attribute",
@@ -2668,6 +2849,9 @@ func newDatabasesCreateUrlAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("array") {
 				options = append(options, service.WithCreateUrlAttributeArray(array))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateUrlAttributeDescription(description))
 			}
 
 			result, err := service.CreateUrlAttribute(databaseId, collectionId, key, required, options...)
@@ -2690,6 +2874,7 @@ func newDatabasesCreateUrlAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	cmd.Flags().BoolVar(&array, "array", false, "Is attribute an array?")
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2700,6 +2885,7 @@ func newDatabasesUpdateUrlAttributeCommand() *cobra.Command {
 	var required bool
 	var xdefault string
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-url-attribute",
@@ -2716,6 +2902,9 @@ func newDatabasesUpdateUrlAttributeCommand() *cobra.Command {
 			options := []databases.UpdateUrlAttributeOption{}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateUrlAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateUrlAttributeDescription(description))
 			}
 
 			result, err := service.UpdateUrlAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -2738,6 +2927,7 @@ func newDatabasesUpdateUrlAttributeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&xdefault, "xdefault", "", "Default value for attribute when not provided. Cannot be set when attribute is required.")
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2750,6 +2940,7 @@ func newDatabasesCreateVarcharAttributeCommand() *cobra.Command {
 	var xdefault string
 	var array bool
 	var encrypt bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-varchar-attribute",
@@ -2772,6 +2963,9 @@ func newDatabasesCreateVarcharAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("encrypt") {
 				options = append(options, service.WithCreateVarcharAttributeEncrypt(encrypt))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateVarcharAttributeDescription(description))
 			}
 
 			result, err := service.CreateVarcharAttribute(databaseId, collectionId, key, size, required, options...)
@@ -2798,6 +2992,7 @@ func newDatabasesCreateVarcharAttributeCommand() *cobra.Command {
 	cmd.Flags().Lookup("array").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&encrypt, "encrypt", false, "Toggle encryption for the attribute. Encryption enhances security by not storing any plain text values in the database. However, encrypted attributes cannot be queried.")
 	cmd.Flags().Lookup("encrypt").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2809,6 +3004,7 @@ func newDatabasesUpdateVarcharAttributeCommand() *cobra.Command {
 	var xdefault string
 	var size int
 	var newKey string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-varchar-attribute",
@@ -2828,6 +3024,9 @@ func newDatabasesUpdateVarcharAttributeCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("new-key") {
 				options = append(options, service.WithUpdateVarcharAttributeNewKey(newKey))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateVarcharAttributeDescription(description))
 			}
 
 			result, err := service.UpdateVarcharAttribute(databaseId, collectionId, key, required, xdefault, options...)
@@ -2851,6 +3050,7 @@ func newDatabasesUpdateVarcharAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("xdefault")
 	cmd.Flags().IntVar(&size, "size", 0, "Maximum size of the varchar attribute.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Attribute Key.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
 
@@ -2941,7 +3141,7 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list-documents",
-		Short: "Get a list of all the user's documents in a given collection. You can use the query params to filter your results.\n\nDocuments returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). They have no `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` or `$collectionId` unless they select or group it, and neither does a right or full join document that no document of this collection matched.",
+		Short: "Get a list of all the user's documents in a given collection. You can use the query params to filter your results.\n\nDocuments returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$collectionId` unless they select or group it, and those of a right or full join document that no document of this collection matched. SDK document models fill omitted system attributes with empty values.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -3855,6 +4055,7 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 	var attributes []string
 	var orders []string
 	var lengths []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-index",
@@ -3879,6 +4080,9 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 			if cmd.Flags().Changed("lengths") {
 				options = append(options, service.WithCreateIndexLengths(lengthsDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIndexDescription(description))
+			}
 
 			result, err := service.CreateIndex(databaseId, collectionId, key, typeArg, attributes, options...)
 			if err != nil {
@@ -3901,6 +4105,7 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("attributes")
 	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
 	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
 

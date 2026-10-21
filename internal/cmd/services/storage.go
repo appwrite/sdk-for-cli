@@ -107,7 +107,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations, stripMetadata")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -134,6 +134,8 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	var encryption bool
 	var antivirus bool
 	var transformations bool
+	var description string
+	var stripMetadata bool
 
 	cmd := &cobra.Command{
 		Use:   "create-bucket",
@@ -175,6 +177,12 @@ func newStorageCreateBucketCommand() *cobra.Command {
 			if cmd.Flags().Changed("transformations") {
 				options = append(options, service.WithCreateBucketTransformations(transformations))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateBucketDescription(description))
+			}
+			if cmd.Flags().Changed("strip-metadata") {
+				options = append(options, service.WithCreateBucketStripMetadata(stripMetadata))
+			}
 
 			result, err := service.CreateBucket(bucketId, name, options...)
 			if err != nil {
@@ -203,6 +211,9 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&transformations, "transformations", false, "Are image transformations enabled?")
 	cmd.Flags().Lookup("transformations").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the bucket.")
+	cmd.Flags().BoolVar(&stripMetadata, "strip-metadata", false, "Remove metadata such as location, device and capture time from uploaded images. The color profile and orientation are kept. For file size above 20MB metadata is not removed even if it's enabled.")
+	cmd.Flags().Lookup("strip-metadata").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -246,6 +257,8 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	var encryption bool
 	var antivirus bool
 	var transformations bool
+	var description string
+	var stripMetadata bool
 
 	cmd := &cobra.Command{
 		Use:   "update-bucket",
@@ -287,6 +300,12 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 			if cmd.Flags().Changed("transformations") {
 				options = append(options, service.WithUpdateBucketTransformations(transformations))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateBucketDescription(description))
+			}
+			if cmd.Flags().Changed("strip-metadata") {
+				options = append(options, service.WithUpdateBucketStripMetadata(stripMetadata))
+			}
 
 			result, err := service.UpdateBucket(bucketId, name, options...)
 			if err != nil {
@@ -315,6 +334,9 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&transformations, "transformations", false, "Are image transformations enabled?")
 	cmd.Flags().Lookup("transformations").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the bucket.")
+	cmd.Flags().BoolVar(&stripMetadata, "strip-metadata", false, "Remove metadata such as location, device and capture time from uploaded images. The color profile and orientation are kept. For file size above 20MB metadata is not removed even if it's enabled. By default, the current setting is kept.")
+	cmd.Flags().Lookup("strip-metadata").NoOptDefVal = "true"
 	return cmd
 }
 

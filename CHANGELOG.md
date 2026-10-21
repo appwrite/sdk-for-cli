@@ -1,5 +1,15 @@
 # Change Log
 
+## 28.8.0
+
+* Added: `account list-memberships`
+* Added: `--description` on create and update commands for databases, collections, tables, attributes, columns, indexes, buckets, functions, sites, variables, topics, webhooks and keys
+* Added: `--deny-list` on `project update-password-dictionary-policy` and `update-password-personal-data-policy`
+* Added: `--strip-metadata` on `storage create-bucket` and `update-bucket`
+* Added: `--self-signed` on `login` to accept a self-signed certificate for that sign-in
+* Fixed: `pull all` and `push all` skip console-only resources such as project settings with a warning when only an API key is configured, instead of stopping
+* Updated: built against sdk-for-go v7.14.0
+
 ## 28.7.0
 
 * Added: `appwrite types -l python` generates Pydantic models for tables

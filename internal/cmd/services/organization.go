@@ -960,6 +960,7 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 	var name string
 	var scopes []string
 	var expire string
+	var description string
 	var organizationId string
 
 	cmd := &cobra.Command{
@@ -977,6 +978,9 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 			options := []organization.UpdateProjectKeyOption{}
 			if cmd.Flags().Changed("expire") {
 				options = append(options, service.WithUpdateProjectKeyExpire(expire))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateProjectKeyDescription(description))
 			}
 
 			result, err := service.UpdateProjectKey(projectId, keyId, name, scopes, options...)
@@ -997,6 +1001,7 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the key.")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
 	return cmd
 }

@@ -146,6 +146,7 @@ func newDocumentsDBCreateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 	var specification string
 	var replicas int
 	var syncMode string
@@ -165,6 +166,9 @@ func newDocumentsDBCreateCommand() *cobra.Command {
 			options := []documentsdb.CreateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithCreateEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateDescription(description))
 			}
 			if cmd.Flags().Changed("specification") {
 				options = append(options, service.WithCreateSpecification(specification))
@@ -191,6 +195,7 @@ func newDocumentsDBCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is the database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Database specification. Defaults to `serverless`, which creates the database on the shared pool. Any other value provisions a dedicated database on that specification.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5) for the dedicated database backing this database. Requires a dedicated `specification`; must be 0 for a serverless database. High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode for the dedicated database backing this database. Requires a dedicated `specification`; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.")
@@ -505,6 +510,7 @@ func newDocumentsDBUpdateCommand() *cobra.Command {
 	var databaseId string
 	var name string
 	var enabled bool
+	var description string
 	var specification string
 	var replicas int
 	var syncMode string
@@ -524,6 +530,9 @@ func newDocumentsDBUpdateCommand() *cobra.Command {
 			options := []documentsdb.UpdateOption{}
 			if cmd.Flags().Changed("enabled") {
 				options = append(options, service.WithUpdateEnabled(enabled))
+			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateDescription(description))
 			}
 			if cmd.Flags().Changed("specification") {
 				options = append(options, service.WithUpdateSpecification(specification))
@@ -550,6 +559,7 @@ func newDocumentsDBUpdateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is database enabled? When set to 'disabled', users cannot access the database but Server SDKs with an API key can still read and write to the database. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the database.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Database specification. Resizing between dedicated specifications changes cpu, memory, storage and the connection ceiling via a rolling cutover with zero downtime. Moving a `serverless` database onto a dedicated specification is a data migration, not a resize.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5) for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification. High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode for the dedicated database backing this database. Only valid when the database is backed by a dedicated specification; the mode is only in force once there is at least one replica. Allowed values: async, sync, quorum.")
@@ -680,6 +690,7 @@ func newDocumentsDBCreateCollectionCommand() *cobra.Command {
 	var enabled bool
 	var attributes []string
 	var indexes []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-collection",
@@ -717,6 +728,9 @@ func newDocumentsDBCreateCollectionCommand() *cobra.Command {
 			if cmd.Flags().Changed("indexes") {
 				options = append(options, service.WithCreateCollectionIndexes(indexesDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateCollectionDescription(description))
+			}
 
 			result, err := service.CreateCollection(databaseId, collectionId, name, options...)
 			if err != nil {
@@ -740,6 +754,7 @@ func newDocumentsDBCreateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attribute definitions to create. Each attribute should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
 	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial), attributes (array of attribute keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
 
@@ -782,6 +797,7 @@ func newDocumentsDBUpdateCollectionCommand() *cobra.Command {
 	var documentSecurity bool
 	var enabled bool
 	var purge bool
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "update-collection",
@@ -808,6 +824,9 @@ func newDocumentsDBUpdateCollectionCommand() *cobra.Command {
 			if cmd.Flags().Changed("purge") {
 				options = append(options, service.WithUpdateCollectionPurge(purge))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithUpdateCollectionDescription(description))
+			}
 
 			result, err := service.UpdateCollection(databaseId, collectionId, name, options...)
 			if err != nil {
@@ -831,6 +850,7 @@ func newDocumentsDBUpdateCollectionCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge all cached list responses for this collection as part of the update. Use this to force readers to see fresh data immediately instead of waiting for the cache TTL to expire.")
 	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
 
@@ -1798,6 +1818,7 @@ func newDocumentsDBCreateIndexCommand() *cobra.Command {
 	var attributes []string
 	var orders []string
 	var lengths []string
+	var description string
 
 	cmd := &cobra.Command{
 		Use:   "create-index",
@@ -1822,6 +1843,9 @@ func newDocumentsDBCreateIndexCommand() *cobra.Command {
 			if cmd.Flags().Changed("lengths") {
 				options = append(options, service.WithCreateIndexLengths(lengthsDecoded))
 			}
+			if cmd.Flags().Changed("description") {
+				options = append(options, service.WithCreateIndexDescription(description))
+			}
 
 			result, err := service.CreateIndex(databaseId, collectionId, key, typeArg, attributes, options...)
 			if err != nil {
@@ -1844,6 +1868,7 @@ func newDocumentsDBCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("attributes")
 	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
 	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
 
