@@ -120,7 +120,7 @@ verifyMacOSCodeSignature() {
 downloadBinary() {
     echo "[2/5] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="28.8.0"
+    GITHUB_LATEST_VERSION="28.9.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -131,6 +131,34 @@ downloadBinary() {
         exit 1
     fi
     curl -L -o $APPWRITE_TEMP_NAME $GITHUB_URL
+    printSuccess
+
+    verifyChecksum
+}
+
+verifyChecksum() {
+    printf "${GREEN}🔐 Verifying checksum ... ${NC}\n"
+
+    CHECKSUMS_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/checksums.txt"
+    EXPECTED_SHA256=$(curl -fsSL "$CHECKSUMS_URL" | awk -v file="$GITHUB_FILE" '$2 == file { print $1 }')
+    if [ -z "$EXPECTED_SHA256" ]; then
+        printf "${RED}❌ Couldn't find a checksum for $GITHUB_FILE in $CHECKSUMS_URL ${NC}\n"
+        rm -f $APPWRITE_TEMP_NAME
+        exit 1
+    fi
+
+    # Linux ships sha256sum, macOS ships shasum.
+    if command -v sha256sum >/dev/null 2>&1; then
+        ACTUAL_SHA256=$(sha256sum $APPWRITE_TEMP_NAME | awk '{ print $1 }')
+    else
+        ACTUAL_SHA256=$(shasum -a 256 $APPWRITE_TEMP_NAME | awk '{ print $1 }')
+    fi
+
+    if [ "$EXPECTED_SHA256" != "$ACTUAL_SHA256" ]; then
+        printf "${RED}❌ Checksum mismatch for $GITHUB_FILE: expected $EXPECTED_SHA256, got $ACTUAL_SHA256 ${NC}\n"
+        rm -f $APPWRITE_TEMP_NAME
+        exit 1
+    fi
     printSuccess
 }
 

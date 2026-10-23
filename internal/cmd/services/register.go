@@ -20,6 +20,7 @@ func Register(root *cobra.Command) {
 	root.AddCommand(NewGraphqlCommand())
 	root.AddCommand(NewLocaleCommand())
 	root.AddCommand(NewMessagingCommand())
+	root.AddCommand(NewMigrationsCommand())
 	root.AddCommand(NewMongoCommand())
 	root.AddCommand(NewMysqlCommand())
 	root.AddCommand(NewOauth2Command())
