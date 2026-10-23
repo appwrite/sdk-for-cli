@@ -1,12 +1,12 @@
 module github.com/appwrite/sdk-for-cli
 
-go 1.26.5
+go 1.26.10
 
 // Direct dependencies only. Run `go mod tidy` after generation to resolve the
 // indirect set and refresh go.sum -- go.mod is regenerated from this template,
 // so anything added by hand to the generated file is lost on the next run.
 require (
-	github.com/appwrite/sdk-for-go/v7 v7.14.0
+	github.com/appwrite/sdk-for-go/v7 v7.15.0
 	github.com/charmbracelet/huh v1.0.0
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/charmbracelet/x/ansi v0.10.1

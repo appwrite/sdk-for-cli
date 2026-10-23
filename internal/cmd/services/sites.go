@@ -276,7 +276,7 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.")
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
-	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the site.")
 	return cmd
@@ -527,7 +527,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.")
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
-	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
 	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the site.")
 	return cmd

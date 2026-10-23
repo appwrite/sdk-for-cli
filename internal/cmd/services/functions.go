@@ -274,7 +274,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.")
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the function deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
-	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
 	return cmd
@@ -526,7 +526,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.")
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the function deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the function executions.")
-	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 means all deployments will be kept.")
+	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule. When omitted, the current interval is kept unless schedule is set.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
 	cmd.Flags().BoolVar(&emailEnabled, "email-enabled", false, "Enable inbound email triggering for this function. When false or omitted on create, SMTP recipients are rejected. Opt-in; default is off.")

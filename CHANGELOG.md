@@ -1,5 +1,15 @@
 # Change Log
 
+## 28.9.0
+
+* Added: `migrations` commands for provider reports, imports, exports, retries, and migration management
+* Fixed: shell installer verified downloaded binaries against release checksums
+* Fixed: rejected incomplete JSON and trailing content before rewriting project and included configs
+* Fixed: respected Unicode characters, escapes and negations in deployment ignore patterns
+* Updated: required patched Go `1.26.10` when building the CLI from source
+* Updated: WAF command help covered request content and session age conditions
+* Updated: built against Go SDK `v7.15.0`
+
 ## 28.8.0
 
 * Added: `account list-memberships`
