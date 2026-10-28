@@ -1,5 +1,20 @@
 # Change Log
 
+## 28.10.0
+
+* Breaking: removed `migrations get-appwrite-report`, which the Go SDK no longer provides
+* Added: `project delete-sessions` to sign out every user in the project
+* Added: `project update-deny-realtime-guests-policy`
+* Added: `--resources` on `project create-environment` to choose what the environment copies
+* Fixed: an API key is no longer carried to a newly configured endpoint
+* Fixed: self-signed certificate trust stays with the server it was granted for, including trust saved by older CLI versions
+* Fixed: `appwrite run` binds the local runtime to loopback only
+* Fixed: the shell installer downloads into a private temporary directory
+* Fixed: `login --switch` is only suggested for signed-in sessions
+* Fixed: path parameters are percent-encoded as one segment; `.` and `..` are refused
+* Updated: built against Go SDK `v7.16.0`, which sends response format `2.6.2`
+* Updated: password hash examples for `users create-argon-2-user`, `create-bcrypt-user` and `create-ph-pass-user` use valid hashes
+
 ## 28.9.0
 
 * Added: `migrations` commands for provider reports, imports, exports, retries, and migration management

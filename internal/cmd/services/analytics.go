@@ -344,7 +344,7 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property ID.")
 	_ = cmd.MarkFlagRequired("property-id")
-	cmd.Flags().StringVar(&name, "name", "", "Event name. \"pageview\" is just a conventional event name; events are not modeled specially.")
+	cmd.Flags().StringVar(&name, "name", "", "Event name. \"pageview\" and \"screen_view\" are counted as views, every other name is a custom event.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&url, "url", "", "Full page URL or screen identifier.")
 	_ = cmd.MarkFlagRequired("url")
@@ -380,7 +380,7 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list-metrics",
-		Short: "Read analytics metrics (visitors, sessions, pageviews, events, bounceRate, …) for a property over a date range.\n\nThree response shapes, chosen by `dimensions[]` and `interval`:\n- Neither: one row aggregating the whole window, with `value` and `date` null. Only this shape carries `pageviews`, `visits`, `bounceRate`, `visitDuration`, `viewsPerVisit`, `scrollDepth` and `engagementTime`.\n- `dimensions[]`: one row per dimension value, ranked by visitors, with `value` set and `date` null.\n- `interval`: one row per time bucket in chronological order, with `date` set and `value` null.\n\nCombining `dimensions[]` with `interval` is not supported yet. `queries[]` filters the underlying events using standard Utopia query syntax.",
+		Short: "Read analytics metrics (visitors, sessions, pageviews, events, bounceRate, …) for a property over a date range.\n\nThree response shapes, chosen by `dimensions[]` and `interval`:\n- Neither: one row aggregating the whole window, with `value` and `date` null. Only this shape carries `visits`, `bounceRate`, `visitDuration`, `viewsPerVisit`, `scrollDepth` and `engagementTime`.\n- `dimensions[]`: one row per dimension value, ranked by visitors, with `value` set and `date` null.\n- `interval`: one row per time bucket in chronological order, with `date` set and `value` null.\n\n`pageviews` is carried by the flat aggregate and by `interval`, but not by a breakdown.\n\nCombining `dimensions[]` with `interval` is not supported yet. `queries[]` filters the underlying events using standard Utopia query syntax.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -449,9 +449,9 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
 	_ = cmd.MarkFlagRequired("property-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Up to 10 filter queries in Utopia syntax. Allowed attributes: country, region, city, browser, operatingSystem, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, botName, botCategory, eventName. page, eventName are only accepted alongside `interval`, or with a breakdown on a dimension other than entryPage, exitPage. Allowed methods: equal, notEqual, contains, startsWith, endsWith. Example: `queries[]=equal(\"country\", [\"US\"])`.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Up to 10 filter queries in Utopia syntax. Allowed attributes: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, botName, botCategory, eventName. page, eventName are only accepted alongside `interval`, or with a breakdown on a dimension other than entryPage, exitPage. Allowed methods: equal, notEqual, contains, startsWith, endsWith. Example: `queries[]=equal(\"country\", [\"US\"])`.")
 	cmd.Flags().StringVar(&interval, "interval", "", "Time bucket size. Omit (null) for a flat aggregate over the whole window. Allowed: 1h, 1d, 1w, 1m.")
-	cmd.Flags().StringArrayVar(&dimensions, "dimensions", nil, "Dimension to break the metrics down by. One at most for now; the parameter is a list so that cap can be raised without a breaking change. Allowed: country, region, city, browser, operatingSystem, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, entryPage, exitPage, trafficType, botName, botCategory, eventName.")
+	cmd.Flags().StringArrayVar(&dimensions, "dimensions", nil, "Dimension to break the metrics down by. One at most for now; the parameter is a list so that cap can be raised without a breaking change. Allowed: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, entryPage, exitPage, trafficType, botName, botCategory, eventName.")
 	cmd.Flags().StringVar(&dateRange, "date-range", "", "Date range shorthand (e.g. 7d, 30d). Ignored for any bound you supply explicitly via startAt/endAt.")
 	cmd.Flags().StringVar(&startAt, "start-at", "", "Explicit window start in ISO 8601. Defaults to endAt minus dateRange.")
 	cmd.Flags().StringVar(&endAt, "end-at", "", "Explicit window end in ISO 8601. Defaults to the current time.")
