@@ -1,7 +1,7 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-2.6.1-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-2.6.2-blue.svg?style=flat-square)
 [![npm](https://img.shields.io/npm/v/appwrite-cli?style=flat-square)](https://www.npmjs.com/package/appwrite-cli)
 [![X Account](https://img.shields.io/badge/follow-%40appwrite-000000?logo=x&style=flat-square)](https://x.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
@@ -64,7 +64,7 @@ npm install -g appwrite-cli
 appwrite -v
 ```
 
-This prints the installed version, for example `28.9.0`.
+This prints the installed version, for example `28.10.0`.
 
 ## Shell completion
 

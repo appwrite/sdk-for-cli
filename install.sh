@@ -23,8 +23,11 @@ APPWRITE_EXECUTABLE_NAME=appwrite
 # Appwrite executable file path
 APPWRITE_EXECUTABLE_FILEPATH="$APPWRITE_INSTALL_DIR/$APPWRITE_EXECUTABLE_NAME"
 
-# Appwrite CLI temp name
-APPWRITE_TEMP_NAME=temp-$(date +%s)
+# Appwrite CLI download. A directory only this user can write, so the file
+# checked against the checksum is the file later copied with sudo.
+APPWRITE_TEMP_DIR=$(mktemp -d) || exit 1
+APPWRITE_TEMP_NAME="$APPWRITE_TEMP_DIR/$APPWRITE_EXECUTABLE_NAME"
+trap 'rm -rf "$APPWRITE_TEMP_DIR"' EXIT
 
 # Appwrite CLI image name
 GITHUB_REPOSITORY_NAME=appwrite/sdk-for-cli
@@ -83,11 +86,11 @@ getSystemInfo() {
 }
 
 runAsRoot() {
-    local CMD="$*"
     if [ $EUID -ne 0 -a $USE_SUDO = "true" ]; then
-        CMD="sudo $CMD"
+        sudo "$@"
+    else
+        "$@"
     fi
-    $CMD
 }
 
 printSuccess() {
@@ -108,10 +111,10 @@ verifyMacOSCodeSignature() {
     fi
 
     printf "${GREEN}🔏 Verifying macOS code signature ${NC}\n"
-    if ! codesign -dv $APPWRITE_TEMP_NAME >/dev/null 2>&1; then
+    if ! codesign -dv "$APPWRITE_TEMP_NAME" >/dev/null 2>&1; then
         printf "${RED}❌ Downloaded macOS binary is missing an embedded code signature. macOS will kill it on launch. ${NC}\n"
         printf "${RED}❌ Please retry once the release artifact is refreshed, or use Homebrew/npm as a temporary workaround. ${NC}\n"
-        rm -f $APPWRITE_TEMP_NAME
+        rm -f "$APPWRITE_TEMP_NAME"
         exit 1
     fi
     printSuccess
@@ -120,7 +123,7 @@ verifyMacOSCodeSignature() {
 downloadBinary() {
     echo "[2/5] Downloading executable for $OS ($ARCH) ..."
 
-    GITHUB_LATEST_VERSION="28.9.0"
+    GITHUB_LATEST_VERSION="28.10.0"
     GITHUB_FILE="appwrite-cli-${OS}-${ARCH}"
     GITHUB_URL="https://github.com/$GITHUB_REPOSITORY_NAME/releases/download/$GITHUB_LATEST_VERSION/$GITHUB_FILE"
 
@@ -130,7 +133,7 @@ downloadBinary() {
         printf "${RED}❌ Couldn't find executable for $OS ($ARCH). Please contact the Appwrite team ${NC} \n"
         exit 1
     fi
-    curl -L -o $APPWRITE_TEMP_NAME $GITHUB_URL
+    curl -L -o "$APPWRITE_TEMP_NAME" $GITHUB_URL
     printSuccess
 
     verifyChecksum
@@ -143,20 +146,20 @@ verifyChecksum() {
     EXPECTED_SHA256=$(curl -fsSL "$CHECKSUMS_URL" | awk -v file="$GITHUB_FILE" '$2 == file { print $1 }')
     if [ -z "$EXPECTED_SHA256" ]; then
         printf "${RED}❌ Couldn't find a checksum for $GITHUB_FILE in $CHECKSUMS_URL ${NC}\n"
-        rm -f $APPWRITE_TEMP_NAME
+        rm -f "$APPWRITE_TEMP_NAME"
         exit 1
     fi
 
     # Linux ships sha256sum, macOS ships shasum.
     if command -v sha256sum >/dev/null 2>&1; then
-        ACTUAL_SHA256=$(sha256sum $APPWRITE_TEMP_NAME | awk '{ print $1 }')
+        ACTUAL_SHA256=$(sha256sum "$APPWRITE_TEMP_NAME" | awk '{ print $1 }')
     else
-        ACTUAL_SHA256=$(shasum -a 256 $APPWRITE_TEMP_NAME | awk '{ print $1 }')
+        ACTUAL_SHA256=$(shasum -a 256 "$APPWRITE_TEMP_NAME" | awk '{ print $1 }')
     fi
 
     if [ "$EXPECTED_SHA256" != "$ACTUAL_SHA256" ]; then
         printf "${RED}❌ Checksum mismatch for $GITHUB_FILE: expected $EXPECTED_SHA256, got $ACTUAL_SHA256 ${NC}\n"
-        rm -f $APPWRITE_TEMP_NAME
+        rm -f "$APPWRITE_TEMP_NAME"
         exit 1
     fi
     printSuccess
@@ -166,7 +169,7 @@ install() {
     echo "[3/5] Installing ..."
 
     printf "${GREEN}🚧 Setting Permissions ${NC}\n"
-    chmod +x $APPWRITE_TEMP_NAME
+    chmod +x "$APPWRITE_TEMP_NAME"
     if [ $? -ne 0 ]; then
         printf "${RED}❌ Failed to set permissions ... ${NC}\n"
         exit 1
@@ -176,7 +179,7 @@ install() {
     verifyMacOSCodeSignature
 
     printf "${GREEN}📝 Copying temporary file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
-    runAsRoot cp $APPWRITE_TEMP_NAME $APPWRITE_EXECUTABLE_FILEPATH
+    runAsRoot cp "$APPWRITE_TEMP_NAME" $APPWRITE_EXECUTABLE_FILEPATH
     if [ $? -ne 0 ]; then
         printf "${RED}❌ Failed to copy temporary file to $APPWRITE_EXECUTABLE_FILEPATH ... ${NC}\n"
         exit 1
@@ -202,7 +205,7 @@ installCompletions() {
 
 cleanup() {
     printf "${GREEN}🧹 Cleaning up mess ... ${NC}\n"
-    rm $APPWRITE_TEMP_NAME
+    rm -rf "$APPWRITE_TEMP_DIR"
     if [ $? -ne 0 ]; then
         printf "${RED}❌ Failed to remove temporary file ... ${NC}\n"
         exit 1
