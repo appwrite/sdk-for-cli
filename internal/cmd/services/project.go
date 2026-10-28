@@ -110,6 +110,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateDenyCorporateEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateDenyDisposableEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateDenyFreeEmailPolicyCommand())
+	cmd.AddCommand(newProjectUpdateDenyRealtimeGuestsPolicyCommand())
 	cmd.AddCommand(newProjectUpdateMembershipPrivacyPolicyCommand())
 	cmd.AddCommand(newProjectUpdateMFAFactorsPolicyCommand())
 	cmd.AddCommand(newProjectUpdatePasskeyPolicyCommand())
@@ -127,6 +128,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectGetPolicyCommand())
 	cmd.AddCommand(newProjectUpdateProtocolCommand())
 	cmd.AddCommand(newProjectUpdateServiceCommand())
+	cmd.AddCommand(newProjectDeleteSessionsCommand())
 	cmd.AddCommand(newProjectUpdateSMTPCommand())
 	cmd.AddCommand(newProjectCreateSMTPTestCommand())
 	cmd.AddCommand(newProjectListEmailTemplatesCommand())
@@ -312,11 +314,12 @@ func newProjectListEnvironmentsCommand() *cobra.Command {
 func newProjectCreateEnvironmentCommand() *cobra.Command {
 	var environmentId string
 	var name string
+	var resources []string
 	var projectId string
 
 	cmd := &cobra.Command{
 		Use:   "create-environment",
-		Short: "Create a new environment of the project. An environment is a separate project in the same organization and region, with its own resources and users. Its usage is billed under the project it belongs to.",
+		Short: "Create a new environment of the project. An environment is a separate project in the same organization and region, with its own resources and users. Its usage is billed under the project it belongs to.\n\nPass `resources` to copy the project into the environment. The environment is returned at once and the copy runs as a migration of the environment, listed by its migrations routes and announced on its `migrations.*` realtime events; a resource whose ID can be chosen keeps it. Users are copied newest first and at most 90 of them, so the environment keeps room under its limit of 100 users for test accounts, and the memberships of users left behind are not copied.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -325,7 +328,13 @@ func newProjectCreateEnvironmentCommand() *cobra.Command {
 			}
 			service := project.New(client)
 
-			result, err := service.CreateEnvironment(environmentId, name)
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.CreateEnvironmentOption{}
+			if cmd.Flags().Changed("resources") {
+				options = append(options, service.WithCreateEnvironmentResources(app.StringSlice(resources)))
+			}
+
+			result, err := service.CreateEnvironment(environmentId, name, options...)
 			if err != nil {
 				return sdk.WrapMutationError("POST", err)
 			}
@@ -338,6 +347,7 @@ func newProjectCreateEnvironmentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&name, "name", "", "Environment name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "Resources to copy from the project into the environment, by type. A structural type such as `database`, `table`, `column`, `index`, `bucket`, `team`, `function` or `site` copies the structure and its settings; `row`, `file`, `user`, `membership`, `deployment` and `site-deployment` copy what it holds. A function or site is copied with its active deployment; add `deployment` or `site-deployment` to copy every deployment. Users are copied newest first and at most 90 of them, leaving room under the limit of 100 users of an environment for test accounts; the memberships of users left behind are not copied. Leave empty for an empty environment. Maximum of 100 types.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4156,6 +4166,36 @@ func newProjectUpdateDenyFreeEmailPolicyCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateDenyRealtimeGuestsPolicyCommand() *cobra.Command {
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-deny-realtime-guests-policy",
+		Short: "Configures if guests, connections without a signed-in user, may subscribe to realtime channels. When enabled, a guest can still connect and sign in over the connection, but cannot subscribe until it does.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.UpdateDenyRealtimeGuestsPolicy(enabled)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set whether or not to stop guests from subscribing to realtime channels.")
+	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateMembershipPrivacyPolicyCommand() *cobra.Command {
 	var userId bool
 	var userEmail bool
@@ -4734,7 +4774,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, password-rotation, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, passkey.")
+	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, password-rotation, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, deny-realtime-guests, passkey.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -4802,6 +4842,33 @@ func newProjectUpdateServiceCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("service-id")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Service status.")
 	_ = cmd.MarkFlagRequired("enabled")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectDeleteSessionsCommand() *cobra.Command {
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-sessions",
+		Short: "Delete all sessions in the project. Any session created before this request will be invalidated immediately: users will be signed out of every active client (web, mobile, server SDKs, JWTs), and will be able to sign in again afterwards. API keys are not affected by this action.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.DeleteSessions()
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }

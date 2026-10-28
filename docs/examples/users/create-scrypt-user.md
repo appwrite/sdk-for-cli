@@ -5,7 +5,7 @@ appwrite users create-scrypt-user \
     --password password \
     --password-salt '<PASSWORD_SALT>' \
     --password-cpu 8 \
-    --password-memory 65536 \
+    --password-memory 14 \
     --password-parallel 1 \
     --password-length 64
 ```

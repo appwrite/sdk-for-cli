@@ -23,7 +23,6 @@ func NewMigrationsCommand() *cobra.Command {
 
 	cmd.AddCommand(newMigrationsListCommand())
 	cmd.AddCommand(newMigrationsCreateAppwriteMigrationCommand())
-	cmd.AddCommand(newMigrationsGetAppwriteReportCommand())
 	cmd.AddCommand(newMigrationsCreateCSVExportCommand())
 	cmd.AddCommand(newMigrationsCreateCSVImportCommand())
 	cmd.AddCommand(newMigrationsCreateFirebaseMigrationCommand())
@@ -167,43 +166,6 @@ func newMigrationsCreateAppwriteMigrationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&apiKey, "api-key", "", "Source API Key")
 	_ = cmd.MarkFlagRequired("api-key")
 	cmd.Flags().StringVar(&onDuplicate, "on-duplicate", "", "Behavior when a row with an existing $id is encountered. \"fail\" (default): abort on first conflict. \"skip\": silently ignore. \"overwrite\": replace existing row.")
-	return cmd
-}
-
-func newMigrationsGetAppwriteReportCommand() *cobra.Command {
-	var resources []string
-	var endpoint string
-	var projectId string
-	var key string
-
-	cmd := &cobra.Command{
-		Use:   "get-appwrite-report",
-		Short: "Generate a report of the data in an Appwrite project before migrating. This endpoint analyzes the source project and returns information about the resources that can be migrated.",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := app.ClientForProject("")
-			if err != nil {
-				return err
-			}
-			service := migrations.New(client)
-
-			result, err := service.GetAppwriteReport(app.StringSlice(resources), endpoint, projectId, key)
-			if err != nil {
-				return sdk.WrapMutationError("GET", err)
-			}
-
-			return app.Render(result)
-		},
-	}
-
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
-	_ = cmd.MarkFlagRequired("resources")
-	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Source's Appwrite Endpoint")
-	_ = cmd.MarkFlagRequired("endpoint")
-	cmd.Flags().StringVar(&projectId, "project-id", "", "Source's Project ID")
-	_ = cmd.MarkFlagRequired("project-id")
-	cmd.Flags().StringVar(&key, "key", "", "Source's API Key")
-	_ = cmd.MarkFlagRequired("key")
 	return cmd
 }
 

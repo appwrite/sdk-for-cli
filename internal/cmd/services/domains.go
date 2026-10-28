@@ -842,7 +842,7 @@ func newDomainsCreateRecordACommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "IPv4 address for this A record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -890,7 +890,7 @@ func newDomainsUpdateRecordACommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "IPv4 address for this A record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -935,7 +935,7 @@ func newDomainsCreateRecordAAAACommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "IPv6 address for this AAAA record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -983,7 +983,7 @@ func newDomainsUpdateRecordAAAACommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "IPv6 address for this AAAA record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1028,7 +1028,7 @@ func newDomainsCreateRecordAliasCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Target domain for this ALIAS record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1076,7 +1076,7 @@ func newDomainsUpdateRecordAliasCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Target domain for this ALIAS record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1121,7 +1121,7 @@ func newDomainsCreateRecordCAACommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "CAA value (e.g. issuer domain).")
 	_ = cmd.MarkFlagRequired("value")
@@ -1169,7 +1169,7 @@ func newDomainsUpdateRecordCAACommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "CAA value (e.g. issuer domain).")
 	_ = cmd.MarkFlagRequired("value")
@@ -1214,7 +1214,7 @@ func newDomainsCreateRecordCNAMECommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Canonical target for this CNAME record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1262,7 +1262,7 @@ func newDomainsUpdateRecordCNAMECommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Canonical target for this CNAME record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1307,7 +1307,7 @@ func newDomainsCreateRecordHTTPSCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Target for the HTTPS record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1355,7 +1355,7 @@ func newDomainsUpdateRecordHTTPSCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Target for the HTTPS record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1401,7 +1401,7 @@ func newDomainsCreateRecordMXCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Mail server domain for this MX record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1452,7 +1452,7 @@ func newDomainsUpdateRecordMXCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Mail server domain for this MX record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1499,7 +1499,7 @@ func newDomainsCreateRecordNSCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Nameserver target for this NS record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1547,7 +1547,7 @@ func newDomainsUpdateRecordNSCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Nameserver target for this NS record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1595,7 +1595,7 @@ func newDomainsCreateRecordSRVCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (service name).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain: the service and protocol, such as `_sip._tcp`. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Target hostname for this SRV record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1652,7 +1652,7 @@ func newDomainsUpdateRecordSRVCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (service name).")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain: the service and protocol, such as `_sip._tcp`. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Target hostname for this SRV record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1706,7 +1706,7 @@ func newDomainsCreateRecordTXTCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain) for the TXT record.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "Time to live, in seconds. Must be between 1 and 2147483647.")
 	_ = cmd.MarkFlagRequired("ttl")
@@ -1753,7 +1753,7 @@ func newDomainsUpdateRecordTXTCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name (subdomain) for the TXT record.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "TXT record value.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1918,7 +1918,7 @@ func newDomainsUpdateZoneCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update-zone",
-		Short: "Update the DNS zone for the given domain using the provided zone file content.\nAll parsed records are imported and then the main domain document is returned.",
+		Short: "Update the DNS zone for the given domain using the provided zone file content.\nAll parsed records the domain does not already have are imported and then the main domain document is returned.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
