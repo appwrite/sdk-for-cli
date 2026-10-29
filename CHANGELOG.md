@@ -1,5 +1,10 @@
 # Change Log
 
+## 28.10.1
+
+* Fixed: `init apns` suggests a Notification Service Extension only when an Appwrite push provider is enabled
+* Fixed: `init apns` no longer asks to enable an Appwrite push provider that APNs alone does not need
+
 ## 28.10.0
 
 * Breaking: removed `migrations get-appwrite-report`, which the Go SDK no longer provides
