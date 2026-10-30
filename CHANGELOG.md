@@ -1,5 +1,10 @@
 # Change Log
 
+## 28.10.2
+
+* Fixed: `logout` revokes the server session on endpoints trusted as self-signed
+* Fixed: chunked uploads print the finished file, not an earlier chunk's progress
+
 ## 28.10.1
 
 * Fixed: `init apns` suggests a Notification Service Extension only when an Appwrite push provider is enabled
