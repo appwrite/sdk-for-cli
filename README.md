@@ -64,7 +64,7 @@ npm install -g appwrite-cli
 appwrite -v
 ```
 
-This prints the installed version, for example `28.10.2`.
+This prints the installed version, for example `28.11.0-rc.1`.
 
 ## Shell completion
 

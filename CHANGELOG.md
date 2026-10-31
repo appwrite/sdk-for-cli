@@ -1,5 +1,9 @@
 # Change Log
 
+## 28.11.0-rc.1
+
+* Release candidate for internal testing
+
 ## 28.10.2
 
 * Fixed: `logout` revokes the server session on endpoints trusted as self-signed
