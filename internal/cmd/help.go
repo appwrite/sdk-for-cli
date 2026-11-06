@@ -154,6 +154,7 @@ var helpOptionOrder = []string{
 	"--all",
 	"--id",
 	"--config-file",
+	"--reason",
 	"--report",
 }
 

@@ -131,6 +131,7 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "create-bypass-rule",
@@ -142,6 +143,10 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.CreateBypassRuleOption{}
@@ -159,6 +164,9 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithCreateBypassRuleConditions(app.StringSlice(conditions)))
+			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithCreateBypassRuleSchedule(scheduleValue))
 			}
 
 			result, err := service.CreateBypassRule(ruleId, resourceType, name, options...)
@@ -182,6 +190,7 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -194,6 +203,7 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "update-bypass-rule",
@@ -205,6 +215,10 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.UpdateBypassRuleOption{}
@@ -229,6 +243,9 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithUpdateBypassRuleConditions(app.StringSlice(conditions)))
 			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithUpdateBypassRuleSchedule(scheduleValue))
+			}
 
 			result, err := service.UpdateBypassRule(ruleId, options...)
 			if err != nil {
@@ -249,6 +266,7 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -264,6 +282,7 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 	var conditions []string
 	var difficulty int
 	var ttl int
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "create-challenge-rule",
@@ -275,6 +294,10 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.CreateChallengeRuleOption{}
@@ -302,6 +325,9 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("ttl") {
 				options = append(options, service.WithCreateChallengeRuleTtl(ttl))
 			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithCreateChallengeRuleSchedule(scheduleValue))
+			}
 
 			result, err := service.CreateChallengeRule(ruleId, resourceType, name, options...)
 			if err != nil {
@@ -327,6 +353,7 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
 	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work.")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "How long, in seconds, a visitor stays cleared after passing the challenge before being challenged again.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -342,6 +369,7 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 	var conditions []string
 	var difficulty int
 	var ttl int
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "update-challenge-rule",
@@ -353,6 +381,10 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.UpdateChallengeRuleOption{}
@@ -386,6 +418,9 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("ttl") {
 				options = append(options, service.WithUpdateChallengeRuleTtl(ttl))
 			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithUpdateChallengeRuleSchedule(scheduleValue))
+			}
 
 			result, err := service.UpdateChallengeRule(ruleId, options...)
 			if err != nil {
@@ -409,6 +444,7 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
 	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work.")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "How long, in seconds, a visitor stays cleared after passing the challenge before being challenged again.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -421,6 +457,7 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "create-deny-rule",
@@ -432,6 +469,10 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.CreateDenyRuleOption{}
@@ -449,6 +490,9 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithCreateDenyRuleConditions(app.StringSlice(conditions)))
+			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithCreateDenyRuleSchedule(scheduleValue))
 			}
 
 			result, err := service.CreateDenyRule(ruleId, resourceType, name, options...)
@@ -472,6 +516,7 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -484,6 +529,7 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "update-deny-rule",
@@ -495,6 +541,10 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.UpdateDenyRuleOption{}
@@ -519,6 +569,9 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithUpdateDenyRuleConditions(app.StringSlice(conditions)))
 			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithUpdateDenyRuleSchedule(scheduleValue))
+			}
 
 			result, err := service.UpdateDenyRule(ruleId, options...)
 			if err != nil {
@@ -539,6 +592,7 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -556,6 +610,7 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "create-rate-limit-rule",
@@ -567,6 +622,10 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.CreateRateLimitRuleOption{}
@@ -593,6 +652,9 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithCreateRateLimitRuleConditions(app.StringSlice(conditions)))
+			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithCreateRateLimitRuleSchedule(scheduleValue))
 			}
 
 			result, err := service.CreateRateLimitRule(ruleId, resourceType, name, limit, interval, options...)
@@ -623,6 +685,7 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -639,6 +702,7 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "update-rate-limit-rule",
@@ -650,6 +714,10 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.UpdateRateLimitRuleOption{}
@@ -686,6 +754,9 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithUpdateRateLimitRuleConditions(app.StringSlice(conditions)))
 			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithUpdateRateLimitRuleSchedule(scheduleValue))
+			}
 
 			result, err := service.UpdateRateLimitRule(ruleId, options...)
 			if err != nil {
@@ -710,6 +781,7 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -724,6 +796,7 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "create-redirect-rule",
@@ -735,6 +808,10 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.CreateRedirectRuleOption{}
@@ -752,6 +829,9 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 			}
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithCreateRedirectRuleConditions(app.StringSlice(conditions)))
+			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithCreateRedirectRuleSchedule(scheduleValue))
 			}
 
 			result, err := service.CreateRedirectRule(ruleId, resourceType, name, location, statusCode, options...)
@@ -779,6 +859,7 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 
@@ -793,6 +874,7 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 	var priority int
 	var enabled bool
 	var conditions []string
+	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "update-redirect-rule",
@@ -804,6 +886,10 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 				return err
 			}
 			service := waf.New(client)
+			scheduleValue, err := app.JSONObject(schedule)
+			if err != nil {
+				return err
+			}
 
 			// An unset flag must be omitted, not sent as its zero value.
 			options := []waf.UpdateRedirectRuleOption{}
@@ -834,6 +920,9 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("conditions") {
 				options = append(options, service.WithUpdateRedirectRuleConditions(app.StringSlice(conditions)))
 			}
+			if cmd.Flags().Changed("schedule") {
+				options = append(options, service.WithUpdateRedirectRuleSchedule(scheduleValue))
+			}
 
 			result, err := service.UpdateRedirectRule(ruleId, options...)
 			if err != nil {
@@ -856,6 +945,7 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
 

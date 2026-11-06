@@ -1,12 +1,12 @@
 # Appwrite Command Line SDK
 
 ![License](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg?style=flat-square)
-![Version](https://img.shields.io/badge/api%20version-2.6.2-blue.svg?style=flat-square)
+![Version](https://img.shields.io/badge/api%20version-2.7.1-blue.svg?style=flat-square)
 [![npm](https://img.shields.io/npm/v/appwrite-cli?style=flat-square)](https://www.npmjs.com/package/appwrite-cli)
 [![X Account](https://img.shields.io/badge/follow-%40appwrite-000000?logo=x&style=flat-square)](https://x.com/appwrite)
 [![Discord](https://img.shields.io/discord/564160730845151244?label=discord&style=flat-square)](https://appwrite.io/discord)
 
-**This SDK targets Appwrite server version 2.6.x as shipped on Appwrite Cloud.** Self-hosted releases can lag behind Cloud — if you run an older self-hosted build, use a matching older SDK from [previous releases](https://github.com/appwrite/sdk-for-cli/releases) when APIs differ.
+**This SDK targets Appwrite server version 2.7.x as shipped on Appwrite Cloud.** Self-hosted releases can lag behind Cloud — if you run an older self-hosted build, use a matching older SDK from [previous releases](https://github.com/appwrite/sdk-for-cli/releases) when APIs differ.
 
 The Appwrite CLI manages your Appwrite projects from the terminal. Create and link projects, deploy functions and sites, sync tables, buckets, teams and other resources through `appwrite.config.json`, and call any Appwrite API. For full API documentation and tutorials go to [https://appwrite.io/docs](https://appwrite.io/docs)
 
@@ -64,7 +64,7 @@ npm install -g appwrite-cli
 appwrite -v
 ```
 
-This prints the installed version, for example `28.10.2`.
+This prints the installed version, for example `28.11.0`.
 
 ## Shell completion
 
@@ -419,6 +419,33 @@ appwrite push --config-file appwrite.config.prod.json
 ```
 
 Includes and resource paths are resolved relative to the chosen file.
+
+### Project environments
+
+On Appwrite Cloud, a project can have environments, such as `staging`. An environment is reached through the project it belongs to, so the config keeps the project's ID in `projectId` and the environment's ID in `environmentId`:
+
+```json
+{
+    "projectId": "my-project",
+    "environmentId": "staging"
+}
+```
+
+On Cloud, `appwrite init project` lists the region closest to you first when creating a project, and picks it when there is no terminal to ask at. If your location is unknown, the list has no suggestion and the no-terminal pick falls back to a default, normally Frankfurt. Pass `--region` to choose another.
+
+`appwrite init project` asks which environment to use when the project has any, or takes `--environment-id`. To set or clear it later, run `appwrite client --environment-id staging` or `appwrite client --environment-id ""`. Set `APPWRITE_ENVIRONMENT_ID` to choose an environment for one run; it wins over the config. The config's `environmentId` applies only to its own `projectId`, so `APPWRITE_PROJECT_ID` naming another project never inherits it.
+
+`push settings` and `pull settings` act on the project itself and refuse to run while an environment is in effect; `push all` and `pull all` skip settings there.
+
+## Recording a reason
+
+Pass `--reason` (or set `APPWRITE_REASON`) to record why you ran a command. Every request the command makes carries it in the `X-Appwrite-Reason` header, and the project's Activity shows it next to each event:
+
+```sh
+appwrite push functions --reason "Roll back checkout to the previous build"
+```
+
+A reason is one line of up to 256 characters.
 
 ## Contribution
 

@@ -30,6 +30,9 @@ func NewProxyCommand() *cobra.Command {
 	cmd.AddCommand(newProxyCreateSMTPRuleCommand())
 	cmd.AddCommand(newProxyGetRuleCommand())
 	cmd.AddCommand(newProxyDeleteRuleCommand())
+	cmd.AddCommand(newProxyUpdateFunctionRuleCommand())
+	cmd.AddCommand(newProxyUpdateRedirectRuleCommand())
+	cmd.AddCommand(newProxyUpdateSiteRuleCommand())
 	cmd.AddCommand(newProxyUpdateRuleStatusCommand())
 
 	return cmd
@@ -394,12 +397,130 @@ func newProxyDeleteRuleCommand() *cobra.Command {
 	return cmd
 }
 
+func newProxyUpdateFunctionRuleCommand() *cobra.Command {
+	var ruleId string
+	var functionId string
+	var branch string
+
+	cmd := &cobra.Command{
+		Use:   "update-function-rule",
+		Short: "Update the function and VCS branch a function proxy rule executes. The rule domain cannot be changed.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := proxy.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []proxy.UpdateFunctionRuleOption{}
+			if cmd.Flags().Changed("branch") {
+				options = append(options, service.WithUpdateFunctionRuleBranch(branch))
+			}
+
+			result, err := service.UpdateFunctionRule(ruleId, functionId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&ruleId, "rule-id", "", "Rule ID.")
+	_ = cmd.MarkFlagRequired("rule-id")
+	cmd.Flags().StringVar(&functionId, "function-id", "", "ID of function to be executed.")
+	_ = cmd.MarkFlagRequired("function-id")
+	cmd.Flags().StringVar(&branch, "branch", "", "Name of VCS branch to deploy changes automatically")
+	return cmd
+}
+
+func newProxyUpdateRedirectRuleCommand() *cobra.Command {
+	var ruleId string
+	var url string
+	var statusCode string
+	var resourceId string
+	var resourceType string
+
+	cmd := &cobra.Command{
+		Use:   "update-redirect-rule",
+		Short: "Update the target URL, status code and parent resource of a redirect proxy rule. The rule domain cannot be changed.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := proxy.New(client)
+
+			result, err := service.UpdateRedirectRule(ruleId, url, statusCode, resourceId, resourceType)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&ruleId, "rule-id", "", "Rule ID.")
+	_ = cmd.MarkFlagRequired("rule-id")
+	cmd.Flags().StringVar(&url, "url", "", "Target URL of redirection")
+	_ = cmd.MarkFlagRequired("url")
+	cmd.Flags().StringVar(&statusCode, "status-code", "", "Status code of redirection")
+	_ = cmd.MarkFlagRequired("status-code")
+	cmd.Flags().StringVar(&resourceId, "resource-id", "", "ID of parent resource.")
+	_ = cmd.MarkFlagRequired("resource-id")
+	cmd.Flags().StringVar(&resourceType, "resource-type", "", "Type of parent resource.")
+	_ = cmd.MarkFlagRequired("resource-type")
+	return cmd
+}
+
+func newProxyUpdateSiteRuleCommand() *cobra.Command {
+	var ruleId string
+	var siteId string
+	var branch string
+
+	cmd := &cobra.Command{
+		Use:   "update-site-rule",
+		Short: "Update the site and VCS branch a site proxy rule serves. The rule domain cannot be changed.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := proxy.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []proxy.UpdateSiteRuleOption{}
+			if cmd.Flags().Changed("branch") {
+				options = append(options, service.WithUpdateSiteRuleBranch(branch))
+			}
+
+			result, err := service.UpdateSiteRule(ruleId, siteId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&ruleId, "rule-id", "", "Rule ID.")
+	_ = cmd.MarkFlagRequired("rule-id")
+	cmd.Flags().StringVar(&siteId, "site-id", "", "ID of site to be executed.")
+	_ = cmd.MarkFlagRequired("site-id")
+	cmd.Flags().StringVar(&branch, "branch", "", "Name of VCS branch to deploy changes automatically")
+	return cmd
+}
+
 func newProxyUpdateRuleStatusCommand() *cobra.Command {
 	var ruleId string
 
 	cmd := &cobra.Command{
 		Use:   "update-rule-status",
-		Short: "If not succeeded yet, retry verification process of a proxy rule domain. This endpoint triggers domain verification by checking DNS records. If verification is successful, a TLS certificate will be automatically provisioned for the domain asynchronously in the background.",
+		Short: "If not succeeded yet, retry verification process of a proxy rule domain. This endpoint triggers domain verification by checking DNS records. If verification is successful, a TLS certificate will be automatically provisioned for the domain asynchronously in the background. A verified rule whose certificate renewal failed or is blocked, or whose certificate expired, is checked the same way, and its certificate renewed in the background.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
