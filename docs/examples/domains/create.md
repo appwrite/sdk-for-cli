@@ -1,5 +1,5 @@
 ```bash
 appwrite domains create \
     --team-id '<TEAM_ID>' \
-    --domain '<VALUE>'
+    --domain example.com
 ```

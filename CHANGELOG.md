@@ -1,5 +1,19 @@
 # Change Log
 
+## 28.11.0
+
+* Added: `init project` lists the closest Cloud region first, and picks it when there is no terminal
+* Added: `--region` on `init project`
+* Added: project environments, through `--environment-id` on `init project` and `client`, and `APPWRITE_ENVIRONMENT_ID`
+* Added: `--reason` and `APPWRITE_REASON` to record why a command ran on its audit logs
+* Added: `project get-prefs` and `update-prefs`
+* Added: `project update-o-auth-2-vipps` and `update-o-auth-2-vipps-sandbox`
+* Added: `proxy update-function-rule`, `update-redirect-rule` and `update-site-rule`
+* Added: `--schedule` on `waf` rule create and update commands
+* Added: analytics property `--type` and `--identify-users`, event `--interactive`, metrics `--prop-key`
+* Fixed: sites get a default Cloud domain when pushed with an API key
+* Updated: built against Go SDK `v7.17.0`, which sends response format `2.7.1`
+
 ## 28.10.2
 
 * Fixed: `logout` revokes the server session on endpoints trusted as self-signed

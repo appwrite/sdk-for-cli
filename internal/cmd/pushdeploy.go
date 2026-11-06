@@ -99,6 +99,9 @@ func runPushSettings(command *cobra.Command) error {
 	if err != nil {
 		return err
 	}
+	if err := refuseSettingsInEnvironment("push", context.local); err != nil {
+		return err
+	}
 
 	console, _, err := consoleClient()
 	if err != nil {
@@ -1689,7 +1692,9 @@ func (c *pushContext) reportDeployment(
 	if link := c.previewURL(resource, id); link != "" {
 		output.Log(out, "Preview link: %s", link)
 	}
-	output.Log(out, "Deployment page: %s", consoleURL)
+	if consoleURL != "" {
+		output.Log(out, "Deployment page: %s", consoleURL)
+	}
 }
 
 // hasScreenshots reports whether a site deployment has a preview image.
@@ -1846,8 +1851,14 @@ func (c *pushContext) ensureDefaultRule(
 			consoleErr = err
 		}
 	}
-	if len(domains) == 0 && resource.Name == "function" && label != "" {
+	if len(domains) == 0 {
+		// Cloud's domains are fixed, so an API key without a console session
+		// still gets a default domain there.
 		domains = cloudFunctionDomains(c.api.Endpoint)
+		if len(domains) > 0 && (resource.Name != "function" || label == "") {
+			// The Sites domain, which Cloud also gives a function by default
+			domains = domains[len(domains)-1:]
+		}
 	}
 	if len(domains) == 0 && consoleErr != nil {
 		output.Warn(out,
@@ -2025,11 +2036,20 @@ func endpointRegion(endpoint string) string {
 	return region
 }
 
-// deploymentConsoleURL builds the console page for a deployment.
+// deploymentConsoleURL builds the console page for a deployment, or "" when
+// there is none to link to.
+//
+// A console page is addressed by project ID, and an environment has none of its
+// own: the link would open the project it belongs to, where the deployment does
+// not exist.
 func (c *pushContext) deploymentConsoleURL(
 	resource deployable,
 	id, deploymentID string,
 ) string {
+	if linkedEnvironmentID(c.local) != "" {
+		return ""
+	}
+
 	return fmt.Sprintf("%s/projects/%s%s/deployments/%s",
 		consoleBaseURL(c.api.Endpoint), c.local.Data.GetString("projectId"),
 		resource.itemPath(id), deploymentID)

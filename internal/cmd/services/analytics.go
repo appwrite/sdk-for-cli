@@ -101,7 +101,7 @@ func newAnalyticsListPropertiesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, domain, enabled")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, domain, enabled, type")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Matches the property ID, name and domain. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -122,6 +122,8 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 	var domain string
 	var enabled bool
 	var allowedOrigins []string
+	var identifyUsers bool
+	var typeArg string
 
 	cmd := &cobra.Command{
 		Use:   "create-property",
@@ -145,6 +147,12 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 			if cmd.Flags().Changed("allowed-origins") {
 				options = append(options, service.WithCreatePropertyAllowedOrigins(app.StringSlice(allowedOrigins)))
 			}
+			if cmd.Flags().Changed("identify-users") {
+				options = append(options, service.WithCreatePropertyIdentifyUsers(identifyUsers))
+			}
+			if cmd.Flags().Changed("type") {
+				options = append(options, service.WithCreatePropertyType(typeArg))
+			}
 
 			result, err := service.CreateProperty(propertyId, name, options...)
 			if err != nil {
@@ -159,10 +167,13 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("property-id")
 	cmd.Flags().StringVar(&name, "name", "", "Human-readable name for this property.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). Optional for native apps.")
+	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). May be empty for mobile and agent properties.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all.")
+	cmd.Flags().BoolVar(&identifyUsers, "identify-users", false, "Record the signed-in user's ID on events sent from a client session, so traffic can be broken down and counted by user. Off by default.")
+	cmd.Flags().Lookup("identify-users").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&typeArg, "type", "", "Kind of product this property tracks. Only changes which panels the dashboard shows; ingestion accepts the same events for every type.")
 	return cmd
 }
 
@@ -200,6 +211,8 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	var domain string
 	var enabled bool
 	var allowedOrigins []string
+	var identifyUsers bool
+	var typeArg string
 
 	cmd := &cobra.Command{
 		Use:   "update-property",
@@ -226,6 +239,12 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 			if cmd.Flags().Changed("allowed-origins") {
 				options = append(options, service.WithUpdatePropertyAllowedOrigins(app.StringSlice(allowedOrigins)))
 			}
+			if cmd.Flags().Changed("identify-users") {
+				options = append(options, service.WithUpdatePropertyIdentifyUsers(identifyUsers))
+			}
+			if cmd.Flags().Changed("type") {
+				options = append(options, service.WithUpdatePropertyType(typeArg))
+			}
 
 			result, err := service.UpdateProperty(propertyId, options...)
 			if err != nil {
@@ -243,6 +262,9 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all.")
+	cmd.Flags().BoolVar(&identifyUsers, "identify-users", false, "Record the signed-in user's ID on events sent from a client session, so traffic can be broken down and counted by user.")
+	cmd.Flags().Lookup("identify-users").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&typeArg, "type", "", "Kind of product this property tracks. Only changes which panels the dashboard shows; stored events are kept.")
 	return cmd
 }
 
@@ -288,6 +310,7 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 	var userId string
 	var ip string
 	var userAgent string
+	var interactive bool
 
 	cmd := &cobra.Command{
 		Use:   "create-event",
@@ -332,6 +355,9 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 			if cmd.Flags().Changed("user-agent") {
 				options = append(options, service.WithCreateEventUserAgent(userAgent))
 			}
+			if cmd.Flags().Changed("interactive") {
+				options = append(options, service.WithCreateEventInteractive(interactive))
+			}
 
 			result, err := service.CreateEvent(propertyId, name, url, options...)
 			if err != nil {
@@ -355,9 +381,11 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 	cmd.Flags().IntVar(&scrollDepth, "scroll-depth", 0, "Scroll depth percentage 0-100.")
 	cmd.Flags().IntVar(&engagementTime, "engagement-time", 0, "Engagement time in seconds, 0-4294967295.")
 	cmd.Flags().StringArrayVar(&props, "props", nil, "Custom string properties as a flat key=value list (max 32 entries, alternating key,value).")
-	cmd.Flags().StringVar(&userId, "user-id", "", "Override user ID. Requires API-key auth with analytics.write scope.")
+	cmd.Flags().StringVar(&userId, "user-id", "", "Override user ID. Pass an opaque ID, not personal data such as an email. Requires API-key auth with analytics.write scope.")
 	cmd.Flags().StringVar(&ip, "ip", "", "Override IP address. Requires API-key auth with analytics.write scope.")
 	cmd.Flags().StringVar(&userAgent, "user-agent", "", "Override user agent. Requires API-key auth with analytics.write scope.")
+	cmd.Flags().BoolVar(&interactive, "interactive", false, "Whether this event is a visitor interaction that ends a bounce. Set false for telemetry such as heartbeats or background syncs. Defaults to true for custom events and false for the automatic engagement, scroll and app lifecycle events. Ignored for views.")
+	cmd.Flags().Lookup("interactive").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -366,6 +394,7 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 	var queries []string
 	var interval string
 	var dimensions []string
+	var propKey string
 	var dateRange string
 	var startAt string
 	var endAt string
@@ -380,7 +409,7 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list-metrics",
-		Short: "Read analytics metrics (visitors, sessions, pageviews, events, bounceRate, …) for a property over a date range.\n\nThree response shapes, chosen by `dimensions[]` and `interval`:\n- Neither: one row aggregating the whole window, with `value` and `date` null. Only this shape carries `visits`, `bounceRate`, `visitDuration`, `viewsPerVisit`, `scrollDepth` and `engagementTime`.\n- `dimensions[]`: one row per dimension value, ranked by visitors, with `value` set and `date` null.\n- `interval`: one row per time bucket in chronological order, with `date` set and `value` null.\n\n`pageviews` is carried by the flat aggregate and by `interval`, but not by a breakdown.\n\nCombining `dimensions[]` with `interval` is not supported yet. `queries[]` filters the underlying events using standard Utopia query syntax.",
+		Short: "Read analytics metrics (visitors, sessions, pageviews, events, bounceRate, …) for a property over a date range.\n\nThree response shapes, chosen by `dimensions[]` and `interval`:\n- Neither: one row aggregating the whole window, with `value` and `date` null. Only this shape carries `visits`, `bounceRate`, `visitDuration`, `viewsPerVisit`, `scrollDepth` and `engagementTime`.\n- `dimensions[]`: one row per dimension value, ranked by visitors, with `value` set and `date` null.\n- `interval`: one row per time bucket in chronological order, with `date` set and `value` null.\n\n`pageviews` is carried by the flat aggregate and by `interval`, but not by a breakdown.\n\n`userId` and `users` cover identified traffic only: events sent with an API key's `userId`, or from a signed-in session on a property with `identifyUsers` on. A `userId` breakdown leaves out anonymous events; returned values are the project's user IDs.\n\nCustom event props: `dimensions[]=props` ranks the prop keys seen in the window, and adding `propKey` ranks the values of that one key. `queries[]` filters on a prop's value with the `props.<key>` attribute, e.g. `equal(\"props.plan\", [\"pro\"])`.\n\nCombining `dimensions[]` with `interval` is not supported yet. `queries[]` filters the underlying events using standard Utopia query syntax.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -422,6 +451,9 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 			if cmd.Flags().Changed("dimensions") {
 				options = append(options, service.WithListMetricsDimensions(app.StringSlice(dimensions)))
 			}
+			if cmd.Flags().Changed("prop-key") {
+				options = append(options, service.WithListMetricsPropKey(propKey))
+			}
 			if cmd.Flags().Changed("date-range") {
 				options = append(options, service.WithListMetricsDateRange(dateRange))
 			}
@@ -449,9 +481,10 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
 	_ = cmd.MarkFlagRequired("property-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Up to 10 filter queries in Utopia syntax. Allowed attributes: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, botName, botCategory, eventName. page, eventName are only accepted alongside `interval`, or with a breakdown on a dimension other than entryPage, exitPage. Allowed methods: equal, notEqual, contains, startsWith, endsWith. Example: `queries[]=equal(\"country\", [\"US\"])`.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Up to 10 filter queries in Utopia syntax. Allowed attributes: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, botName, botCategory, userId, eventName, and `props.<key>` for a custom prop. page, userId, eventName and `props.<key>` are only accepted alongside `interval`, or with a breakdown on a dimension other than entryPage, exitPage. Allowed methods: equal, notEqual, contains, startsWith, endsWith. Example: `queries[]=equal(\"country\", [\"US\"])`.")
 	cmd.Flags().StringVar(&interval, "interval", "", "Time bucket size. Omit (null) for a flat aggregate over the whole window. Allowed: 1h, 1d, 1w, 1m.")
-	cmd.Flags().StringArrayVar(&dimensions, "dimensions", nil, "Dimension to break the metrics down by. One at most for now; the parameter is a list so that cap can be raised without a breaking change. Allowed: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, entryPage, exitPage, trafficType, botName, botCategory, eventName.")
+	cmd.Flags().StringArrayVar(&dimensions, "dimensions", nil, "Dimension to break the metrics down by. One at most for now; the parameter is a list so that cap can be raised without a breaking change. Allowed: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, entryPage, exitPage, trafficType, botName, botCategory, userId, eventName, props.")
+	cmd.Flags().StringVar(&propKey, "prop-key", "", "Custom prop key whose values to rank, with `dimensions[]=props`. Omit to rank the prop keys themselves.")
 	cmd.Flags().StringVar(&dateRange, "date-range", "", "Date range shorthand (e.g. 7d, 30d). Ignored for any bound you supply explicitly via startAt/endAt.")
 	cmd.Flags().StringVar(&startAt, "start-at", "", "Explicit window start in ISO 8601. Defaults to endAt minus dateRange.")
 	cmd.Flags().StringVar(&endAt, "end-at", "", "Explicit window end in ISO 8601. Defaults to the current time.")

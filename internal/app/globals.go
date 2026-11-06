@@ -3,6 +3,7 @@ package app
 import (
 	"os"
 
+	"github.com/appwrite/sdk-for-cli/internal/client"
 	"github.com/appwrite/sdk-for-cli/internal/config"
 	"github.com/appwrite/sdk-for-cli/internal/output"
 	"github.com/appwrite/sdk-for-cli/internal/sdk"
@@ -66,6 +67,10 @@ func RegisterGlobalFlags(root *cobra.Command) {
 		"Print a prefilled bug report link on error")
 	flags.StringVar(&config.LocalFile, "config-file", os.Getenv(sdk.EnvConfigFile),
 		"Project config file `path` to use instead of the nearest "+config.LocalFileName)
+	// Bound straight to the client package, like --config-file to config: every
+	// client the CLI builds reads it, and none of them can import this package.
+	flags.StringVar(&client.Reason, "reason", os.Getenv(sdk.EnvReason),
+		"Record why you are running this command, as `text`, on its audit logs")
 }
 
 // Renderer builds an output renderer from the current global flags.

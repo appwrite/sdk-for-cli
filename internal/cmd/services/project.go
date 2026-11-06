@@ -84,6 +84,8 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TwitchCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2VippsCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2VippsSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2WebflowCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2WordPressCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2XCommand())
@@ -126,6 +128,8 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateSessionLimitPolicyCommand())
 	cmd.AddCommand(newProjectUpdateUserLimitPolicyCommand())
 	cmd.AddCommand(newProjectGetPolicyCommand())
+	cmd.AddCommand(newProjectGetPrefsCommand())
+	cmd.AddCommand(newProjectUpdatePrefsCommand())
 	cmd.AddCommand(newProjectUpdateProtocolCommand())
 	cmd.AddCommand(newProjectUpdateServiceCommand())
 	cmd.AddCommand(newProjectDeleteSessionsCommand())
@@ -245,7 +249,7 @@ func newProjectListEnvironmentsCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list-environments",
-		Short: "Get a list of all environments of the project. You can use the query params to filter your results.",
+		Short: "Get a list of all environments of the project. You can use the query params to filter your results. An environment is listed by its ID, the one passed in the `X-Appwrite-Environment` header to act in it.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -296,7 +300,7 @@ func newProjectListEnvironmentsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search, accessedAt, status, parentId")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: $id, name, search")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -319,7 +323,7 @@ func newProjectCreateEnvironmentCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "create-environment",
-		Short: "Create a new environment of the project. An environment is a separate project in the same organization and region, with its own resources and users. Its usage is billed under the project it belongs to.\n\nPass `resources` to copy the project into the environment. The environment is returned at once and the copy runs as a migration of the environment, listed by its migrations routes and announced on its `migrations.*` realtime events; a resource whose ID can be chosen keeps it. Users are copied newest first and at most 90 of them, so the environment keeps room under its limit of 100 users for test accounts, and the memberships of users left behind are not copied.",
+		Short: "Create a new environment of the project. An environment is a separate project in the same organization and region, with its own resources and users. Its usage is billed under the project it belongs to. Requests act in the environment when they carry the project's ID in the `X-Appwrite-Project` header and the environment's ID in the `X-Appwrite-Environment` header; the environment has no project ID of its own to pass.\n\nPass `resources` to copy the project into the environment. The environment is returned at once and the copy runs as a migration of the environment, listed by its migrations routes and announced on its `migrations.*` realtime events; a resource whose ID can be chosen keeps it. Users are copied newest first and at most 90 of them, so the environment keeps room under its limit of 100 users for test accounts, and the memberships of users left behind are not copied.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -343,7 +347,7 @@ func newProjectCreateEnvironmentCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Unique Id. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, and hyphen. Can't start with a special char. Max length is 36 chars.")
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment ID, unique within the project and passed in the `X-Appwrite-Environment` header to act in the environment. Choose a custom ID such as `staging`, or generate a random ID with `ID.unique()`. Valid chars are a-z, 0-9, and hyphen. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&name, "name", "", "Environment name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
@@ -358,7 +362,7 @@ func newProjectGetEnvironmentCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "get-environment",
-		Short: "Get an environment of the project by its unique ID.",
+		Short: "Get an environment of the project by its ID, the one passed in the `X-Appwrite-Environment` header to act in it.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -376,7 +380,7 @@ func newProjectGetEnvironmentCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment unique ID.")
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment ID.")
 	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -389,7 +393,7 @@ func newProjectUpdateEnvironmentCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update-environment",
-		Short: "Update the name of an environment of the project.",
+		Short: "Update the name of an environment of the project. The environment ID cannot be changed.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
@@ -407,7 +411,7 @@ func newProjectUpdateEnvironmentCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment unique ID.")
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment ID.")
 	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&name, "name", "", "Environment name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
@@ -439,7 +443,7 @@ func newProjectDeleteEnvironmentCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment unique ID.")
+	cmd.Flags().StringVar(&environmentId, "environment-id", "", "Environment ID.")
 	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -3118,6 +3122,98 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2VippsCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-vipps",
+		Short: "Update the project OAuth2 Vipps MobilePay configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2VippsOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2VippsClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2VippsClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2VippsEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Vipps(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Vipps MobilePay OAuth2 app. For example: 9a3a4b3e-0000-0000-0000-0f1a6d1c3b2e")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Vipps MobilePay OAuth2 app. For example: Ay1jb000000000000000000000000000000Vx3k")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2VippsSandboxCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-vipps-sandbox",
+		Short: "Update the project OAuth2 Vipps MobilePay Sandbox configuration.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2VippsSandboxOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2VippsSandboxClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2VippsSandboxClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2VippsSandboxEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2VippsSandbox(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Vipps MobilePay Sandbox OAuth2 app. For example: 9a3a4b3e-0000-0000-0000-0f1a6d1c3b2e")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Vipps MobilePay Sandbox OAuth2 app. For example: Ay1jb000000000000000000000000000000Vx3k")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2WebflowCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -4776,6 +4872,67 @@ func newProjectGetPolicyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, password-rotation, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, deny-realtime-guests, passkey.")
 	_ = cmd.MarkFlagRequired("policy-id")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectGetPrefsCommand() *cobra.Command {
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "get-prefs",
+		Short: "Get the project preferences. Preferences are a key-value object stored on the project for anyone working on it.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.GetPrefs()
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdatePrefsCommand() *cobra.Command {
+	var prefs string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-prefs",
+		Short: "Update the project preferences. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+			prefsValue, err := app.JSONObject(prefs)
+			if err != nil {
+				return err
+			}
+
+			result, err := service.UpdatePrefs(prefsValue)
+			if err != nil {
+				return sdk.WrapMutationError("PUT", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&prefs, "prefs", "", "Prefs key-value JSON object.")
+	_ = cmd.MarkFlagRequired("prefs")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
