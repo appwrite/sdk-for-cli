@@ -69,6 +69,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2KickCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2LinkedinCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2MicrosoftCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2NaverCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2NotionCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2OidcCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2OktaCommand())
@@ -94,6 +95,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2ZohoCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2ZoomCommand())
 	cmd.AddCommand(newProjectGetOAuth2ProviderCommand())
+	cmd.AddCommand(newProjectDeletePasswordsCommand())
 	cmd.AddCommand(newProjectListPlatformsCommand())
 	cmd.AddCommand(newProjectCreateAndroidPlatformCommand())
 	cmd.AddCommand(newProjectUpdateAndroidPlatformCommand())
@@ -2383,6 +2385,52 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2NaverCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-naver",
+		Short: "Update the project OAuth2 Naver configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2NaverOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2NaverClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2NaverClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2NaverEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Naver(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Naver OAuth2 app. For example: jK8pQ0000000000000Zv")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Naver OAuth2 app. For example: 9f42A0000000000c1dEb. Find it under Application > My Applications, on the overview of your app")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2NotionCommand() *cobra.Command {
 	var oauthClientId string
 	var oauthClientSecret string
@@ -3568,6 +3616,33 @@ func newProjectGetOAuth2ProviderCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&providerId, "provider-id", "", "OAuth2 provider key. For example: github, google, apple.")
 	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectDeletePasswordsCommand() *cobra.Command {
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-passwords",
+		Short: "Delete all passwords in the project, forcing every user to reset their password. Any password set before this request stops working for email and password sign-in immediately: signing in returns a `user_password_reset_required` error until the user sets a new password through password recovery, or until a new password is set for them with the Users API. Existing sessions are not affected; call the delete sessions endpoint to sign users out as well. Users without a password and API keys are not affected by this action.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.DeletePasswords()
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }

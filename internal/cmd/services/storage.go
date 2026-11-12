@@ -675,7 +675,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "get-file-preview",
-		Short: "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.",
+		Short: "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Set `output` to `auto` to receive avif or webp when the client's `Accept` header supports it, falling back to the original image format. Preview is supported only for image files smaller than 10MB.\n",
 		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -748,7 +748,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 	cmd.Flags().Float64Var(&opacity, "opacity", 0, "Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.")
 	cmd.Flags().IntVar(&rotation, "rotation", 0, "Preview image rotation in degrees. Pass an integer between -360 and 360.")
 	cmd.Flags().StringVar(&background, "background", "", "Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.")
-	cmd.Flags().StringVar(&output, "output", "", "Output format type (jpeg, jpg, png, gif and webp).")
+	cmd.Flags().StringVar(&output, "output", "", "Output format type (jpeg, jpg, png, gif, webp, heic and avif). Pass auto to serve avif or webp when the client's Accept header supports it, falling back to the original format.")
 	cmd.Flags().StringVar(&token, "token", "", "File token for accessing this file.")
 	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
 	_ = cmd.MarkFlagRequired("destination")
