@@ -89,7 +89,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-messages",
 		Short: "Get a list of all messages from the current Appwrite project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -142,7 +142,7 @@ func newMessagingListMessagesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType, users, targets")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: scheduledAt, deliveredAt, deliveredTotal, status, description, providerType, users, targets. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -177,7 +177,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email",
 		Short: "Create a new email message.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -239,12 +239,12 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("subject")
 	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
 	_ = cmd.MarkFlagRequired("content")
-	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
-	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
-	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
-	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC.")
-	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
-	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
+	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&html, "html", false, "Is content of type HTML")
@@ -252,7 +252,7 @@ func newMessagingCreateEmailCommand() *cobra.Command {
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. If not set, defaults to the sender email address.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. If not set, defaults to the sender name.")
-	cmd.Flags().StringArrayVar(&emails, "emails", nil, "List of email addresses to send the message to. Use this to deliver to recipients that are not backed by an Appwrite user, target, or topic.")
+	cmd.Flags().StringArrayVar(&emails, "emails", nil, "List of email addresses to send the message to. Use this to deliver to recipients that are not backed by an Appwrite user, target, or topic. Repeat the flag for each value.")
 	return cmd
 }
 
@@ -276,7 +276,7 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email",
 		Short: "Update an email message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -340,22 +340,22 @@ func newMessagingUpdateEmailCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
-	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
-	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
-	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
+	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&subject, "subject", "", "Email Subject.")
 	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&html, "html", false, "Is content of type HTML")
 	cmd.Flags().Lookup("html").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC.")
-	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC.")
+	cmd.Flags().StringArrayVar(&cc, "cc", nil, "Array of target IDs to be added as CC. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&bcc, "bcc", nil, "Array of target IDs to be added as BCC. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
-	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>.")
+	cmd.Flags().StringArrayVar(&attachments, "attachments", nil, "Array of compound ID strings of bucket IDs and file IDs to be attached to the email. They should be formatted as <BUCKET_ID>:<FILE_ID>. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email address to reply to. Pass an empty string to restore the provider or sender default.")
 	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name of the reply to recipient. Pass an empty string to restore the provider or sender default.")
-	cmd.Flags().StringArrayVar(&emails, "emails", nil, "List of email addresses to send the message to. Use this to deliver to recipients that are not backed by an Appwrite user, target, or topic.")
+	cmd.Flags().StringArrayVar(&emails, "emails", nil, "List of email addresses to send the message to. Use this to deliver to recipients that are not backed by an Appwrite user, target, or topic. Repeat the flag for each value.")
 	return cmd
 }
 
@@ -384,7 +384,7 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-push",
 		Short: "Create a new push notification.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -469,9 +469,9 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("message-id")
 	cmd.Flags().StringVar(&title, "title", "", "Title for push notification.")
 	cmd.Flags().StringVar(&body, "body", "", "Body for push notification.")
-	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
-	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
-	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
+	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&data, "data", "", "Additional key-value pair data for push notification.")
 	cmd.Flags().StringVar(&action, "action", "", "Action for push notification.")
 	cmd.Flags().StringVar(&image, "image", "", "Image for push notification. Must be a compound bucket ID to file ID of a jpeg, png, or bmp image in Appwrite Storage. It should be formatted as <BUCKET_ID>:<FILE_ID>.")
@@ -517,7 +517,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-push",
 		Short: "Update a push notification by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -600,9 +600,9 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
-	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
-	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
-	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
+	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&title, "title", "", "Title for push notification.")
 	cmd.Flags().StringVar(&body, "body", "", "Body for push notification.")
 	cmd.Flags().StringVar(&data, "data", "", "Additional Data for push notification.")
@@ -637,7 +637,7 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-sms",
 		Short: "Create a new SMS message.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -676,9 +676,9 @@ func newMessagingCreateSmsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("message-id")
 	cmd.Flags().StringVar(&content, "content", "", "SMS Content.")
 	_ = cmd.MarkFlagRequired("content")
-	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
-	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
-	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
+	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&scheduledAt, "scheduled-at", "", "Scheduled delivery time for message in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. DateTime value must be in future.")
@@ -697,7 +697,7 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-sms",
 		Short: "Update an SMS message by its unique ID. This endpoint only works on messages that are in draft status. Messages that are already processing, sent, or failed cannot be updated.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -737,9 +737,9 @@ func newMessagingUpdateSmsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
-	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs.")
-	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs.")
-	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs.")
+	cmd.Flags().StringArrayVar(&topics, "topics", nil, "List of Topic IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&users, "users", nil, "List of User IDs. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&targets, "targets", nil, "List of Targets IDs. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&content, "content", "", "Email Content.")
 	cmd.Flags().BoolVar(&draft, "draft", false, "Is message a draft")
 	cmd.Flags().Lookup("draft").NoOptDefVal = "true"
@@ -753,7 +753,7 @@ func newMessagingGetMessageCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-message",
 		Short: "Get a message by its unique ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -781,7 +781,7 @@ func newMessagingDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a message. If the message is not a draft or scheduled, but has been sent, this will not recall the message.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -819,7 +819,7 @@ func newMessagingListTargetsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-targets",
 		Short: "Get a list of the targets associated with a message.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -871,7 +871,7 @@ func newMessagingListTargetsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&messageId, "message-id", "", "Message ID.")
 	_ = cmd.MarkFlagRequired("message-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -901,7 +901,7 @@ func newMessagingListProvidersCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-providers",
 		Short: "Get a list of all providers from the current Appwrite project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -954,7 +954,7 @@ func newMessagingListProvidersCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, provider, type, enabled. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -982,7 +982,7 @@ func newMessagingCreateApnsProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-apns-provider",
 		Short: "Create a new Apple Push Notification service provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1048,7 +1048,7 @@ func newMessagingUpdateApnsProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-apns-provider",
 		Short: "Update a Apple Push Notification service provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1113,7 +1113,7 @@ func newMessagingCreateAppwriteProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-appwrite-provider",
 		Short: "Create a new Appwrite push provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1163,7 +1163,7 @@ func newMessagingUpdateAppwriteProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-appwrite-provider",
 		Short: "Update an Appwrite push provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1214,7 +1214,7 @@ func newMessagingCreateFcmProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-fcm-provider",
 		Short: "Create a new Firebase Cloud Messaging provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1263,7 +1263,7 @@ func newMessagingUpdateFcmProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-fcm-provider",
 		Short: "Update a Firebase Cloud Messaging provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1320,7 +1320,7 @@ func newMessagingCreateMailgunProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mailgun-provider",
 		Short: "Create a new Mailgun provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1396,7 +1396,7 @@ func newMessagingUpdateMailgunProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mailgun-provider",
 		Short: "Update a Mailgun provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1470,7 +1470,7 @@ func newMessagingCreateMsg91ProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-msg-91-provider",
 		Short: "Create a new MSG91 provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1525,7 +1525,7 @@ func newMessagingUpdateMsg91ProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-msg-91-provider",
 		Short: "Update a MSG91 provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1584,7 +1584,7 @@ func newMessagingCreateResendProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-resend-provider",
 		Short: "Create a new Resend provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1649,7 +1649,7 @@ func newMessagingUpdateResendProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-resend-provider",
 		Short: "Update a Resend provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1716,7 +1716,7 @@ func newMessagingCreateSendgridProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-sendgrid-provider",
 		Short: "Create a new Sendgrid provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1781,7 +1781,7 @@ func newMessagingUpdateSendgridProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-sendgrid-provider",
 		Short: "Update a Sendgrid provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1850,7 +1850,7 @@ func newMessagingCreateSesProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ses-provider",
 		Short: "Create a new Amazon SES provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1925,7 +1925,7 @@ func newMessagingUpdateSesProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-ses-provider",
 		Short: "Update an Amazon SES provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2006,7 +2006,7 @@ func newMessagingCreateSmtpProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-smtp-provider",
 		Short: "Create a new SMTP provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2100,7 +2100,7 @@ func newMessagingUpdateSmtpProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-smtp-provider",
 		Short: "Update a SMTP provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2190,7 +2190,7 @@ func newMessagingCreateTelesignProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-telesign-provider",
 		Short: "Create a new Telesign provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2245,7 +2245,7 @@ func newMessagingUpdateTelesignProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-telesign-provider",
 		Short: "Update a Telesign provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2302,7 +2302,7 @@ func newMessagingCreateTextmagicProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-textmagic-provider",
 		Short: "Create a new Textmagic provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2357,7 +2357,7 @@ func newMessagingUpdateTextmagicProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-textmagic-provider",
 		Short: "Update a Textmagic provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2414,7 +2414,7 @@ func newMessagingCreateTwilioProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-twilio-provider",
 		Short: "Create a new Twilio provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2469,7 +2469,7 @@ func newMessagingUpdateTwilioProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-twilio-provider",
 		Short: "Update a Twilio provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2526,7 +2526,7 @@ func newMessagingCreateVonageProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-vonage-provider",
 		Short: "Create a new Vonage provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2581,7 +2581,7 @@ func newMessagingUpdateVonageProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-vonage-provider",
 		Short: "Update a Vonage provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2633,7 +2633,7 @@ func newMessagingGetProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-provider",
 		Short: "Get a provider by its unique ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2661,7 +2661,7 @@ func newMessagingDeleteProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-provider",
 		Short: "Delete a provider by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2699,7 +2699,7 @@ func newMessagingListTopicsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-topics",
 		Short: "Get a list of all topics from the current Appwrite project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2752,7 +2752,7 @@ func newMessagingListTopicsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, description, emailTotal, smsTotal, pushTotal. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -2778,7 +2778,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-topic",
 		Short: "Create a new topic.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2814,7 +2814,7 @@ func newMessagingCreateTopicCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("topic-id")
 	cmd.Flags().StringVar(&name, "name", "", "Topic Name.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
+	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800). Null inherits the lowest expiry of the project's enabled Appwrite providers, or the 7-day ledger window if none sets one.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the topic.")
@@ -2827,7 +2827,7 @@ func newMessagingGetTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-topic",
 		Short: "Get a topic by its unique ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2860,7 +2860,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-topic",
 		Short: "Update a topic by its unique ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2898,7 +2898,7 @@ func newMessagingUpdateTopicCommand() *cobra.Command {
 	cmd.Flags().StringVar(&topicId, "topic-id", "", "Topic ID.")
 	_ = cmd.MarkFlagRequired("topic-id")
 	cmd.Flags().StringVar(&name, "name", "", "Topic Name.")
-	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.")
+	cmd.Flags().StringArrayVar(&subscribe, "subscribe", nil, "An array of role strings with subscribe permission. By default all users are granted with any subscribe permission. learn more about roles (https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&qos, "qos", 0, "MQTT delivery quality of service for this topic. 0 is fire-and-forget (delivered only to clients connected at publish time). 1 persists each message and replays it when a client reconnects without having acknowledged it. Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Message retention in seconds for offline delivery. Max 7 days (604800). Null inherits the lowest expiry of the project's enabled Appwrite providers, or the 7-day ledger window if none sets one.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the topic.")
@@ -2911,7 +2911,7 @@ func newMessagingDeleteTopicCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-topic",
 		Short: "Delete a topic by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2950,7 +2950,7 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-subscribers",
 		Short: "Get a list of all subscribers from the current Appwrite project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3005,7 +3005,7 @@ func newMessagingListSubscribersCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&topicId, "topic-id", "", "Topic ID. The topic ID subscribed to.")
 	_ = cmd.MarkFlagRequired("topic-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: targetId, topicId, userId, providerType")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: targetId, topicId, userId, providerType. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -3028,7 +3028,7 @@ func newMessagingCreateSubscriberCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-subscriber",
 		Short: "Create a new subscriber.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3061,7 +3061,7 @@ func newMessagingGetSubscriberCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-subscriber",
 		Short: "Get a subscriber by its unique ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3092,7 +3092,7 @@ func newMessagingDeleteSubscriberCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-subscriber",
 		Short: "Delete a subscriber by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

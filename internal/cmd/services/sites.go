@@ -66,7 +66,7 @@ func newSitesListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all the project's sites. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -119,7 +119,7 @@ func newSitesListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, framework, deploymentId, buildCommand, installCommand, outputDirectory, installationId. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -164,7 +164,7 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new site.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -272,12 +272,12 @@ func newSitesCreateCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&providerSilentMode, "provider-silent-mode", false, "Is the VCS (Version Control System) connection in silent mode for the repo linked to the site? In silent mode, comments will not be made on commits and pull requests.")
 	cmd.Flags().Lookup("provider-silent-mode").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&providerRootDirectory, "provider-root-directory", "", "Path to site code in the linked repo.")
-	cmd.Flags().StringArrayVar(&providerBranches, "provider-branches", nil, "List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches.")
-	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.")
+	cmd.Flags().StringArrayVar(&providerBranches, "provider-branches", nil, "List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the site.")
 	return cmd
 }
@@ -288,7 +288,7 @@ func newSitesListFrameworksCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-frameworks",
 		Short: "Get a list of all frameworks that are currently available on the server instance.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -323,7 +323,7 @@ func newSitesListSpecificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
 		Short: "List allowed site specifications for this instance.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -361,7 +361,7 @@ func newSitesGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a site by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -413,7 +413,7 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update site by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -523,12 +523,12 @@ func newSitesUpdateCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&providerSilentMode, "provider-silent-mode", false, "Is the VCS (Version Control System) connection in silent mode for the repo linked to the site? In silent mode, comments will not be made on commits and pull requests.")
 	cmd.Flags().Lookup("provider-silent-mode").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&providerRootDirectory, "provider-root-directory", "", "Path to site code in the linked repo.")
-	cmd.Flags().StringArrayVar(&providerBranches, "provider-branches", nil, "List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches.")
-	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes.")
+	cmd.Flags().StringArrayVar(&providerBranches, "provider-branches", nil, "List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&providerPaths, "provider-paths", nil, "List of file path patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all file changes. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&buildSpecification, "build-specification", "", "Build specification for the site deployments.")
 	cmd.Flags().StringVar(&runtimeSpecification, "runtime-specification", "", "Runtime specification for the SSR executions.")
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of scopes allowed for API key auto-generated for every site build and SSR execution. Maximum of 200 scopes are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the site.")
 	return cmd
 }
@@ -539,7 +539,7 @@ func newSitesDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a site by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -568,7 +568,7 @@ func newSitesUpdateSiteDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-site-deployment",
 		Short: "Update the site active deployment. Use this endpoint to switch the code deployment that should be used when visitor opens your site.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -609,7 +609,7 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-deployments",
 		Short: "Get a list of all the site's code deployments. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -664,7 +664,7 @@ func newSitesListDeploymentsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&siteId, "site-id", "", "Site ID.")
 	_ = cmd.MarkFlagRequired("site-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -690,7 +690,7 @@ func newSitesCreateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-deployment",
 		Short: "Create a new site code deployment. Use this endpoint to upload a new version of your site code. To activate your newly uploaded code, you'll need to update the site's deployment to use your new deployment ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -746,7 +746,7 @@ func newSitesCreateDuplicateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-duplicate-deployment",
 		Short: "Create a new build for an existing site deployment. This endpoint allows you to rebuild a deployment with the updated site configuration, including its commands and output directory if they have been modified. The build process will be queued and executed asynchronously. The original deployment's code will be preserved and used for the new build.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -782,7 +782,7 @@ func newSitesCreateTemplateDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-template-deployment",
 		Short: "Create a deployment based on a template.\n\nUse this endpoint with combination of listTemplates (https://appwrite.io/docs/products/sites/templates) to find the template details.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -831,7 +831,7 @@ func newSitesCreateVcsDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-vcs-deployment",
 		Short: "Create a deployment when a site is connected to VCS.\n\nThis endpoint lets you create deployment from a branch, commit, or a tag.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -872,7 +872,7 @@ func newSitesGetDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-deployment",
 		Short: "Get a site deployment by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -903,7 +903,7 @@ func newSitesDeleteDeploymentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-deployment",
 		Short: "Delete a site deployment by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -937,7 +937,7 @@ func newSitesGetDeploymentDownloadCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-deployment-download",
 		Short: "Get a site deployment content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -983,7 +983,7 @@ func newSitesUpdateDeploymentStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deployment-status",
 		Short: "Cancel an ongoing site deployment build. If the build is already in progress, it will be stopped and marked as canceled. If the build hasn't started yet, it will be marked as canceled without executing. You cannot cancel builds that have already completed (status 'ready') or failed. The response includes the final build status and details.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1023,7 +1023,7 @@ func newSitesListLogsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-logs",
 		Short: "Get a list of all site logs. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1075,7 +1075,7 @@ func newSitesListLogsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&siteId, "site-id", "", "Site ID.")
 	_ = cmd.MarkFlagRequired("site-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1096,7 +1096,7 @@ func newSitesGetLogCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-log",
 		Short: "Get a site request log by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1127,7 +1127,7 @@ func newSitesDeleteLogCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-log",
 		Short: "Delete a site log by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1167,7 +1167,7 @@ func newSitesListVariablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-variables",
 		Short: "Get a list of all variables of a specific site.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1219,7 +1219,7 @@ func newSitesListVariablesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&siteId, "site-id", "", "Site unique ID.")
 	_ = cmd.MarkFlagRequired("site-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1244,7 +1244,7 @@ func newSitesCreateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-variable",
 		Short: "Create a new site variable. These variables can be accessed during build and runtime (server-side rendering) as environment variables.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1291,7 +1291,7 @@ func newSitesGetVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-variable",
 		Short: "Get a variable by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1326,7 +1326,7 @@ func newSitesUpdateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-variable",
 		Short: "Update variable by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1377,7 +1377,7 @@ func newSitesDeleteVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-variable",
 		Short: "Delete a variable by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

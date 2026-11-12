@@ -108,6 +108,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectGetPlatformCommand())
 	cmd.AddCommand(newProjectDeletePlatformCommand())
 	cmd.AddCommand(newProjectListPoliciesCommand())
+	cmd.AddCommand(newProjectUpdateAccountDevicesPolicyCommand())
 	cmd.AddCommand(newProjectUpdateDenyAliasedEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateDenyCorporateEmailPolicyCommand())
 	cmd.AddCommand(newProjectUpdateDenyDisposableEmailPolicyCommand())
@@ -153,7 +154,7 @@ func newProjectGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -180,7 +181,7 @@ func newProjectDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -209,7 +210,7 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-auth-method",
 		Short: "Update properties of a specific auth method. Use this endpoint to enable or disable a method in your project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -250,7 +251,7 @@ func newProjectListEnvironmentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-environments",
 		Short: "Get a list of all environments of the project. You can use the query params to filter your results. An environment is listed by its ID, the one passed in the `X-Appwrite-Environment` header to act in it.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -300,7 +301,7 @@ func newProjectListEnvironmentsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: $id, name, search")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: $id, name, search. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -324,7 +325,7 @@ func newProjectCreateEnvironmentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-environment",
 		Short: "Create a new environment of the project. An environment is a separate project in the same organization and region, with its own resources and users. Its usage is billed under the project it belongs to. Requests act in the environment when they carry the project's ID in the `X-Appwrite-Project` header and the environment's ID in the `X-Appwrite-Environment` header; the environment has no project ID of its own to pass.\n\nPass `resources` to copy the project into the environment. The environment is returned at once and the copy runs as a migration of the environment, listed by its migrations routes and announced on its `migrations.*` realtime events; a resource whose ID can be chosen keeps it. Users are copied newest first and at most 90 of them, so the environment keeps room under its limit of 100 users for test accounts, and the memberships of users left behind are not copied.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -351,7 +352,7 @@ func newProjectCreateEnvironmentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("environment-id")
 	cmd.Flags().StringVar(&name, "name", "", "Environment name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "Resources to copy from the project into the environment, by type. A structural type such as `database`, `table`, `column`, `index`, `bucket`, `team`, `function` or `site` copies the structure and its settings; `row`, `file`, `user`, `membership`, `deployment` and `site-deployment` copy what it holds. A function or site is copied with its active deployment; add `deployment` or `site-deployment` to copy every deployment. Users are copied newest first and at most 90 of them, leaving room under the limit of 100 users of an environment for test accounts; the memberships of users left behind are not copied. Leave empty for an empty environment. Maximum of 100 types.")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "Resources to copy from the project into the environment, by type. A structural type such as `database`, `table`, `column`, `index`, `bucket`, `team`, `function` or `site` copies the structure and its settings; `row`, `file`, `user`, `membership`, `deployment` and `site-deployment` copy what it holds. A function or site is copied with its active deployment; add `deployment` or `site-deployment` to copy every deployment. Users are copied newest first and at most 90 of them, leaving room under the limit of 100 users of an environment for test accounts; the memberships of users left behind are not copied. Leave empty for an empty environment. Maximum of 100 types. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -363,7 +364,7 @@ func newProjectGetEnvironmentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-environment",
 		Short: "Get an environment of the project by its ID, the one passed in the `X-Appwrite-Environment` header to act in it.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -394,7 +395,7 @@ func newProjectUpdateEnvironmentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-environment",
 		Short: "Update the name of an environment of the project. The environment ID cannot be changed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -426,7 +427,7 @@ func newProjectDeleteEnvironmentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-environment",
 		Short: "Delete an environment of the project, with all of its resources and users.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -465,7 +466,7 @@ func newProjectListKeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-keys",
 		Short: "Get a list of all API keys from the current project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -515,7 +516,7 @@ func newProjectListKeysCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -538,7 +539,7 @@ func newProjectCreateEphemeralKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ephemeral-key",
 		Short: "Create a new ephemeral API key. It's recommended to have multiple API keys with strict scopes for separate functions within your project.\n\nYou can also create a standard API key if you need a longer-lived key instead.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -555,7 +556,7 @@ func newProjectCreateEphemeralKeyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before ephemeral key expires. Maximum duration is 3600 seconds.")
 	_ = cmd.MarkFlagRequired("duration")
@@ -570,7 +571,7 @@ func newProjectGetKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-key",
 		Short: "Get a key by its unique ID. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -604,7 +605,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-key",
 		Short: "Update a key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -634,7 +635,7 @@ func newProjectUpdateKeyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the key.")
@@ -649,7 +650,7 @@ func newProjectDeleteKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-key",
 		Short: "Delete a key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -679,7 +680,7 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-labels",
 		Short: "Update the project labels. Labels can be used to easily filter projects in an organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -696,7 +697,7 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.")
+	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("labels")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -712,7 +713,7 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-mock-phones",
 		Short: "Get a list of all mock phones in the project. This endpoint returns an array of all mock phones and their OTPs.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -747,7 +748,7 @@ func newProjectListMockPhonesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
@@ -764,7 +765,7 @@ func newProjectCreateMockPhoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mock-phone",
 		Short: "Create a new mock phone for your project. Use this endpoint to register a mock phone number and its sign-in OTP for your testers.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -796,7 +797,7 @@ func newProjectGetMockPhoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-mock-phone",
 		Short: "Get a mock phone by its unique number. This endpoint returns the mock phone's OTP.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -827,7 +828,7 @@ func newProjectUpdateMockPhoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mock-phone",
 		Short: "Update a mock phone by its unique number. Use this endpoint to update the mock phone's OTP.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -859,7 +860,7 @@ func newProjectDeleteMockPhoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-mock-phone",
 		Short: "Delete a mock phone by its unique number. This endpoint removes the mock phone and its OTP configuration from the project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -892,7 +893,7 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-o-auth-2-providers",
 		Short: "Get a list of all OAuth2 providers supported by the server, along with the project's configuration for each. Credential fields are write-only and always returned empty.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -927,7 +928,7 @@ func newProjectListOAuth2ProvidersCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
@@ -958,7 +959,7 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-server",
 		Short: "Update the OAuth2 server (OIDC provider) configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1024,8 +1025,8 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&authorizationUrl, "authorization-url", "", "URL to your application with consent screen.")
 	_ = cmd.MarkFlagRequired("authorization-url")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of allowed OAuth2 scopes. Maximum of 100 scopes are allowed, each up to 128 characters long.")
-	cmd.Flags().StringArrayVar(&authorizationDetailsTypes, "authorization-details-types", nil, "List of accepted `authorization_details` types. Maximum of 100 types are allowed, each up to 128 characters long.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "List of allowed OAuth2 scopes. Maximum of 100 scopes are allowed, each up to 128 characters long. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&authorizationDetailsTypes, "authorization-details-types", nil, "List of accepted `authorization_details` types. Maximum of 100 types are allowed, each up to 128 characters long. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&accessTokenDuration, "access-token-duration", 0, "Access token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 8 hours.")
 	cmd.Flags().IntVar(&refreshTokenDuration, "refresh-token-duration", 0, "Refresh token duration in seconds for confidential clients (server-side apps that authenticate with a client secret). Leave empty to use default 1 year.")
 	cmd.Flags().IntVar(&publicAccessTokenDuration, "public-access-token-duration", 0, "Access token duration in seconds for public clients (SPAs, mobile, and native apps that cannot keep a client secret). Leave empty to use default 1 hour.")
@@ -1037,8 +1038,8 @@ func newProjectUpdateOAuth2ServerCommand() *cobra.Command {
 	cmd.Flags().IntVar(&userCodeLength, "user-code-length", 0, "Number of characters in the device flow user code, excluding the formatting separator. Shorter codes are easier to type but weaker; pair short codes with short expiry. Leave empty to use default 8.")
 	cmd.Flags().StringVar(&userCodeFormat, "user-code-format", "", "Character set for device flow user codes: `numeric` (digits only — best for numeric keypads and TV remotes), `alphabetic` (letters only), or `alphanumeric` (letters and digits — highest entropy per character). Defaults to `alphanumeric`.")
 	cmd.Flags().IntVar(&deviceCodeDuration, "device-code-duration", 0, "Lifetime in seconds of device flow device codes and user codes. Device codes are intentionally short-lived. Leave empty to use default 600.")
-	cmd.Flags().StringArrayVar(&defaultScopes, "default-scopes", nil, "List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long.")
-	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "List of scopes an application may request when installed on a team. Omitting the parameter clears the list, so no installation scopes can be granted. Maximum of 100 scopes are allowed, each up to 128 characters long.")
+	cmd.Flags().StringArrayVar(&defaultScopes, "default-scopes", nil, "List of OAuth2 scopes used when an authorization request omits the scope parameter. Every default scope must also be allowed by the OAuth2 server. Maximum of 100 scopes are allowed, each up to 128 characters long. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "List of scopes an application may request when installed on a team. Omitting the parameter clears the list, so no installation scopes can be granted. Maximum of 100 scopes are allowed, each up to 128 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1052,7 +1053,7 @@ func newProjectUpdateOAuth2AmazonCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-amazon",
 		Short: "Update the project OAuth2 Amazon configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1102,7 +1103,7 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-apple",
 		Short: "Update the project OAuth2 Apple configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1149,7 +1150,7 @@ func newProjectUpdateOAuth2AppleCommand() *cobra.Command {
 	cmd.Flags().StringVar(&p8File, "p-8-file", "", "Contents of the Apple OAuth2 app .p8 private key file. The secret key wrapped by the PEM markers is 200 characters long. For example: -----BEGIN PRIVATE KEY-----MIGTAg...jy2Xbna-----END PRIVATE KEY-----")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Browser-based OAuth2 sign-in status. Set to true to enable new session creation through the redirect flow. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid. Has no effect on native sign-in, which is controlled by nativeEnabled only.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "App bundle IDs accepted as ID token audiences for native Sign in with Apple. For example: com.example.app. Together with the Services ID, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
+	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "App bundle IDs accepted as ID token audiences for native Sign in with Apple. For example: com.example.app. Together with the Services ID, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&nativeEnabled, "native-enabled", false, "Native Sign in with Apple status. This is the only switch for creating sessions from ID tokens obtained on device and is independent of enabled. Needs a Services ID or at least one native client ID to match tokens against, but no key or team ID: this method verifies a signature rather than redeeming an authorization code.")
 	cmd.Flags().Lookup("native-enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -1165,7 +1166,7 @@ func newProjectUpdateOAuth2AppwriteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-appwrite",
 		Short: "Update the project OAuth2 Appwrite configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1213,7 +1214,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-auth-0",
 		Short: "Update the project OAuth2 Auth0 configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1253,7 +1254,7 @@ func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Domain of Auth0 instance. For example: example.us.auth0.com")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Auth0 OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Auth0 default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Auth0 OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Auth0 default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1268,7 +1269,7 @@ func newProjectUpdateOAuth2AuthentikCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-authentik",
 		Short: "Update the project OAuth2 Authentik configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1318,7 +1319,7 @@ func newProjectUpdateOAuth2AutodeskCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-autodesk",
 		Short: "Update the project OAuth2 Autodesk configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1364,7 +1365,7 @@ func newProjectUpdateOAuth2BitbucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-bitbucket",
 		Short: "Update the project OAuth2 Bitbucket configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1410,7 +1411,7 @@ func newProjectUpdateOAuth2BitlyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-bitly",
 		Short: "Update the project OAuth2 Bitly configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1456,7 +1457,7 @@ func newProjectUpdateOAuth2BoxCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-box",
 		Short: "Update the project OAuth2 Box configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1502,7 +1503,7 @@ func newProjectUpdateOAuth2CloudflareCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-cloudflare",
 		Short: "Update the project OAuth2 Cloudflare configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1548,7 +1549,7 @@ func newProjectUpdateOAuth2DailymotionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-dailymotion",
 		Short: "Update the project OAuth2 Dailymotion configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1595,7 +1596,7 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-discord",
 		Short: "Update the project OAuth2 Discord configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1631,7 +1632,7 @@ func newProjectUpdateOAuth2DiscordCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Discord OAuth2 app. For example: YmPXnM000000000000000000002zFg5D")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array with at most one Discord OAuth2 prompt value. \"none\" means: skip the authorization screen for users who already authorized the app with the requested scopes. \"consent\" means: ask users who already authorized the app to approve it again. Pass an empty array to use the Discord default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array with at most one Discord OAuth2 prompt value. \"none\" means: skip the authorization screen for users who already authorized the app with the requested scopes. \"consent\" means: ask users who already authorized the app to approve it again. Pass an empty array to use the Discord default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1645,7 +1646,7 @@ func newProjectUpdateOAuth2DisqusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-disqus",
 		Short: "Update the project OAuth2 Disqus configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1691,7 +1692,7 @@ func newProjectUpdateOAuth2DropboxCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-dropbox",
 		Short: "Update the project OAuth2 Dropbox configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1737,7 +1738,7 @@ func newProjectUpdateOAuth2EtsyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-etsy",
 		Short: "Update the project OAuth2 Etsy configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1783,7 +1784,7 @@ func newProjectUpdateOAuth2FacebookCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-facebook",
 		Short: "Update the project OAuth2 Facebook configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1829,7 +1830,7 @@ func newProjectUpdateOAuth2FigmaCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-figma",
 		Short: "Update the project OAuth2 Figma configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1876,7 +1877,7 @@ func newProjectUpdateOAuth2FusionAuthCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-fusion-auth",
 		Short: "Update the project OAuth2 FusionAuth configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1927,7 +1928,7 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-git-hub",
 		Short: "Update the project OAuth2 GitHub configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -1963,7 +1964,7 @@ func newProjectUpdateOAuth2GitHubCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of GitHub OAuth2 app. For example: 5e07c00000000000000000000000000000198bcc")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of GitHub OAuth2 prompt values. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the GitHub default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of GitHub OAuth2 prompt values. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the GitHub default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -1978,7 +1979,7 @@ func newProjectUpdateOAuth2GitlabCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-gitlab",
 		Short: "Update the project OAuth2 Gitlab configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2031,7 +2032,7 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-google",
 		Short: "Update the project OAuth2 Google configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2071,10 +2072,10 @@ func newProjectUpdateOAuth2GoogleCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Google OAuth2 app. For example: 120000000095-92ifjb00000000000000000000g7ijfb.apps.googleusercontent.com")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Google OAuth2 app. For example: GOCSPX-2k8gsR0000000000000000VNahJj")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Google OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. Must not be specified with other values. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Google OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. Must not be specified with other values. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Browser-based OAuth2 sign-in status. Set to true to enable new session creation through the redirect flow. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid. Has no effect on native sign-in, which is controlled by nativeEnabled only.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "Additional OAuth2 client IDs accepted as ID token audiences for native sign-in (Android and iOS client IDs). Together with the client ID, which is always accepted, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list.")
+	cmd.Flags().StringArrayVar(&nativeClientIds, "native-client-ids", nil, "Additional OAuth2 client IDs accepted as ID token audiences for native sign-in (Android and iOS client IDs). Together with the client ID, which is always accepted, these are the only client IDs whose tokens are trusted. Pass an empty array to clear the list. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&nativeEnabled, "native-enabled", false, "Native Google sign-in status. This is the only switch for creating sessions from ID tokens obtained on device and is independent of enabled. Needs a client ID or at least one native client ID to match tokens against, but no client secret: this method verifies a signature rather than redeeming an authorization code.")
 	cmd.Flags().Lookup("native-enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -2090,7 +2091,7 @@ func newProjectUpdateOAuth2HuggingFaceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-hugging-face",
 		Short: "Update the project OAuth2 Hugging Face configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2137,7 +2138,7 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-kakao",
 		Short: "Update the project OAuth2 Kakao configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2173,7 +2174,7 @@ func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Kakao OAuth2 app. For example: jLNVOK00000000000000000000yJebea. Generate it under Kakao Login > Security and set its status to enabled")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Kakao OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"create\" means: prompt the user to sign up. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Kakao default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Kakao OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"create\" means: prompt the user to sign up. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Kakao default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2189,7 +2190,7 @@ func newProjectUpdateOAuth2KeycloakCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-keycloak",
 		Short: "Update the project OAuth2 Keycloak configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2243,7 +2244,7 @@ func newProjectUpdateOAuth2KickCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-kick",
 		Short: "Update the project OAuth2 Kick configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2289,7 +2290,7 @@ func newProjectUpdateOAuth2LinkedinCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-linkedin",
 		Short: "Update the project OAuth2 Linkedin configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2337,7 +2338,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-microsoft",
 		Short: "Update the project OAuth2 Microsoft configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2377,7 +2378,7 @@ func newProjectUpdateOAuth2MicrosoftCommand() *cobra.Command {
 	cmd.Flags().StringVar(&tenant, "tenant", "", "Microsoft Entra ID tenant identifier. Use 'common', 'organizations', 'consumers' or a specific tenant ID. For example: common")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Microsoft OAuth2 prompt values. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Microsoft default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Microsoft OAuth2 prompt values. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Pass an empty array to use the Microsoft default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2391,7 +2392,7 @@ func newProjectUpdateOAuth2NotionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-notion",
 		Short: "Update the project OAuth2 Notion configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2443,7 +2444,7 @@ func newProjectUpdateOAuth2OidcCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-oidc",
 		Short: "Update the project OAuth2 Oidc configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2496,7 +2497,7 @@ func newProjectUpdateOAuth2OidcCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authorizationUrl, "authorization-url", "", "OpenID Connect authorization endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/authorize")
 	cmd.Flags().StringVar(&tokenUrl, "token-url", "", "OpenID Connect token endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/token")
 	cmd.Flags().StringVar(&userInfoUrl, "user-info-url", "", "OpenID Connect user info endpoint URL. Required when wellKnownURL is not provided. For example: https://myoauth.com/oauth2/userinfo")
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of OpenID Connect prompt values controlling the authentication and consent screens. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of OpenID Connect prompt values controlling the authentication and consent screens. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. \"select_account\" means: prompt the user to select an account. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "Maximum authentication age in seconds. When set, the user must have authenticated within this many seconds, otherwise they are prompted to re-authenticate.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
@@ -2516,7 +2517,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-okta",
 		Short: "Update the project OAuth2 Okta configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2560,7 +2561,7 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	cmd.Flags().StringVar(&authorizationServerId, "authorization-server-id", "", "Custom Authorization Servers. Optional, can be left empty or unconfigured. For example: aus000000000000000h7z")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Okta OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Okta default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Okta OAuth2 prompt values. If \"none\" is included, it must be the only element. \"none\" means: don't display any authentication or consent screens. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Okta default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2574,7 +2575,7 @@ func newProjectUpdateOAuth2PaypalCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-paypal",
 		Short: "Update the project OAuth2 Paypal configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2620,7 +2621,7 @@ func newProjectUpdateOAuth2PaypalSandboxCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-paypal-sandbox",
 		Short: "Update the project OAuth2 PaypalSandbox configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2666,7 +2667,7 @@ func newProjectUpdateOAuth2PodioCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-podio",
 		Short: "Update the project OAuth2 Podio configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2712,7 +2713,7 @@ func newProjectUpdateOAuth2ResendCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-resend",
 		Short: "Update the project OAuth2 Resend configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2759,7 +2760,7 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-salesforce",
 		Short: "Update the project OAuth2 Salesforce configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2795,7 +2796,7 @@ func newProjectUpdateOAuth2SalesforceCommand() *cobra.Command {
 	cmd.Flags().StringVar(&customerSecret, "customer-secret", "", "'Consumer Secret' of Salesforce OAuth2 app. For example: 3w000000000000e2")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Salesforce OAuth2 prompt values. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Salesforce default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Salesforce OAuth2 prompt values. \"login\" means: prompt the user to re-authenticate. \"consent\" means: prompt the user for consent. Pass an empty array to use the Salesforce default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -2809,7 +2810,7 @@ func newProjectUpdateOAuth2SlackCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-slack",
 		Short: "Update the project OAuth2 Slack configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2855,7 +2856,7 @@ func newProjectUpdateOAuth2SpotifyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-spotify",
 		Short: "Update the project OAuth2 Spotify configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2901,7 +2902,7 @@ func newProjectUpdateOAuth2StripeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-stripe",
 		Short: "Update the project OAuth2 Stripe configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2947,7 +2948,7 @@ func newProjectUpdateOAuth2TikTokCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-tik-tok",
 		Short: "Update the project OAuth2 TikTok configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -2993,7 +2994,7 @@ func newProjectUpdateOAuth2TradeshiftCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-tradeshift",
 		Short: "Update the project OAuth2 Tradeshift configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3039,7 +3040,7 @@ func newProjectUpdateOAuth2TradeshiftSandboxCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-tradeshift-sandbox",
 		Short: "Update the project OAuth2 Tradeshift Sandbox configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3085,7 +3086,7 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-twitch",
 		Short: "Update the project OAuth2 Twitch configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3131,7 +3132,7 @@ func newProjectUpdateOAuth2VippsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-vipps",
 		Short: "Update the project OAuth2 Vipps MobilePay configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3177,7 +3178,7 @@ func newProjectUpdateOAuth2VippsSandboxCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-vipps-sandbox",
 		Short: "Update the project OAuth2 Vipps MobilePay Sandbox configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3223,7 +3224,7 @@ func newProjectUpdateOAuth2WebflowCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-webflow",
 		Short: "Update the project OAuth2 Webflow configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3269,7 +3270,7 @@ func newProjectUpdateOAuth2WordPressCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-word-press",
 		Short: "Update the project OAuth2 WordPress configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3315,7 +3316,7 @@ func newProjectUpdateOAuth2XCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2x",
 		Short: "Update the project OAuth2 X configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3361,7 +3362,7 @@ func newProjectUpdateOAuth2YahooCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-yahoo",
 		Short: "Update the project OAuth2 Yahoo configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3407,7 +3408,7 @@ func newProjectUpdateOAuth2YandexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-yandex",
 		Short: "Update the project OAuth2 Yandex configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3454,7 +3455,7 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-zoho",
 		Short: "Update the project OAuth2 Zoho configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3490,7 +3491,7 @@ func newProjectUpdateOAuth2ZohoCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Zoho OAuth2 app. For example: fb5cac000000000000000000000000000000a68f6e")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Zoho OAuth2 prompt values. \"consent\" means: prompt the user for consent. Pass an empty array to use the Zoho default.")
+	cmd.Flags().StringArrayVar(&prompt, "prompt", nil, "Array of Zoho OAuth2 prompt values. \"consent\" means: prompt the user for consent. Pass an empty array to use the Zoho default. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3504,7 +3505,7 @@ func newProjectUpdateOAuth2ZoomCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-o-auth-2-zoom",
 		Short: "Update the project OAuth2 Zoom configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3548,7 +3549,7 @@ func newProjectGetOAuth2ProviderCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-o-auth-2-provider",
 		Short: "Get a single OAuth2 provider configuration. Credential fields (client secret, p8 file, key/team IDs) are write-only and always returned empty.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3587,7 +3588,7 @@ func newProjectListPlatformsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-platforms",
 		Short: "Get a list of all platforms in the project. This endpoint returns an array of all platforms and their configurations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3637,7 +3638,7 @@ func newProjectListPlatformsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: type, name, hostname, bundleIdentifier, applicationId, packageIdentifierName, packageName")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: type, name, hostname, bundleIdentifier, applicationId, packageIdentifierName, packageName. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -3662,7 +3663,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-android-platform",
 		Short: "Create a new Android platform for your project. Use this endpoint to register a new Android platform where your users will run your application which will interact with the Appwrite API.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3691,7 +3692,7 @@ func newProjectCreateAndroidPlatformCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "Android application ID. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("application-id")
-	cmd.Flags().StringArrayVar(&fingerprints, "fingerprints", nil, "SHA-256 fingerprints of the certificates your app is signed with, such as \"14:6D:E9:...:2B:6A\". Passkeys created in the app are accepted when its signature matches one. Find them under App signing in Play Console, or with `./gradlew signingReport`.")
+	cmd.Flags().StringArrayVar(&fingerprints, "fingerprints", nil, "SHA-256 fingerprints of the certificates your app is signed with, such as \"14:6D:E9:...:2B:6A\". Passkeys created in the app are accepted when its signature matches one. Find them under App signing in Play Console, or with `./gradlew signingReport`. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3706,7 +3707,7 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-android-platform",
 		Short: "Update an Android platform by its unique ID. Use this endpoint to update the platform's name, application ID or signing certificate fingerprints.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3735,7 +3736,7 @@ func newProjectUpdateAndroidPlatformCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&applicationId, "application-id", "", "Android application ID. Max length: 256 chars.")
 	_ = cmd.MarkFlagRequired("application-id")
-	cmd.Flags().StringArrayVar(&fingerprints, "fingerprints", nil, "SHA-256 fingerprints of the certificates your app is signed with, such as \"14:6D:E9:...:2B:6A\". Passkeys created in the app are accepted when its signature matches one. Find them under App signing in Play Console, or with `./gradlew signingReport`. Omit to keep the current list, or pass an empty array to clear it.")
+	cmd.Flags().StringArrayVar(&fingerprints, "fingerprints", nil, "SHA-256 fingerprints of the certificates your app is signed with, such as \"14:6D:E9:...:2B:6A\". Passkeys created in the app are accepted when its signature matches one. Find them under App signing in Play Console, or with `./gradlew signingReport`. Omit to keep the current list, or pass an empty array to clear it. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -3749,7 +3750,7 @@ func newProjectCreateApplePlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-apple-platform",
 		Short: "Create a new Apple platform for your project. Use this endpoint to register a new Apple platform where your users will run your application which will interact with the Appwrite API.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3785,7 +3786,7 @@ func newProjectUpdateApplePlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-apple-platform",
 		Short: "Update an Apple platform by its unique ID. Use this endpoint to update the platform's name or bundle identifier.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3821,7 +3822,7 @@ func newProjectCreateLinuxPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-linux-platform",
 		Short: "Create a new Linux platform for your project. Use this endpoint to register a new Linux platform where your users will run your application which will interact with the Appwrite API.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3857,7 +3858,7 @@ func newProjectUpdateLinuxPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-linux-platform",
 		Short: "Update a Linux platform by its unique ID. Use this endpoint to update the platform's name or package name.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3893,7 +3894,7 @@ func newProjectCreateWebPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-web-platform",
 		Short: "Create a new web platform for your project. Use this endpoint to register a new platform where your users will run your application which will interact with the Appwrite API.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3929,7 +3930,7 @@ func newProjectUpdateWebPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-web-platform",
 		Short: "Update a web platform by its unique ID. Use this endpoint to update the platform's name or hostname.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -3965,7 +3966,7 @@ func newProjectCreateWindowsPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-windows-platform",
 		Short: "Create a new Windows platform for your project. Use this endpoint to register a new Windows platform where your users will run your application which will interact with the Appwrite API.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4001,7 +4002,7 @@ func newProjectUpdateWindowsPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-windows-platform",
 		Short: "Update a Windows platform by its unique ID. Use this endpoint to update the platform's name or package identifier name.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4035,7 +4036,7 @@ func newProjectGetPlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-platform",
 		Short: "Get a platform by its unique ID. This endpoint returns the platform's details, including its name, type, and key configurations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4065,7 +4066,7 @@ func newProjectDeletePlatformCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-platform",
 		Short: "Delete a platform by its unique ID. This endpoint removes the platform and all its configurations from the project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4098,7 +4099,7 @@ func newProjectListPoliciesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-policies",
 		Short: "Get a list of all project policies and their current configuration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4133,11 +4134,41 @@ func newProjectListPoliciesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
 	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateAccountDevicesPolicyCommand() *cobra.Command {
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-account-devices-policy",
+		Short: "Update whether account devices are enabled for the project. When enabled, a browser can create an account device that holds multiple sessions and switch between them. When disabled, account devices can no longer be created, so each browser is limited to a single active session.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.UpdateAccountDevicesPolicy(enabled)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to true to allow account devices, or false to disable them for this project.")
+	_ = cmd.MarkFlagRequired("enabled")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4149,7 +4180,7 @@ func newProjectUpdateDenyAliasedEmailPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deny-aliased-email-policy",
 		Short: "Configures if aliased emails such as subaddresses and emails with suffixes are denied during new users sign-ups and email updates.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4179,7 +4210,7 @@ func newProjectUpdateDenyCorporateEmailPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deny-corporate-email-policy",
 		Short: "Configures if only corporate email addresses (non-free and non-disposable domains) are allowed during new user sign-ups and email updates.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4209,7 +4240,7 @@ func newProjectUpdateDenyDisposableEmailPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deny-disposable-email-policy",
 		Short: "Configures if disposable emails from known temporary domains are denied during new users sign-ups and email updates.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4239,7 +4270,7 @@ func newProjectUpdateDenyFreeEmailPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deny-free-email-policy",
 		Short: "Configures if emails from free providers such as Gmail or Yahoo are denied during new users sign-ups and email updates.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4269,7 +4300,7 @@ func newProjectUpdateDenyRealtimeGuestsPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deny-realtime-guests-policy",
 		Short: "Configures if guests, connections without a signed-in user, may subscribe to realtime channels. When enabled, a guest can still connect and sign in over the connection, but cannot subscribe until it does.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4304,7 +4335,7 @@ func newProjectUpdateMembershipPrivacyPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-membership-privacy-policy",
 		Short: "Updating this policy allows you to control if team members can see other members information. When enabled, all team members can see ID, name, email, phone number, and MFA status of other members..",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4368,7 +4399,7 @@ func newProjectUpdateMFAFactorsPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa-factors-policy",
 		Short: "Updating this policy allows you to control which factors users can use to complete an MFA challenge. Disabled factors cannot be used to create a challenge and are reported as unavailable when listing factors. The custom factor is disabled by default; enable it to deliver challenge codes through your own channel. Recovery codes always remain available as a fallback.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4419,7 +4450,7 @@ func newProjectUpdatePasskeyPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-passkey-policy",
 		Short: "Set the relying party ID passkeys are bound to: the domain of your application. Passkeys work on the project's web platforms on that domain or its subdomains, and on the domain itself for Apple apps. A localhost web platform enables passkeys for local development without a relying party ID. The relying party ID cannot change while users have passkeys, and any change invalidates ceremonies in progress.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4450,7 +4481,7 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password-dictionary-policy",
 		Short: "Updating this policy allows you to control if new passwords are checked against most common passwords dictionary. When enabled, and user changes their password, password must not be contained in the dictionary.\n\nCustom denyList entries use case-sensitive equality and apply only while this policy is enabled. Omit denyList or pass null to preserve it, pass an array to replace it, or pass [] to clear it. Entries are stored without trimming or deduplication. Existing passwords remain valid for sign-in and password confirmation. The combined serialized project authentication configuration must fit within 16,384 characters, even when each list meets its entry limits.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4475,7 +4506,7 @@ func newProjectUpdatePasswordDictionaryPolicyCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password dictionary policy. Set to true if you want password change to block passwords in the dictionary, or false to allow them. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
-	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-sensitive equality. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters.")
+	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-sensitive equality. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4487,7 +4518,7 @@ func newProjectUpdatePasswordHistoryPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password-history-policy",
 		Short: "Updates one of password strength policies. Based on total length configured, previous password hashes are stored, and users cannot choose a new password that is already stored in the passwird history list, when updating an user password, or setting new one through password recovery.\n\nKeep in mind, while password history policy is disabled, the history is not being stored. Enabling the policy will not have any history on existing users, and it will only start to collect and enforce the policy on password changes since the policy is enabled.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4518,7 +4549,7 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password-personal-data-policy",
 		Short: "Updating this policy allows you to control if password strength is checked against personal data. When enabled, and user sets or changes their password, the password must not contain user ID, name, email or phone number.\n\nCustom denyList entries use case-insensitive substring matching and apply only while this policy is enabled. Omit denyList or pass null to preserve it, pass an array to replace it, or pass [] to clear it. Entries are stored without trimming or deduplication. Existing passwords remain valid for sign-in and password confirmation. The combined serialized project authentication configuration must fit within 16,384 characters, even when each list meets its entry limits.\nPassword recovery also checks the recovered user profile, closing the previous gap in profile-based personal-data validation.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4543,7 +4574,7 @@ func newProjectUpdatePasswordPersonalDataPolicyCommand() *cobra.Command {
 
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Toggle password personal data policy. Set to true if you want to block passwords including user's personal data, or false to allow it. When changing this policy, existing passwords remain valid.")
 	_ = cmd.MarkFlagRequired("enabled")
-	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-insensitive substring matching. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters.")
+	cmd.Flags().StringArrayVar(&denyList, "deny-list", nil, "Custom blocked values using case-insensitive substring matching. Up to 100 entries of 1 to 256 characters. Omit or pass null to preserve, an array to replace, or [] to clear. Combined authentication settings must fit within 16,384 characters. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
@@ -4557,7 +4588,7 @@ func newProjectUpdatePasswordPwnedPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password-pwned-policy",
 		Short: "Updating this policy allows you to control if passwords are checked against the Have I Been Pwned breach database. When enabled, every password a user signs up, signs in or resets with is checked and the result is recorded on the user as `passwordPwned`. On its own the policy only records. Enable `users` to reject a breached password when a user signs up or sets a new password, and `sessions` to refuse a sign-in with a breached password until it is reset. Only the first five characters of the password hash are ever shared with the service. Options left out keep their current value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4604,7 +4635,7 @@ func newProjectUpdatePasswordRotationPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password-rotation-policy",
 		Short: "Require a password reset when an email/password sign-in uses a password older than the configured maximum age. Options left out keep their current value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4648,7 +4679,7 @@ func newProjectUpdatePasswordStrengthPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password-strength-policy",
 		Short: "Update the password strength requirements for users in the project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4703,7 +4734,7 @@ func newProjectUpdateSessionAlertPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-session-alert-policy",
 		Short: "Updating this policy allows you to control if email alert is sent upon session creation. When enabled, and user signs into their account, they will be sent an email notification. There is an exception, the first session after a new sign up does not trigger an alert, even if the policy is enabled.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4733,7 +4764,7 @@ func newProjectUpdateSessionDurationPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-session-duration-policy",
 		Short: "Update maximum duration how long sessions created within a project should stay active for.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4763,7 +4794,7 @@ func newProjectUpdateSessionInvalidationPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-session-invalidation-policy",
 		Short: "Updating this policy allows you to control if existing sessions should be invalidated when a password of a user is changed. When enabled, and user changes their password, they will be logged out of all their devices.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4793,7 +4824,7 @@ func newProjectUpdateSessionLimitPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-session-limit-policy",
 		Short: "Update the maximum number of sessions allowed per user. When the limit is hit, the oldest session will be deleted to make room for new one.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4823,7 +4854,7 @@ func newProjectUpdateUserLimitPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-user-limit-policy",
 		Short: "Update the maximum number of users in the project. When the limit is hit or amount of existing users already exceeded the limit, all users remain active, but new user sign up will be prohibited.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4853,7 +4884,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-policy",
 		Short: "Get a policy by its unique ID. This endpoint returns the current configuration for the requested project policy.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4870,7 +4901,7 @@ func newProjectGetPolicyCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, password-rotation, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, deny-realtime-guests, passkey.")
+	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Can be one of: password-dictionary, password-history, password-strength, password-personal-data, password-pwned, password-rotation, session-alert, session-duration, session-invalidation, session-limit, user-limit, membership-privacy, mfa-factors, deny-aliased-email, deny-disposable-email, deny-free-email, deny-corporate-email, deny-realtime-guests, passkey, account-devices.")
 	_ = cmd.MarkFlagRequired("policy-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -4882,7 +4913,7 @@ func newProjectGetPrefsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-prefs",
 		Short: "Get the project preferences. Preferences are a key-value object stored on the project for anyone working on it.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4910,7 +4941,7 @@ func newProjectUpdatePrefsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-prefs",
 		Short: "Update the project preferences. The object you pass is stored as is and replaces any previous value. The maximum allowed prefs size is 64kB and throws an error if exceeded.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4945,7 +4976,7 @@ func newProjectUpdateProtocolCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-protocol",
 		Short: "Update properties of a specific protocol. Use this endpoint to enable or disable a protocol in your project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -4978,7 +5009,7 @@ func newProjectUpdateServiceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-service",
 		Short: "Update properties of a specific service. Use this endpoint to enable or disable a service in your project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5009,7 +5040,7 @@ func newProjectDeleteSessionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-sessions",
 		Short: "Delete all sessions in the project. Any session created before this request will be invalidated immediately: users will be signed out of every active client (web, mobile, server SDKs, JWTs), and will be able to sign in again afterwards. API keys are not affected by this action.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5046,7 +5077,7 @@ func newProjectUpdateSMTPCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-smtp",
 		Short: "Update the SMTP configuration for your project. Use this endpoint to configure your project's SMTP provider with your custom settings for sending transactional emails.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5118,7 +5149,7 @@ func newProjectCreateSMTPTestCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-smtp-test",
 		Short: "Send a test email to verify SMTP configuration. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5135,7 +5166,7 @@ func newProjectCreateSMTPTestCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&emails, "emails", nil, "Array of emails to send test email to. Maximum of 10 emails are allowed.")
+	cmd.Flags().StringArrayVar(&emails, "emails", nil, "Array of emails to send test email to. Maximum of 10 emails are allowed. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("emails")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
@@ -5151,7 +5182,7 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-email-templates",
 		Short: "Get a list of all custom email templates configured for the project. This endpoint returns an array of all configured email templates and their locales.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5186,7 +5217,7 @@ func newProjectListEmailTemplatesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Only supported methods are limit and offset. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
@@ -5209,7 +5240,7 @@ func newProjectUpdateEmailTemplateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-template",
 		Short: "Update a custom email template for the specified locale and type. Use this endpoint to modify the content of your email templates.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5271,7 +5302,7 @@ func newProjectGetEmailTemplateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-email-template",
 		Short: "Get a custom email template for the specified locale and type. This endpoint returns the template content, subject, and other configuration details.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5317,7 +5348,7 @@ func newProjectListVariablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-variables",
 		Short: "Get a list of all project environment variables.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5367,7 +5398,7 @@ func newProjectListVariablesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, resourceType, resourceId, secret. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -5393,7 +5424,7 @@ func newProjectCreateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-variable",
 		Short: "Create a new project environment variable. These variables can be accessed by all functions and sites in the project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5439,7 +5470,7 @@ func newProjectGetVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-variable",
 		Short: "Get a variable by its unique ID. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5473,7 +5504,7 @@ func newProjectUpdateVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-variable",
 		Short: "Update variable by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {
@@ -5523,7 +5554,7 @@ func newProjectDeleteVariableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-variable",
 		Short: "Delete a variable by its unique ID. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject(projectId)
 			if err != nil {

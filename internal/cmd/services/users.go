@@ -88,7 +88,7 @@ func newUsersListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all the project's users. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -141,7 +141,7 @@ func newUsersListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, passwordPwned, labels, impersonator, accessedAt")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, email, phone, status, passwordUpdate, registration, emailVerification, phoneVerification, passwordPwned, labels, impersonator, accessedAt. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -166,7 +166,7 @@ func newUsersCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -216,7 +216,7 @@ func newUsersCreateArgon2UserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-argon-2-user",
 		Short: "Create a new user. Password provided must be hashed with the Argon2 (https://en.wikipedia.org/wiki/Argon2) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -258,7 +258,7 @@ func newUsersCreateBcryptUserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-bcrypt-user",
 		Short: "Create a new user. Password provided must be hashed with the Bcrypt (https://en.wikipedia.org/wiki/Bcrypt) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -307,7 +307,7 @@ func newUsersListIdentitiesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-identities",
 		Short: "Get identities for all users.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -360,7 +360,7 @@ func newUsersListIdentitiesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -381,7 +381,7 @@ func newUsersDeleteIdentityCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-identity",
 		Short: "Delete an identity by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -412,7 +412,7 @@ func newUsersCreateMD5UserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-md-5-user",
 		Short: "Create a new user. Password provided must be hashed with the MD5 (https://en.wikipedia.org/wiki/MD5) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -454,7 +454,7 @@ func newUsersCreatePHPassUserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ph-pass-user",
 		Short: "Create a new user. Password provided must be hashed with the PHPass (https://www.openwall.com/phpass/) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -501,7 +501,7 @@ func newUsersCreateScryptUserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-scrypt-user",
 		Short: "Create a new user. Password provided must be hashed with the Scrypt (https://github.com/Tarsnap/scrypt) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -556,7 +556,7 @@ func newUsersCreateScryptModifiedUserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-scrypt-modified-user",
 		Short: "Create a new user. Password provided must be hashed with the Scrypt Modified (https://gist.github.com/Meldiron/eecf84a0225eccb5a378d45bb27462cc) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -605,7 +605,7 @@ func newUsersCreateSHAUserCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-sha-user",
 		Short: "Create a new user. Password provided must be hashed with the SHA (https://en.wikipedia.org/wiki/Secure_Hash_Algorithm) algorithm. Use the POST /users (https://appwrite.io/docs/server/users#usersCreate) endpoint to create users with a plain text password.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -648,7 +648,7 @@ func newUsersGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a user by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -676,7 +676,7 @@ func newUsersDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a user by its unique ID, thereby releasing it's ID. Since ID is released and can be reused, all user-related resources like documents or storage files should be deleted before user deletion. If you want to keep ID reserved, use the updateStatus (https://appwrite.io/docs/server/users#usersUpdateStatus) endpoint instead.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -705,7 +705,7 @@ func newUsersUpdateEmailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email",
 		Short: "Update the user email by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -736,7 +736,7 @@ func newUsersUpdateImpersonatorCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-impersonator",
 		Short: "Enable or disable whether a user can impersonate other users. When impersonation headers are used, the request runs as the target user for API behavior, while internal audit logs still attribute the action to the original impersonator and store the impersonated target details only in internal audit payload data. Account endpoints are read-only while impersonating: they report the target's account, and anything that would change it is refused, so an impersonator cannot alter the target's credentials or delete their account.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -768,7 +768,7 @@ func newUsersCreateJWTCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-jwt",
 		Short: "Use this endpoint to create a JSON Web Token for user by its unique ID. You can use the resulting JWT to authenticate on behalf of the user. The JWT secret will become invalid if the session it uses gets deleted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -808,7 +808,7 @@ func newUsersUpdateLabelsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-labels",
 		Short: "Update the user labels by its unique ID. \n\nLabels can be used to grant access to resources. While teams are a way for user's to share access to a resource, labels can be defined by the developer to grant access without an invitation. See the Permissions docs (https://appwrite.io/docs/permissions) for more info.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -827,7 +827,7 @@ func newUsersUpdateLabelsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of user labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long.")
+	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of user labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("labels")
 	return cmd
 }
@@ -849,7 +849,7 @@ func newUsersListMembershipsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-memberships",
 		Short: "Get the user membership list by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -904,7 +904,7 @@ func newUsersListMembershipsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -926,7 +926,7 @@ func newUsersUpdateMfaCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa",
 		Short: "Enable or disable MFA on a user account.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -957,7 +957,7 @@ func newUsersDeleteMfaAuthenticatorCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-mfa-authenticator",
 		Short: "Delete an authenticator app.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -988,7 +988,7 @@ func newUsersGetMFAChallengeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-mfa-challenge",
 		Short: "Get a custom MFA challenge for a user, including the code to be delivered through your own channel.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1018,7 +1018,7 @@ func newUsersListMfaFactorsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-mfa-factors",
 		Short: "List the factors available on the account to be used as a MFA challange.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1046,7 +1046,7 @@ func newUsersGetMfaRecoveryCodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-mfa-recovery-codes",
 		Short: "Get recovery codes that can be used as backup for MFA flow by User ID. Before getting codes, they must be generated using createMfaRecoveryCodes method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1074,7 +1074,7 @@ func newUsersUpdateMfaRecoveryCodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa-recovery-codes",
 		Short: "Regenerate recovery codes that can be used as backup for MFA flow by User ID. Before regenerating codes, they must be first generated using createMfaRecoveryCodes method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1102,7 +1102,7 @@ func newUsersCreateMfaRecoveryCodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mfa-recovery-codes",
 		Short: "Generate recovery codes used as backup for MFA flow for User ID. Recovery codes can be used as a MFA verification type in createMfaChallenge method by client SDK.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1131,7 +1131,7 @@ func newUsersUpdateNameCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-name",
 		Short: "Update the user name by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1171,7 +1171,7 @@ func newUsersListPasskeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-passkeys",
 		Short: "Get the list of verified passkeys registered by a user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1223,7 +1223,7 @@ func newUsersListPasskeysCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter and order on the following attributes: $id, $createdAt, $updatedAt, name, accessedAt")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter and order on the following attributes: $id, $createdAt, $updatedAt, name, accessedAt. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1244,7 +1244,7 @@ func newUsersGetPasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-passkey",
 		Short: "Get a verified passkey of a user by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1276,7 +1276,7 @@ func newUsersUpdatePasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-passkey",
 		Short: "Rename a passkey of a user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1309,7 +1309,7 @@ func newUsersDeletePasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-passkey",
 		Short: "Delete a passkey from a user, for example when a device is lost. The passkey can no longer be used to sign in.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1340,7 +1340,7 @@ func newUsersUpdatePasswordCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password",
 		Short: "Update the user password by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1371,7 +1371,7 @@ func newUsersUpdatePhoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-phone",
 		Short: "Update the user phone by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1401,7 +1401,7 @@ func newUsersGetPrefsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-prefs",
 		Short: "Get the user preferences by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1430,7 +1430,7 @@ func newUsersUpdatePrefsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-prefs",
 		Short: "Update the user preferences by its unique ID. The object you pass is stored as is, and replaces any previous value. The maximum allowed prefs size is 64kB and throws error if exceeded.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1465,7 +1465,7 @@ func newUsersListSessionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-sessions",
 		Short: "Get the user sessions list by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1501,7 +1501,7 @@ func newUsersCreateSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-session",
 		Short: "Creates a session for a user. Returns an immediately usable session object.\n\nIf you want to generate a token for a custom authentication flow, use the POST /users/{userId}/tokens (https://appwrite.io/docs/server/users#createToken) endpoint.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1529,7 +1529,7 @@ func newUsersDeleteSessionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-sessions",
 		Short: "Delete all user's sessions by using the user's unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1558,7 +1558,7 @@ func newUsersDeleteSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-session",
 		Short: "Delete a user sessions by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1589,7 +1589,7 @@ func newUsersUpdateStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-status",
 		Short: "Update the user status by its unique ID. Use this endpoint as an alternative to deleting a user if you want to keep user's ID reserved.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1629,7 +1629,7 @@ func newUsersListTargetsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-targets",
 		Short: "List the messaging targets that are associated with a user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1681,7 +1681,7 @@ func newUsersListTargetsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&userId, "user-id", "", "User ID.")
 	_ = cmd.MarkFlagRequired("user-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, providerId, identifier, providerType. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1706,7 +1706,7 @@ func newUsersCreateTargetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-target",
 		Short: "Create a messaging target.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1752,7 +1752,7 @@ func newUsersGetTargetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-target",
 		Short: "Get a user's push notification target by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1786,7 +1786,7 @@ func newUsersUpdateTargetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-target",
 		Short: "Update a messaging target.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1832,7 +1832,7 @@ func newUsersDeleteTargetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-target",
 		Short: "Delete a messaging target.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1864,7 +1864,7 @@ func newUsersCreateTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-token",
 		Short: "Returns a token with a secret key for creating a session. Use the user ID and secret and submit a request to the PUT /account/sessions/token (https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1904,7 +1904,7 @@ func newUsersUpdateEmailVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-verification",
 		Short: "Update the user email verification status by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1935,7 +1935,7 @@ func newUsersUpdatePhoneVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-phone-verification",
 		Short: "Update the user phone verification status by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

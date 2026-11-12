@@ -124,7 +124,7 @@ func newTablesDBListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -177,7 +177,7 @@ func newTablesDBListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -204,7 +204,7 @@ func newTablesDBCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new Database.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -257,7 +257,7 @@ func newTablesDBListSpecificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
 		Short: "List the dedicated database specifications available on the current plan. Each specification reports its resource limits, its own prices and overage rates, and whether it is enabled for the organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -292,7 +292,7 @@ func newTablesDBListTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-transactions",
 		Short: "List transactions across all databases.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -342,7 +342,7 @@ func newTablesDBListTransactionsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -362,7 +362,7 @@ func newTablesDBCreateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-transaction",
 		Short: "Create a new transaction.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -395,7 +395,7 @@ func newTablesDBGetTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-transaction",
 		Short: "Get a transaction by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -425,7 +425,7 @@ func newTablesDBUpdateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-transaction",
 		Short: "Update a transaction, to either commit or roll back its operations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -466,7 +466,7 @@ func newTablesDBDeleteTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-transaction",
 		Short: "Delete a transaction by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -495,7 +495,7 @@ func newTablesDBCreateOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-operations",
 		Short: "Create multiple operations in a single transaction.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -524,7 +524,7 @@ func newTablesDBCreateOperationsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID.")
 	_ = cmd.MarkFlagRequired("transaction-id")
-	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations.")
+	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations. Repeat the flag for each value.")
 	return cmd
 }
 
@@ -534,7 +534,7 @@ func newTablesDBGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -568,7 +568,7 @@ func newTablesDBUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a database by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -624,7 +624,7 @@ func newTablesDBDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -653,7 +653,7 @@ func newTablesDBCreateFailoverCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-failover",
 		Short: "Trigger a manual failover for a dedicated database with high availability enabled. Promotes a replica to primary. The failover runs asynchronously; poll the database document for status updates. A database left mid-operation also accepts this call as a repair once nothing is driving the operation it is stuck in. Repairing a failover that did not finish, a `failed` database, a stranded upgrade or migrate, or a stranded compute resize additionally requires `targetReplicaId` to name the member to promote, because the default target may be the member that operation already promoted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -688,7 +688,7 @@ func newTablesDBListMigrationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-migrations",
 		Short: "List the dedicated migrations for a TablesDB database. A database has at most one in-flight migration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -718,7 +718,7 @@ func newTablesDBCreateMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-migration",
 		Short: "Start migrating a serverless TablesDB database onto a dedicated MySQL compute. Data is copied to the target while the source stays live. Reads continue throughout. Row writes are held for up to a few seconds while routing switches to the dedicated compute; a write the switch has not absorbed within that hold is refused with `database_migration_cutover` and can be retried. Schema changes (tables, columns, indexes) are refused from creation until the cutover completes, and resume once the migration is `soaking`.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -757,7 +757,7 @@ func newTablesDBGetMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-migration",
 		Short: "Get a single dedicated migration for a TablesDB database by its ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -788,7 +788,7 @@ func newTablesDBDeleteMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-migration",
 		Short: "Abort an in-flight TablesDB dedicated migration. Only allowed before cutover; once the migration has cut over it cannot be aborted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -819,7 +819,7 @@ func newTablesDBCreateCutoverCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-cutover",
 		Short: "Cut a verified TablesDB migration over to its dedicated compute. Only applies to a migration created with `autoCutover` disabled, which waits at `ready_to_cutover` until this is called. The routing flip happens shortly after this returns. Reads are unaffected; row writes are held for up to a few seconds while it lands, and a write the flip has not absorbed within that hold is refused with `database_migration_cutover` and can be retried. One call buys one attempt: a cutover that fails a check returns the migration to `verifying` and parks it again, so call this once more to retry.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -852,7 +852,7 @@ func newTablesDBListOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-operations",
 		Short: "List the lifecycle operations recorded for a dedicated database, newest first. Every provision, update, restore, backup and replication action is recorded here with its outcome, including an attempt that was abandoned because another worker took over the database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -895,7 +895,7 @@ func newTablesDBGetReplicasCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-replicas",
 		Short: "Get high availability status for a dedicated database. Returns replica statuses, replication lag, and sync mode.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -923,7 +923,7 @@ func newTablesDBGetStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-status",
 		Short: "Get real-time health and status information for a dedicated database. Returns health status, readiness, uptime, connection info, replica status, and volume information.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -962,7 +962,7 @@ func newTablesDBListTablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-tables",
 		Short: "Get a list of all tables that belong to the provided databaseId. You can use the search parameter to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1017,7 +1017,7 @@ func newTablesDBListTablesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name, enabled, rowSecurity. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -1046,7 +1046,7 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-table",
 		Short: "Create a new Table. Before using this route, you should create a new database resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1098,13 +1098,13 @@ func newTablesDBCreateTableCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&name, "name", "", "Table name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&rowSecurity, "row-security", false, "Enables configuring permissions for individual rows. A user needs one of row or table level permissions to access a row. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("row-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is table enabled? When set to 'disabled', users cannot access the table but Server SDKs with and API key can still read and write to the table. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of column definitions to create. Each column should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
-	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial, trigram), attributes (array of column keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
+	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of column definitions to create. Each column should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial, trigram), attributes (array of column keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the table.")
 	return cmd
 }
@@ -1116,7 +1116,7 @@ func newTablesDBGetTableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-table",
 		Short: "Get a table by its unique ID. This endpoint response returns a JSON object with the table metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1153,7 +1153,7 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-table",
 		Short: "Update a table by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1196,7 +1196,7 @@ func newTablesDBUpdateTableCommand() *cobra.Command {
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID.")
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&name, "name", "", "Table name. Max length: 128 chars.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&rowSecurity, "row-security", false, "Enables configuring permissions for individual rows. A user needs one of row or table-level permissions to access a row. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("row-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is table enabled? When set to 'disabled', users cannot access the table but Server SDKs with and API key can still read and write to the table. No data is lost when this is toggled.")
@@ -1214,7 +1214,7 @@ func newTablesDBDeleteTableCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-table",
 		Short: "Delete a table by its unique ID. Only users with write permissions have access to delete this resource.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1255,7 +1255,7 @@ func newTablesDBListColumnsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-columns",
 		Short: "List columns in the table.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1309,7 +1309,7 @@ func newTablesDBListColumnsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID.")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, size, required, array, status, error. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1337,7 +1337,7 @@ func newTablesDBCreateBigIntColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-big-int-column",
 		Short: "Create a bigint column. Optionally, minimum and maximum values can be provided.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1403,7 +1403,7 @@ func newTablesDBUpdateBigIntColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-big-int-column",
 		Short: "Update a bigint column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1464,7 +1464,7 @@ func newTablesDBCreateBooleanColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-boolean-column",
 		Short: "Create a boolean column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1521,7 +1521,7 @@ func newTablesDBUpdateBooleanColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-boolean-column",
 		Short: "Update a boolean column. Changing the `default` value will not update already existing rows.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1574,7 +1574,7 @@ func newTablesDBCreateDatetimeColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-datetime-column",
 		Short: "Create a date time column according to the ISO 8601 standard.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1630,7 +1630,7 @@ func newTablesDBUpdateDatetimeColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-datetime-column",
 		Short: "Update a date time column. Changing the `default` value will not update already existing rows.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1683,7 +1683,7 @@ func newTablesDBCreateEmailColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-column",
 		Short: "Create an email column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1739,7 +1739,7 @@ func newTablesDBUpdateEmailColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-column",
 		Short: "Update an email column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1793,7 +1793,7 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-enum-column",
 		Short: "Create an enumeration column. The `elements` param acts as a white-list of accepted values for this column.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1828,7 +1828,7 @@ func newTablesDBCreateEnumColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
 	_ = cmd.MarkFlagRequired("key")
-	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Array of enum values.")
+	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Array of enum values. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("elements")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
@@ -1852,7 +1852,7 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-enum-column",
 		Short: "Update an enum column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1884,7 +1884,7 @@ func newTablesDBUpdateEnumColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&key, "key", "", "Column Key.")
 	_ = cmd.MarkFlagRequired("key")
-	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Updated list of enum values.")
+	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Updated list of enum values. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("elements")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
@@ -1909,7 +1909,7 @@ func newTablesDBCreateFloatColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-float-column",
 		Short: "Create a float column. Optionally, minimum and maximum values can be provided.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1975,7 +1975,7 @@ func newTablesDBUpdateFloatColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-float-column",
 		Short: "Update a float column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2038,7 +2038,7 @@ func newTablesDBCreateIntegerColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-integer-column",
 		Short: "Create an integer column. Optionally, minimum and maximum values can be provided.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2104,7 +2104,7 @@ func newTablesDBUpdateIntegerColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-integer-column",
 		Short: "Update an integer column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2165,7 +2165,7 @@ func newTablesDBCreateIpColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ip-column",
 		Short: "Create IP address column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2221,7 +2221,7 @@ func newTablesDBUpdateIpColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-ip-column",
 		Short: "Update an ip column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2273,7 +2273,7 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-line-column",
 		Short: "Create a geometric line column.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2311,7 +2311,7 @@ func newTablesDBCreateLineColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
@@ -2328,7 +2328,7 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-line-column",
 		Short: "Update a line column. Changing the `default` value will not update already existing rows.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2369,7 +2369,7 @@ func newTablesDBUpdateLineColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when column is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
@@ -2388,7 +2388,7 @@ func newTablesDBCreateLongtextColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-longtext-column",
 		Short: "Create a longtext column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2449,7 +2449,7 @@ func newTablesDBUpdateLongtextColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-longtext-column",
 		Short: "Update a longtext column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2503,7 +2503,7 @@ func newTablesDBCreateMediumtextColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mediumtext-column",
 		Short: "Create a mediumtext column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2564,7 +2564,7 @@ func newTablesDBUpdateMediumtextColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mediumtext-column",
 		Short: "Update a mediumtext column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2616,7 +2616,7 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-point-column",
 		Short: "Create a geometric point column.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2654,7 +2654,7 @@ func newTablesDBCreatePointColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
@@ -2671,7 +2671,7 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-point-column",
 		Short: "Update a point column. Changing the `default` value will not update already existing rows.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2712,7 +2712,7 @@ func newTablesDBUpdatePointColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when column is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
@@ -2729,7 +2729,7 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-polygon-column",
 		Short: "Create a geometric polygon column.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2767,7 +2767,7 @@ func newTablesDBCreatePolygonColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
 }
@@ -2784,7 +2784,7 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-polygon-column",
 		Short: "Update a polygon column. Changing the `default` value will not update already existing rows.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2825,7 +2825,7 @@ func newTablesDBUpdatePolygonColumnCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is column required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for column when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when column is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New Column Key.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the column.")
 	return cmd
@@ -2845,7 +2845,7 @@ func newTablesDBCreateRelationshipColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-relationship-column",
 		Short: "Create relationship column. Learn more about relationship columns (https://appwrite.io/docs/databases-relationships#relationship-columns).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2908,7 +2908,7 @@ func newTablesDBUpdateRelationshipColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-relationship-column",
 		Short: "Update relationship column. Learn more about relationship columns (https://appwrite.io/docs/databases-relationships#relationship-columns).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2963,7 +2963,7 @@ func newTablesDBCreateStringColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-string-column",
 		Short: "Create a string column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3027,7 +3027,7 @@ func newTablesDBUpdateStringColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-string-column",
 		Short: "Update a string column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3085,7 +3085,7 @@ func newTablesDBCreateTextColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-text-column",
 		Short: "Create a text column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3146,7 +3146,7 @@ func newTablesDBUpdateTextColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-text-column",
 		Short: "Update a text column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3199,7 +3199,7 @@ func newTablesDBCreateUrlColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-url-column",
 		Short: "Create a URL column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3255,7 +3255,7 @@ func newTablesDBUpdateUrlColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-url-column",
 		Short: "Update an url column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3310,7 +3310,7 @@ func newTablesDBCreateVarcharColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-varchar-column",
 		Short: "Create a varchar column.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3374,7 +3374,7 @@ func newTablesDBUpdateVarcharColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-varchar-column",
 		Short: "Update a varchar column. Changing the `default` value will not update already existing rows.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3427,7 +3427,7 @@ func newTablesDBGetColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-column",
 		Short: "Get column by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3461,7 +3461,7 @@ func newTablesDBDeleteColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-column",
 		Short: "Deletes a column.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3504,7 +3504,7 @@ func newTablesDBListIndexesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-indexes",
 		Short: "List indexes on the table.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3558,7 +3558,7 @@ func newTablesDBListIndexesCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: key, type, status, attributes, error. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -3585,7 +3585,7 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-index",
 		Short: "Creates an index on the columns listed. Your index should include all the columns you will query in a single request.\nType can be `key`, `fulltext`, `unique`, `spatial`, or `trigram`. `trigram` is only available on PostgreSQL and lets `contains`, `startsWith`, and `endsWith` queries on string columns use an index.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3626,10 +3626,10 @@ func newTablesDBCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Index type.")
 	_ = cmd.MarkFlagRequired("type")
-	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of columns to index. Maximum of 100 columns are allowed, each 32 characters long.")
+	cmd.Flags().StringArrayVar(&columns, "columns", nil, "Array of columns to index. Maximum of 100 columns are allowed, each 32 characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("columns")
-	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
-	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
@@ -3642,7 +3642,7 @@ func newTablesDBGetIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-index",
 		Short: "Get index by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3676,7 +3676,7 @@ func newTablesDBDeleteIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-index",
 		Short: "Delete an index.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3722,7 +3722,7 @@ func newTablesDBListRowsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-rows",
 		Short: "Get a list of all the user's rows in a given table. You can use the query params to filter your results.\n\nRows returned by aggregate, groupBy or distinct queries hold only the columns they select, group or aggregate, typed as a row types them, with a joined column named by its join alias (`alias.column`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$tableId` unless they select or group it, and those of a right or full join row that no row of this table matched. SDK row models fill omitted system columns with empty values.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3783,7 +3783,7 @@ func newTablesDBListRowsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/products/databases/tables#create-table).")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -3811,7 +3811,7 @@ func newTablesDBCreateRowCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-row",
 		Short: "Create a new Row. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3849,7 +3849,7 @@ func newTablesDBCreateRowCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("row-id")
 	cmd.Flags().StringVar(&data, "data", "", "Row data as JSON object.")
 	_ = cmd.MarkFlagRequired("data")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -3863,7 +3863,7 @@ func newTablesDBCreateRowsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-rows",
 		Short: "Create new Rows. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3894,7 +3894,7 @@ func newTablesDBCreateRowsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable). Make sure to define columns before creating rows.")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&rows, "rows", nil, "Array of rows data as JSON objects.")
+	cmd.Flags().StringArrayVar(&rows, "rows", nil, "Array of rows data as JSON objects. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("rows")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
@@ -3909,7 +3909,7 @@ func newTablesDBUpsertRowsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-rows",
 		Short: "Create or update Rows. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3940,7 +3940,7 @@ func newTablesDBUpsertRowsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID.")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&rows, "rows", nil, "Array of row data as JSON objects. May contain partial rows.")
+	cmd.Flags().StringArrayVar(&rows, "rows", nil, "Array of row data as JSON objects. May contain partial rows. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("rows")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
@@ -3964,7 +3964,7 @@ func newTablesDBUpdateRowsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-rows",
 		Short: "Update all rows that match your queries, if no queries are submitted then all rows are updated. You can pass only specific fields to be updated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4026,7 +4026,7 @@ func newTablesDBUpdateRowsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID.")
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&data, "data", "", "Row data as JSON object. Include only column and value pairs to be updated.")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
@@ -4056,7 +4056,7 @@ func newTablesDBDeleteRowsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-rows",
 		Short: "Bulk delete rows using queries, if no queries are passed then all rows are deleted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4110,7 +4110,7 @@ func newTablesDBDeleteRowsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID. You can create a new table using the Database service server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable).")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
@@ -4143,7 +4143,7 @@ func newTablesDBCreateQueryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-query",
 		Short: "Get a list of all the user's rows in a given table using a POST request. This behaves identically to the list rows endpoint but accepts the queries in the request body, allowing much larger `queries` arrays than can fit in a URL query string.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4204,7 +4204,7 @@ func newTablesDBCreateQueryCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&tableId, "table-id", "", "Table ID. You can create a new table using the TablesDB service server integration (https://appwrite.io/docs/products/databases/tables#create-table).")
 	_ = cmd.MarkFlagRequired("table-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -4232,7 +4232,7 @@ func newTablesDBGetRowCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-row",
 		Short: "Get a row by its unique ID. This endpoint response returns a JSON object with the row data.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4272,7 +4272,7 @@ func newTablesDBGetRowCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("table-id")
 	cmd.Flags().StringVar(&rowId, "row-id", "", "Row ID.")
 	_ = cmd.MarkFlagRequired("row-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().StringArrayVar(&selectAttributes, "select", nil, "Attribute to include in the response. Repeat for multiple attributes.")
 	return cmd
@@ -4289,7 +4289,7 @@ func newTablesDBUpsertRowCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-row",
 		Short: "Create or update a Row. Before using this route, you should create a new table resource using either a server integration (https://appwrite.io/docs/references/cloud/server-dart/tablesDB#createTable) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4329,7 +4329,7 @@ func newTablesDBUpsertRowCommand() *cobra.Command {
 	cmd.Flags().StringVar(&rowId, "row-id", "", "Row ID.")
 	_ = cmd.MarkFlagRequired("row-id")
 	cmd.Flags().StringVar(&data, "data", "", "Row data as JSON object. Include all required columns of the row to be created or updated.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -4345,7 +4345,7 @@ func newTablesDBUpdateRowCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-row",
 		Short: "Update a row by its unique ID. Using the patch method you can pass only specific fields that will get updated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4385,7 +4385,7 @@ func newTablesDBUpdateRowCommand() *cobra.Command {
 	cmd.Flags().StringVar(&rowId, "row-id", "", "Row ID.")
 	_ = cmd.MarkFlagRequired("row-id")
 	cmd.Flags().StringVar(&data, "data", "", "Row data as JSON object. Include only columns and value pairs to be updated.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -4399,7 +4399,7 @@ func newTablesDBDeleteRowCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-row",
 		Short: "Delete a row by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4444,7 +4444,7 @@ func newTablesDBDecrementRowColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "decrement-row-column",
 		Short: "Decrement a specific column of a row by a given value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4499,7 +4499,7 @@ func newTablesDBIncrementRowColumnCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "increment-row-column",
 		Short: "Increment a specific column of a row by a given value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
