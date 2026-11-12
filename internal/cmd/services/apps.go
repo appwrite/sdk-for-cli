@@ -62,7 +62,7 @@ func newAppsListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List applications.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -112,7 +112,7 @@ func newAppsListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -150,7 +150,7 @@ func newAppsCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new application.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -222,20 +222,20 @@ func newAppsCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("app-id")
 	cmd.Flags().StringVar(&name, "name", "", "Application name.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&redirectUris, "redirect-uris", nil, "Redirect URIs. Each must be an https URL, an http loopback URL (localhost, 127.0.0.1, [::1]), or a private-use scheme URI (e.g. com.example.app:/oauth), and must not contain a fragment.")
+	cmd.Flags().StringArrayVar(&redirectUris, "redirect-uris", nil, "Redirect URIs. Each must be an https URL, an http loopback URL (localhost, 127.0.0.1, [::1]), or a private-use scheme URI (e.g. com.example.app:/oauth), and must not contain a fragment. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("redirect-uris")
 	cmd.Flags().StringVar(&description, "description", "", "Application description shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&clientUri, "client-uri", "", "Application homepage URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&logoUri, "logo-uri", "", "Application logo URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&privacyPolicyUrl, "privacy-policy-url", "", "Application privacy policy URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&termsUrl, "terms-url", "", "Application terms of service URL shown to users during OAuth2 consent.")
-	cmd.Flags().StringArrayVar(&contacts, "contacts", nil, "Application support or security contact emails. Maximum of 100 contacts are allowed.")
+	cmd.Flags().StringArrayVar(&contacts, "contacts", nil, "Application support or security contact emails. Maximum of 100 contacts are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&tagline, "tagline", "", "Application tagline shown to users during OAuth2 consent.")
-	cmd.Flags().StringArrayVar(&tags, "tags", nil, "Application tags shown to users during OAuth2 consent. Maximum of 100 tags are allowed, each up to 64 characters long.")
-	cmd.Flags().StringArrayVar(&images, "images", nil, "Application image URLs shown to users during OAuth2 consent. Maximum of 100 images are allowed.")
+	cmd.Flags().StringArrayVar(&tags, "tags", nil, "Application tags shown to users during OAuth2 consent. Maximum of 100 tags are allowed, each up to 64 characters long. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&images, "images", nil, "Application image URLs shown to users during OAuth2 consent. Maximum of 100 images are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&supportUrl, "support-url", "", "Application support URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&dataDeletionUrl, "data-deletion-url", "", "Application data deletion URL shown to users during OAuth2 consent.")
-	cmd.Flags().StringArrayVar(&postLogoutRedirectUris, "post-logout-redirect-uris", nil, "Post-logout redirect URIs for OpenID Connect RP-Initiated Logout. Each must be an https URL, an http loopback URL, or a private-use scheme URI, and must not contain a fragment. After ending the user session, the logout endpoint only redirects to URIs in this list.")
+	cmd.Flags().StringArrayVar(&postLogoutRedirectUris, "post-logout-redirect-uris", nil, "Post-logout redirect URIs for OpenID Connect RP-Initiated Logout. Each must be an https URL, an http loopback URL, or a private-use scheme URI, and must not contain a fragment. After ending the user session, the logout endpoint only redirects to URIs in this list. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is application enabled?")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&typeArg, "type", "", "OAuth2 client type. Use `public` for SPAs, mobile, and native apps that cannot keep a `client_secret` — PKCE is then required at the token endpoint. Use `confidential` for server-side clients that present a `client_secret`. Defaults to `confidential`.")
@@ -250,7 +250,7 @@ func newAppsListInstallationScopesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-installation-scopes",
 		Short: "List scopes an application can request when installed on a team.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -275,7 +275,7 @@ func newAppsListOAuth2ScopesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-o-auth-2-scopes",
 		Short: "List scopes an application can request during the OAuth2 flow.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -301,7 +301,7 @@ func newAppsGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get an application by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -348,7 +348,7 @@ func newAppsUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update an application by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -431,20 +431,20 @@ func newAppsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&logoUri, "logo-uri", "", "Application logo URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&privacyPolicyUrl, "privacy-policy-url", "", "Application privacy policy URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&termsUrl, "terms-url", "", "Application terms of service URL shown to users during OAuth2 consent.")
-	cmd.Flags().StringArrayVar(&contacts, "contacts", nil, "Application support or security contact emails. Maximum of 100 contacts are allowed.")
+	cmd.Flags().StringArrayVar(&contacts, "contacts", nil, "Application support or security contact emails. Maximum of 100 contacts are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&tagline, "tagline", "", "Application tagline shown to users during OAuth2 consent.")
-	cmd.Flags().StringArrayVar(&tags, "tags", nil, "Application tags shown to users during OAuth2 consent. Maximum of 100 tags are allowed, each up to 64 characters long.")
-	cmd.Flags().StringArrayVar(&images, "images", nil, "Application image URLs shown to users during OAuth2 consent. Maximum of 100 images are allowed.")
+	cmd.Flags().StringArrayVar(&tags, "tags", nil, "Application tags shown to users during OAuth2 consent. Maximum of 100 tags are allowed, each up to 64 characters long. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&images, "images", nil, "Application image URLs shown to users during OAuth2 consent. Maximum of 100 images are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&supportUrl, "support-url", "", "Application support URL shown to users during OAuth2 consent.")
 	cmd.Flags().StringVar(&dataDeletionUrl, "data-deletion-url", "", "Application data deletion URL shown to users during OAuth2 consent.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is application enabled?")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&redirectUris, "redirect-uris", nil, "Redirect URIs. Each must be an https URL, an http loopback URL (localhost, 127.0.0.1, [::1]), or a private-use scheme URI (e.g. com.example.app:/oauth), and must not contain a fragment.")
-	cmd.Flags().StringArrayVar(&postLogoutRedirectUris, "post-logout-redirect-uris", nil, "Post-logout redirect URIs for OpenID Connect RP-Initiated Logout. Each must be an https URL, an http loopback URL, or a private-use scheme URI, and must not contain a fragment. After ending the user session, the logout endpoint only redirects to URIs in this list.")
+	cmd.Flags().StringArrayVar(&redirectUris, "redirect-uris", nil, "Redirect URIs. Each must be an https URL, an http loopback URL (localhost, 127.0.0.1, [::1]), or a private-use scheme URI (e.g. com.example.app:/oauth), and must not contain a fragment. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&postLogoutRedirectUris, "post-logout-redirect-uris", nil, "Post-logout redirect URIs for OpenID Connect RP-Initiated Logout. Each must be an https URL, an http loopback URL, or a private-use scheme URI, and must not contain a fragment. After ending the user session, the logout endpoint only redirects to URIs in this list. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&typeArg, "type", "", "OAuth2 client type. Use `public` for SPAs, mobile, and native apps that cannot keep a `client_secret` — PKCE is then required at the token endpoint. Use `confidential` for server-side clients that present a `client_secret`. Defaults to `confidential`.")
 	cmd.Flags().BoolVar(&deviceFlow, "device-flow", false, "Allow this client to use the OAuth2 Device Authorization Grant (RFC 8628) for input-constrained devices such as TVs and CLIs. Defaults to false.")
 	cmd.Flags().Lookup("device-flow").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "Scopes the application requests when installed on a team. Only scopes allowed by the project's OAuth2 server installation scopes configuration are accepted; use the list installation scopes endpoint to discover available values. Maximum of 100 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&installationScopes, "installation-scopes", nil, "Scopes the application requests when installed on a team. Only scopes allowed by the project's OAuth2 server installation scopes configuration are accepted; use the list installation scopes endpoint to discover available values. Maximum of 100 scopes are allowed. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&installationRedirectUrl, "installation-redirect-url", "", "URL users are redirected to after creating or updating an installation of this application. Must be an https URL, an http loopback URL (localhost, 127.0.0.1, [::1]), or a private-use scheme URI, and must not contain a fragment. Leave empty for no redirect.")
 	return cmd
 }
@@ -455,7 +455,7 @@ func newAppsDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete an application by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -493,7 +493,7 @@ func newAppsListInstallationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-installations",
 		Short: "List installations of an application. Requires an app key sent in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header, or a caller with update access to the app.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -545,7 +545,7 @@ func newAppsListInstallationsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -566,7 +566,7 @@ func newAppsGetInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-installation",
 		Short: "Get an installation of an application by its unique ID. Requires an app key sent in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header, or a caller with update access to the app.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -597,7 +597,7 @@ func newAppsDeleteInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-installation",
 		Short: "Delete an installation of an application by its unique ID. Requires a caller with update access to the app. Previously issued installation access tokens are revoked.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -628,7 +628,7 @@ func newAppsCreateInstallationTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-installation-token",
 		Short: "Create a token for an installation of an application. Requires an app key sent in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header, or a caller with update access to the app. The returned token carries the scopes and authorization details granted to the installation, and can be used as an `Authorization: Bearer` header everywhere OAuth2 access tokens are accepted. Multiple tokens can be active for the same installation at once; each token stays valid until it expires or the installation is updated or deleted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -668,7 +668,7 @@ func newAppsListKeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-keys",
 		Short: "List app keys for an application.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -720,7 +720,7 @@ func newAppsListKeysCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -740,7 +740,7 @@ func newAppsCreateKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-key",
 		Short: "Create a new app key for an application. App keys carry no scopes; send one in the `X-Appwrite-Key` header alongside the `X-Appwrite-App` header to list the application's installations and create installation access tokens.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -769,7 +769,7 @@ func newAppsGetKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-key",
 		Short: "Get an app key by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -800,7 +800,7 @@ func newAppsDeleteKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-key",
 		Short: "Delete an app key by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -831,7 +831,7 @@ func newAppsUpdateLabelsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-labels",
 		Short: "Update the labels of an application. Labels are read-only for clients; only a server SDK using a project API key can set them. Replaces the previous labels.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -850,7 +850,7 @@ func newAppsUpdateLabelsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
-	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of application labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long. Reserved labels are rejected.")
+	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of application labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long. Reserved labels are rejected. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("labels")
 	return cmd
 }
@@ -871,7 +871,7 @@ func newAppsListSecretsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-secrets",
 		Short: "List client secrets for an application.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -923,7 +923,7 @@ func newAppsListSecretsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&appId, "app-id", "", "Application unique ID.")
 	_ = cmd.MarkFlagRequired("app-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -943,7 +943,7 @@ func newAppsCreateSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-secret",
 		Short: "Create a new client secret for an application.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -972,7 +972,7 @@ func newAppsGetSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-secret",
 		Short: "Get an application client secret by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1003,7 +1003,7 @@ func newAppsDeleteSecretCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-secret",
 		Short: "Delete an application client secret by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1034,7 +1034,7 @@ func newAppsUpdateTeamCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-team",
 		Short: "Transfer an application to another team by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1064,7 +1064,7 @@ func newAppsDeleteTokensCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-tokens",
 		Short: "Revoke all tokens for an application by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

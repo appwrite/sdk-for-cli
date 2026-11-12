@@ -76,7 +76,7 @@ func newVectorsDBListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -126,7 +126,7 @@ func newVectorsDBListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following columns: name. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -152,7 +152,7 @@ func newVectorsDBCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new Database.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -205,7 +205,7 @@ func newVectorsDBListSpecificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
 		Short: "List the dedicated database specifications available on the current plan. Each specification reports its resource limits, its own prices and overage rates, and whether it is enabled for the organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -240,7 +240,7 @@ func newVectorsDBListTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-transactions",
 		Short: "List transactions across all databases.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -290,7 +290,7 @@ func newVectorsDBListTransactionsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -310,7 +310,7 @@ func newVectorsDBCreateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-transaction",
 		Short: "Create a new transaction.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -343,7 +343,7 @@ func newVectorsDBGetTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-transaction",
 		Short: "Get a transaction by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -373,7 +373,7 @@ func newVectorsDBUpdateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-transaction",
 		Short: "Update a transaction, to either commit or roll back its operations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -414,7 +414,7 @@ func newVectorsDBDeleteTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-transaction",
 		Short: "Delete a transaction by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -443,7 +443,7 @@ func newVectorsDBCreateOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-operations",
 		Short: "Create multiple operations in a single transaction.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -472,7 +472,7 @@ func newVectorsDBCreateOperationsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID.")
 	_ = cmd.MarkFlagRequired("transaction-id")
-	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations.")
+	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations. Repeat the flag for each value.")
 	return cmd
 }
 
@@ -482,7 +482,7 @@ func newVectorsDBGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -516,7 +516,7 @@ func newVectorsDBUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a database by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -570,7 +570,7 @@ func newVectorsDBDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -609,7 +609,7 @@ func newVectorsDBListCollectionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-collections",
 		Short: "Get a list of all collections that belong to the provided databaseId. You can use the search parameter to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -664,7 +664,7 @@ func newVectorsDBListCollectionsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, documentSecurity")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, documentSecurity. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -692,7 +692,7 @@ func newVectorsDBCreateCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-collection",
 		Short: "Create a new Collection. Before using this route, you should create a new database resource using either a server integration (https://appwrite.io/docs/server/databases#documentsDBCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -732,7 +732,7 @@ func newVectorsDBCreateCollectionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().IntVar(&dimension, "dimension", 0, "Embedding dimension.")
 	_ = cmd.MarkFlagRequired("dimension")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&documentSecurity, "document-security", false, "Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("document-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is collection enabled? When set to 'disabled', users cannot access the collection but Server SDKs with and API key can still read and write to the collection. No data is lost when this is toggled.")
@@ -748,7 +748,7 @@ func newVectorsDBGetCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-collection",
 		Short: "Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -785,7 +785,7 @@ func newVectorsDBUpdateCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-collection",
 		Short: "Update a collection by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -827,7 +827,7 @@ func newVectorsDBUpdateCollectionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "", "Collection name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().IntVar(&dimension, "dimension", 0, "Embedding dimensions.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&documentSecurity, "document-security", false, "Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("document-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is collection enabled? When set to 'disabled', users cannot access the collection but Server SDKs with and API key can still read and write to the collection. No data is lost when this is toggled.")
@@ -843,7 +843,7 @@ func newVectorsDBDeleteCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-collection",
 		Short: "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -887,7 +887,7 @@ func newVectorsDBListDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-documents",
 		Short: "Get a list of all the user's documents in a given collection. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -948,7 +948,7 @@ func newVectorsDBListDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 524288 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 524288 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -976,7 +976,7 @@ func newVectorsDBCreateDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-document",
 		Short: "Create a new Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#documentsDBCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1014,7 +1014,7 @@ func newVectorsDBCreateDocumentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object.")
 	_ = cmd.MarkFlagRequired("data")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -1028,7 +1028,7 @@ func newVectorsDBCreateDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-documents",
 		Short: "Create new Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#documentsDBCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1059,7 +1059,7 @@ func newVectorsDBCreateDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of documents data as JSON objects.")
+	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of documents data as JSON objects. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("documents")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
@@ -1074,7 +1074,7 @@ func newVectorsDBUpsertDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-documents",
 		Short: "Create or update Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#documentsDBCreateCollection) API or directly from your database console.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1105,7 +1105,7 @@ func newVectorsDBUpsertDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of document data as JSON objects. May contain partial documents.")
+	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of document data as JSON objects. May contain partial documents. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("documents")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
@@ -1129,7 +1129,7 @@ func newVectorsDBUpdateDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-documents",
 		Short: "Update all documents that match your queries, if no queries are submitted then all documents are updated. You can pass only specific fields to be updated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1191,7 +1191,7 @@ func newVectorsDBUpdateDocumentsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include only attribute and value pairs to be updated.")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
@@ -1221,7 +1221,7 @@ func newVectorsDBDeleteDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-documents",
 		Short: "Bulk delete documents using queries, if no queries are passed then all documents are deleted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1275,7 +1275,7 @@ func newVectorsDBDeleteDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
@@ -1308,7 +1308,7 @@ func newVectorsDBCreateQueryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-query",
 		Short: "Get a list of all the user's documents in a given collection using a POST request. This behaves identically to the list documents endpoint but accepts the queries in the request body, allowing much larger `queries` arrays than can fit in a URL query string.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1369,7 +1369,7 @@ func newVectorsDBCreateQueryCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 524288 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 524288 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -1397,7 +1397,7 @@ func newVectorsDBGetDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-document",
 		Short: "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1437,7 +1437,7 @@ func newVectorsDBGetDocumentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().StringArrayVar(&selectAttributes, "select", nil, "Attribute to include in the response. Repeat for multiple attributes.")
 	return cmd
@@ -1454,7 +1454,7 @@ func newVectorsDBUpsertDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-document",
 		Short: "Create or update a Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#documentsDBCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1494,7 +1494,7 @@ func newVectorsDBUpsertDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include all required fields of the document to be created or updated.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -1510,7 +1510,7 @@ func newVectorsDBUpdateDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-document",
 		Short: "Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1550,7 +1550,7 @@ func newVectorsDBUpdateDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include only fields and value pairs to be updated.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -1564,7 +1564,7 @@ func newVectorsDBDeleteDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-document",
 		Short: "Delete a document by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1614,7 +1614,7 @@ func newVectorsDBListIndexesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-indexes",
 		Short: "List indexes in the collection.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1668,7 +1668,7 @@ func newVectorsDBListIndexesCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, status, attributes, error")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, status, attributes, error. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1695,7 +1695,7 @@ func newVectorsDBCreateIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-index",
 		Short: "Creates an index on the attributes listed. Your index should include all the attributes you will query in a single request.\nAttributes can be `key`, `fulltext`, and `unique`.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1736,10 +1736,10 @@ func newVectorsDBCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Index type.")
 	_ = cmd.MarkFlagRequired("type")
-	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attributes to index. Maximum of 100 attributes are allowed, each 32 characters long.")
+	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attributes to index. Maximum of 100 attributes are allowed, each 32 characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("attributes")
-	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
-	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
@@ -1752,7 +1752,7 @@ func newVectorsDBGetIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-index",
 		Short: "Get index by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1786,7 +1786,7 @@ func newVectorsDBDeleteIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-index",
 		Short: "Delete an index.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1819,7 +1819,7 @@ func newVectorsDBCreateFailoverCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-failover",
 		Short: "Trigger a manual failover for a dedicated database with high availability enabled. Promotes a replica to primary. The failover runs asynchronously; poll the database document for status updates. A database left mid-operation also accepts this call as a repair once nothing is driving the operation it is stuck in. Repairing a failover that did not finish, a `failed` database, a stranded upgrade or migrate, or a stranded compute resize additionally requires `targetReplicaId` to name the member to promote, because the default target may be the member that operation already promoted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1857,7 +1857,7 @@ func newVectorsDBListOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-operations",
 		Short: "List the lifecycle operations recorded for a dedicated database, newest first. Every provision, update, restore, backup and replication action is recorded here with its outcome, including an attempt that was abandoned because another worker took over the database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1900,7 +1900,7 @@ func newVectorsDBGetReplicasCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-replicas",
 		Short: "Get high availability status for a dedicated database. Returns replica statuses, replication lag, and sync mode.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1928,7 +1928,7 @@ func newVectorsDBGetStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-status",
 		Short: "Get real-time health and status information for a dedicated database. Returns health status, readiness, uptime, connection info, replica status, and volume information.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

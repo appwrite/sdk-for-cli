@@ -54,7 +54,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-buckets",
 		Short: "Get a list of all the storage buckets. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -107,7 +107,7 @@ func newStorageListBucketsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations, stripMetadata")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations, stripMetadata. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -140,7 +140,7 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-bucket",
 		Short: "Create a new storage bucket.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -197,15 +197,15 @@ func newStorageCreateBucketCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("bucket-id")
 	cmd.Flags().StringVar(&name, "name", "", "Bucket name")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&fileSecurity, "file-security", false, "Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("file-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is bucket enabled? When set to 'disabled', users cannot access the files in this bucket but Server SDKs with and API key can still access the bucket. No files are lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&maximumFileSize, "maximum-file-size", 0, "Maximum file size allowed in bytes. Maximum allowed value is 5GB.")
-	cmd.Flags().StringArrayVar(&allowedFileExtensions, "allowed-file-extensions", nil, "Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.")
+	cmd.Flags().StringArrayVar(&allowedFileExtensions, "allowed-file-extensions", nil, "Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&compression, "compression", "", "Compression algorithm chosen for compression. Can be one of none,  gzip (https://en.wikipedia.org/wiki/Gzip), or zstd (https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled")
-	cmd.Flags().BoolVar(&encryption, "encryption", false, "Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled")
+	cmd.Flags().BoolVar(&encryption, "encryption", false, "Is encryption enabled? Files of any size are encrypted.")
 	cmd.Flags().Lookup("encryption").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&antivirus, "antivirus", false, "Is virus scanning enabled? For file size above 20MB AntiVirus scanning is skipped even if it's enabled")
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
@@ -223,7 +223,7 @@ func newStorageGetBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-bucket",
 		Short: "Get a storage bucket by its unique ID. This endpoint response returns a JSON object with the storage bucket metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -263,7 +263,7 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-bucket",
 		Short: "Update a storage bucket by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -320,15 +320,15 @@ func newStorageUpdateBucketCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("bucket-id")
 	cmd.Flags().StringVar(&name, "name", "", "Bucket name")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&fileSecurity, "file-security", false, "Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("file-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is bucket enabled? When set to 'disabled', users cannot access the files in this bucket but Server SDKs with and API key can still access the bucket. No files are lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&maximumFileSize, "maximum-file-size", 0, "Maximum file size allowed in bytes. Maximum allowed value is 5GB.")
-	cmd.Flags().StringArrayVar(&allowedFileExtensions, "allowed-file-extensions", nil, "Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.")
+	cmd.Flags().StringArrayVar(&allowedFileExtensions, "allowed-file-extensions", nil, "Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&compression, "compression", "", "Compression algorithm chosen for compression. Can be one of none, gzip (https://en.wikipedia.org/wiki/Gzip), or zstd (https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled")
-	cmd.Flags().BoolVar(&encryption, "encryption", false, "Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled")
+	cmd.Flags().BoolVar(&encryption, "encryption", false, "Is encryption enabled? Files of any size are encrypted.")
 	cmd.Flags().Lookup("encryption").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&antivirus, "antivirus", false, "Is virus scanning enabled? For file size above 20MB AntiVirus scanning is skipped even if it's enabled")
 	cmd.Flags().Lookup("antivirus").NoOptDefVal = "true"
@@ -346,7 +346,7 @@ func newStorageDeleteBucketCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-bucket",
 		Short: "Delete a storage bucket by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -385,7 +385,7 @@ func newStorageListFilesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-files",
 		Short: "Get a list of all the user files. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -440,7 +440,7 @@ func newStorageListFilesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&bucketId, "bucket-id", "", "Storage bucket unique ID. You can create a new storage bucket using the Storage service server integration (https://appwrite.io/docs/server/storage#createBucket).")
 	_ = cmd.MarkFlagRequired("bucket-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, folder, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, folder, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -465,7 +465,7 @@ func newStorageCreateFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-file",
 		Short: "Create a new file. Before using this route, you should create a new bucket resource using either a server integration (https://appwrite.io/docs/server/storage#storageCreateBucket) API or directly from your Appwrite console.\n\nLarger files should be uploaded using multiple requests with the content-range (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of `5MB`. The `content-range` header values should always be in bytes.\n\nWhen the first request is sent, the server will return the File object, and the subsequent part request must include the file's id in `x-appwrite-id` header to allow the server to know that the partial upload is for the existing file and not for a new one.\n\nIf you're creating a new file using one of the Appwrite SDKs, all the chunking logic will be managed by the SDK internally.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -501,7 +501,7 @@ func newStorageCreateFileCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("file-id")
 	cmd.Flags().StringVar(&file, "file", "", "Binary file. Appwrite SDKs provide helpers to handle file input. Learn about file input (https://appwrite.io/docs/products/storage/upload-download#input-file).")
 	_ = cmd.MarkFlagRequired("file")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&folder, "folder", "", "Virtual folder to place the file in, for example \"photos/2026\". Nest folders with `/`. Defaults to the bucket root.")
 	return cmd
 }
@@ -513,7 +513,7 @@ func newStorageGetFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file",
 		Short: "Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -546,7 +546,7 @@ func newStorageUpdateFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-file",
 		Short: "Update a file by its unique ID. Only users with write permissions have access to update this resource.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -577,7 +577,7 @@ func newStorageUpdateFileCommand() *cobra.Command {
 	cmd.Flags().StringVar(&fileId, "file-id", "", "File ID.")
 	_ = cmd.MarkFlagRequired("file-id")
 	cmd.Flags().StringVar(&name, "name", "", "File name.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	return cmd
 }
 
@@ -588,7 +588,7 @@ func newStorageDeleteFileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-file",
 		Short: "Delete a file by its unique ID. Only users with write permissions have access to delete this resource.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -621,7 +621,7 @@ func newStorageGetFileDownloadCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file-download",
 		Short: "Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -676,7 +676,7 @@ func newStorageGetFilePreviewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file-preview",
 		Short: "Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -764,7 +764,7 @@ func newStorageGetFileViewCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-file-view",
 		Short: "Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

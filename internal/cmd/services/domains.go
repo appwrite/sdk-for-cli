@@ -88,7 +88,7 @@ func newDomainsListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all domains registered for this project. This endpoint supports pagination.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -141,7 +141,7 @@ func newDomainsListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on attributes such as domain name, teamInternalId, expiration, etc.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on attributes such as domain name, teamInternalId, expiration, etc. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -163,7 +163,7 @@ func newDomainsCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new domain. Before creating a domain, you need to ensure that your DNS provider is properly configured. After creating the domain, you can use the verification endpoint to check if the domain is ready to be used.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -195,7 +195,7 @@ func newDomainsGetPriceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-price",
 		Short: "Get the registration price for a domain name.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -236,7 +236,7 @@ func newDomainsListPricesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-prices",
 		Short: "Check availability and get the requested registration price for one or more domain names. Availability is resolved for all domains in a single registrar lookup. Unavailable domains have a null price for new registrations, but can still be priced for renewal, transfer, or trade. Every priced domain also carries its renewal price for the same period, so a separate renewal lookup is not needed. A domain whose price could not be resolved, for example because its TLD is not supported, is returned with a null price.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -262,7 +262,7 @@ func newDomainsListPricesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&domainsArg, "domains", nil, "Domain names to check availability and price for. Maximum of 50 domains per request.")
+	cmd.Flags().StringArrayVar(&domainsArg, "domains", nil, "Domain names to check availability and price for. Maximum of 50 domains per request. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("domains")
 	cmd.Flags().IntVar(&periodYears, "period-years", 0, "Number of years to calculate the domain price for. Must be at least 1.")
 	cmd.Flags().StringVar(&registrationType, "registration-type", "", "Type of registration pricing to fetch. Allowed values: new, transfer, renewal, trade.")
@@ -275,7 +275,7 @@ func newDomainsGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a domain by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -303,7 +303,7 @@ func newDomainsDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a domain by its unique ID. This endpoint can be used to delete a domain from your project.\nOnce deleted, the domain will no longer be available for use and all associated resources will be removed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -332,7 +332,7 @@ func newDomainsUpdateNameserversCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-nameservers",
 		Short: "Update the registrar nameservers for the given domain. When nameservers are not provided,\nthe domain will be updated to use Appwrite nameservers.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -357,7 +357,7 @@ func newDomainsUpdateNameserversCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringArrayVar(&nameservers, "nameservers", nil, "Nameservers to set for the domain. Defaults to Appwrite nameservers when omitted.")
+	cmd.Flags().StringArrayVar(&nameservers, "nameservers", nil, "Nameservers to set for the domain. Defaults to Appwrite nameservers when omitted. Repeat the flag for each value.")
 	return cmd
 }
 
@@ -367,7 +367,7 @@ func newDomainsVerifyNameserversCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "verify-nameservers",
 		Short: "Verify which NS records are used and update the domain accordingly. This will check the domain's\nnameservers and update the domain's status based on whether the nameservers match the expected\nAppwrite nameservers.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -395,7 +395,7 @@ func newDomainsGetPresetGoogleWorkspaceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-preset-google-workspace",
 		Short: "List Google Workspace DNS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -423,7 +423,7 @@ func newDomainsCreatePresetGoogleWorkspaceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-preset-google-workspace",
 		Short: "Add Google Workspace DNS records to the domain. This will create the required MX records \nfor Google Workspace email hosting.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -451,7 +451,7 @@ func newDomainsGetPresetICloudCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-preset-i-cloud",
 		Short: "List iCloud DNS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -479,7 +479,7 @@ func newDomainsCreatePresetICloudCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-preset-i-cloud",
 		Short: "Add iCloud DNS records to the domain. This will create the required MX and SPF records\nfor using iCloud email services with your domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -507,7 +507,7 @@ func newDomainsGetPresetMailgunCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-preset-mailgun",
 		Short: "List Mailgun DNS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -535,7 +535,7 @@ func newDomainsCreatePresetMailgunCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-preset-mailgun",
 		Short: "Add Mailgun DNS records to the domain. This endpoint will create the required DNS records \nfor Mailgun in the specified domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -563,7 +563,7 @@ func newDomainsGetPresetOutlookCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-preset-outlook",
 		Short: "List Outlook DNS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -591,7 +591,7 @@ func newDomainsCreatePresetOutlookCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-preset-outlook",
 		Short: "Add Outlook DNS records to the domain. This will create the required MX records\nfor setting up Outlook email hosting for your domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -619,7 +619,7 @@ func newDomainsGetPresetProtonMailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-preset-proton-mail",
 		Short: "List ProtonMail DNS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -647,7 +647,7 @@ func newDomainsCreatePresetProtonMailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-preset-proton-mail",
 		Short: "Add ProtonMail DNS records to the domain. This will create the required MX records\nfor using ProtonMail with your custom domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -675,7 +675,7 @@ func newDomainsGetPresetZohoCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-preset-zoho",
 		Short: "List Zoho DNS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -703,7 +703,7 @@ func newDomainsCreatePresetZohoCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-preset-zoho",
 		Short: "Add Zoho Mail DNS records to the domain. This will create the required MX records\nfor setting up Zoho Mail on your domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -741,7 +741,7 @@ func newDomainsListRecordsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-records",
 		Short: "List DNS records for a given domain. You can use this endpoint to list all the DNS records\nassociated with your domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -793,7 +793,7 @@ func newDomainsListRecordsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. You may filter on attributes such as type, name, value, etc. Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. You may filter on attributes such as type, name, value, etc. Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -817,7 +817,7 @@ func newDomainsCreateRecordACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-a",
 		Short: "Create a new A record for the given domain. A records are used to point a domain name \nto an IPv4 address. The record value should be a valid IPv4 address.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -863,7 +863,7 @@ func newDomainsUpdateRecordACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-a",
 		Short: "Update an existing A record for the given domain. This endpoint allows you to modify \nthe properties of an A record including its name (subdomain), IPv4 address, TTL, \nand optional comment.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -910,7 +910,7 @@ func newDomainsCreateRecordAAAACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-aaaa",
 		Short: "Create a new AAAA record for the given domain. This endpoint allows you to add a new IPv6 DNS record \nto your domain. The record will be used to point a hostname to an IPv6 address.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -956,7 +956,7 @@ func newDomainsUpdateRecordAAAACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-aaaa",
 		Short: "Update an existing AAAA record for the given domain. This endpoint allows you to modify\nthe properties of an existing AAAA record, including its name (subdomain), IPv6 address,\nTTL, and optional comment.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1003,7 +1003,7 @@ func newDomainsCreateRecordAliasCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-alias",
 		Short: "Create a new ALIAS record for the given domain. This record type can be used to point your domain \nto another domain name that will serve as an alias. This is particularly useful when you want to \nmap your domain to a target domain that may change its IP address.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1049,7 +1049,7 @@ func newDomainsUpdateRecordAliasCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-alias",
 		Short: "Update an existing ALIAS record for the specified domain. This endpoint allows you to modify\nthe properties of an existing ALIAS record including its name, target domain, TTL, and comment.\n    \nThe ALIAS record type is similar to a CNAME record but can be used at the zone apex (root domain).\nIt provides a way to map one domain name to another.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1096,7 +1096,7 @@ func newDomainsCreateRecordCAACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-caa",
 		Short: "Create a new CAA record for the given domain. CAA records are used to specify which \nCertificate Authorities (CAs) are allowed to issue SSL/TLS certificates for your domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1142,7 +1142,7 @@ func newDomainsUpdateRecordCAACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-caa",
 		Short: "Update an existing CAA record for the given domain. A CAA (Certification Authority Authorization) \nrecord is used to specify which certificate authorities (CAs) are authorized to issue certificates \nfor a domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1189,7 +1189,7 @@ func newDomainsCreateRecordCNAMECommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-cname",
 		Short: "Create a new CNAME record for the given domain.\n    \nA CNAME record maps a subdomain to another domain name, allowing you to create aliases \nfor your domain. For example, you can create a CNAME record to point 'blog.example.com' \nto 'example.wordpress.com'.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1214,7 +1214,7 @@ func newDomainsCreateRecordCNAMECommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&domainId, "domain-id", "", "Domain unique ID.")
 	_ = cmd.MarkFlagRequired("domain-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`. A CNAME cannot be at the domain itself; use an ALIAS record there. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Canonical target for this CNAME record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1235,7 +1235,7 @@ func newDomainsUpdateRecordCNAMECommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-cname",
 		Short: "Update an existing CNAME record for the given domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1262,7 +1262,7 @@ func newDomainsUpdateRecordCNAMECommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("domain-id")
 	cmd.Flags().StringVar(&recordId, "record-id", "", "DNS record unique ID.")
 	_ = cmd.MarkFlagRequired("record-id")
-	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`, or `@` for the domain itself. A full name ending in the domain is also accepted and stored relative to it.")
+	cmd.Flags().StringVar(&name, "name", "", "Record name relative to the domain, such as `www`. A CNAME cannot be at the domain itself; use an ALIAS record there. A full name ending in the domain is also accepted and stored relative to it.")
 	_ = cmd.MarkFlagRequired("name")
 	cmd.Flags().StringVar(&value, "value", "", "Canonical target for this CNAME record.")
 	_ = cmd.MarkFlagRequired("value")
@@ -1282,7 +1282,7 @@ func newDomainsCreateRecordHTTPSCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-https",
 		Short: "Create a new HTTPS record for the given domain. This record is used to configure HTTPS \nsettings for your domain, enabling secure communication over SSL/TLS.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1328,7 +1328,7 @@ func newDomainsUpdateRecordHTTPSCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-https",
 		Short: "Update an existing HTTPS record for the given domain. This endpoint allows you to modify \nthe properties of an HTTPS record associated with your domain, including the name (subdomain), \ntarget value, TTL, and optional comment.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1376,7 +1376,7 @@ func newDomainsCreateRecordMXCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-mx",
 		Short: "Create a new MX record for the given domain. MX records are used to define the mail servers responsible \nfor accepting email messages for the domain. Multiple MX records can be created with different priorities.\nThe priority parameter determines the order in which mail servers are used, with lower values indicating \nhigher priority.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1425,7 +1425,7 @@ func newDomainsUpdateRecordMXCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-mx",
 		Short: "Update an existing MX record for the given domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1474,7 +1474,7 @@ func newDomainsCreateRecordNSCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-ns",
 		Short: "Create a new NS record for the given domain. NS records specify the nameservers that are used \nto resolve the domain name to IP addresses. Each domain can have multiple NS records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1520,7 +1520,7 @@ func newDomainsUpdateRecordNSCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-ns",
 		Short: "Update an existing NS record for the given domain. This endpoint allows you to modify \nthe properties of an NS (nameserver) record associated with your domain. You can update \nthe record name (subdomain), target nameserver value, TTL, and add or modify comments \nfor better record management.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1570,7 +1570,7 @@ func newDomainsCreateRecordSRVCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-srv",
 		Short: "Create a new SRV record for the given domain. SRV records are used to define the location \nof servers for specific services. For example, they can be used to specify which server \nhandles a specific service like SIP or XMPP for the domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1625,7 +1625,7 @@ func newDomainsUpdateRecordSRVCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-srv",
 		Short: "Update an existing SRV record for the given domain.\n    \nRequired parameters:\n- domainId: Domain unique ID\n- recordId: DNS record unique ID\n- name: Record name (service name)\n- value: Target hostname for this SRV record\n- ttl: Time to live, in seconds\n- priority: Record priority\n- weight: Record weight\n- port: Port number for the service\n    \nOptional parameters:\n- comment: A comment for this record",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1678,7 +1678,7 @@ func newDomainsCreateRecordTXTCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-record-txt",
 		Short: "Create a new TXT record for the given domain. TXT records can be used \nto provide additional information about your domain, such as domain \nverification records, SPF records, or DKIM records.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1726,7 +1726,7 @@ func newDomainsUpdateRecordTXTCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-record-txt",
 		Short: "Update an existing TXT record for the given domain.\n    \nUpdate the TXT record details for a specific domain by providing the domain ID,\nrecord ID, and the new record configuration including name, value, TTL, and an optional comment.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1770,7 +1770,7 @@ func newDomainsGetRecordCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-record",
 		Short: "Get a single DNS record for a given domain by record ID.\n    \nThis endpoint allows you to retrieve a specific DNS record associated with a domain\nusing its unique identifier. The record contains information about the DNS configuration\nsuch as type, value, and TTL settings.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1801,7 +1801,7 @@ func newDomainsDeleteRecordCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-record",
 		Short: "Delete a DNS record for the given domain. This endpoint allows you to delete an existing DNS record \nfrom a specific domain.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1832,7 +1832,7 @@ func newDomainsUpdateTeamCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-team",
 		Short: "Update the team ID for a specific domain. The caller must administer the current\nteam and be an owner of the destination team.\n\nUpdating the team ID will transfer ownership and access control of the domain\nand all its DNS records to the new team.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1862,7 +1862,7 @@ func newDomainsGetTransferStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-transfer-status",
 		Short: "Retrieve the current transfer status for a domain. Returns the status, an optional reason, and a timestamp of the last status change.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1890,7 +1890,7 @@ func newDomainsGetZoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-zone",
 		Short: "Retrieve the DNS zone file for the given domain. This endpoint will return the DNS\nzone file in a standardized format that can be used to configure DNS servers.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1919,7 +1919,7 @@ func newDomainsUpdateZoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-zone",
 		Short: "Update the DNS zone for the given domain using the provided zone file content.\nAll parsed records the domain does not already have are imported and then the main domain document is returned.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {

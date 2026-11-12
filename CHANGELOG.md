@@ -1,5 +1,19 @@
 # Change Log
 
+## 28.12.0
+
+* Breaking: `push` no longer deletes databases, tables or columns missing from the config; pass `--prune`
+* Breaking: `--force` no longer approves deletions or column recreations; only `--prune` does
+* Added: `--prune` on `push`, `push all`, `push table` and `push collection`, showing row counts and backup coverage first
+* Added: `--prune` without a terminal requires `--reason`
+* Added: `appwrite terminal`, an interactive interface for browsing a project
+* Added: `account create-device`, `get-device`, `delete-device` and `update-device-session`
+* Added: `project update-account-devices-policy`
+* Fixed: `push table` no longer deletes databases before a later step fails
+* Fixed: a second value after a list flag explains how to repeat the flag
+* Fixed: `push settings` only lists keys the config changes
+* Updated: built against Go SDK `v7.18.0`
+
 ## 28.11.0
 
 * Added: `init project` lists the closest Cloud region first, and picks it when there is no terminal

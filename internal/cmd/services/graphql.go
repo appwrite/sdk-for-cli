@@ -32,7 +32,7 @@ func newGraphqlQueryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",
 		Short: "Execute a GraphQL query.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -64,7 +64,7 @@ func newGraphqlMutationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "mutation",
 		Short: "Execute a GraphQL mutation.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

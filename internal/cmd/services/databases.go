@@ -113,7 +113,7 @@ func newDatabasesListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "Get a list of all databases from the current Appwrite project. You can use the search parameter to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -166,7 +166,7 @@ func newDatabasesListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -190,7 +190,7 @@ func newDatabasesCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new Database.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -241,7 +241,7 @@ func newDatabasesListTransactionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-transactions",
 		Short: "List transactions across all databases.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -291,7 +291,7 @@ func newDatabasesListTransactionsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries).")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -311,7 +311,7 @@ func newDatabasesCreateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-transaction",
 		Short: "Create a new transaction.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -344,7 +344,7 @@ func newDatabasesGetTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-transaction",
 		Short: "Get a transaction by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -374,7 +374,7 @@ func newDatabasesUpdateTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-transaction",
 		Short: "Update a transaction, to either commit or roll back its operations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -415,7 +415,7 @@ func newDatabasesDeleteTransactionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-transaction",
 		Short: "Delete a transaction by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -444,7 +444,7 @@ func newDatabasesCreateOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-operations",
 		Short: "Create multiple operations in a single transaction.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -473,7 +473,7 @@ func newDatabasesCreateOperationsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID.")
 	_ = cmd.MarkFlagRequired("transaction-id")
-	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations.")
+	cmd.Flags().StringArrayVar(&operations, "operations", nil, "Array of staged operations. Repeat the flag for each value.")
 	return cmd
 }
 
@@ -483,7 +483,7 @@ func newDatabasesGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a database by its unique ID. This endpoint response returns a JSON object with the database metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -514,7 +514,7 @@ func newDatabasesUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a database by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -558,7 +558,7 @@ func newDatabasesDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a database by its unique ID. Only API keys with with databases.write scope can delete a database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -597,7 +597,7 @@ func newDatabasesListCollectionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-collections",
 		Short: "Get a list of all collections that belong to the provided databaseId. You can use the search parameter to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -652,7 +652,7 @@ func newDatabasesListCollectionsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, documentSecurity")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, documentSecurity. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -681,7 +681,7 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-collection",
 		Short: "Create a new Collection. Before using this route, you should create a new database resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -733,13 +733,13 @@ func newDatabasesCreateCollectionCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&name, "name", "", "Collection name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, no user is granted with any permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&documentSecurity, "document-security", false, "Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("document-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is collection enabled? When set to 'disabled', users cannot access the collection but Server SDKs with and API key can still read and write to the collection. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attribute definitions to create. Each attribute should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options.")
-	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial, trigram), attributes (array of attribute keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional).")
+	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attribute definitions to create. Each attribute should contain: key (string), type (string: string, varchar, text, mediumtext, longtext, integer, bigint, double, boolean, datetime, point, linestring, polygon, email, url, ip, enum), size (integer, required for string and varchar types), required (boolean, optional), default (mixed, optional), array (boolean, optional), and type-specific options. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&indexes, "indexes", nil, "Array of index definitions to create. Each index should contain: key (string), type (string: key, fulltext, unique, spatial, trigram), attributes (array of attribute keys), orders (array of ASC/DESC, optional), and lengths (array of integers, optional). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the collection.")
 	return cmd
 }
@@ -751,7 +751,7 @@ func newDatabasesGetCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-collection",
 		Short: "Get a collection by its unique ID. This endpoint response returns a JSON object with the collection metadata.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -788,7 +788,7 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-collection",
 		Short: "Update a collection by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -831,7 +831,7 @@ func newDatabasesUpdateCollectionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&name, "name", "", "Collection name. Max length: 128 chars.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permission strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&documentSecurity, "document-security", false, "Enables configuring permissions for individual documents. A user needs one of document or collection level permissions to access a document. Learn more about permissions (https://appwrite.io/docs/permissions).")
 	cmd.Flags().Lookup("document-security").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is collection enabled? When set to 'disabled', users cannot access the collection but Server SDKs with and API key can still read and write to the collection. No data is lost when this is toggled.")
@@ -849,7 +849,7 @@ func newDatabasesDeleteCollectionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-collection",
 		Short: "Delete a collection by its unique ID. Only users with write permissions have access to delete this resource.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -890,7 +890,7 @@ func newDatabasesListAttributesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-attributes",
 		Short: "List attributes in the collection.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -944,7 +944,7 @@ func newDatabasesListAttributesCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, size, required, array, status, error")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, size, required, array, status, error. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -972,7 +972,7 @@ func newDatabasesCreateBigIntAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-big-int-attribute",
 		Short: "Create a bigint attribute. Optionally, minimum and maximum values can be provided.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1038,7 +1038,7 @@ func newDatabasesUpdateBigIntAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-big-int-attribute",
 		Short: "Update a bigint attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1099,7 +1099,7 @@ func newDatabasesCreateBooleanAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-boolean-attribute",
 		Short: "Create a boolean attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1156,7 +1156,7 @@ func newDatabasesUpdateBooleanAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-boolean-attribute",
 		Short: "Update a boolean attribute. Changing the `default` value will not update already existing documents.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1209,7 +1209,7 @@ func newDatabasesCreateDatetimeAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-datetime-attribute",
 		Short: "Create a date time attribute according to the ISO 8601 standard.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1265,7 +1265,7 @@ func newDatabasesUpdateDatetimeAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-datetime-attribute",
 		Short: "Update a date time attribute. Changing the `default` value will not update already existing documents.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1318,7 +1318,7 @@ func newDatabasesCreateEmailAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-attribute",
 		Short: "Create an email attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1374,7 +1374,7 @@ func newDatabasesUpdateEmailAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-attribute",
 		Short: "Update an email attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1428,7 +1428,7 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-enum-attribute",
 		Short: "Create an enum attribute. The `elements` param acts as a white-list of accepted values for this attribute. \n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1463,7 +1463,7 @@ func newDatabasesCreateEnumAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&key, "key", "", "Attribute Key.")
 	_ = cmd.MarkFlagRequired("key")
-	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Array of enum values.")
+	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Array of enum values. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("elements")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
@@ -1487,7 +1487,7 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-enum-attribute",
 		Short: "Update an enum attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1519,7 +1519,7 @@ func newDatabasesUpdateEnumAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&key, "key", "", "Attribute Key.")
 	_ = cmd.MarkFlagRequired("key")
-	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Updated list of enum values.")
+	cmd.Flags().StringArrayVar(&elements, "elements", nil, "Updated list of enum values. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("elements")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
@@ -1544,7 +1544,7 @@ func newDatabasesCreateFloatAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-float-attribute",
 		Short: "Create a float attribute. Optionally, minimum and maximum values can be provided.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1610,7 +1610,7 @@ func newDatabasesUpdateFloatAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-float-attribute",
 		Short: "Update a float attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1673,7 +1673,7 @@ func newDatabasesCreateIntegerAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-integer-attribute",
 		Short: "Create an integer attribute. Optionally, minimum and maximum values can be provided.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1739,7 +1739,7 @@ func newDatabasesUpdateIntegerAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-integer-attribute",
 		Short: "Update an integer attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1800,7 +1800,7 @@ func newDatabasesCreateIpAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ip-attribute",
 		Short: "Create IP address attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1856,7 +1856,7 @@ func newDatabasesUpdateIpAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-ip-attribute",
 		Short: "Update an ip attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1908,7 +1908,7 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-line-attribute",
 		Short: "Create a geometric line attribute.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1946,7 +1946,7 @@ func newDatabasesCreateLineAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
@@ -1963,7 +1963,7 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-line-attribute",
 		Short: "Update a line attribute. Changing the `default` value will not update already existing documents.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2004,7 +2004,7 @@ func newDatabasesUpdateLineAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, two-dimensional array of coordinate pairs, [[longitude, latitude], [longitude, latitude], …], listing the vertices of the line in order. Cannot be set when attribute is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
@@ -2023,7 +2023,7 @@ func newDatabasesCreateLongtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-longtext-attribute",
 		Short: "Create a longtext attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2084,7 +2084,7 @@ func newDatabasesUpdateLongtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-longtext-attribute",
 		Short: "Update a longtext attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2138,7 +2138,7 @@ func newDatabasesCreateMediumtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mediumtext-attribute",
 		Short: "Create a mediumtext attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2199,7 +2199,7 @@ func newDatabasesUpdateMediumtextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mediumtext-attribute",
 		Short: "Update a mediumtext attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2251,7 +2251,7 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-point-attribute",
 		Short: "Create a geometric point attribute.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2289,7 +2289,7 @@ func newDatabasesCreatePointAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
@@ -2306,7 +2306,7 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-point-attribute",
 		Short: "Update a point attribute. Changing the `default` value will not update already existing documents.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2347,7 +2347,7 @@ func newDatabasesUpdatePointAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, array of two numbers [longitude, latitude], representing a single coordinate. Cannot be set when attribute is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
@@ -2364,7 +2364,7 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-polygon-attribute",
 		Short: "Create a geometric polygon attribute.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2402,7 +2402,7 @@ func newDatabasesCreatePolygonAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
 }
@@ -2419,7 +2419,7 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-polygon-attribute",
 		Short: "Update a polygon attribute. Changing the `default` value will not update already existing documents.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2460,7 +2460,7 @@ func newDatabasesUpdatePolygonAttributeCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().BoolVar(&required, "required", false, "Is attribute required?")
 	_ = cmd.MarkFlagRequired("required")
-	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required.")
+	cmd.Flags().StringArrayVar(&xdefault, "xdefault", nil, "Default value for attribute when not provided, three-dimensional array where the outer array holds one or more linear rings, [[[longitude, latitude], …], …], the first ring is the exterior boundary, any additional rings are interior holes, and each ring must start and end with the same coordinate pair. Cannot be set when attribute is required. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&newKey, "new-key", "", "New attribute key.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the attribute.")
 	return cmd
@@ -2480,7 +2480,7 @@ func newDatabasesCreateRelationshipAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-relationship-attribute",
 		Short: "Create relationship attribute. Learn more about relationship attributes (https://appwrite.io/docs/databases-relationships#relationship-attributes).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2543,7 +2543,7 @@ func newDatabasesUpdateRelationshipAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-relationship-attribute",
 		Short: "Update relationship attribute. Learn more about relationship attributes (https://appwrite.io/docs/databases-relationships#relationship-attributes).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2598,7 +2598,7 @@ func newDatabasesCreateStringAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-string-attribute",
 		Short: "Create a string attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2662,7 +2662,7 @@ func newDatabasesUpdateStringAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-string-attribute",
 		Short: "Update a string attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2720,7 +2720,7 @@ func newDatabasesCreateTextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-text-attribute",
 		Short: "Create a text attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2781,7 +2781,7 @@ func newDatabasesUpdateTextAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-text-attribute",
 		Short: "Update a text attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2834,7 +2834,7 @@ func newDatabasesCreateUrlAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-url-attribute",
 		Short: "Create a URL attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2890,7 +2890,7 @@ func newDatabasesUpdateUrlAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-url-attribute",
 		Short: "Update an url attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -2945,7 +2945,7 @@ func newDatabasesCreateVarcharAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-varchar-attribute",
 		Short: "Create a varchar attribute.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3009,7 +3009,7 @@ func newDatabasesUpdateVarcharAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-varchar-attribute",
 		Short: "Update a varchar attribute. Changing the `default` value will not update already existing documents.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3062,7 +3062,7 @@ func newDatabasesGetAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-attribute",
 		Short: "Get attribute by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3096,7 +3096,7 @@ func newDatabasesDeleteAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-attribute",
 		Short: "Deletes an attribute.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3142,7 +3142,7 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-documents",
 		Short: "Get a list of all the user's documents in a given collection. You can use the query params to filter your results.\n\nDocuments returned by aggregate, groupBy or distinct queries hold only the attributes they select, group or aggregate, typed as a document types them, with a joined attribute named by its join alias (`alias.attribute`). The response omits their `$id`, `$sequence`, `$createdAt`, `$updatedAt`, `$permissions`, `$databaseId` and `$collectionId` unless they select or group it, and those of a right or full join document that no document of this collection matched. SDK document models fill omitted system attributes with empty values.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3203,7 +3203,7 @@ func newDatabasesListDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -3231,7 +3231,7 @@ func newDatabasesCreateDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-document",
 		Short: "Create a new Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3269,7 +3269,7 @@ func newDatabasesCreateDocumentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object.")
 	_ = cmd.MarkFlagRequired("data")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -3283,7 +3283,7 @@ func newDatabasesCreateDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-documents",
 		Short: "Create new Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3314,7 +3314,7 @@ func newDatabasesCreateDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection). Make sure to define attributes before creating documents.")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of documents data as JSON objects.")
+	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of documents data as JSON objects. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("documents")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
@@ -3329,7 +3329,7 @@ func newDatabasesUpsertDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-documents",
 		Short: "Create or update Documents. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3360,7 +3360,7 @@ func newDatabasesUpsertDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of document data as JSON objects. May contain partial documents.")
+	cmd.Flags().StringArrayVar(&documents, "documents", nil, "Array of document data as JSON objects. May contain partial documents. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("documents")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
@@ -3384,7 +3384,7 @@ func newDatabasesUpdateDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-documents",
 		Short: "Update all documents that match your queries, if no queries are submitted then all documents are updated. You can pass only specific fields to be updated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3446,7 +3446,7 @@ func newDatabasesUpdateDocumentsCommand() *cobra.Command {
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID.")
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include only attribute and value pairs to be updated.")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
@@ -3476,7 +3476,7 @@ func newDatabasesDeleteDocumentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-documents",
 		Short: "Bulk delete documents using queries, if no queries are passed then all documents are deleted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3530,7 +3530,7 @@ func newDatabasesDeleteDocumentsCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
 	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
@@ -3563,7 +3563,7 @@ func newDatabasesCreateQueryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-query",
 		Short: "Get a list of all the user's documents in a given collection using a POST request. This behaves identically to the list documents endpoint but accepts the queries in the request body, allowing much larger `queries` arrays than can fit in a URL query string.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3624,7 +3624,7 @@ func newDatabasesCreateQueryCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -3652,7 +3652,7 @@ func newDatabasesGetDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-document",
 		Short: "Get a document by its unique ID. This endpoint response returns a JSON object with the document data.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3692,7 +3692,7 @@ func newDatabasesGetDocumentCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID to read uncommitted changes within the transaction.")
 	cmd.Flags().StringArrayVar(&selectAttributes, "select", nil, "Attribute to include in the response. Repeat for multiple attributes.")
 	return cmd
@@ -3709,7 +3709,7 @@ func newDatabasesUpsertDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert-document",
 		Short: "Create or update a Document. Before using this route, you should create a new collection resource using either a server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection) API or directly from your database console.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3749,7 +3749,7 @@ func newDatabasesUpsertDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include all required attributes of the document to be created or updated.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -3765,7 +3765,7 @@ func newDatabasesUpdateDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-document",
 		Short: "Update a document by its unique ID. Using the patch method you can pass only specific fields that will get updated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3805,7 +3805,7 @@ func newDatabasesUpdateDocumentCommand() *cobra.Command {
 	cmd.Flags().StringVar(&documentId, "document-id", "", "Document ID.")
 	_ = cmd.MarkFlagRequired("document-id")
 	cmd.Flags().StringVar(&data, "data", "", "Document data as JSON object. Include only attribute and value pairs to be updated.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, the current permissions are inherited. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&transactionId, "transaction-id", "", "Transaction ID for staging the operation.")
 	return cmd
 }
@@ -3819,7 +3819,7 @@ func newDatabasesDeleteDocumentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-document",
 		Short: "Delete a document by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3864,7 +3864,7 @@ func newDatabasesDecrementDocumentAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "decrement-document-attribute",
 		Short: "Decrement a specific attribute of a document by a given value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3919,7 +3919,7 @@ func newDatabasesIncrementDocumentAttributeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "increment-document-attribute",
 		Short: "Increment a specific attribute of a document by a given value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -3979,7 +3979,7 @@ func newDatabasesListIndexesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-indexes",
 		Short: "List indexes in the collection.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4033,7 +4033,7 @@ func newDatabasesListIndexesCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&collectionId, "collection-id", "", "Collection ID. You can create a new collection using the Database service server integration (https://appwrite.io/docs/server/databases#databasesCreateCollection).")
 	_ = cmd.MarkFlagRequired("collection-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, status, attributes, error")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: key, type, status, attributes, error. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -4060,7 +4060,7 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-index",
 		Short: "Creates an index on the attributes listed. Your index should include all the attributes you will query in a single request.\nAttributes can be `key`, `fulltext`, `unique`, `spatial`, and `trigram`. `trigram` is only available on PostgreSQL and lets `contains`, `startsWith`, and `endsWith` queries on string attributes use an index.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4101,10 +4101,10 @@ func newDatabasesCreateIndexCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key")
 	cmd.Flags().StringVar(&typeArg, "type", "", "Index type.")
 	_ = cmd.MarkFlagRequired("type")
-	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attributes to index. Maximum of 100 attributes are allowed, each 32 characters long.")
+	cmd.Flags().StringArrayVar(&attributes, "attributes", nil, "Array of attributes to index. Maximum of 100 attributes are allowed, each 32 characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("attributes")
-	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed.")
-	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100")
+	cmd.Flags().StringArrayVar(&orders, "orders", nil, "Array of index orders. Maximum of 100 orders are allowed. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&lengths, "lengths", nil, "Length of index. Maximum of 100. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the index.")
 	return cmd
 }
@@ -4117,7 +4117,7 @@ func newDatabasesGetIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-index",
 		Short: "Get an index by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -4151,7 +4151,7 @@ func newDatabasesDeleteIndexCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-index",
 		Short: "Delete an index.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

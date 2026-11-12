@@ -32,7 +32,7 @@ func newEmbeddingsCreateTextEmbeddingsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-text-embeddings",
 		Short: "Generate vector embeddings for an array of text using the selected embedding model. Use the returned vectors to power semantic search and similarity queries against your vector collections.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -55,7 +55,7 @@ func newEmbeddingsCreateTextEmbeddingsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&texts, "texts", nil, "Array of text to generate embeddings.")
+	cmd.Flags().StringArrayVar(&texts, "texts", nil, "Array of text to generate embeddings. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("texts")
 	cmd.Flags().StringVar(&model, "model", "", "The embedding model to use for generating vector embeddings.")
 	return cmd

@@ -56,7 +56,7 @@ func newMigrationsListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all migrations in the current project. This endpoint returns a list of all migrations including their status, progress, and any errors that occurred during the migration process.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -109,7 +109,7 @@ func newMigrationsListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, stage, source, destination, resources, resourceId, resourceInternalId, resourceType, parentResourceId, parentResourceInternalId, parentResourceType, destinationResourceId, destinationResourceInternalId, destinationResourceType, statusCounters, resourceData, errors")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, stage, source, destination, resources, resourceId, resourceInternalId, resourceType, parentResourceId, parentResourceInternalId, parentResourceType, destinationResourceId, destinationResourceInternalId, destinationResourceType, statusCounters, resourceData, errors. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -134,7 +134,7 @@ func newMigrationsCreateAppwriteMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-appwrite-migration",
 		Short: "Migrate data from another Appwrite project to your current project. This endpoint allows you to migrate resources like databases, collections, documents, users, and files from an existing Appwrite project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -157,7 +157,7 @@ func newMigrationsCreateAppwriteMigrationCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Source Appwrite endpoint")
 	_ = cmd.MarkFlagRequired("endpoint")
@@ -192,7 +192,7 @@ func newMigrationsCreateCSVExportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-csv-export",
 		Short: "Export documents to a CSV file from your Appwrite database. This endpoint allows you to export documents to a CSV file stored in a secure internal bucket. You'll receive an email with a download link when the export is complete.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -263,8 +263,8 @@ func newMigrationsCreateCSVExportCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&filename, "filename", "", "The name of the file to be created for the export, excluding the .csv extension.")
 	_ = cmd.MarkFlagRequired("filename")
-	cmd.Flags().StringArrayVar(&columns, "columns", nil, "List of attributes to export. If empty, all attributes will be exported. You can use the `*` wildcard to export all attributes from the collection.")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&columns, "columns", nil, "List of attributes to export. If empty, all attributes will be exported. You can use the `*` wildcard to export all attributes from the collection. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&delimiter, "delimiter", "", "The character that separates each column value. Default is comma.")
 	cmd.Flags().StringVar(&enclosure, "enclosure", "", "The character that encloses each column value. Default is double quotes.")
 	cmd.Flags().StringVar(&escape, "escape", "", "The escape character for the enclosure character. Default is double quotes.")
@@ -294,7 +294,7 @@ func newMigrationsCreateCSVImportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-csv-import",
 		Short: "Import documents from a CSV file into your Appwrite database. This endpoint allows you to import documents from a CSV file uploaded to Appwrite Storage bucket.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -341,7 +341,7 @@ func newMigrationsCreateFirebaseMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-firebase-migration",
 		Short: "Migrate data from a Firebase project to your Appwrite project. This endpoint allows you to migrate resources like authentication and other supported services from a Firebase project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -358,7 +358,7 @@ func newMigrationsCreateFirebaseMigrationCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&serviceAccount, "service-account", "", "JSON of the Firebase service account credentials")
 	_ = cmd.MarkFlagRequired("service-account")
@@ -372,7 +372,7 @@ func newMigrationsGetFirebaseReportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-firebase-report",
 		Short: "Generate a report of the data in a Firebase project before migrating. This endpoint analyzes the source project and returns information about the resources that can be migrated.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -389,7 +389,7 @@ func newMigrationsGetFirebaseReportCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&serviceAccount, "service-account", "", "JSON of the Firebase service account credentials")
 	_ = cmd.MarkFlagRequired("service-account")
@@ -415,7 +415,7 @@ func newMigrationsCreateJSONExportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-json-export",
 		Short: "Export documents to a JSON file from your Appwrite database. This endpoint allows you to export documents to a JSON file stored in a secure internal bucket. You'll receive an email with a download link when the export is complete.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -474,8 +474,8 @@ func newMigrationsCreateJSONExportCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("collection-id")
 	cmd.Flags().StringVar(&filename, "filename", "", "The name of the file to be created for the export, excluding the .json extension.")
 	_ = cmd.MarkFlagRequired("filename")
-	cmd.Flags().StringArrayVar(&columns, "columns", nil, "List of attributes to export. If empty, all attributes will be exported. You can use the `*` wildcard to export all attributes from the collection.")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&columns, "columns", nil, "List of attributes to export. If empty, all attributes will be exported. You can use the `*` wildcard to export all attributes from the collection. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK to filter documents to export. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&notify, "notify", false, "Set to true to receive an email when the export is complete. Default is true.")
 	cmd.Flags().Lookup("notify").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -500,7 +500,7 @@ func newMigrationsCreateJSONImportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-json-import",
 		Short: "Import documents from a JSON file into your Appwrite database. This endpoint allows you to import documents from a JSON file uploaded to Appwrite Storage bucket.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -553,7 +553,7 @@ func newMigrationsCreateNHostMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-n-host-migration",
 		Short: "Migrate data from an NHost project to your Appwrite project. This endpoint allows you to migrate resources like authentication, databases, and other supported services from an NHost project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -576,7 +576,7 @@ func newMigrationsCreateNHostMigrationCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&subdomain, "subdomain", "", "Source's Subdomain")
 	_ = cmd.MarkFlagRequired("subdomain")
@@ -607,7 +607,7 @@ func newMigrationsGetNHostReportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-n-host-report",
 		Short: "Generate a detailed report of the data in an NHost project before migrating. This endpoint analyzes the source project and returns information about the resources that can be migrated. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -630,7 +630,7 @@ func newMigrationsGetNHostReportCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate.")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&subdomain, "subdomain", "", "Source's Subdomain.")
 	_ = cmd.MarkFlagRequired("subdomain")
@@ -660,7 +660,7 @@ func newMigrationsCreateSupabaseMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-supabase-migration",
 		Short: "Migrate data from a Supabase project to your Appwrite project. This endpoint allows you to migrate resources like authentication, databases, and other supported services from a Supabase project. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -683,7 +683,7 @@ func newMigrationsCreateSupabaseMigrationCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Source's Supabase Endpoint")
 	_ = cmd.MarkFlagRequired("endpoint")
@@ -711,7 +711,7 @@ func newMigrationsGetSupabaseReportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-supabase-report",
 		Short: "Generate a report of the data in a Supabase project before migrating. This endpoint analyzes the source project and returns information about the resources that can be migrated. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -734,7 +734,7 @@ func newMigrationsGetSupabaseReportCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate")
+	cmd.Flags().StringArrayVar(&resources, "resources", nil, "List of resources to migrate. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("resources")
 	cmd.Flags().StringVar(&endpoint, "endpoint", "", "Source's Supabase Endpoint.")
 	_ = cmd.MarkFlagRequired("endpoint")
@@ -756,7 +756,7 @@ func newMigrationsGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a migration by its unique ID. This endpoint returns detailed information about a specific migration including its current status, progress, and any errors that occurred during the migration process. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -784,7 +784,7 @@ func newMigrationsRetryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "retry",
 		Short: "Retry a failed migration. This endpoint allows you to retry a migration that has previously failed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -812,7 +812,7 @@ func newMigrationsDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a migration by its unique ID. This endpoint allows you to remove a migration from your project's migration history. ",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
