@@ -74,7 +74,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "authorize",
 		Short: "Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of `application/json` to receive a JSON response instead of a redirect.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -147,7 +147,7 @@ func newOauth2AuthorizeCommand() *cobra.Command {
 	cmd.Flags().StringVar(&prompt, "prompt", "", "OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "OIDC max_age paraleter for customization of consent screen. Maximum allowable elapsed time in seconds since the user last authenticated. If exceeded, re-authentication is required.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	cmd.Flags().StringVar(&requestUri, "request-uri", "", "OAuth2 authorization request handle returned by the pushed authorization request endpoint.")
 	return cmd
@@ -172,7 +172,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "authorize-post",
 		Short: "Begin the OAuth2 authorization flow. When called without a session, the user is redirected to the consent screen without grant ID. When called with a session, the redirect URL includes param for grant ID. You can pass Accept header of `application/json` to receive a JSON response instead of a redirect.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -245,7 +245,7 @@ func newOauth2AuthorizePostCommand() *cobra.Command {
 	cmd.Flags().StringVar(&prompt, "prompt", "", "OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "OIDC max_age paraleter for customization of consent screen. Maximum allowable elapsed time in seconds since the user last authenticated. If exceeded, re-authentication is required.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	cmd.Flags().StringVar(&requestUri, "request-uri", "", "OAuth2 authorization request handle returned by the pushed authorization request endpoint.")
 	return cmd
@@ -261,7 +261,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-device-authorization",
 		Short: "Start the OAuth2 Device Authorization Grant. Returns the device code, user code, verification URL, expiration, and polling interval.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -299,7 +299,7 @@ func newOauth2CreateDeviceAuthorizationCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientId, "client-id", "", "OAuth2 client ID. Either a registered app ID or an HTTPS client ID metadata document URL.")
 	cmd.Flags().StringVar(&scope, "scope", "", "Space-separated OAuth2 scopes. Can include project scopes, and built-in scopes: `openid`, `email`, `profile`.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	return cmd
 }
@@ -310,7 +310,7 @@ func newOauth2CreateGrantCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-grant",
 		Short: "Exchange a device flow user code for an OAuth2 grant. The authenticated user is bound to the pending grant. Pass the returned grant ID to the get grant endpoint to render the consent screen, then to the approve or reject endpoint to complete the flow.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -338,7 +338,7 @@ func newOauth2GetGrantCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-grant",
 		Short: "Get an OAuth2 grant by its ID. Used by the consent screen to display the details of the authorization the user is being asked to approve. A grant can only be read by the user it belongs to, or by server SDK.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -369,7 +369,7 @@ func newOauth2IntrospectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "introspect",
 		Short: "Introspect an OAuth2 access token or refresh token. Authenticate with an API key holding the `oauth2.introspect` scope to introspect any token in the project, or with the client credentials of the app the token was issued to.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -417,7 +417,7 @@ func newOauth2ListOrganizationsCommand() *cobra.Command {
 		Hidden: true,
 		Example: "  " + app.ExecutableName + " list-organizations --search <NAME>\n" +
 			"  " + app.ExecutableName + " organization get --organization-id <ORGANIZATION_ID>",
-		Args: cobra.NoArgs,
+		Args: app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			limitFlag := app.FlagInt(cmd, "limit", limit)
@@ -455,7 +455,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-par",
 		Short: "Store an OAuth2 authorization request server-side and receive a short-lived request_uri handle for the authorize endpoint.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -519,7 +519,7 @@ func newOauth2CreatePARCommand() *cobra.Command {
 	cmd.Flags().StringVar(&prompt, "prompt", "", "OIDC prompt parameter for customization of consent screen. Space-separated list of: none, login, consent, select_account.")
 	cmd.Flags().IntVar(&maxAge, "max-age", 0, "OIDC max_age parameter for customization of consent screen.")
 	cmd.Flags().StringVar(&authorizationDetails, "authorization-details", "", "Rich authorization request. JSON array of objects, each with a `type` and project-defined fields")
-	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	return cmd
 }
@@ -536,7 +536,7 @@ func newOauth2ListProjectsCommand() *cobra.Command {
 		Hidden: true,
 		Example: "  " + app.ExecutableName + " list-projects --organization-id <ORGANIZATION_ID>\n" +
 			"  " + app.ExecutableName + " project get --project-id <PROJECT_ID>",
-		Args: cobra.NoArgs,
+		Args: app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			limitFlag := app.FlagInt(cmd, "limit", limit)
@@ -564,7 +564,7 @@ func newOauth2RejectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reject",
 		Short: "Reject an OAuth2 grant when the user denies consent. Returns the `redirectUrl` the end user should be sent to with an `access_denied` error. You can pass Accept header of `application/json` to receive a JSON response instead of a redirect.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -595,7 +595,7 @@ func newOauth2RevokeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoke",
 		Short: "Revoke an OAuth2 access token or refresh token.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -647,7 +647,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-token",
 		Short: "Exchange an OAuth2 authorization code, refresh token, or device code for access and refresh tokens.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -703,7 +703,7 @@ func newOauth2CreateTokenCommand() *cobra.Command {
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "OAuth2 client secret. Required for confidential apps.")
 	cmd.Flags().StringVar(&codeVerifier, "code-verifier", "", "PKCE code verifier. Required for public apps.")
 	cmd.Flags().StringVar(&redirectUri, "redirect-uri", "", "Redirect URI. Required for `authorization_code` grant type.")
-	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment.")
+	cmd.Flags().StringArrayVar(&resource, "resource", nil, "RFC 8707 resource indicator URI or URI list. Each value must be an absolute URI without a fragment. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&audience, "audience", "", "Compatibility alias for a single OAuth2 resource indicator URI.")
 	return cmd
 }

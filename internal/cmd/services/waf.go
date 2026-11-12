@@ -54,7 +54,7 @@ func newWafListRulesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-rules",
 		Short: "List WAF rules for the current project.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -107,7 +107,7 @@ func newWafListRulesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -136,7 +136,7 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-bypass-rule",
 		Short: "Create a bypass WAF rule. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -189,7 +189,7 @@ func newWafCreateBypassRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -208,7 +208,7 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-bypass-rule",
 		Short: "Update a bypass WAF rule. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -265,7 +265,7 @@ func newWafUpdateBypassRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -287,7 +287,7 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-challenge-rule",
 		Short: "Create a challenge WAF rule. Use `difficulty` (1 easiest to 5 hardest) to tune the client-side proof-of-work cost, and `ttl` to control how long, in seconds, a visitor stays cleared after passing the challenge before being challenged again. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -350,7 +350,7 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work.")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "How long, in seconds, a visitor stays cleared after passing the challenge before being challenged again.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
@@ -374,7 +374,7 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-challenge-rule",
 		Short: "Update a challenge WAF rule. Use `difficulty` (1 easiest to 5 hardest) to tune the client-side proof-of-work cost, and `ttl` to control how long, in seconds, a visitor stays cleared after passing the challenge before being challenged again. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -441,7 +441,7 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work.")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "How long, in seconds, a visitor stays cleared after passing the challenge before being challenged again.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
@@ -462,7 +462,7 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-deny-rule",
 		Short: "Create a deny WAF rule. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon. `sessionAge` and `mfaAge` hold the seconds since the request's session was created and since its last MFA challenge. Both are null for requests without a session, such as guests and API keys, while a request authenticated with the `x-appwrite-jwt` header carries the age of the session its token is bound to; on `functions` rules the session comes from the `x-appwrite-user-jwt` header, and `mfaAge` is null when the session never completed MFA. A deny matching on `mfaAge` returns `user_challenge_required` and one matching on `sessionAge` returns `user_reauthentication_required`, both with status 401, so the user can sign in again and retry. To also deny requests without a session, combine `isNull` and `greaterThan` in an `or` condition.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -515,7 +515,7 @@ func newWafCreateDenyRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -534,7 +534,7 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-deny-rule",
 		Short: "Update a deny WAF rule. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon. `sessionAge` and `mfaAge` hold the seconds since the request's session was created and since its last MFA challenge. Both are null for requests without a session, such as guests and API keys, while a request authenticated with the `x-appwrite-jwt` header carries the age of the session its token is bound to; on `functions` rules the session comes from the `x-appwrite-user-jwt` header, and `mfaAge` is null when the session never completed MFA. A deny matching on `mfaAge` returns `user_challenge_required` and one matching on `sessionAge` returns `user_reauthentication_required`, both with status 401, so the user can sign in again and retry. To also deny requests without a session, combine `isNull` and `greaterThan` in an `or` condition.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -591,7 +591,7 @@ func newWafUpdateDenyRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -615,7 +615,7 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-rate-limit-rule",
 		Short: "Create a rate limit WAF rule. Use `key` to choose the counter: `ip` limits per client IP, while `userId` limits per authenticated user (requests without an authenticated user skip `userId` rules). Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -684,7 +684,7 @@ func newWafCreateRateLimitRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -707,7 +707,7 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-rate-limit-rule",
 		Short: "Update a rate limit WAF rule. Use `key` to choose the counter: `ip` limits per client IP, while `userId` limits per authenticated user (requests without an authenticated user skip `userId` rules). Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -780,7 +780,7 @@ func newWafUpdateRateLimitRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -801,7 +801,7 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-redirect-rule",
 		Short: "Create a redirect WAF rule. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -858,7 +858,7 @@ func newWafCreateRedirectRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -879,7 +879,7 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-redirect-rule",
 		Short: "Update a redirect WAF rule. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -944,7 +944,7 @@ func newWafUpdateRedirectRuleCommand() *cobra.Command {
 	cmd.Flags().IntVar(&priority, "priority", 0, "Evaluation priority. Lower numbers run earlier.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -955,7 +955,7 @@ func newWafGetRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-rule",
 		Short: "Get a WAF rule by its ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -983,7 +983,7 @@ func newWafDeleteRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-rule",
 		Short: "Delete a WAF rule.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

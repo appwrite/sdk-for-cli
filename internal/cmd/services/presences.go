@@ -46,7 +46,7 @@ func newPresencesListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List presence logs. Expired entries are filtered out automatically.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -99,7 +99,7 @@ func newPresencesListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "TTL (seconds) for caching list responses. Responses are stored in an in-memory key-value cache, keyed per project, collection, schema version (attributes and indexes), caller authorization roles, and the exact query — so users with different permissions never share cached entries. Schema changes invalidate cached entries automatically; document writes do not, so choose a TTL you are comfortable serving as stale data. Set to 0 to disable caching. Must be between 0 and 86400 (24 hours).")
@@ -120,7 +120,7 @@ func newPresencesGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a presence log by its unique ID. Entries whose `expiresAt` is in the past are treated as not found.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -153,7 +153,7 @@ func newPresencesUpsertCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "upsert",
 		Short: "Create or update a presence log by its user ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -192,7 +192,7 @@ func newPresencesUpsertCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&status, "status", "", "Presence status.")
 	_ = cmd.MarkFlagRequired("status")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&expiresAt, "expires-at", "", "Presence expiry datetime.")
 	cmd.Flags().StringVar(&metadata, "metadata", "", "Presence metadata object.")
 	return cmd
@@ -210,7 +210,7 @@ func newPresencesUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a presence log by its unique ID. Using the patch method you can pass only specific fields that will get updated.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -256,7 +256,7 @@ func newPresencesUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&status, "status", "", "Presence status.")
 	cmd.Flags().StringVar(&expiresAt, "expires-at", "", "Presence expiry datetime.")
 	cmd.Flags().StringVar(&metadata, "metadata", "", "Presence metadata object.")
-	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions).")
+	cmd.Flags().StringArrayVar(&permissions, "permissions", nil, "An array of permissions strings. By default, only the current user is granted all permissions. Learn more about permissions (https://appwrite.io/docs/permissions). Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&purge, "purge", false, "When true, purge cached responses used by list presences endpoint.")
 	cmd.Flags().Lookup("purge").NoOptDefVal = "true"
 	return cmd
@@ -268,7 +268,7 @@ func newPresencesDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a presence log by its unique ID.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

@@ -52,7 +52,7 @@ func newBackupsListArchivesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-archives",
 		Short: "List all archives for a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -102,7 +102,7 @@ func newBackupsListArchivesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -123,7 +123,7 @@ func newBackupsCreateArchiveCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-archive",
 		Short: "Create a new archive asynchronously for a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -146,7 +146,7 @@ func newBackupsCreateArchiveCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to backup")
+	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to backup. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("services")
 	cmd.Flags().StringVar(&resourceId, "resource-id", "", "Resource ID. When set, only this single resource will be backed up.")
 	return cmd
@@ -158,7 +158,7 @@ func newBackupsGetArchiveCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-archive",
 		Short: "Get a backup archive using it's ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -186,7 +186,7 @@ func newBackupsDeleteArchiveCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-archive",
 		Short: "Delete an existing archive for a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -223,7 +223,7 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-policies",
 		Short: "List all policies for a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -273,7 +273,7 @@ func newBackupsListPoliciesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -299,7 +299,7 @@ func newBackupsCreatePolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-policy",
 		Short: "Create a new backup policy.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -330,7 +330,7 @@ func newBackupsCreatePolicyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&policyId, "policy-id", "", "Policy ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	_ = cmd.MarkFlagRequired("policy-id")
-	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to backup")
+	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to backup. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("services")
 	cmd.Flags().IntVar(&retention, "retention", 0, "Days to keep backups before deletion")
 	_ = cmd.MarkFlagRequired("retention")
@@ -349,7 +349,7 @@ func newBackupsGetPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-policy",
 		Short: "Get a backup policy using it's ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -381,7 +381,7 @@ func newBackupsUpdatePolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-policy",
 		Short: "Update an existing policy using it's ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -429,7 +429,7 @@ func newBackupsDeletePolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-policy",
 		Short: "Delete a policy using it's ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -460,7 +460,7 @@ func newBackupsCreateRestorationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-restoration",
 		Short: "Create and trigger a new restoration for a backup on a project.\n\nFor a backup of one database, the restoration resolves its destination before it is queued. When `newResourceId` is omitted, the archived database is restored in place and its own ID is returned in `options`. Pass a different `newResourceId` to restore alongside it as a new database instead.\n\nThe restoration migration records the archived database in `resourceId` and `resourceType`, and the resolved database in `destinationResourceId` and `destinationResourceType`. Database types are stored canonically as `database`, `documentsdb`, or `vectorsdb`. Project-wide restorations leave these fields empty because they do not have a single source or destination database.\n\nTo list every migration related to one database, use its canonical type in a nested `OR(AND(...), AND(...), AND(...))` across the root, parent, and destination relation pairs: `(resourceType, resourceId)`, `(parentResourceType, parentResourceId)`, and `(destinationResourceType, destinationResourceId)`. Legacy and TablesDB databases use `database`; the operational `resourceType` of a table migration is not rewritten to `tablesdb`.\n\nWhen restoring a DocumentsDB or VectorsDB database from a dedicated source, the restore provisions a fresh dedicated backing database at the source database's own specification and lands the data there. An in-place restore swaps the database onto that backing only once the restore has succeeded, and retires the backing it displaced only once that swap is confirmed, so the source keeps serving its own data until the restored data is in place and any failure leaves it untouched. A serverless source has no dedicated backing to clone and restores onto the archived database instead.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -488,7 +488,7 @@ func newBackupsCreateRestorationCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&archiveId, "archive-id", "", "Backup archive ID to restore")
 	_ = cmd.MarkFlagRequired("archive-id")
-	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to restore")
+	cmd.Flags().StringArrayVar(&services, "services", nil, "Array of services to restore. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("services")
 	cmd.Flags().StringVar(&newResourceId, "new-resource-id", "", "Destination resource ID. Omit to restore the archived resource in place, or pass a different ID to restore alongside it as a new resource. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
 	cmd.Flags().StringVar(&newResourceName, "new-resource-name", "", "Database name. Max length: 128 chars.")
@@ -510,7 +510,7 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-restorations",
 		Short: "List all backup restorations for a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -560,7 +560,7 @@ func newBackupsListRestorationsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -580,7 +580,7 @@ func newBackupsGetRestorationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-restoration",
 		Short: "Get the current status of a backup restoration.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

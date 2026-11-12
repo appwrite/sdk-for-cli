@@ -54,7 +54,7 @@ func newOrganizationGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get the current organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			result, err := app.GetOrganizationForSession(organizationId)
@@ -77,7 +77,7 @@ func newOrganizationUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update the current organization's name.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -106,7 +106,7 @@ func newOrganizationDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete the current organization. All projects that belong to the organization are deleted as well.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -143,7 +143,7 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-installations",
 		Short: "List app installations on the organization. Any organization member can read installations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -193,7 +193,7 @@ func newOrganizationListInstallationsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -216,7 +216,7 @@ func newOrganizationCreateInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-installation",
 		Short: "Install an app on the organization. Only organization members with the owner role can install apps. The installation is granted the scopes the app currently requests.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -253,7 +253,7 @@ func newOrganizationGetInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-installation",
 		Short: "Get an app installation on the organization by its unique ID. Any organization member can read installations.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -284,7 +284,7 @@ func newOrganizationUpdateInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-installation",
 		Short: "Update an app installation on the organization. Only organization members with the owner role can update installations. The installation's granted scopes are refreshed to the scopes the app currently requests; previously issued installation access tokens are revoked.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -321,7 +321,7 @@ func newOrganizationDeleteInstallationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-installation",
 		Short: "Uninstall an app from the organization by its installation ID. Only organization members with the owner role can remove installations. Previously issued installation access tokens are revoked.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -361,7 +361,7 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-memberships",
 		Short: "Get a list of all memberships from the current organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -414,7 +414,7 @@ func newOrganizationListMembershipsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -442,7 +442,7 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-membership",
 		Short: "Invite a new member to join the current organization. An email with a link to join the organization will be sent to the new member's email address. If member doesn't exist in the project it will be automatically created.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -477,7 +477,7 @@ func newOrganizationCreateMembershipCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&roles, "roles", nil, "Array of strings. Use this param to set the user roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.")
+	cmd.Flags().StringArrayVar(&roles, "roles", nil, "Array of strings. Use this param to set the user roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("roles")
 	cmd.Flags().StringVar(&email, "email", "", "Email of the new organization member.")
 	cmd.Flags().StringVar(&userId, "user-id", "", "ID of the user to be added to the organization.")
@@ -495,7 +495,7 @@ func newOrganizationGetMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-membership",
 		Short: "Get a membership from the current organization by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -526,7 +526,7 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-membership",
 		Short: "Modify the roles of a member in the current organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -545,7 +545,7 @@ func newOrganizationUpdateMembershipCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&membershipId, "membership-id", "", "Membership ID.")
 	_ = cmd.MarkFlagRequired("membership-id")
-	cmd.Flags().StringArrayVar(&roles, "roles", nil, "An array of strings. Use this param to set the user's roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long.")
+	cmd.Flags().StringArrayVar(&roles, "roles", nil, "An array of strings. Use this param to set the user's roles in the organization. A role can be any string. Learn more about roles and permissions (https://appwrite.io/docs/permissions). Maximum of 100 roles are allowed, each 81 characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("roles")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
 	return cmd
@@ -558,7 +558,7 @@ func newOrganizationDeleteMembershipCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-membership",
 		Short: "Remove a member from the current organization. The member is removed whether they accepted the invitation or not; a pending invitation is revoked.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -598,7 +598,7 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-projects",
 		Short: "Get a list of all projects. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -651,7 +651,7 @@ func newOrganizationListProjectsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search, accessedAt")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, teamId, labels, search, accessedAt. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -676,7 +676,7 @@ func newOrganizationCreateProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-project",
 		Short: "Create a new project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -715,7 +715,7 @@ func newOrganizationGetProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-project",
 		Short: "Get a project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -746,7 +746,7 @@ func newOrganizationUpdateProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-project",
 		Short: "Update a project by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -778,7 +778,7 @@ func newOrganizationDeleteProjectCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-project",
 		Short: "Delete a project by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -818,7 +818,7 @@ func newOrganizationListProjectKeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-project-keys",
 		Short: "Get a list of all API keys of a project in your organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -870,7 +870,7 @@ func newOrganizationListProjectKeysCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
 	_ = cmd.MarkFlagRequired("project-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: expire, accessedAt, name, scopes. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -894,7 +894,7 @@ func newOrganizationCreateEphemeralProjectKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-ephemeral-project-key",
 		Short: "Create a new ephemeral API key for a project in your organization. It's recommended to have multiple API keys with strict scopes for separate functions within your project.\n\nYou can also create a standard API key if you need a longer-lived key instead.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -913,7 +913,7 @@ func newOrganizationCreateEphemeralProjectKeyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project unique ID.")
 	_ = cmd.MarkFlagRequired("project-id")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().IntVar(&duration, "duration", 0, "Time in seconds before ephemeral key expires. Maximum duration is 3600 seconds.")
 	_ = cmd.MarkFlagRequired("duration")
@@ -929,7 +929,7 @@ func newOrganizationGetProjectKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-project-key",
 		Short: "Get a project key by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -966,7 +966,7 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-project-key",
 		Short: "Update a project key by its unique ID. Use this endpoint to update the name, scopes, or expiration time of an API key.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {
@@ -998,7 +998,7 @@ func newOrganizationUpdateProjectKeyCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("key-id")
 	cmd.Flags().StringVar(&name, "name", "", "Key name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "Key scopes list. Maximum of 200 scopes are allowed. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("scopes")
 	cmd.Flags().StringVar(&expire, "expire", "", "Expiration time in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format. Use null for unlimited expiration.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the key.")
@@ -1014,7 +1014,7 @@ func newOrganizationDeleteProjectKeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-project-key",
 		Short: "Delete a project key by its unique ID. Once deleted, the key can no longer be used to authenticate API calls.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForOrganization(organizationId)
 			if err != nil {

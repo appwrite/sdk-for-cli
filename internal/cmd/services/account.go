@@ -29,6 +29,10 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountListConsentTokensCommand())
 	cmd.AddCommand(newAccountGetConsentTokenCommand())
 	cmd.AddCommand(newAccountDeleteConsentTokenCommand())
+	cmd.AddCommand(newAccountCreateDeviceCommand())
+	cmd.AddCommand(newAccountGetDeviceCommand())
+	cmd.AddCommand(newAccountDeleteDeviceCommand())
+	cmd.AddCommand(newAccountUpdateDeviceSessionCommand())
 	cmd.AddCommand(newAccountUpdateEmailCommand())
 	cmd.AddCommand(newAccountListIdentitiesCommand())
 	cmd.AddCommand(newAccountDeleteIdentityCommand())
@@ -93,7 +97,7 @@ func newAccountGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -122,7 +126,7 @@ func newAccountCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Use this endpoint to allow a new user to register a new account in your project. After the user registration completes successfully, you can use the /account/verfication (https://appwrite.io/docs/references/cloud/client-web/account#createVerification) route to start verifying the user email address. To allow the new user to login to their new account, you need to create a new account session (https://appwrite.io/docs/references/cloud/client-web/account#createEmailSession).",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -170,7 +174,7 @@ func newAccountListConsentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-consents",
 		Short: "Get a list of the OAuth2 consents the current user has given to third-party apps.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -220,7 +224,7 @@ func newAccountListConsentsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -240,7 +244,7 @@ func newAccountGetConsentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-consent",
 		Short: "Get an OAuth2 consent the current user has given to a third-party app by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -268,7 +272,7 @@ func newAccountDeleteConsentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-consent",
 		Short: "Delete an OAuth2 consent by its unique ID. All token families issued under the consent are revoked, and the app must ask for consent again to regain access.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -306,7 +310,7 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-consent-tokens",
 		Short: "Get a list of the token families issued under an OAuth2 consent. Each entry represents one authorized device or session; the token secrets themselves are never returned.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -358,7 +362,7 @@ func newAccountListConsentTokensCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&consentId, "consent-id", "", "Consent unique ID.")
 	_ = cmd.MarkFlagRequired("consent-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -379,7 +383,7 @@ func newAccountGetConsentTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-consent-token",
 		Short: "Get a token family issued under an OAuth2 consent by its unique ID. The token secrets themselves are never returned.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -410,7 +414,7 @@ func newAccountDeleteConsentTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-consent-token",
 		Short: "Delete a token family issued under an OAuth2 consent by its unique ID. The access and refresh tokens of the family stop working immediately; other token families and the consent itself are unaffected.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -434,6 +438,118 @@ func newAccountDeleteConsentTokenCommand() *cobra.Command {
 	return cmd
 }
 
+func newAccountCreateDeviceCommand() *cobra.Command {
+
+	cmd := &cobra.Command{
+		Use:   "create-device",
+		Short: "Create an account switching device. A device is a container, scoped to one browser or app install, that holds multiple sessions and tracks which one is active. Once a device exists, session creation endpoints attach the new session to it automatically, so a single browser can stay signed in to several accounts and switch between them. A device holds at most one session per user: signing in again as a user it already holds replaces that user's session. The device lives as long as its newest session.\n\nThe device secret is returned in a cookie. Run this on app start: if the browser already has a valid device, the existing one is returned with the same status code instead of an error, so it is always safe to call.\n\nEvery session that joins the device rotates the device secret and re-issues the cookie, so an earlier copy of the secret stops working. A client that keeps the secret itself, rather than relying on the cookie, must replace it from each session response.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.CreateDevice()
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	return cmd
+}
+
+func newAccountGetDeviceCommand() *cobra.Command {
+	var deviceId string
+
+	cmd := &cobra.Command{
+		Use:   "get-device",
+		Short: "Get the account switching device for the current browser, including every session it holds, the name of the user each session belongs to, and the ID of the active session. Use the string 'current' to reference the current browser's device.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.GetDevice(deviceId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&deviceId, "device-id", "", "Device ID. Use the string 'current' to reference the device of the current browser.")
+	_ = cmd.MarkFlagRequired("device-id")
+	return cmd
+}
+
+func newAccountDeleteDeviceCommand() *cobra.Command {
+	var deviceId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-device",
+		Short: "Delete the account switching device for the current browser. Every session the device holds is signed out, each firing its own session delete event, the device is removed, and both the device and session cookies are cleared. Use the string 'current' to reference the current browser's device.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.DeleteDevice(deviceId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&deviceId, "device-id", "", "Device ID. Use the string 'current' to reference the device of the current browser.")
+	_ = cmd.MarkFlagRequired("device-id")
+	return cmd
+}
+
+func newAccountUpdateDeviceSessionCommand() *cobra.Command {
+	var deviceId string
+	var sessionId string
+
+	cmd := &cobra.Command{
+		Use:   "update-device-session",
+		Short: "Switch the active account on an account switching device to one of the sessions it holds. The chosen session becomes active and its secret is written to the browser's session cookie, so subsequent requests authenticate as that account. Use the string 'current' to reference the current browser's device.\n\nSwitching rotates the chosen session's secret. Any other holder of that session, such as a copy kept elsewhere, stops working, so a session should not be shared across devices.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			result, err := service.UpdateDeviceSession(deviceId, sessionId)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&deviceId, "device-id", "", "Device ID. Use the string 'current' to reference the device of the current browser.")
+	_ = cmd.MarkFlagRequired("device-id")
+	cmd.Flags().StringVar(&sessionId, "session-id", "", "ID of the session, held by the device, to make active.")
+	_ = cmd.MarkFlagRequired("session-id")
+	return cmd
+}
+
 func newAccountUpdateEmailCommand() *cobra.Command {
 	var email string
 	var password string
@@ -441,7 +557,7 @@ func newAccountUpdateEmailCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email",
 		Short: "Update currently logged in user account email address. After changing user address, the user confirmation status will get reset. A new confirmation email is not sent automatically however you can use the send confirmation email endpoint again to send the confirmation email. For security measures, user password is required to complete this request.\nThis endpoint can also be used to convert an anonymous account to a normal one, by passing an email address and a new password.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -480,7 +596,7 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-identities",
 		Short: "Get the list of identities for the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -530,7 +646,7 @@ func newAccountListIdentitiesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, provider, providerUid, providerEmail, providerAccessTokenExpiry. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -550,7 +666,7 @@ func newAccountDeleteIdentityCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-identity",
 		Short: "Delete an identity by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -587,7 +703,7 @@ func newAccountListMembershipsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-memberships",
 		Short: "Get the team memberships of the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -637,7 +753,7 @@ func newAccountListMembershipsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: userId, teamId, invited, joined, confirm, roles. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -657,7 +773,7 @@ func newAccountUpdateMFACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa",
 		Short: "Enable or disable MFA on an account.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -685,7 +801,7 @@ func newAccountCreateMfaAuthenticatorCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mfa-authenticator",
 		Short: "Add an authenticator app to be used as an MFA factor. Verify the authenticator using the verify authenticator method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -714,7 +830,7 @@ func newAccountUpdateMfaAuthenticatorCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa-authenticator",
 		Short: "Verify an authenticator app after adding it using the add authenticator method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -744,7 +860,7 @@ func newAccountDeleteMfaAuthenticatorCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-mfa-authenticator",
 		Short: "Delete an authenticator for a user by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -772,7 +888,7 @@ func newAccountCreateMfaChallengeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mfa-challenge",
 		Short: "Begin the process of MFA verification after sign-in. Finish the flow with updateMfaChallenge method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -801,7 +917,7 @@ func newAccountUpdateMfaChallengeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa-challenge",
 		Short: "Complete the MFA challenge by providing the one-time password. Finish the process of MFA verification by providing the one-time password. To begin the flow, use createMfaChallenge method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -830,7 +946,7 @@ func newAccountListMfaFactorsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-mfa-factors",
 		Short: "List the factors available on the account to be used as a MFA challange.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -855,7 +971,7 @@ func newAccountGetMfaRecoveryCodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-mfa-recovery-codes",
 		Short: "Get recovery codes that can be used as backup for MFA flow. Before getting codes, they must be generated using createMfaRecoveryCodes method. An OTP challenge is required to read recovery codes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -880,7 +996,7 @@ func newAccountCreateMfaRecoveryCodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-mfa-recovery-codes",
 		Short: "Generate recovery codes as backup for MFA flow. It's recommended to generate and show then immediately after user successfully adds their authehticator. Recovery codes can be used as a MFA verification type in createMfaChallenge method.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -905,7 +1021,7 @@ func newAccountUpdateMfaRecoveryCodesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-mfa-recovery-codes",
 		Short: "Regenerate recovery codes that can be used as backup for MFA flow. Before regenerating codes, they must be first generated using createMfaRecoveryCodes method. An OTP challenge is required to regenreate recovery codes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -931,7 +1047,7 @@ func newAccountUpdateNameCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-name",
 		Short: "Update currently logged in user account name.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -968,7 +1084,7 @@ func newAccountListPasskeysCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-passkeys",
 		Short: "Get the list of verified passkeys registered by the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1018,7 +1134,7 @@ func newAccountListPasskeysCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter and order on the following attributes: $id, $createdAt, $updatedAt, name, accessedAt")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter and order on the following attributes: $id, $createdAt, $updatedAt, name, accessedAt. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -1039,7 +1155,7 @@ func newAccountCreatePasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-passkey",
 		Short: "Start registering a passkey for the currently logged in user. The session must have signed in or completed an MFA challenge within the last 10 minutes. Pass the returned `publicKey` options to `navigator.credentials.create()`, then complete the registration with Update passkey verification. The passkey stays pending until verified, and the challenge expires after 5 minutes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1076,7 +1192,7 @@ func newAccountGetPasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-passkey",
 		Short: "Get a verified passkey of the currently logged in user by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1105,7 +1221,7 @@ func newAccountUpdatePasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-passkey",
 		Short: "Rename a passkey of the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1135,7 +1251,7 @@ func newAccountDeletePasskeyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-passkey",
 		Short: "Delete a passkey from the currently logged in user. The passkey can no longer be used to sign in, although it may remain stored on the user's device. The session must have signed in or completed an MFA challenge within the last 10 minutes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1164,7 +1280,7 @@ func newAccountUpdatePasskeyVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-passkey-verification",
 		Short: "Complete a passkey registration started with Create passkey. Pass the JSON form of the credential returned by `navigator.credentials.create()`, for example `credential.toJSON()`. Each registration can be verified once; a failed attempt requires starting it again.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1199,7 +1315,7 @@ func newAccountUpdatePasswordCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-password",
 		Short: "Update currently logged in user password. For validation, user is required to pass in the new password, and the old password. For users created with OAuth, Team Invites and Magic URL, oldPassword is optional.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1235,7 +1351,7 @@ func newAccountUpdatePhoneCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-phone",
 		Short: "Update the currently logged in user's phone number. After updating the phone number, the phone verification status will be reset. A confirmation SMS is not sent automatically, however you can use the POST /account/verification/phone (https://appwrite.io/docs/references/cloud/client-web/account#createPhoneVerification) endpoint to send a confirmation SMS.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1264,7 +1380,7 @@ func newAccountGetPrefsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-prefs",
 		Short: "Get the preferences as a key-value object for the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1290,7 +1406,7 @@ func newAccountUpdatePrefsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-prefs",
 		Short: "Update currently logged in user account preferences. The object you pass is stored as is, and replaces any previous value. The maximum allowed prefs size is 64kB and throws error if exceeded.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1323,7 +1439,7 @@ func newAccountCreateRecoveryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-recovery",
 		Short: "Sends the user an email with a temporary secret key for password reset. When the user clicks the confirmation link he is redirected back to your app password reset URL with the secret key and email address values attached to the URL query string. Use the query string params to submit a request to the PUT /account/recovery (https://appwrite.io/docs/references/cloud/client-web/account#updateRecovery) endpoint to complete the process. The verification link sent to the user's email address is valid for 1 hour.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1355,7 +1471,7 @@ func newAccountUpdateRecoveryCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-recovery",
 		Short: "Use this endpoint to complete the user account password reset. Both the userId and secret arguments will be passed as query parameters to the redirect URL you have provided when sending your request to the POST /account/recovery (https://appwrite.io/docs/references/cloud/client-web/account#createRecovery) endpoint.\n\nPlease note that in order to avoid a Redirect Attack (https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md) the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.\n\nThe new password must satisfy the project's enabled password policies, including custom deny lists. Dictionary entries match the entire password case-sensitively; personal-data terms match substrings case-insensitively. Personal-data validation runs after token verification against the recovered user's ID, name, email, and phone, closing the previous recovery gap for profile-based checks. A rejected password leaves the existing credentials unchanged and the recovery token usable.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1388,7 +1504,7 @@ func newAccountCreateRecoveryOTPCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-recovery-otp",
 		Short: "Use this endpoint to send a 6-digit password recovery code to the user's email address. Unlike createRecovery (https://appwrite.io/docs/references/cloud/client-web/account#createRecovery), this method requires no redirect URL, which makes it suitable for mobile and desktop apps that cannot host a recovery page. Learn more about how to complete the recovery process (https://appwrite.io/docs/references/cloud/client-web/account#updateRecoveryOTP). The code sent to the user's email address is valid for 15 minutes.\n\nEnable the phrase parameter to include a randomly generated security phrase in both the email and the response. Showing that phrase in your app lets the user confirm the email genuinely came from your request, which helps protect against phishing.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1426,7 +1542,7 @@ func newAccountUpdateRecoveryOTPCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-recovery-otp",
 		Short: "Use this endpoint to complete the user password recovery process using the 6-digit code that was emailed by createRecoveryOTP (https://appwrite.io/docs/references/cloud/client-web/account#createRecoveryOTP). Pass the userId of the user along with the secret code from the email and the new password to set. If confirmed, this route will return a 200 status code, the code is consumed and the user's password is updated.\n\nThe new password must satisfy the project's enabled password policies, including custom deny lists. Dictionary entries match the entire password case-sensitively; personal-data terms match substrings case-insensitively. Personal-data validation runs after token verification against the recovered user's ID, name, email, and phone, closing the previous recovery gap for profile-based checks. A rejected password leaves the existing credentials unchanged and the recovery token usable.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1458,7 +1574,7 @@ func newAccountListSessionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-sessions",
 		Short: "Get the list of active sessions across different devices for the currently logged in user.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1492,7 +1608,7 @@ func newAccountDeleteSessionsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-sessions",
 		Short: "Delete all sessions from the user account and remove any sessions cookies from the end client. Pass `current` as false to keep the session making the request and sign out of every other session.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1525,7 +1641,7 @@ func newAccountCreateAnonymousSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-anonymous-session",
 		Short: "Use this endpoint to allow a new user to register an anonymous account in your project. This route will also create a new session for the user. To allow the new user to convert an anonymous account to a normal account, you need to update its email and password (https://appwrite.io/docs/references/cloud/client-web/account#updateEmail) or create an OAuth2 session (https://appwrite.io/docs/references/cloud/client-web/account#CreateOAuth2Session).",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1553,7 +1669,7 @@ func newAccountCreateEmailPasswordSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-password-session",
 		Short: "Allow the user to login into their account by providing a valid email and password combination. This route will create a new session for the user. Use the optional `duration` parameter to create a shorter session, for example when the user doesn't choose \"remember me\". It must be at least 60 seconds and cannot exceed the project maximum session length.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1595,7 +1711,7 @@ func newAccountCreateIdTokenSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-id-token-session",
 		Short: "Allow the user to login to their account using an OpenID Connect ID token obtained natively from the OAuth2 provider, for example via Google Credential Manager on Android or Sign in with Apple on iOS. No browser or redirect is involved: the ID token is verified against the provider's published signing keys and a session is created in a single request.\n\nNative sign-in is switched on per provider with its nativeEnabled setting. It is independent of the browser-based flow's enabled setting, which has no effect on this endpoint. The token's audience must match the provider's configured client ID or one of its native client IDs; tokens issued for any other client ID are rejected. For Sign in with Apple, register your app's bundle ID as a native client ID. For Google, the web client ID used by Credential Manager is usually the configured client ID; add your Android and iOS client IDs as native client IDs if your app requests tokens for them.\n\nPass the raw nonce used when requesting the ID token so it can be validated against the token's nonce claim. When signing in with Apple, the nonce is required: hash it with SHA-256 before passing it to the Apple SDK, and send the raw value here - Apple tokens requested without a nonce are rejected. For Google the nonce is optional: it is validated whenever the token carries one, and ignored when the provider issued the token without one. Apple only returns the user's name on the first authorization, and never inside the ID token - capture it on the client and pass it via the name parameter.\n\nIf there is already an active session, the new session will be attached to the logged-in account. If there are no active sessions, the server will attempt to look for a user with the same email address as the verified email received from the provider and attach the new session to the existing user. If no matching user is found - the server will create a new user.\n\nThis flow does not return provider refresh tokens. You may pass an access token the provider handed your client, along with its lifetime, to store it on the session - but Appwrite cannot renew it once it expires. If your app needs long-lived access to provider APIs, use the browser-based OAuth2 flow instead.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1645,7 +1761,7 @@ func newAccountUpdateMagicURLSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-magic-url-session",
 		Short: "Use this endpoint to create a session from token. Provide the userId and secret parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1676,7 +1792,7 @@ func newAccountUpdatePhoneSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-phone-session",
 		Short: "Use this endpoint to create a session from token. Provide the userId and secret parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1707,7 +1823,7 @@ func newAccountCreateSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-session",
 		Short: "Use this endpoint to create a session from token. Provide the userId and secret parameters from the successful response of authentication flows initiated by token creation. For example, magic URL and phone login.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1737,7 +1853,7 @@ func newAccountGetSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-session",
 		Short: "Use this endpoint to get a logged in user's session using a Session ID. Inputting 'current' will return the current session being used.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1765,7 +1881,7 @@ func newAccountUpdateSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-session",
 		Short: "Use this endpoint to extend a session's length. Extending a session is useful when session expiry is short. If the session was created using an OAuth provider, this endpoint refreshes the access token from the provider.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1793,7 +1909,7 @@ func newAccountDeleteSessionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-session",
 		Short: "Logout the user. Use 'current' as the session ID to logout on this device, use a session ID to logout on another device. If you're looking to logout the user on all devices, use Delete Sessions (https://appwrite.io/docs/references/cloud/client-web/account#deleteSessions) instead.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1820,7 +1936,7 @@ func newAccountUpdateStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-status",
 		Short: "Block the currently logged in user account. Behind the scene, the user record is not deleted but permanently blocked from any access. To completely delete a user, use the Users API instead.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1848,7 +1964,7 @@ func newAccountCreateEmailTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-token",
 		Short: "Sends the user an email with a secret key for creating a session. If the email address has never been used, a new account is created using the provided `userId`. Otherwise, if the email address is already attached to an account, the user ID is ignored. Then, the user will receive an email with the one-time password. Use the returned user ID and secret and submit a request to the POST /v1/account/sessions/token (https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The secret sent to the user's email is valid for 15 minutes.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1889,7 +2005,7 @@ func newAccountCreateMagicURLTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-magic-url-token",
 		Short: "Sends the user an email with a secret key for creating a session. If the provided user ID has not been registered, a new user will be created. When the user clicks the link in the email, the user is redirected back to the URL you provided with the secret key and userId values attached to the URL query string. Use the query string parameters to submit a request to the POST /v1/account/sessions/token (https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The link sent to the user's email address is valid for 1 hour.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1935,7 +2051,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-o-auth-2-token",
 		Short: "Allow the user to login to their account using the OAuth2 provider of their choice. Each OAuth2 provider should be enabled from the Appwrite console first. Use the success and failure arguments to provide a redirect URL's back to your app when login is completed. \n\nIf authentication succeeds, `userId` and `secret` of a token will be appended to the success URL as query parameters. These can be used to create a new session using the Create session (https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint.\n\nIf there is already an active session, the OAuth2 identity is attached to the logged-in account and that session stays active until the token is exchanged for a new one.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -1971,7 +2087,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("provider")
 	cmd.Flags().StringVar(&success, "success", "", "URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
-	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long.")
+	cmd.Flags().StringArrayVar(&scopes, "scopes", nil, "A list of custom OAuth2 scopes. Check each provider internal docs for a list of supported scopes. Maximum of 100 scopes are allowed, each 4096 characters long. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&state, "state", "", "An opaque value your app generates and keeps, for example in a cookie. It is returned unchanged as the `state` query parameter on the success and failure URLs, so your app can check that the sign-in it receives is one it started. Printable ASCII only (RFC 6749 Appendix A.5). Max length: 256 chars.")
 	return cmd
 }
@@ -1981,7 +2097,7 @@ func newAccountCreatePasskeyTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-passkey-token",
 		Short: "Start signing in with a passkey. No email or user ID is needed: pass the returned `publicKey` options to `navigator.credentials.get()` and the user picks one of their passkeys. Then call Update passkey token with the credential to receive a token, and exchange it with Create session. The challenge expires after 5 minutes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2008,7 +2124,7 @@ func newAccountUpdatePasskeyTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-passkey-token",
 		Short: "Complete a passkey sign-in started with Create passkey token. Pass the challenge ID and the JSON form of the credential returned by `navigator.credentials.get()`, for example `credential.toJSON()`. The returned token includes its secret and expires after 1 minute: exchange it for a session with Create session. Passkeys require user verification, so the session also satisfies MFA. Each challenge can only be used once.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2043,7 +2159,7 @@ func newAccountCreatePhoneTokenCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-phone-token",
 		Short: "Sends the user an SMS with a secret key for creating a session. If the provided user ID has not be registered, a new user will be created. Use the returned user ID and secret and submit a request to the POST /v1/account/sessions/token (https://appwrite.io/docs/references/cloud/client-web/account#createSession) endpoint to complete the login process. The secret sent to the user's phone is valid for 15 minutes.\n\nA user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2073,7 +2189,7 @@ func newAccountCreateEmailVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-verification",
 		Short: "Use this endpoint to send a verification message to your user email address to confirm they are the valid owners of that address. Both the userId and secret arguments will be passed as query parameters to the URL you have provided to be attached to the verification email. The provided URL should redirect the user back to your app and allow you to complete the verification process by verifying both the userId and secret parameters. Learn more about how to complete the verification process (https://appwrite.io/docs/references/cloud/client-web/account#updateVerification). The verification link sent to the user's email address is valid for 7 days.\n\nPlease note that in order to avoid a Redirect Attack (https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md), the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2101,7 +2217,7 @@ func newAccountCreateVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-verification",
 		Short: "Use this endpoint to send a verification message to your user email address to confirm they are the valid owners of that address. Both the userId and secret arguments will be passed as query parameters to the URL you have provided to be attached to the verification email. The provided URL should redirect the user back to your app and allow you to complete the verification process by verifying both the userId and secret parameters. Learn more about how to complete the verification process (https://appwrite.io/docs/references/cloud/client-web/account#updateVerification). The verification link sent to the user's email address is valid for 7 days.\n\nPlease note that in order to avoid a Redirect Attack (https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.md), the only valid redirect URLs are the ones from domains you have set when adding your platforms in the console interface.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2130,7 +2246,7 @@ func newAccountUpdateEmailVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-verification",
 		Short: "Use this endpoint to complete the user email verification process. Use both the userId and secret parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2161,7 +2277,7 @@ func newAccountUpdateVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-verification",
 		Short: "Use this endpoint to complete the user email verification process. Use both the userId and secret parameters that were attached to your app URL to verify the user email ownership. If confirmed this route will return a 200 status code.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2191,7 +2307,7 @@ func newAccountCreateEmailVerificationOTPCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-email-verification-otp",
 		Short: "Use this endpoint to send a 6-digit verification code to the currently logged in user's email address. Unlike createEmailVerification (https://appwrite.io/docs/references/cloud/client-web/account#createEmailVerification), this method requires no redirect URL, which makes it suitable for mobile and desktop apps that cannot host a verification page. Learn more about how to complete the verification process (https://appwrite.io/docs/references/cloud/client-web/account#updateEmailVerificationOTP). The code sent to the user's email address is valid for 15 minutes.\n\nEnable the phrase parameter to include a randomly generated security phrase in both the email and the response. Showing that phrase in your app lets the user confirm the email genuinely came from your request, which helps protect against phishing.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2226,7 +2342,7 @@ func newAccountUpdateEmailVerificationOTPCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-email-verification-otp",
 		Short: "Use this endpoint to complete the user email verification process using the 6-digit code that was emailed by createEmailVerificationOTP (https://appwrite.io/docs/references/cloud/client-web/account#createEmailVerificationOTP). Pass the userId of the user being verified along with the secret code from the email. If confirmed, this route will return a 200 status code and the code is consumed.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2255,7 +2371,7 @@ func newAccountCreatePhoneVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-phone-verification",
 		Short: "Use this endpoint to send a verification SMS to the currently logged in user. This endpoint is meant for use after updating a user's phone number using the accountUpdatePhone (https://appwrite.io/docs/references/cloud/client-web/account#updatePhone) endpoint. Learn more about how to complete the verification process (https://appwrite.io/docs/references/cloud/client-web/account#updatePhoneVerification). The verification code sent to the user's phone number is valid for 15 minutes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {
@@ -2282,7 +2398,7 @@ func newAccountUpdatePhoneVerificationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-phone-verification",
 		Short: "Use this endpoint to complete the user phone verification process. Use the userId and secret that were sent to your user's phone number to verify the user email ownership. If confirmed this route will return a 200 status code.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
 			if err != nil {

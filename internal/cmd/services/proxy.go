@@ -46,7 +46,7 @@ func newProxyCreateInvalidationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-invalidation",
 		Short: "Create a new CDN cache invalidation for a domain. Executes a hard purge of cached content.\n\nDepending on type, the invalidation purges a single cache tag, a single URL path, or all cached content for the domain.\n\nDomains that route to a function do not support cache invalidation.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -92,7 +92,7 @@ func newProxyListRulesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-rules",
 		Short: "Get a list of all the proxy rules. You can use the query params to filter your results.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -142,7 +142,7 @@ func newProxyListRulesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: domain, type, trigger, deploymentResourceType, deploymentResourceId, deploymentId, deploymentVcsProviderBranch, protocol")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/databases#querying-documents). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: domain, type, trigger, deploymentResourceType, deploymentResourceId, deploymentId, deploymentVcsProviderBranch, protocol. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -162,7 +162,7 @@ func newProxyCreateAPIRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-api-rule",
 		Short: "Create a new proxy rule for serving Appwrite's API on custom domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -192,7 +192,7 @@ func newProxyCreateFunctionRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-function-rule",
 		Short: "Create a new proxy rule for executing Appwrite Function on custom domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -233,7 +233,7 @@ func newProxyCreateRedirectRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-redirect-rule",
 		Short: "Create a new proxy rule for to redirect from custom domain to another domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -271,7 +271,7 @@ func newProxyCreateSiteRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-site-rule",
 		Short: "Create a new proxy rule for serving Appwrite Site on custom domain.\n\nRule ID is automatically generated as MD5 hash of a rule domain for performance purposes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -310,7 +310,7 @@ func newProxyCreateSMTPRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-smtp-rule",
 		Short: "Create an SMTP ingress rule that asynchronously executes an Appwrite Function for incoming email.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -347,7 +347,7 @@ func newProxyGetRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-rule",
 		Short: "Get a proxy rule by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -375,7 +375,7 @@ func newProxyDeleteRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-rule",
 		Short: "Delete a proxy rule by its unique ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -405,7 +405,7 @@ func newProxyUpdateFunctionRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-function-rule",
 		Short: "Update the function and VCS branch a function proxy rule executes. The rule domain cannot be changed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -446,7 +446,7 @@ func newProxyUpdateRedirectRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-redirect-rule",
 		Short: "Update the target URL, status code and parent resource of a redirect proxy rule. The rule domain cannot be changed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -484,7 +484,7 @@ func newProxyUpdateSiteRuleCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-site-rule",
 		Short: "Update the site and VCS branch a site proxy rule serves. The rule domain cannot be changed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -521,7 +521,7 @@ func newProxyUpdateRuleStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-rule-status",
 		Short: "If not succeeded yet, retry verification process of a proxy rule domain. This endpoint triggers domain verification by checking DNS records. If verification is successful, a TLS certificate will be automatically provisioned for the domain asynchronously in the background. A verified rule whose certificate renewal failed or is blocked, or whose certificate expired, is checked the same way, and its certificate renewed in the background.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

@@ -75,7 +75,7 @@ func newMysqlListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all dedicated databases. Results support pagination.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -125,7 +125,7 @@ func newMysqlListCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -158,7 +158,7 @@ func newMysqlCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new dedicated database with the chosen engine and configuration. Status will be 'provisioning' until the database is ready.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -223,7 +223,7 @@ func newMysqlCreateCommand() *cobra.Command {
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5). High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode preference. Allowed values: async, sync, quorum.")
 	cmd.Flags().IntVar(&networkIdleTimeoutSeconds, "network-idle-timeout-seconds", 0, "Connection idle timeout in seconds.")
-	cmd.Flags().StringArrayVar(&networkIpAllowlist, "network-ip-allowlist", nil, "IP addresses/CIDR ranges allowed to connect.")
+	cmd.Flags().StringArrayVar(&networkIpAllowlist, "network-ip-allowlist", nil, "IP addresses/CIDR ranges allowed to connect. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&idleTimeoutMinutes, "idle-timeout-minutes", 0, "Minutes of inactivity before container scales to zero.")
 	cmd.Flags().BoolVar(&pitr, "pitr", false, "Enable point-in-time recovery (PITR). Continuously archives changes so the database can be restored to any moment within the retention window.")
 	cmd.Flags().Lookup("pitr").NoOptDefVal = "true"
@@ -240,7 +240,7 @@ func newMysqlListSpecificationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-specifications",
 		Short: "List the dedicated database specifications available on the current plan. Each specification reports its resource limits, its own prices and overage rates, and whether it is enabled for the organization.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -266,7 +266,7 @@ func newMysqlGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
 		Short: "Get a dedicated database by its unique ID. Returns the database configuration and current status.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -314,7 +314,7 @@ func newMysqlUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update a dedicated database configuration. All changes are applied with zero downtime. Specification changes (cpu, memory, storage) are handled via rolling cutover. Storage expansion is done online. All other settings are applied in-place.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -402,7 +402,7 @@ func newMysqlUpdateCommand() *cobra.Command {
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5). High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode preference. Allowed values: async, sync, quorum.")
 	cmd.Flags().IntVar(&networkIdleTimeoutSeconds, "network-idle-timeout-seconds", 0, "Connection idle timeout in seconds (60-86400).")
-	cmd.Flags().StringArrayVar(&networkIpAllowlist, "network-ip-allowlist", nil, "IP addresses/CIDR ranges allowed to connect.")
+	cmd.Flags().StringArrayVar(&networkIpAllowlist, "network-ip-allowlist", nil, "IP addresses/CIDR ranges allowed to connect. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&idleTimeoutMinutes, "idle-timeout-minutes", 0, "Minutes before container scales to zero.")
 	cmd.Flags().BoolVar(&pitr, "pitr", false, "Enable or disable point-in-time recovery (PITR).")
 	cmd.Flags().Lookup("pitr").NoOptDefVal = "true"
@@ -415,7 +415,7 @@ func newMysqlUpdateCommand() *cobra.Command {
 	cmd.Flags().IntVar(&metricsSlowQueryLogThresholdMs, "metrics-slow-query-log-threshold-ms", 0, "Threshold in ms above which queries are logged as slow. Forwarded to the sidecar.")
 	cmd.Flags().BoolVar(&sqlApiEnabled, "sql-api-enabled", false, "Enable the SQL API sidecar for this database.")
 	cmd.Flags().Lookup("sql-api-enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&sqlApiAllowedStatements, "sql-api-allowed-statements", nil, "Statement types the SQL API accepts. Allowed values: SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, TRUNCATE, GRANT, REVOKE.")
+	cmd.Flags().StringArrayVar(&sqlApiAllowedStatements, "sql-api-allowed-statements", nil, "Statement types the SQL API accepts. Allowed values: SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, TRUNCATE, GRANT, REVOKE. Repeat the flag for each value.")
 	cmd.Flags().IntVar(&sqlApiMaxRows, "sql-api-max-rows", 0, "Maximum rows returned per SQL API execution (1-1000000).")
 	cmd.Flags().IntVar(&sqlApiMaxBytes, "sql-api-max-bytes", 0, "Maximum serialised SQL API result payload in bytes (1024-104857600).")
 	cmd.Flags().IntVar(&sqlApiTimeoutSeconds, "sql-api-timeout-seconds", 0, "Per-call SQL API execution timeout in seconds (1-300).")
@@ -428,7 +428,7 @@ func newMysqlDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
 		Short: "Delete a dedicated database. This action is irreversible. The database status will be set to 'deleting' and all resources will be cleaned up. Deletion is allowed from any state, and repeating the call re-dispatches the cleanup.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -466,7 +466,7 @@ func newMysqlListBackupsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-backups",
 		Short: "List all backups for a dedicated database. Results can be filtered by status and type.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -518,7 +518,7 @@ func newMysqlListBackupsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, type, databaseId")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: status, type, databaseId. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -539,7 +539,7 @@ func newMysqlCreateBackupCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-backup",
 		Short: "Create a manual backup of a dedicated database. The backup will be created asynchronously and its status can be checked via the get backup endpoint.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -584,7 +584,7 @@ func newMysqlListBackupPoliciesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-backup-policies",
 		Short: "List scheduled backup policies for a dedicated database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -636,7 +636,7 @@ func newMysqlListBackupPoliciesCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&databaseId, "database-id", "", "Database ID.")
 	_ = cmd.MarkFlagRequired("database-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -662,7 +662,7 @@ func newMysqlCreateBackupPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-backup-policy",
 		Short: "Create a scheduled backup policy for a dedicated database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -711,7 +711,7 @@ func newMysqlGetBackupPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-backup-policy",
 		Short: "Get a scheduled backup policy for a dedicated database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -746,7 +746,7 @@ func newMysqlUpdateBackupPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-backup-policy",
 		Short: "Update a scheduled backup policy for a dedicated database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -797,7 +797,7 @@ func newMysqlDeleteBackupPolicyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-backup-policy",
 		Short: "Delete a scheduled backup policy for a dedicated database. Backups already taken by the policy are kept until their retention expires.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -834,7 +834,7 @@ func newMysqlUpdateBackupStorageCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-backup-storage",
 		Short: "Configure off-cluster backup storage for a dedicated database. Supports S3, GCS, and Azure Blob Storage destinations. Backups will be stored to the configured destination in addition to on-cluster storage.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -886,7 +886,7 @@ func newMysqlGetBackupCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-backup",
 		Short: "Get details of a specific database backup including its status, size, and timestamps.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -917,7 +917,7 @@ func newMysqlDeleteBackupCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-backup",
 		Short: "Delete a database backup. This will permanently remove the backup from storage and cannot be undone.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -947,7 +947,7 @@ func newMysqlListBranchesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-branches",
 		Short: "List all ephemeral branches for a dedicated database. Returns branch metadata including ID, name, namespace, and expiration time.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -977,7 +977,7 @@ func newMysqlCreateBranchCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-branch",
 		Short: "Create an ephemeral database branch from the primary via PVC snapshot. The branch is a full copy of the database at the current point in time, useful for testing schema migrations or running experiments without affecting production data. Branches expire after the configured TTL (default 24 hours). The branch is created asynchronously.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1017,7 +1017,7 @@ func newMysqlDeleteBranchCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-branch",
 		Short: "Delete an ephemeral database branch. This removes the branch namespace, its PVC, and the associated VolumeSnapshot. The deletion runs asynchronously and is irreversible.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1047,7 +1047,7 @@ func newMysqlUpdateCredentialsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-credentials",
 		Short: "Queue a rotation of the primary connection credentials for a dedicated database. A hibernated database is woken by the worker before rotation. List database operations until the returned operation reaches a terminal status, then fetch the database again for the refreshed connection string.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1078,7 +1078,7 @@ func newMysqlCreateExecutionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-execution",
 		Short: "Execute SQL through the console-facing Cloud endpoint. Cloud proxies through the edge platform to the per-database SQL API sidecar. Application traffic should bypass cloud entirely and POST directly to the per-database hostname: `https://db-{project}-{db}.{region}.appwrite.center/v1/sql/executions` with an `X-Appwrite-Key` header — that path scales to the whole DB fleet without a per-query cloud round-trip. The statement type must be on the database's configured allow-list. Use bound parameters for any user-supplied values — the API does not interpolate raw strings. Long-running statements (for example CREATE INDEX) can outlive the HTTP request: if the request ends before a result is returned, check the database before retrying, and prefer a direct connection for work that may take minutes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1124,7 +1124,7 @@ func newMysqlCreateFailoverCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-failover",
 		Short: "Trigger a manual failover for a dedicated database with high availability enabled. Promotes a replica to primary. The failover runs asynchronously; poll the database document for status updates. A database left mid-operation also accepts this call as a repair once nothing is driving the operation it is stuck in. Repairing a failover that did not finish, a `failed` database, a stranded upgrade or migrate, or a stranded compute resize additionally requires `targetReplicaId` to name the member to promote, because the default target may be the member that operation already promoted.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1161,7 +1161,7 @@ func newMysqlUpdateMaintenanceCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-maintenance",
 		Short: "Update the maintenance window for a dedicated database. Maintenance operations like minor version upgrades will be performed during this window.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1195,7 +1195,7 @@ func newMysqlCreateMigrationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-migration",
 		Short: "Migrate a database between shared and dedicated types. Shared to dedicated provisions an always-on dedicated instance; dedicated to shared converts to a serverless instance that scales to zero when idle. Data is copied to the target with a brief read-only window during cutover.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1235,7 +1235,7 @@ func newMysqlListOperationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-operations",
 		Short: "List the lifecycle operations recorded for a dedicated database, newest first. Every provision, update, restore, backup and replication action is recorded here with its outcome, including an attempt that was abandoned because another worker took over the database.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1278,7 +1278,7 @@ func newMysqlGetPitrCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-pitr",
 		Short: "Get available point-in-time recovery windows for a dedicated database. Returns the earliest and latest recovery points.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1306,7 +1306,7 @@ func newMysqlGetPoolerCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-pooler",
 		Short: "Get the connection pooler configuration for a dedicated database. Returns pooler mode, max connections, and pool size settings.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1342,7 +1342,7 @@ func newMysqlUpdatePoolerCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-pooler",
 		Short: "Update the connection pooler configuration for a dedicated database. Configure pool mode, max connections, and pool sizes.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1406,7 +1406,7 @@ func newMysqlGetReplicasCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-replicas",
 		Short: "Get high availability status for a dedicated database. Returns replica statuses, replication lag, and sync mode.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1438,7 +1438,7 @@ func newMysqlListRestorationsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-restorations",
 		Short: "List all restorations for a dedicated database. Results can be filtered by status and type.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1492,7 +1492,7 @@ func newMysqlCreateRestorationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-restoration",
 		Short: "Restore a database from a backup or to a specific point in time (PITR). For backup restoration, provide a backupId. For PITR, provide a targetTime as an ISO 8601 datetime. PITR requires the database to have PITR enabled and is only available for enterprise databases.\n\nBy default the backup is replayed over the database it was taken from. Pass `restoreMode` as `clone` to recover it onto a second workload beside this database instead: this database keeps serving its own data while the clone is filled, and the switch happens as soon as the clone is ready, on the endpoint and credentials it already had. Pass `autoPromote` as false to hold the clone until you promote it yourself. Pass `restoreMode` as `copy` to recover onto a separate database with its own endpoint, either one you name with `targetDatabaseId` or one provisioned as a copy of this database's engine, version, specification and replicas. Neither mode is available for a point-in-time recovery or an incremental backup.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1553,7 +1553,7 @@ func newMysqlGetRestorationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-restoration",
 		Short: "Get details of a specific database restoration including its status, type, and timestamps.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1584,7 +1584,7 @@ func newMysqlPromoteRestorationCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "promote-restoration",
 		Short: "Switch the database over to the clone a restoration recovered. The database keeps\nits endpoint and credentials; clients reconnect once. Writes made after the\nrecovery point are discarded, and the side being replaced is retained briefly so\nthe switch can be reversed.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1614,7 +1614,7 @@ func newMysqlGetStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-status",
 		Short: "Get real-time health and status information for a dedicated database. Returns health status, readiness, uptime, connection info, replica status, and volume information.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -1643,7 +1643,7 @@ func newMysqlCreateUpgradeCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-upgrade",
 		Short: "Upgrade a dedicated database to a new engine version. Uses blue-green deployment for zero-downtime cutover.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

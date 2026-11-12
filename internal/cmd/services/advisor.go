@@ -45,7 +45,7 @@ func newAdvisorListReportsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-reports",
 		Short: "Get a list of all the project's analyzer reports. You can use the query params to filter your results.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -95,7 +95,7 @@ func newAdvisorListReportsCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: appId, type, targetType, target, analyzedAt")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: appId, type, targetType, target, analyzedAt. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -115,7 +115,7 @@ func newAdvisorGetReportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-report",
 		Short: "Get an analyzer report by its unique ID. The response includes the report's metadata and the nested insights it produced.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -143,7 +143,7 @@ func newAdvisorDeleteReportCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-report",
 		Short: "Delete an analyzer report by its unique ID. Nested insights and CTA metadata are removed asynchronously by the deletes worker.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -181,7 +181,7 @@ func newAdvisorListInsightsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-insights",
 		Short: "List the insights produced under a single analyzer report. You can use the query params to filter your results further.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -233,7 +233,7 @@ func newAdvisorListInsightsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&reportId, "report-id", "", "Parent report ID.")
 	_ = cmd.MarkFlagRequired("report-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: type, severity, status, resourceType, resourceId, parentResourceType, parentResourceId, analyzedAt, dismissedAt, dismissedBy")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: type, severity, status, resourceType, resourceId, parentResourceType, parentResourceId, analyzedAt, dismissedAt, dismissedBy. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
@@ -254,7 +254,7 @@ func newAdvisorGetInsightCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-insight",
 		Short: "Get an insight by its unique ID, scoped to its parent report.\n",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {

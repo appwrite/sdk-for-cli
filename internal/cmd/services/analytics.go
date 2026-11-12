@@ -48,7 +48,7 @@ func newAnalyticsListPropertiesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-properties",
 		Short: "List analytics properties for the current project.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -101,7 +101,7 @@ func newAnalyticsListPropertiesCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, domain, enabled, type")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, domain, enabled, type. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&search, "search", "", "Search term to filter your list results. Matches the property ID, name and domain. Max length: 256 chars.")
 	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
 	cmd.Flags().Lookup("total").NoOptDefVal = "true"
@@ -128,7 +128,7 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-property",
 		Short: "Create a new analytics property to track a website or application.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -170,7 +170,7 @@ func newAnalyticsCreatePropertyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). May be empty for mobile and agent properties.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all.")
+	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&identifyUsers, "identify-users", false, "Record the signed-in user's ID on events sent from a client session, so traffic can be broken down and counted by user. Off by default.")
 	cmd.Flags().Lookup("identify-users").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&typeArg, "type", "", "Kind of product this property tracks. Only changes which panels the dashboard shows; ingestion accepts the same events for every type.")
@@ -183,7 +183,7 @@ func newAnalyticsGetPropertyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-property",
 		Short: "Get an analytics property by ID.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -217,7 +217,7 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-property",
 		Short: "Update an analytics property. Only the attributes you pass are changed; omitted attributes keep their current value.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -261,7 +261,7 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). Pass an empty string to clear it.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all.")
+	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&identifyUsers, "identify-users", false, "Record the signed-in user's ID on events sent from a client session, so traffic can be broken down and counted by user.")
 	cmd.Flags().Lookup("identify-users").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&typeArg, "type", "", "Kind of product this property tracks. Only changes which panels the dashboard shows; stored events are kept.")
@@ -274,7 +274,7 @@ func newAnalyticsDeletePropertyCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete-property",
 		Short: "Delete an analytics property along with every event and session collected for it. This cannot be undone.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -315,7 +315,7 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-event",
 		Short: "Send a tracking event from a browser, native app, or server-side SDK.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -380,7 +380,7 @@ func newAnalyticsCreateEventCommand() *cobra.Command {
 	cmd.Flags().StringVar(&sessionHash, "session-hash", "", "Optional session hash (provided by SDK).")
 	cmd.Flags().IntVar(&scrollDepth, "scroll-depth", 0, "Scroll depth percentage 0-100.")
 	cmd.Flags().IntVar(&engagementTime, "engagement-time", 0, "Engagement time in seconds, 0-4294967295.")
-	cmd.Flags().StringArrayVar(&props, "props", nil, "Custom string properties as a flat key=value list (max 32 entries, alternating key,value).")
+	cmd.Flags().StringArrayVar(&props, "props", nil, "Custom string properties as a flat key=value list (max 32 entries, alternating key,value). Repeat the flag for each value.")
 	cmd.Flags().StringVar(&userId, "user-id", "", "Override user ID. Pass an opaque ID, not personal data such as an email. Requires API-key auth with analytics.write scope.")
 	cmd.Flags().StringVar(&ip, "ip", "", "Override IP address. Requires API-key auth with analytics.write scope.")
 	cmd.Flags().StringVar(&userAgent, "user-agent", "", "Override user agent. Requires API-key auth with analytics.write scope.")
@@ -410,7 +410,7 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-metrics",
 		Short: "Read analytics metrics (visitors, sessions, pageviews, events, bounceRate, …) for a property over a date range.\n\nThree response shapes, chosen by `dimensions[]` and `interval`:\n- Neither: one row aggregating the whole window, with `value` and `date` null. Only this shape carries `visits`, `bounceRate`, `visitDuration`, `viewsPerVisit`, `scrollDepth` and `engagementTime`.\n- `dimensions[]`: one row per dimension value, ranked by visitors, with `value` set and `date` null.\n- `interval`: one row per time bucket in chronological order, with `date` set and `value` null.\n\n`pageviews` is carried by the flat aggregate and by `interval`, but not by a breakdown.\n\n`userId` and `users` cover identified traffic only: events sent with an API key's `userId`, or from a signed-in session on a property with `identifyUsers` on. A `userId` breakdown leaves out anonymous events; returned values are the project's user IDs.\n\nCustom event props: `dimensions[]=props` ranks the prop keys seen in the window, and adding `propKey` ranks the values of that one key. `queries[]` filters on a prop's value with the `props.<key>` attribute, e.g. `equal(\"props.plan\", [\"pro\"])`.\n\nCombining `dimensions[]` with `interval` is not supported yet. `queries[]` filters the underlying events using standard Utopia query syntax.",
-		Args:  cobra.NoArgs,
+		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
 			if err != nil {
@@ -481,9 +481,9 @@ func newAnalyticsListMetricsCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
 	_ = cmd.MarkFlagRequired("property-id")
-	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Up to 10 filter queries in Utopia syntax. Allowed attributes: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, botName, botCategory, userId, eventName, and `props.<key>` for a custom prop. page, userId, eventName and `props.<key>` are only accepted alongside `interval`, or with a breakdown on a dimension other than entryPage, exitPage. Allowed methods: equal, notEqual, contains, startsWith, endsWith. Example: `queries[]=equal(\"country\", [\"US\"])`.")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Up to 10 filter queries in Utopia syntax. Allowed attributes: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, botName, botCategory, userId, eventName, and `props.<key>` for a custom prop. page, userId, eventName and `props.<key>` are only accepted alongside `interval`, or with a breakdown on a dimension other than entryPage, exitPage. Allowed methods: equal, notEqual, contains, startsWith, endsWith. Example: `queries[]=equal(\"country\", [\"US\"])`. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&interval, "interval", "", "Time bucket size. Omit (null) for a flat aggregate over the whole window. Allowed: 1h, 1d, 1w, 1m.")
-	cmd.Flags().StringArrayVar(&dimensions, "dimensions", nil, "Dimension to break the metrics down by. One at most for now; the parameter is a list so that cap can be raised without a breaking change. Allowed: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, entryPage, exitPage, trafficType, botName, botCategory, userId, eventName, props.")
+	cmd.Flags().StringArrayVar(&dimensions, "dimensions", nil, "Dimension to break the metrics down by. One at most for now; the parameter is a list so that cap can be raised without a breaking change. Allowed: country, region, city, browser, browserVersion, operatingSystem, operatingSystemVersion, device, screenSize, referrerSource, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm, page, hostname, entryPage, exitPage, trafficType, botName, botCategory, userId, eventName, props. Repeat the flag for each value.")
 	cmd.Flags().StringVar(&propKey, "prop-key", "", "Custom prop key whose values to rank, with `dimensions[]=props`. Omit to rank the prop keys themselves.")
 	cmd.Flags().StringVar(&dateRange, "date-range", "", "Date range shorthand (e.g. 7d, 30d). Ignored for any bound you supply explicitly via startAt/endAt.")
 	cmd.Flags().StringVar(&startAt, "start-at", "", "Explicit window start in ISO 8601. Defaults to endAt minus dateRange.")
