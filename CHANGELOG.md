@@ -1,5 +1,15 @@
 # Change Log
 
+## 28.12.1
+
+* Added: `project update-o-auth-2-naver` and `project delete-passwords`
+* Added: `naver` as a `--provider` for `account create-o-auth-2-token`
+* Added: `auto` for `--output` on `storage get-file-preview`, serving avif or webp when the request's `Accept` header supports it
+* Fixed: `avatars get-screenshot --output auto` can return avif or webp; it always returned png
+* Fixed: output masks every response field the API marks as a password, not only the field names the CLI knew
+* Fixed: `terminal` lists the organizations of a Cloud login, which failed with `general_access_forbidden`, and treats Cloud staging as Cloud
+* Updated: built against Go SDK `v7.19.0`
+
 ## 28.12.0
 
 * Breaking: `push` no longer deletes databases, tables or columns missing from the config; pass `--prune`
