@@ -261,7 +261,7 @@ func newAnalyticsUpdatePropertyCommand() *cobra.Command {
 	cmd.Flags().StringVar(&domain, "domain", "", "Primary domain to track (e.g. example.com). Pass an empty string to clear it.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Whether the property accepts events. Events sent to a disabled property are rejected as not found.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all. Repeat the flag for each value.")
+	cmd.Flags().StringArrayVar(&allowedOrigins, "allowed-origins", nil, "Allowed origins for tracking. Use [\"*\"] to allow all. On a property linked to a site, Appwrite manages this list: it is rewritten from the site's production domains whenever they change. Repeat the flag for each value.")
 	cmd.Flags().BoolVar(&identifyUsers, "identify-users", false, "Record the signed-in user's ID on events sent from a client session, so traffic can be broken down and counted by user.")
 	cmd.Flags().Lookup("identify-users").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&typeArg, "type", "", "Kind of product this property tracks. Only changes which panels the dashboard shows; stored events are kept.")

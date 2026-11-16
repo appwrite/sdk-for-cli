@@ -35,6 +35,8 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateKeyCommand())
 	cmd.AddCommand(newProjectDeleteKeyCommand())
 	cmd.AddCommand(newProjectUpdateLabelsCommand())
+	cmd.AddCommand(newProjectUpdateLDAPCommand())
+	cmd.AddCommand(newProjectCreateLDAPTestCommand())
 	cmd.AddCommand(newProjectListMockPhonesCommand())
 	cmd.AddCommand(newProjectCreateMockPhoneCommand())
 	cmd.AddCommand(newProjectGetMockPhoneCommand())
@@ -229,7 +231,7 @@ func newProjectUpdateAuthMethodCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&methodId, "method-id", "", "Auth Method ID. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone,passkey")
+	cmd.Flags().StringVar(&methodId, "method-id", "", "Auth Method ID. Possible values: email-password,magic-url,email-otp,anonymous,invites,jwt,phone,passkey,ldap")
 	_ = cmd.MarkFlagRequired("method-id")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Auth method status.")
 	_ = cmd.MarkFlagRequired("enabled")
@@ -701,6 +703,158 @@ func newProjectUpdateLabelsCommand() *cobra.Command {
 
 	cmd.Flags().StringArrayVar(&labels, "labels", nil, "Array of project labels. Replaces the previous labels. Maximum of 1000 labels are allowed, each up to 36 alphanumeric characters long. Repeat the flag for each value.")
 	_ = cmd.MarkFlagRequired("labels")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateLDAPCommand() *cobra.Command {
+	var enabled bool
+	var hosts []string
+	var port int
+	var encryption string
+	var verification bool
+	var certificate string
+	var timeout int
+	var baseDn string
+	var bindDn string
+	var bindPassword string
+	var userFilter string
+	var requiredGroupDn string
+	var idAttribute string
+	var emailAttribute string
+	var nameAttribute string
+	var phoneAttribute string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-ldap",
+		Short: "Update the LDAP configuration for your project. Use this endpoint to connect your project to an LDAP directory, such as OpenLDAP or Active Directory, so users can sign in with their directory credentials. Omitted parameters keep their stored value. Enabling LDAP connects to the directory and binds as the service account, so a project cannot be left enabled with a configuration that cannot sign anyone in.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateLDAPOption{}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateLDAPEnabled(enabled))
+			}
+			if cmd.Flags().Changed("hosts") {
+				options = append(options, service.WithUpdateLDAPHosts(app.StringSlice(hosts)))
+			}
+			if cmd.Flags().Changed("port") {
+				options = append(options, service.WithUpdateLDAPPort(port))
+			}
+			if cmd.Flags().Changed("encryption") {
+				options = append(options, service.WithUpdateLDAPEncryption(encryption))
+			}
+			if cmd.Flags().Changed("verification") {
+				options = append(options, service.WithUpdateLDAPVerification(verification))
+			}
+			if cmd.Flags().Changed("certificate") {
+				options = append(options, service.WithUpdateLDAPCertificate(certificate))
+			}
+			if cmd.Flags().Changed("timeout") {
+				options = append(options, service.WithUpdateLDAPTimeout(timeout))
+			}
+			if cmd.Flags().Changed("base-dn") {
+				options = append(options, service.WithUpdateLDAPBaseDn(baseDn))
+			}
+			if cmd.Flags().Changed("bind-dn") {
+				options = append(options, service.WithUpdateLDAPBindDn(bindDn))
+			}
+			if cmd.Flags().Changed("bind-password") {
+				options = append(options, service.WithUpdateLDAPBindPassword(bindPassword))
+			}
+			if cmd.Flags().Changed("user-filter") {
+				options = append(options, service.WithUpdateLDAPUserFilter(userFilter))
+			}
+			if cmd.Flags().Changed("required-group-dn") {
+				options = append(options, service.WithUpdateLDAPRequiredGroupDn(requiredGroupDn))
+			}
+			if cmd.Flags().Changed("id-attribute") {
+				options = append(options, service.WithUpdateLDAPIdAttribute(idAttribute))
+			}
+			if cmd.Flags().Changed("email-attribute") {
+				options = append(options, service.WithUpdateLDAPEmailAttribute(emailAttribute))
+			}
+			if cmd.Flags().Changed("name-attribute") {
+				options = append(options, service.WithUpdateLDAPNameAttribute(nameAttribute))
+			}
+			if cmd.Flags().Changed("phone-attribute") {
+				options = append(options, service.WithUpdateLDAPPhoneAttribute(phoneAttribute))
+			}
+
+			result, err := service.UpdateLDAP(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Enable or disable LDAP sign-in. Enabling connects to the directory to validate the configuration.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&hosts, "hosts", nil, "Directory hostnames or IP addresses, tried in order until one answers. IPv6 addresses can be written with or without square brackets. Maximum of 10 hosts are allowed. For example: [\"ldap.example.com\"]. Repeat the flag for each value.")
+	cmd.Flags().IntVar(&port, "port", 0, "Directory port. Defaults to 636 for LDAPS and 389 otherwise.")
+	cmd.Flags().StringVar(&encryption, "encryption", "", "Transport encryption. Use \"ldaps\" for TLS from the first byte, \"starttls\" to upgrade a plain connection, or \"none\" for a trusted network only. Allowed values are: none, ldaps, starttls. Defaults to ldaps.")
+	cmd.Flags().BoolVar(&verification, "verification", false, "Certificate verification, false for disabled or true for enabled. Defaults to true. Has no effect when encryption is none.")
+	cmd.Flags().Lookup("verification").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&certificate, "certificate", "", "Certificate in PEM format of the authority that signed the directory certificate, or the directory certificate itself when it is self-signed. Several certificates can be given one after another. Leave empty to use the system trust store. Pass an empty string to clear a previously set value.")
+	cmd.Flags().IntVar(&timeout, "timeout", 0, "Seconds to wait for the directory to connect and answer each operation. Maximum is 30 seconds. Defaults to 10.")
+	cmd.Flags().StringVar(&baseDn, "base-dn", "", "Subtree the user search starts from. For example: ou=people,dc=example,dc=com")
+	cmd.Flags().StringVar(&bindDn, "bind-dn", "", "Service account used to search for users. Pass an empty string if the directory allows anonymous search. For example: cn=appwrite,ou=services,dc=example,dc=com")
+	cmd.Flags().StringVar(&bindPassword, "bind-password", "", "Service account password. This property is stored securely and cannot be read in future (write-only). Required again when hosts, port, encryption, verification, certificate or bindDn change.")
+	cmd.Flags().StringVar(&userFilter, "user-filter", "", "LDAP filter that finds the user signing in. {username} is replaced with the username they enter and must appear at least once. Pass an empty string to use the default, (uid={username}). For example: (sAMAccountName={username}) on Active Directory, or (|(uid={username})(mail={username})) to accept a username or an email address.")
+	cmd.Flags().StringVar(&requiredGroupDn, "required-group-dn", "", "Group a user must belong to in order to sign in, checked on every sign-in. Pass an empty string to allow every user the directory authenticates. For example: cn=staff,ou=groups,dc=example,dc=com")
+	cmd.Flags().StringVar(&idAttribute, "id-attribute", "", "Attribute holding the identifier that stays the same when an entry is renamed or moved. Defaults to entryUUID; use objectGUID on Active Directory.")
+	cmd.Flags().StringVar(&emailAttribute, "email-attribute", "", "Attribute holding the email address. Defaults to mail.")
+	cmd.Flags().StringVar(&nameAttribute, "name-attribute", "", "Attribute holding the display name. Defaults to cn.")
+	cmd.Flags().StringVar(&phoneAttribute, "phone-attribute", "", "Attribute holding the phone number, in international format. Leave empty, the default, to leave the phone unmapped. For example: mobile")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectCreateLDAPTestCommand() *cobra.Command {
+	var username string
+	var password string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "create-ldap-test",
+		Short: "Test the stored LDAP configuration against the directory without signing anyone in. Connects to the directory, binds as the service account and reads the base DN. Pass a username to also look the user up and check the required group, and a password to also verify it. The error names the step that failed.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.CreateLDAPTestOption{}
+			if cmd.Flags().Changed("username") {
+				options = append(options, service.WithCreateLDAPTestUsername(username))
+			}
+			if cmd.Flags().Changed("password") {
+				options = append(options, service.WithCreateLDAPTestPassword(password))
+			}
+
+			result, err := service.CreateLDAPTest(options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&username, "username", "", "Username to look up in the directory. Leave empty to test the connection and service account only.")
+	cmd.Flags().StringVar(&password, "password", "", "Password of the user to verify. Only used together with a username.")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }

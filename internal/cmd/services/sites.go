@@ -28,6 +28,7 @@ func NewSitesCommand() *cobra.Command {
 	cmd.AddCommand(newSitesGetCommand())
 	cmd.AddCommand(newSitesUpdateCommand())
 	cmd.AddCommand(newSitesDeleteCommand())
+	cmd.AddCommand(newSitesUpdateAnalyticsCommand())
 	cmd.AddCommand(newSitesUpdateSiteDeploymentCommand())
 	cmd.AddCommand(newSitesListDeploymentsCommand())
 	cmd.AddCommand(newSitesCreateDeploymentCommand())
@@ -558,6 +559,37 @@ func newSitesDeleteCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&siteId, "site-id", "", "Site ID.")
 	_ = cmd.MarkFlagRequired("site-id")
+	return cmd
+}
+
+func newSitesUpdateAnalyticsCommand() *cobra.Command {
+	var siteId string
+	var enabled bool
+
+	cmd := &cobra.Command{
+		Use:   "update-analytics",
+		Short: "Turn analytics on or off for a site. Turning it on links an analytics property named after the site, creating one on first use, and injects the tracker into pages served on the site's production domains. Turning it on also needs the `analytics.write` scope. Turning it off stops the injection and keeps the property and its data.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := sites.New(client)
+
+			result, err := service.UpdateAnalytics(siteId, enabled)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&siteId, "site-id", "", "Site ID.")
+	_ = cmd.MarkFlagRequired("site-id")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Inject the analytics tracker into the site's production domains. Injected pageviews and events are billed as analytics usage.")
+	_ = cmd.MarkFlagRequired("enabled")
 	return cmd
 }
 
