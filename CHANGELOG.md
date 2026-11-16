@@ -1,5 +1,9 @@
 # Change Log
 
+## 28.13.1
+
+* Fixed: `terminal` reached Cloud projects outside the default region instead of failing with `general_access_forbidden`
+
 ## 28.13.0
 
 * Added: `account create-ldap-session` for LDAP sign-in
