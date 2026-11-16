@@ -45,6 +45,7 @@ var secretFields = []string{
 	"device_code",
 	"id_token",
 	"jwt",
+	"ldapBindPassword",
 	"oauth2ClientSecret",
 	"oauthClientSecret",
 	"p8File",

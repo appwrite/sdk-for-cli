@@ -67,6 +67,7 @@ func NewAccountCommand() *cobra.Command {
 	cmd.AddCommand(newAccountCreateAnonymousSessionCommand())
 	cmd.AddCommand(newAccountCreateEmailPasswordSessionCommand())
 	cmd.AddCommand(newAccountCreateIdTokenSessionCommand())
+	cmd.AddCommand(newAccountCreateLDAPSessionCommand())
 	cmd.AddCommand(newAccountUpdateMagicURLSessionCommand())
 	cmd.AddCommand(newAccountUpdatePhoneSessionCommand())
 	cmd.AddCommand(newAccountCreateSessionCommand())
@@ -1751,6 +1752,45 @@ func newAccountCreateIdTokenSessionCommand() *cobra.Command {
 	cmd.Flags().StringVar(&accessToken, "access-token", "", "Provider access token to store alongside the session for calling provider APIs. Never used for authentication.")
 	cmd.Flags().IntVar(&accessTokenExpiry, "access-token-expiry", 0, "Seconds until the provider access token expires, as reported by the provider. Stored so clients can tell when the stored token goes stale.")
 	cmd.Flags().StringVar(&name, "name", "", "User name. Only used when creating a new user and the ID token has no name claim, such as on the first Sign in with Apple authorization.")
+	return cmd
+}
+
+func newAccountCreateLDAPSessionCommand() *cobra.Command {
+	var username string
+	var password string
+	var duration int
+
+	cmd := &cobra.Command{
+		Use:   "create-ldap-session",
+		Short: "Allow the user to login into their account by providing the username and password they use in the project's LDAP directory. The directory verifies the password; on the first sign-in an account is created from the directory entry, and on later sign-ins the name, email and phone follow the directory. This endpoint requires LDAP to be configured and enabled for the project. A user is limited to 10 active sessions at a time by default. Learn more about session limits (https://appwrite.io/docs/authentication-security#limits).",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForConsole()
+			if err != nil {
+				return err
+			}
+			service := account.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []account.CreateLDAPSessionOption{}
+			if cmd.Flags().Changed("duration") {
+				options = append(options, service.WithCreateLDAPSessionDuration(duration))
+			}
+
+			result, err := service.CreateLDAPSession(username, password, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&username, "username", "", "Directory username, matched against the username attribute of the project's LDAP configuration.")
+	_ = cmd.MarkFlagRequired("username")
+	cmd.Flags().StringVar(&password, "password", "", "Directory password.")
+	_ = cmd.MarkFlagRequired("password")
+	cmd.Flags().IntVar(&duration, "duration", 0, "Session length in seconds. Minimum is 60 seconds, and it cannot exceed the project maximum session length. Defaults to the project maximum session length.")
 	return cmd
 }
 
