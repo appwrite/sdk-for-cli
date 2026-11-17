@@ -1,5 +1,9 @@
 # Change Log
 
+## 28.13.2
+
+* Fixed: `terminal` re-reads an open organization on Cloud; every refresh failed with `Not Found (404 http)`
+
 ## 28.13.1
 
 * Fixed: `terminal` reached Cloud projects outside the default region instead of failing with `general_access_forbidden`
