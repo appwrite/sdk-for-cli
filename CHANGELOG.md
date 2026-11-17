@@ -1,5 +1,14 @@
 # Change Log
 
+## 28.14.0-rc.1
+
+Release candidate for internal testing. Not for production use.
+
+* Added: `zero` creates a working project without signing up, listed under GET STARTED in `help`
+* Added: `zero extend` adds an hour to a Zero project's build time, up to three times
+* Added: `zero` at a terminal offers to open the project in the console and asks you to save the claim link
+* Fixed: `zero status` rounds time left down, matching the expiry it prints
+
 ## 28.13.1
 
 * Fixed: `terminal` reached Cloud projects outside the default region instead of failing with `general_access_forbidden`
