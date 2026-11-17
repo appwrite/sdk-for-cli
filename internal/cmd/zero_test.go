@@ -20,6 +20,7 @@ import (
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/config"
+	"github.com/appwrite/sdk-for-cli/internal/prompt"
 	"github.com/appwrite/sdk-for-cli/internal/sdk"
 )
 
@@ -54,6 +55,25 @@ func zeroServer(t *testing.T, requests *[]*http.Request, status string) *httptes
 			body, _ := io.ReadAll(r.Body)
 			r.Body = io.NopCloser(bytes.NewReader(body))
 			w.WriteHeader(http.StatusNoContent)
+		case r.URL.Path == "/zero/zero-project/extensions" && status == zeroNotFound:
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(`{"message":"Zero project not found","code":404,"type":"zero_not_found"}`))
+		case r.URL.Path == "/zero/zero-project/extensions" && status == zeroExtensionLimit:
+			w.WriteHeader(http.StatusForbidden)
+			w.Write([]byte(`{"message":"This Appwrite Zero project has no build window extensions left.","code":403,"type":"zero_extension_limit_exceeded"}`))
+		case r.Method == http.MethodPost && r.URL.Path == "/zero/zero-project/extensions":
+			body, _ := io.ReadAll(r.Body)
+			r.Body = io.NopCloser(bytes.NewReader(body))
+			w.WriteHeader(http.StatusCreated)
+			json.NewEncoder(w).Encode(map[string]any{
+				"$id":                 "zero-project",
+				"projectId":           "zero-project",
+				"status":              zeroActive,
+				"endpoint":            server.URL,
+				"expiresAt":           "2099-01-01T01:00:00Z",
+				"claimBy":             "2099-01-02T00:00:00Z",
+				"extensionsRemaining": 2,
+			})
 		case r.URL.Path == "/zero/zero-project/tokens" && status == zeroNotFound:
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(`{"message":"Zero project not found","code":404,"type":"zero_not_found"}`))
@@ -324,6 +344,53 @@ func TestZeroConsoleOpensASignInLink(t *testing.T) {
 	}
 	if !strings.Contains(out.String(), link) {
 		t.Errorf("does not print the link for a browser that did not open:\n%s", out)
+	}
+}
+
+// At a terminal, `zero` offers the console and asks for the claim link to be
+// saved. The test runs without one, which is how an agent sees it: no question.
+func TestZeroOnboardsAPersonAtATerminal(t *testing.T) {
+	for _, console := range []bool{true, false} {
+		preferencesWith(t, `{}`)
+		inDirectory(t, t.TempDir())
+		withZeroFlags(t, false, false)
+
+		var requests []*http.Request
+		server := zeroServer(t, &requests, zeroActive)
+
+		command, out := captureCommand()
+		if err := runZero(command, server.URL, "", ""); err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(out.String(), "Save your claim link") {
+			t.Fatalf("asked without a terminal:\n%s", out)
+		}
+
+		global, err := preferences()
+		if err != nil {
+			t.Fatal(err)
+		}
+		out.Reset()
+		const (
+			open  = "Open the project in the console now?"
+			saved = "Have you saved the claim link?"
+		)
+		prompter := &prompt.Scripted{Confirms: map[string]bool{open: console, saved: false}}
+		var opened []string
+		session := global.SessionData(zeroSessionPrefix + "zero-project")
+		if err := onboardZero(command, prompter, session, func(link string) { opened = append(opened, link) }); err != nil {
+			t.Fatal(err)
+		}
+
+		if strings.Join(prompter.Asked, "|") != open+"|"+saved {
+			t.Errorf("asked %v", prompter.Asked)
+		}
+		if console != (len(opened) == 1) {
+			t.Errorf("console %v, opened %v", console, opened)
+		}
+		if !strings.Contains(out.String(), "https://console.example/claim/code") || !strings.Contains(out.String(), "zero list") {
+			t.Errorf("does not show the claim link and where to find it again:\n%s", out)
+		}
 	}
 }
 
@@ -878,6 +945,85 @@ func TestZeroDeleteReportsAProjectNoLongerUnclaimed(t *testing.T) {
 	global, _ := preferences()
 	if global.SessionData(zeroSessionPrefix+"zero-project") == nil {
 		t.Error("the session was dropped for a project that may still be claimable")
+	}
+}
+
+// `zero extend` sends the claim code and stores the moved deadline, so `zero
+// list` shows it without asking the API.
+func TestZeroExtendStoresTheNewDeadline(t *testing.T) {
+	preferencesWith(t, `{}`)
+	inDirectory(t, t.TempDir())
+	withZeroFlags(t, false, false)
+
+	var requests []*http.Request
+	server := zeroServer(t, &requests, zeroActive)
+
+	command, out := captureCommand()
+	if err := runZero(command, server.URL, "", ""); err != nil {
+		t.Fatal(err)
+	}
+	out.Reset()
+
+	if err := runZeroExtend(command); err != nil {
+		t.Fatal(err)
+	}
+
+	request := requests[len(requests)-1]
+	if request.Method != http.MethodPost || request.URL.Path != "/zero/zero-project/extensions" {
+		t.Fatalf("last request = %s %s, want POST /zero/zero-project/extensions", request.Method, request.URL.Path)
+	}
+	body, _ := io.ReadAll(request.Body)
+	var sent map[string]any
+	if err := json.Unmarshal(body, &sent); err != nil || sent["secret"] != "claim-secret" {
+		t.Errorf("sent %s, want the claim secret", body)
+	}
+
+	global, err := preferences()
+	if err != nil {
+		t.Fatal(err)
+	}
+	stored := global.SessionData(zeroSessionPrefix + "zero-project").GetObject(preferenceZero)
+	if got := stored.GetString("expiresAt"); got != "2099-01-01T01:00:00Z" {
+		t.Errorf("stored expiresAt = %q, want the extended one", got)
+	}
+	if got := stored.GetString("claimBy"); got != "2099-01-02T00:00:00Z" {
+		t.Errorf("stored claimBy = %q, want it unchanged", got)
+	}
+	for _, want := range []string{"Extended Appwrite Zero project zero-project", "Extensions left  2", "https://console.example/claim/code"} {
+		if !strings.Contains(out.String(), want) {
+			t.Errorf("output is missing %q:\n%s", want, out)
+		}
+	}
+
+	// Rounded down, so it agrees with the "in 3h" a timestamp prints next to it
+	if got := timeLeft("2026-11-16T21:22:18Z", time.Date(2026, 11, 16, 17, 25, 0, 0, time.UTC)); got != "3h 57m" {
+		t.Errorf("time left = %q, want 3h 57m", got)
+	}
+}
+
+// With no extension left, the error points at the claim link and the stored
+// deadline stays as it was.
+func TestZeroExtendPointsAtTheClaimLinkWhenNoExtensionIsLeft(t *testing.T) {
+	preferencesWith(t, `{}`)
+	inDirectory(t, t.TempDir())
+	withZeroFlags(t, false, false)
+
+	var requests []*http.Request
+	server := zeroServer(t, &requests, zeroExtensionLimit)
+
+	command, _ := captureCommand()
+	if err := runZero(command, server.URL, "", ""); err != nil {
+		t.Fatal(err)
+	}
+
+	err := runZeroExtend(command)
+	if err == nil || !strings.Contains(err.Error(), "no build window extensions left") || !strings.Contains(err.Error(), "https://console.example/claim/code") {
+		t.Fatalf("err = %v, want the API's reason and the claim link", err)
+	}
+
+	global, _ := preferences()
+	if got := global.SessionData(zeroSessionPrefix + "zero-project").GetObject(preferenceZero).GetString("expiresAt"); got != "2099-01-01T00:00:00Z" {
+		t.Errorf("stored expiresAt = %q, want it unchanged", got)
 	}
 }
 

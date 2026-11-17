@@ -1,8 +1,8 @@
 # Change Log
 
-## 28.13.1
+## 28.14.0-rc.1
 
-* Fixed: `terminal` reached Cloud projects outside the default region instead of failing with `general_access_forbidden`
+* Release candidate for internal testing.
 
 ## 28.13.0
 
