@@ -520,7 +520,7 @@ func newProxyUpdateRuleStatusCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "update-rule-status",
-		Short: "If not succeeded yet, retry verification process of a proxy rule domain. This endpoint triggers domain verification by checking DNS records. If verification is successful, a TLS certificate will be automatically provisioned for the domain asynchronously in the background. A verified rule whose certificate renewal failed or is blocked, or whose certificate expired, is checked the same way, and its certificate renewed in the background.",
+		Short: "If not succeeded yet, retry verification process of a proxy rule domain. This endpoint triggers domain verification by checking DNS records. If verification is successful, a TLS certificate will be automatically provisioned for the domain asynchronously in the background. A verified rule whose certificate renewal failed or is blocked, or whose certificate expired, is checked the same way, and its certificate renewed in the background.\n\nA domain may also be assigned to a project with a TXT record at `_appwrite.<domain>` holding the project ID. The record is optional, but a domain assigned to another project never verifies here, and publishing it lets this project claim a domain another one holds.",
 		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")

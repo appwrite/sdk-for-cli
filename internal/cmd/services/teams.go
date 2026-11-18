@@ -37,6 +37,9 @@ func NewTeamsCommand() *cobra.Command {
 	cmd.AddCommand(newTeamsUpdateMembershipCommand())
 	cmd.AddCommand(newTeamsDeleteMembershipCommand())
 	cmd.AddCommand(newTeamsUpdateMembershipStatusCommand())
+	cmd.AddCommand(newTeamsGetPhotoCommand())
+	cmd.AddCommand(newTeamsUpdatePhotoCommand())
+	cmd.AddCommand(newTeamsDeletePhotoCommand())
 	cmd.AddCommand(newTeamsGetPrefsCommand())
 	cmd.AddCommand(newTeamsUpdatePrefsCommand())
 
@@ -756,6 +759,125 @@ func newTeamsUpdateMembershipStatusCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("user-id")
 	cmd.Flags().StringVar(&secret, "secret", "", "Secret key.")
 	_ = cmd.MarkFlagRequired("secret")
+	return cmd
+}
+
+func newTeamsGetPhotoCommand() *cobra.Command {
+	var teamId string
+	var width int
+	var height int
+	var quality int
+	var output string
+	var destination string
+
+	cmd := &cobra.Command{
+		Use:   "get-photo",
+		Short: "Returns the photo of a team: the uploaded photo (see teams.updatePhoto), else the initials of the team name, else a built-in static placeholder.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := teams.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []teams.GetPhotoOption{}
+			if cmd.Flags().Changed("width") {
+				options = append(options, service.WithGetPhotoWidth(width))
+			}
+			if cmd.Flags().Changed("height") {
+				options = append(options, service.WithGetPhotoHeight(height))
+			}
+			if cmd.Flags().Changed("quality") {
+				options = append(options, service.WithGetPhotoQuality(quality))
+			}
+			if cmd.Flags().Changed("output") {
+				options = append(options, service.WithGetPhotoOutput(output))
+			}
+
+			result, err := service.GetPhoto(teamId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			// A location method returns the file bytes, not a URL -- the SDK
+			// has already fetched them.
+			return app.WriteFile(destination, result)
+		},
+	}
+
+	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
+	_ = cmd.MarkFlagRequired("team-id")
+	cmd.Flags().IntVar(&width, "width", 0, "Output image width in pixels. Pass an integer between 0 and 2000. Defaults to 256.")
+	cmd.Flags().IntVar(&height, "height", 0, "Output image height in pixels. Pass an integer between 0 and 2000. Defaults to 256.")
+	cmd.Flags().IntVar(&quality, "quality", 0, "Output image quality between 0 and 100. Defaults to 100.")
+	cmd.Flags().StringVar(&output, "output", "", "Output image format. Defaults to 'png'.")
+	cmd.Flags().StringVar(&destination, "destination", "", "Path to save the file to.")
+	_ = cmd.MarkFlagRequired("destination")
+	return cmd
+}
+
+func newTeamsUpdatePhotoCommand() *cobra.Command {
+	var teamId string
+	var file string
+
+	cmd := &cobra.Command{
+		Use:   "update-photo",
+		Short: "Update the photo of a team. Updating an already customized photo replaces it. The image must be at most 5MB and is sent in a single request.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := teams.New(client)
+			fileFile, err := app.InputFile(file)
+			if err != nil {
+				return err
+			}
+
+			result, err := service.UpdatePhoto(teamId, fileFile)
+			if err != nil {
+				return sdk.WrapMutationError("PUT", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
+	_ = cmd.MarkFlagRequired("team-id")
+	cmd.Flags().StringVar(&file, "file", "", "Binary image file of at most 5MB. Allowed file types are png, jpg, jpeg, and webp.")
+	_ = cmd.MarkFlagRequired("file")
+	return cmd
+}
+
+func newTeamsDeletePhotoCommand() *cobra.Command {
+	var teamId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-photo",
+		Short: "Delete the photo of a team and store the built-in static placeholder in its place. The placeholder is the team's photo from then on, so it takes priority over the initials of the team name until a new photo is uploaded with teams.updatePhoto.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := teams.New(client)
+
+			result, err := service.DeletePhoto(teamId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&teamId, "team-id", "", "Team ID.")
+	_ = cmd.MarkFlagRequired("team-id")
 	return cmd
 }
 
