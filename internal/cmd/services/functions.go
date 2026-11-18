@@ -160,6 +160,9 @@ func newFunctionsCreateCommand() *cobra.Command {
 	var deploymentRetention int
 	var interval int
 	var description string
+	var providerComments bool
+	var providerDeployments bool
+	var providerStatuses bool
 
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -237,6 +240,15 @@ func newFunctionsCreateCommand() *cobra.Command {
 			if cmd.Flags().Changed("description") {
 				options = append(options, service.WithCreateDescription(description))
 			}
+			if cmd.Flags().Changed("provider-comments") {
+				options = append(options, service.WithCreateProviderComments(providerComments))
+			}
+			if cmd.Flags().Changed("provider-deployments") {
+				options = append(options, service.WithCreateProviderDeployments(providerDeployments))
+			}
+			if cmd.Flags().Changed("provider-statuses") {
+				options = append(options, service.WithCreateProviderStatuses(providerStatuses))
+			}
 
 			result, err := service.Create(functionId, name, runtime, options...)
 			if err != nil {
@@ -267,7 +279,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Appwrite Installation ID for VCS (Version Control System) deployment.")
 	cmd.Flags().StringVar(&providerRepositoryId, "provider-repository-id", "", "Repository ID of the repo linked to the function.")
 	cmd.Flags().StringVar(&providerBranch, "provider-branch", "", "Production branch for the repo linked to the function.")
-	cmd.Flags().BoolVar(&providerSilentMode, "provider-silent-mode", false, "Is the VCS (Version Control System) connection in silent mode for the repo linked to the function? In silent mode, comments will not be made on commits and pull requests.")
+	cmd.Flags().BoolVar(&providerSilentMode, "provider-silent-mode", false, "Is the VCS (Version Control System) connection in silent mode for the repo linked to the function? In silent mode, no comments or checks are posted to commits and pull requests.")
 	cmd.Flags().Lookup("provider-silent-mode").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&providerRootDirectory, "provider-root-directory", "", "Path to function code in the linked repo.")
 	cmd.Flags().StringArrayVar(&providerBranches, "provider-branches", nil, "List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches. Repeat the flag for each value.")
@@ -277,6 +289,12 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
+	cmd.Flags().BoolVar(&providerComments, "provider-comments", false, "Post a build summary on pull requests for the repo linked to the function. Commit statuses are still reported when disabled. Ignored in silent mode.")
+	cmd.Flags().Lookup("provider-comments").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&providerDeployments, "provider-deployments", false, "Deploy every push that matches the branch and path rules for the repo linked to the function. When disabled, deploy manually.")
+	cmd.Flags().Lookup("provider-deployments").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&providerStatuses, "provider-statuses", false, "Report the build status on each commit for the repo linked to the function. Ignored in silent mode.")
+	cmd.Flags().Lookup("provider-statuses").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -406,6 +424,9 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	var deploymentRetention int
 	var interval int
 	var description string
+	var providerComments bool
+	var providerDeployments bool
+	var providerStatuses bool
 	var emailEnabled bool
 
 	cmd := &cobra.Command{
@@ -487,6 +508,15 @@ func newFunctionsUpdateCommand() *cobra.Command {
 			if cmd.Flags().Changed("description") {
 				options = append(options, service.WithUpdateDescription(description))
 			}
+			if cmd.Flags().Changed("provider-comments") {
+				options = append(options, service.WithUpdateProviderComments(providerComments))
+			}
+			if cmd.Flags().Changed("provider-deployments") {
+				options = append(options, service.WithUpdateProviderDeployments(providerDeployments))
+			}
+			if cmd.Flags().Changed("provider-statuses") {
+				options = append(options, service.WithUpdateProviderStatuses(providerStatuses))
+			}
 			if cmd.Flags().Changed("email-enabled") {
 				options = append(options, service.WithUpdateEmailEnabled(emailEnabled))
 			}
@@ -519,7 +549,7 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&installationId, "installation-id", "", "Appwrite Installation ID for VCS (Version Controle System) deployment.")
 	cmd.Flags().StringVar(&providerRepositoryId, "provider-repository-id", "", "Repository ID of the repo linked to the function")
 	cmd.Flags().StringVar(&providerBranch, "provider-branch", "", "Production branch for the repo linked to the function")
-	cmd.Flags().BoolVar(&providerSilentMode, "provider-silent-mode", false, "Is the VCS (Version Control System) connection in silent mode for the repo linked to the function? In silent mode, comments will not be made on commits and pull requests.")
+	cmd.Flags().BoolVar(&providerSilentMode, "provider-silent-mode", false, "Is the VCS (Version Control System) connection in silent mode for the repo linked to the function? In silent mode, no comments or checks are posted to commits and pull requests.")
 	cmd.Flags().Lookup("provider-silent-mode").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&providerRootDirectory, "provider-root-directory", "", "Path to function code in the linked repo.")
 	cmd.Flags().StringArrayVar(&providerBranches, "provider-branches", nil, "List of branch name patterns to trigger automatic deployments. Supports wildcards. Leave empty to deploy on all branches. Repeat the flag for each value.")
@@ -529,6 +559,12 @@ func newFunctionsUpdateCommand() *cobra.Command {
 	cmd.Flags().IntVar(&deploymentRetention, "deployment-retention", 0, "Days to keep non-active deployments before deletion. Value 0 keeps all deployments unless the server applies a default retention.")
 	cmd.Flags().IntVar(&interval, "interval", 0, "Minutes between scheduled executions. Appwrite picks when within each interval the function runs. Use 0 to disable. Cannot be combined with schedule. When omitted, the current interval is kept unless schedule is set.")
 	cmd.Flags().StringVar(&description, "description", "", "Optional description for the function.")
+	cmd.Flags().BoolVar(&providerComments, "provider-comments", false, "Post a build summary on pull requests for the repo linked to the function. Commit statuses are still reported when disabled. Ignored in silent mode.")
+	cmd.Flags().Lookup("provider-comments").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&providerDeployments, "provider-deployments", false, "Deploy every push that matches the branch and path rules for the repo linked to the function. When disabled, deploy manually.")
+	cmd.Flags().Lookup("provider-deployments").NoOptDefVal = "true"
+	cmd.Flags().BoolVar(&providerStatuses, "provider-statuses", false, "Report the build status on each commit for the repo linked to the function. Ignored in silent mode.")
+	cmd.Flags().Lookup("provider-statuses").NoOptDefVal = "true"
 	cmd.Flags().BoolVar(&emailEnabled, "email-enabled", false, "Enable inbound email triggering for this function. When false or omitted on create, SMTP recipients are rejected. Opt-in; default is off.")
 	cmd.Flags().Lookup("email-enabled").NoOptDefVal = "true"
 	return cmd

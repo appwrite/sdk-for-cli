@@ -1,17 +1,12 @@
 # Change Log
 
-## 28.13.3
+## 28.14.0
 
-* Fixed: `terminal` reads a Cloud project's usage within the history its plan keeps; the usage panel failed with `limit_history_exceeded`
-* Fixed: `terminal` names the Appwrite version and the `usage.read` scope only after a usage error they explain
-
-## 28.13.2
-
-* Fixed: `terminal` re-reads an open organization on Cloud; every refresh failed with `Not Found (404 http)`
-
-## 28.13.1
-
-* Fixed: `terminal` reached Cloud projects outside the default region instead of failing with `general_access_forbidden`
+* Added: `--provider-comments`, `--provider-deployments` and `--provider-statuses` on `functions` and `sites` create and update
+* Added: `teams get-photo`, `teams update-photo` and `teams delete-photo`
+* Added: `analytics` commands to list, create, get, update and delete annotations
+* Added: `project` OAuth2 settings for Atlassian, Instagram, LINE, Linear, Netlify, Patreon, Railway, Reddit, Roblox, Strava, Vercel, VK and WorkOS
+* Updated: built against Go SDK `v7.21.0`
 
 ## 28.13.0
 

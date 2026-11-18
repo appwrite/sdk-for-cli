@@ -26,6 +26,11 @@ func NewAnalyticsCommand() *cobra.Command {
 	cmd.AddCommand(newAnalyticsGetPropertyCommand())
 	cmd.AddCommand(newAnalyticsUpdatePropertyCommand())
 	cmd.AddCommand(newAnalyticsDeletePropertyCommand())
+	cmd.AddCommand(newAnalyticsListAnnotationsCommand())
+	cmd.AddCommand(newAnalyticsCreateAnnotationCommand())
+	cmd.AddCommand(newAnalyticsGetAnnotationCommand())
+	cmd.AddCommand(newAnalyticsUpdateAnnotationCommand())
+	cmd.AddCommand(newAnalyticsDeleteAnnotationCommand())
 	cmd.AddCommand(newAnalyticsCreateEventCommand())
 	cmd.AddCommand(newAnalyticsListMetricsCommand())
 
@@ -293,6 +298,231 @@ func newAnalyticsDeletePropertyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
 	_ = cmd.MarkFlagRequired("property-id")
+	return cmd
+}
+
+func newAnalyticsListAnnotationsCommand() *cobra.Command {
+	var propertyId string
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+
+	cmd := &cobra.Command{
+		Use:   "list-annotations",
+		Short: "List the annotations of an analytics property. Filter on `date` to fetch the annotations inside a chart's time range.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := analytics.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []analytics.ListAnnotationsOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListAnnotationsQueries(app.StringSlice(queries)))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListAnnotationsTotal(total))
+			}
+
+			result, err := service.ListAnnotations(propertyId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
+	_ = cmd.MarkFlagRequired("property-id")
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: date. Repeat the flag for each value.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	return cmd
+}
+
+func newAnalyticsCreateAnnotationCommand() *cobra.Command {
+	var propertyId string
+	var annotationId string
+	var date string
+	var content string
+
+	cmd := &cobra.Command{
+		Use:   "create-annotation",
+		Short: "Create an annotation that marks a point in time on an analytics property's charts.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := analytics.New(client)
+
+			result, err := service.CreateAnnotation(propertyId, annotationId, date, content)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
+	_ = cmd.MarkFlagRequired("property-id")
+	cmd.Flags().StringVar(&annotationId, "annotation-id", "", "Unique ID. Choose a custom ID or generate a random ID with `ID.unique()`. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("annotation-id")
+	cmd.Flags().StringVar(&date, "date", "", "Point in time the annotation marks, in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format.")
+	_ = cmd.MarkFlagRequired("date")
+	cmd.Flags().StringVar(&content, "content", "", "Annotation text. Max length: 512 chars.")
+	_ = cmd.MarkFlagRequired("content")
+	return cmd
+}
+
+func newAnalyticsGetAnnotationCommand() *cobra.Command {
+	var propertyId string
+	var annotationId string
+
+	cmd := &cobra.Command{
+		Use:   "get-annotation",
+		Short: "Get an analytics annotation by ID.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := analytics.New(client)
+
+			result, err := service.GetAnnotation(propertyId, annotationId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
+	_ = cmd.MarkFlagRequired("property-id")
+	cmd.Flags().StringVar(&annotationId, "annotation-id", "", "Annotation unique ID.")
+	_ = cmd.MarkFlagRequired("annotation-id")
+	return cmd
+}
+
+func newAnalyticsUpdateAnnotationCommand() *cobra.Command {
+	var propertyId string
+	var annotationId string
+	var date string
+	var content string
+
+	cmd := &cobra.Command{
+		Use:   "update-annotation",
+		Short: "Update an analytics annotation. Only the attributes you pass are changed; omitted attributes keep their current value.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := analytics.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []analytics.UpdateAnnotationOption{}
+			if cmd.Flags().Changed("date") {
+				options = append(options, service.WithUpdateAnnotationDate(date))
+			}
+			if cmd.Flags().Changed("content") {
+				options = append(options, service.WithUpdateAnnotationContent(content))
+			}
+
+			result, err := service.UpdateAnnotation(propertyId, annotationId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
+	_ = cmd.MarkFlagRequired("property-id")
+	cmd.Flags().StringVar(&annotationId, "annotation-id", "", "Annotation unique ID.")
+	_ = cmd.MarkFlagRequired("annotation-id")
+	cmd.Flags().StringVar(&date, "date", "", "Point in time the annotation marks, in ISO 8601 (https://www.iso.org/iso-8601-date-and-time-format.html) format.")
+	cmd.Flags().StringVar(&content, "content", "", "Annotation text. Max length: 512 chars.")
+	return cmd
+}
+
+func newAnalyticsDeleteAnnotationCommand() *cobra.Command {
+	var propertyId string
+	var annotationId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-annotation",
+		Short: "Delete an analytics annotation.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := analytics.New(client)
+
+			result, err := service.DeleteAnnotation(propertyId, annotationId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&propertyId, "property-id", "", "Analytics property unique ID.")
+	_ = cmd.MarkFlagRequired("property-id")
+	cmd.Flags().StringVar(&annotationId, "annotation-id", "", "Annotation unique ID.")
+	_ = cmd.MarkFlagRequired("annotation-id")
 	return cmd
 }
 

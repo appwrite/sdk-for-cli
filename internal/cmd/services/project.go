@@ -47,6 +47,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2AmazonCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2AppleCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2AppwriteCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2AtlassianCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2Auth0Command())
 	cmd.AddCommand(newProjectUpdateOAuth2AuthentikCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2AutodeskCommand())
@@ -66,31 +67,43 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2GitlabCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2GoogleCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2HuggingFaceCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2InstagramCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KakaoCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KeycloakCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2KickCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2LineCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2LinearCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2LinkedinCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2MicrosoftCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2NaverCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2NetlifyCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2NotionCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2OidcCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2OktaCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2PatreonCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2PaypalCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2PaypalSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2PodioCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2RailwayCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2RedditCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2ResendCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2RobloxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SalesforceCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SlackCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2SpotifyCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2StravaCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2StripeCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TikTokCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftSandboxCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TwitchCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2VercelCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2VippsCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2VippsSandboxCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2VKCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2WebflowCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2WordPressCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2WorkOSCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2XCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2YahooCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2YandexCommand())
@@ -1359,6 +1372,52 @@ func newProjectUpdateOAuth2AppwriteCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2AtlassianCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-atlassian",
+		Short: "Update the project OAuth2 Atlassian configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2AtlassianOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2AtlassianClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2AtlassianClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2AtlassianEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Atlassian(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Atlassian OAuth2 app. For example: uQ7mZ3s0000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Atlassian OAuth2 app. For example: ATOA0000000000000000000000000000000000000000000000000000000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2Auth0Command() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -2284,6 +2343,52 @@ func newProjectUpdateOAuth2HuggingFaceCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2InstagramCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-instagram",
+		Short: "Update the project OAuth2 Instagram configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2InstagramOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2InstagramClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2InstagramClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2InstagramEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Instagram(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Instagram OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Instagram OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2KakaoCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -2437,6 +2542,98 @@ func newProjectUpdateOAuth2KickCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2LineCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-line",
+		Short: "Update the project OAuth2 LINE configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2LineOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2LineClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2LineClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2LineEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Line(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of LINE OAuth2 app. For example: 1650000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of LINE OAuth2 app. For example: a1b2c3d4e5f600000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2LinearCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-linear",
+		Short: "Update the project OAuth2 Linear configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2LinearOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2LinearClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2LinearClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2LinearEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Linear(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Linear OAuth2 app. For example: 5e1c0000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Linear OAuth2 app. For example: 9f8e7d6c5b4a00000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2LinkedinCommand() *cobra.Command {
 	var clientId string
 	var primaryClientSecret string
@@ -2579,6 +2776,52 @@ func newProjectUpdateOAuth2NaverCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Naver OAuth2 app. For example: jK8pQ0000000000000Zv")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Naver OAuth2 app. For example: 9f42A0000000000c1dEb. Find it under Application > My Applications, on the overview of your app")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2NetlifyCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-netlify",
+		Short: "Update the project OAuth2 Netlify configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2NetlifyOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2NetlifyClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2NetlifyClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2NetlifyEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Netlify(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Netlify OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Netlify OAuth2 app. For example: 00000000000000000000000000000000")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -2768,6 +3011,52 @@ func newProjectUpdateOAuth2OktaCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2PatreonCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-patreon",
+		Short: "Update the project OAuth2 Patreon configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2PatreonOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2PatreonClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2PatreonClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2PatreonEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Patreon(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Patreon OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Patreon OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2PaypalCommand() *cobra.Command {
 	var clientId string
 	var secretKey string
@@ -2906,6 +3195,98 @@ func newProjectUpdateOAuth2PodioCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2RailwayCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-railway",
+		Short: "Update the project OAuth2 Railway configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2RailwayOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2RailwayClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2RailwayClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2RailwayEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Railway(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Railway OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Railway OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2RedditCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-reddit",
+		Short: "Update the project OAuth2 Reddit configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2RedditOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2RedditClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2RedditClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2RedditEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Reddit(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Reddit OAuth2 app. For example: aBcD0000000000000000aB")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Reddit OAuth2 app. For example: xYz00000000000000000000000000a")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2ResendCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -2946,6 +3327,52 @@ func newProjectUpdateOAuth2ResendCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Resend OAuth2 app. For example: f47ac10b-58cc-4372-a567-0e02b2c3d479")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Resend OAuth2 app. For example: 9c1e4b00000000000000000000000000000000000000000000000000a72d5f4")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2RobloxCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-roblox",
+		Short: "Update the project OAuth2 Roblox configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2RobloxOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2RobloxClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2RobloxClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2RobloxEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Roblox(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Roblox OAuth2 app. For example: 1234567890123456789")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Roblox OAuth2 app. For example: RBX-0000000000000000000000000000000000000000000000000000000000000000000000")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -3089,6 +3516,52 @@ func newProjectUpdateOAuth2SpotifyCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Spotify OAuth2 app. For example: 6ec271000000000000000000009beace")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Spotify OAuth2 app. For example: db068a000000000000000000008b5b9f")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2StravaCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-strava",
+		Short: "Update the project OAuth2 Strava configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2StravaOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2StravaClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2StravaClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2StravaEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Strava(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Strava OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Strava OAuth2 app. For example: 00000000000000000000000000000000")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -3325,6 +3798,52 @@ func newProjectUpdateOAuth2TwitchCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2VercelCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-vercel",
+		Short: "Update the project OAuth2 Vercel configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2VercelOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2VercelClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2VercelClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2VercelEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Vercel(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Vercel OAuth2 app. For example: cl_0000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Vercel OAuth2 app. For example: vc_0000000000000000000000000000000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2VippsCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -3417,6 +3936,52 @@ func newProjectUpdateOAuth2VippsSandboxCommand() *cobra.Command {
 	return cmd
 }
 
+func newProjectUpdateOAuth2VKCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2vk",
+		Short: "Update the project OAuth2 VK configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2VKOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2VKClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2VKClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2VKEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2VK(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of VK OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of VK OAuth2 app. For example: 00000000000000000000000000000000")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
 func newProjectUpdateOAuth2WebflowCommand() *cobra.Command {
 	var clientId string
 	var clientSecret string
@@ -3503,6 +4068,52 @@ func newProjectUpdateOAuth2WordPressCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of WordPress OAuth2 app. For example: 130005")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of WordPress OAuth2 app. For example: PlBfJS0000000000000000000000000000000000000000000000000000EdUZJk")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2WorkOSCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-work-os",
+		Short: "Update the project OAuth2 WorkOS configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2WorkOSOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2WorkOSClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2WorkOSClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2WorkOSEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2WorkOS(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of WorkOS OAuth2 app. For example: client_01H0000000000000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of WorkOS OAuth2 app. For example: wos0000000000000000000000000000000000000000000000000000000000000")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
