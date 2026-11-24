@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"net/url"
 	"os"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 
 	"github.com/appwrite/sdk-for-cli/internal/app"
 	"github.com/appwrite/sdk-for-cli/internal/client"
@@ -35,9 +35,10 @@ import (
 // the token in the X-Appwrite-Zero-Token header.
 
 const (
-	pathZero   = "/zero"
-	pathRules  = "/proxy/rules"
-	pathTokens = "/tokens"
+	pathZero       = "/zero"
+	pathRules      = "/proxy/rules"
+	pathTokens     = "/tokens"
+	pathExtensions = "/extensions"
 
 	// zeroOwnerPath is where a domain of an unclaimed Zero takes the owner token,
 	// which opens its deployment previews without a console session.
@@ -53,6 +54,11 @@ const (
 	zeroNotFound    = "zero_not_found"
 	zeroActive      = "active"
 	zeroExpired     = "expired"
+
+	// The build window cannot be extended again: no extension is left, or the
+	// next would run past the claim deadline.
+	zeroExtensionLimit     = "zero_extension_limit_exceeded"
+	zeroExtensionPastClaim = "zero_extension_past_claim"
 )
 
 func newZeroCommand() *cobra.Command {
@@ -90,6 +96,7 @@ func newZeroCommand() *cobra.Command {
 	command.AddCommand(newZeroConsoleCommand())
 	command.AddCommand(newZeroListCommand())
 	command.AddCommand(newZeroDeleteCommand())
+	command.AddCommand(newZeroExtendCommand())
 
 	return command
 }
@@ -146,6 +153,20 @@ func newZeroDeleteCommand() *cobra.Command {
 	}
 }
 
+func newZeroExtendCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "extend",
+		Short: "Add an hour to the build time of the Zero project linked to this directory",
+		Long: "Extend this directory's unclaimed Zero project by an hour, resuming it if its " +
+			"build time had run out. It can be extended a few times, never past its claim " +
+			"deadline, which does not move. --json prints the manifest.",
+		Args: cobra.NoArgs,
+		RunE: func(command *cobra.Command, args []string) error {
+			return runZeroExtend(command)
+		},
+	}
+}
+
 func runZero(command *cobra.Command, endpoint, region, directory string) error {
 	endpoint, err := zeroEndpoint(endpoint, region)
 	if err != nil {
@@ -155,7 +176,7 @@ func runZero(command *cobra.Command, endpoint, region, directory string) error {
 	path := config.LocalPathOr(config.LocalPath("."))
 	if directory != "" {
 		if config.LocalFile != "" {
-			return errors.New("--config and a directory both choose where the project is linked; pass only one")
+			return errors.New("--config-file and a directory both choose where the project is linked; pass only one")
 		}
 		if err := os.MkdirAll(directory, 0o755); err != nil {
 			return err
@@ -234,6 +255,45 @@ func runZero(command *cobra.Command, endpoint, region, directory string) error {
 	}
 
 	printZeroWelcome(command.OutOrStdout(), &zero, local.Path(), directory)
+
+	// Agents, pipes and --force get the welcome alone.
+	if app.Flags().Force || !prompt.Interactive() || !term.IsTerminal(int(os.Stdout.Fd())) {
+		return nil
+	}
+
+	return onboardZero(command, prompt.New(false), session, openBrowser)
+}
+
+// onboardZero walks a person at a terminal through opening the project and
+// saving the claim link, the only way to keep the project.
+func onboardZero(command *cobra.Command, prompter prompt.Prompter, session *config.Object, open func(string)) error {
+	out := command.OutOrStdout()
+	stored := session.GetObject(preferenceZero)
+
+	fmt.Fprintln(out)
+	console, err := prompter.Confirm(prompt.Question{Message: "Open the project in the console now?", Default: true})
+	if err != nil {
+		return err
+	}
+	if console {
+		if err := openZeroConsole(out, session, open); err != nil {
+			return err
+		}
+	}
+
+	fmt.Fprintln(out)
+	fmt.Fprintln(out, output.Heading("  Save your claim link"))
+	fmt.Fprintf(out, "    %s\n", stored.GetString("claimUrl"))
+	fmt.Fprintf(out, "  Without it the project is deleted in %s.\n", timeLeft(stored.GetString("claimBy"), time.Now()))
+	fmt.Fprintln(out)
+
+	saved, err := prompter.Confirm(prompt.Question{Message: "Have you saved the claim link?", Default: false})
+	if err != nil {
+		return err
+	}
+	if !saved {
+		output.Hint(out, "Run `%s zero list` to see it again", app.ExecutableName)
+	}
 
 	return nil
 }
@@ -437,31 +497,50 @@ func runZeroConsole(command *cobra.Command, open func(string)) error {
 	if session == nil {
 		return fmt.Errorf("no Appwrite Zero project found. Run `%s zero` to create one", app.ExecutableName)
 	}
+
+	if app.Flags().JSON || app.Flags().Raw {
+		token, err := zeroSignInToken(session)
+		if err != nil {
+			return err
+		}
+
+		return renderZeroManifest(command.OutOrStdout(), token)
+	}
+
+	return openZeroConsole(command.OutOrStdout(), session, open)
+}
+
+func zeroSignInToken(session *config.Object) (*jsonx.Object, error) {
 	stored := session.GetObject(preferenceZero)
 
 	var token jsonx.Object
 	path := pathZero + "/" + url.PathEscape(stored.GetString("$id")) + pathTokens
-	err = client.New(session.GetString(config.PreferenceEndpoint), app.Version).
+	err := client.New(session.GetString(config.PreferenceEndpoint), app.Version).
 		WithoutResponseFormat().
 		SetProject(config.ProjectConsole).
 		SetLocale("en-US").
 		Call("POST", path, map[string]any{"secret": stored.GetString("secret")}, &token)
 	var apiError *client.APIError
 	if errors.As(err, &apiError) && apiError.Type == zeroNotFound {
-		return zeroGone(session)
+		return nil, zeroGone(session)
 	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &token, nil
+}
+
+func openZeroConsole(out io.Writer, session *config.Object, open func(string)) error {
+	token, err := zeroSignInToken(session)
 	if err != nil {
 		return err
 	}
-
-	if app.Flags().JSON || app.Flags().Raw {
-		return renderZeroManifest(command.OutOrStdout(), &token)
-	}
+	stored := session.GetObject(preferenceZero)
 
 	link := token.GetString("url")
 	open(link)
 
-	out := command.OutOrStdout()
 	output.Success(out, "Opening Appwrite Zero project %s in the console", stored.GetString("projectId"))
 	fmt.Fprintln(out)
 	within := ""
@@ -475,8 +554,8 @@ func runZeroConsole(command *cobra.Command, open func(string)) error {
 }
 
 // runZeroList reads the stored sessions only: each holds the deadlines the
-// project was created with, which no later call moves, so listing costs no
-// request and works for a project the API no longer answers for.
+// project was created with, as `zero extend` last moved them, so listing costs
+// no request and works for a project the API no longer answers for.
 func runZeroList(command *cobra.Command) error {
 	global, err := preferences()
 	if err != nil {
@@ -595,6 +674,70 @@ func runZeroDelete(command *cobra.Command) error {
 	return nil
 }
 
+// runZeroExtend extends the project this directory is linked to with its claim
+// code, as `zero delete` picks it, and stores the new end of the build window
+// for `zero list`.
+func runZeroExtend(command *cobra.Command) error {
+	global, err := preferences()
+	if err != nil {
+		return err
+	}
+
+	local, err := config.LoadLocal(config.FindLocalPath())
+	if err != nil {
+		return fmt.Errorf("no Appwrite Zero project is linked here. Run `%s zero extend` in its directory", app.ExecutableName)
+	}
+	projectID := local.Data.GetString("projectId")
+	session := global.SessionData(zeroSessionPrefix + projectID)
+	if projectID == "" || session == nil || session.GetObject(preferenceZero) == nil {
+		return fmt.Errorf("this directory is not linked to an Appwrite Zero project on this machine. Run `%s zero list` to see them", app.ExecutableName)
+	}
+	stored := session.GetObject(preferenceZero)
+
+	var zero jsonx.Object
+	path := pathZero + "/" + url.PathEscape(stored.GetString("$id")) + pathExtensions
+	err = client.New(session.GetString(config.PreferenceEndpoint), app.Version).
+		WithoutResponseFormat().
+		SetProject(config.ProjectConsole).
+		SetLocale("en-US").
+		Call("POST", path, map[string]any{"secret": stored.GetString("secret")}, &zero)
+	var apiError *client.APIError
+	if errors.As(err, &apiError) {
+		switch apiError.Type {
+		case zeroNotFound:
+			return zeroGone(session)
+		case zeroExtensionLimit, zeroExtensionPastClaim:
+			return fmt.Errorf("%s Claim it here: %s", apiError.Message, stored.GetString("claimUrl"))
+		}
+	}
+	if err != nil {
+		return err
+	}
+
+	stored.Set("expiresAt", zero.GetString("expiresAt"))
+	if err := global.Write(); err != nil {
+		return err
+	}
+
+	if app.Flags().JSON || app.Flags().Raw {
+		// The API returns the claim link only to the creator's session, not to the claim secret
+		if zero.GetString("claimUrl") == "" {
+			zero.Set("claimUrl", stored.GetString("claimUrl"))
+		}
+		return renderZeroManifest(command.OutOrStdout(), &zero)
+	}
+
+	now := time.Now()
+	out := command.OutOrStdout()
+	output.Success(out, "Extended Appwrite Zero project %s: %s left to build", projectID, timeLeft(zero.GetString("expiresAt"), now))
+	fmt.Fprintln(out)
+	fmt.Fprintf(out, "  Extensions left  %d\n", zero.GetInt64("extensionsRemaining"))
+	fmt.Fprintf(out, "  Claim it within %s to keep it:\n", timeLeft(zero.GetString("claimBy"), now))
+	fmt.Fprintf(out, "    %s\n", stored.GetString("claimUrl"))
+
+	return nil
+}
+
 // zeroGone explains zero_not_found, which the API answers alike for a claimed,
 // deleted or unknown project and for a wrong secret. The session is left as it
 // is: the CLI cannot tell which case this is, and a project still unclaimed
@@ -702,22 +845,19 @@ func cdCommand(directory string) string {
 	return `cd "` + directory + `"`
 }
 
-// timeLeft renders the time until an ISO 8601 deadline, such as "60 min".
+// timeLeft renders the time until an ISO 8601 deadline, such as "3h 57m",
+// rounded down so it never claims more time than is left and agrees with the
+// "in 3h" the timestamps print.
 func timeLeft(deadline string, now time.Time) string {
 	parsed, err := time.Parse(time.RFC3339, deadline)
 	if err != nil {
 		return ""
 	}
 
-	remaining := parsed.Sub(now).Round(time.Second)
-	switch {
-	case remaining <= 0:
-		return ""
-	case remaining >= time.Hour:
-		return fmt.Sprintf("%dh", int(math.Round(remaining.Hours())))
-	case remaining >= time.Minute:
-		return fmt.Sprintf("%d min", int(math.Round(remaining.Minutes())))
+	remaining := parsed.Sub(now)
+	if remaining >= time.Minute {
+		remaining = remaining.Truncate(time.Minute)
 	}
 
-	return fmt.Sprintf("%ds", int(remaining.Seconds()))
+	return output.HumanizeSeconds(remaining.Seconds())
 }
