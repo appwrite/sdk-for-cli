@@ -51,6 +51,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2Auth0Command())
 	cmd.AddCommand(newProjectUpdateOAuth2AuthentikCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2AutodeskCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2BirdCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2BitbucketCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2BitlyCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2BoxCommand())
@@ -93,6 +94,7 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectUpdateOAuth2SpotifyCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2StravaCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2StripeCommand())
+	cmd.AddCommand(newProjectUpdateOAuth2SupabaseCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TikTokCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftCommand())
 	cmd.AddCommand(newProjectUpdateOAuth2TradeshiftSandboxCommand())
@@ -1565,6 +1567,52 @@ func newProjectUpdateOAuth2AutodeskCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Autodesk OAuth2 app. For example: 5zw90v00000000000000000000kVYXN7")
 	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Autodesk OAuth2 app. For example: 7I000000000000MW")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2BirdCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-bird",
+		Short: "Update the project OAuth2 Bird configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2BirdOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2BirdClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2BirdClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2BirdEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Bird(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Bird OAuth2 app. For example: oac_01m7sv000000000000008r9qt6")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Bird OAuth2 app. For example: D6XGgt0000000000000000000000000000000l7JvQ8")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
@@ -3608,6 +3656,52 @@ func newProjectUpdateOAuth2StripeCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Stripe OAuth2 app. For example: ca_UKibXX0000000000000000000006byvR")
 	cmd.Flags().StringVar(&apiSecretKey, "api-secret-key", "", "'API Secret Key' of Stripe OAuth2 app. For example: sk_51SfOd000000000000000000000000000000000000000000000000000000000000000000000000000000000000000QGWYfp")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateOAuth2SupabaseCommand() *cobra.Command {
+	var clientId string
+	var clientSecret string
+	var enabled bool
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-o-auth-2-supabase",
+		Short: "Update the project OAuth2 Supabase configuration.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateOAuth2SupabaseOption{}
+			if cmd.Flags().Changed("client-id") {
+				options = append(options, service.WithUpdateOAuth2SupabaseClientId(clientId))
+			}
+			if cmd.Flags().Changed("client-secret") {
+				options = append(options, service.WithUpdateOAuth2SupabaseClientSecret(clientSecret))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateOAuth2SupabaseEnabled(enabled))
+			}
+
+			result, err := service.UpdateOAuth2Supabase(options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&clientId, "client-id", "", "'Client ID' of Supabase OAuth2 app. For example: 00000000-0000-0000-0000-000000000000")
+	cmd.Flags().StringVar(&clientSecret, "client-secret", "", "'Client Secret' of Supabase OAuth2 app. For example: 00000000000000000000000000000000")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "OAuth2 sign-in method status. Set to true to enable new session creation. Setting to true will trigger end-to-end credentials validation, and will throw if the credentials are invalid.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")

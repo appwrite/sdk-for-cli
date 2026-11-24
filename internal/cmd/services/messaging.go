@@ -36,6 +36,10 @@ func NewMessagingCommand() *cobra.Command {
 	cmd.AddCommand(newMessagingUpdateApnsProviderCommand())
 	cmd.AddCommand(newMessagingCreateAppwriteProviderCommand())
 	cmd.AddCommand(newMessagingUpdateAppwriteProviderCommand())
+	cmd.AddCommand(newMessagingCreateBirdEmailProviderCommand())
+	cmd.AddCommand(newMessagingUpdateBirdEmailProviderCommand())
+	cmd.AddCommand(newMessagingCreateBirdSMSProviderCommand())
+	cmd.AddCommand(newMessagingUpdateBirdSMSProviderCommand())
 	cmd.AddCommand(newMessagingCreateFcmProviderCommand())
 	cmd.AddCommand(newMessagingUpdateFcmProviderCommand())
 	cmd.AddCommand(newMessagingCreateMailgunProviderCommand())
@@ -380,6 +384,7 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	var critical bool
 	var priority string
 	var channelId string
+	var mutableContent bool
 
 	cmd := &cobra.Command{
 		Use:   "create-push",
@@ -455,6 +460,9 @@ func newMessagingCreatePushCommand() *cobra.Command {
 			if cmd.Flags().Changed("channel-id") {
 				options = append(options, service.WithCreatePushChannelId(channelId))
 			}
+			if cmd.Flags().Changed("mutable-content") {
+				options = append(options, service.WithCreatePushMutableContent(mutableContent))
+			}
 
 			result, err := service.CreatePush(messageId, options...)
 			if err != nil {
@@ -489,6 +497,8 @@ func newMessagingCreatePushCommand() *cobra.Command {
 	cmd.Flags().Lookup("critical").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&priority, "priority", "", "Set the notification priority. \"normal\" will consider device state and may not deliver notifications immediately. \"high\" will always attempt to immediately deliver the notification.")
 	cmd.Flags().StringVar(&channelId, "channel-id", "", "ID of the notification channel to deliver the notification on. The app must have already created a channel with this ID, otherwise the channel from the app manifest is used. Available only for Android Platform.")
+	cmd.Flags().BoolVar(&mutableContent, "mutable-content", false, "If set to true, iOS runs the app's notification service extension before showing the notification, so it can change the content. Pushes with an image always set it. Available only for iOS Platform.")
+	cmd.Flags().Lookup("mutable-content").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -513,6 +523,7 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	var critical bool
 	var priority string
 	var channelId string
+	var mutableContent bool
 
 	cmd := &cobra.Command{
 		Use:   "update-push",
@@ -588,6 +599,9 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 			if cmd.Flags().Changed("channel-id") {
 				options = append(options, service.WithUpdatePushChannelId(channelId))
 			}
+			if cmd.Flags().Changed("mutable-content") {
+				options = append(options, service.WithUpdatePushMutableContent(mutableContent))
+			}
 
 			result, err := service.UpdatePush(messageId, options...)
 			if err != nil {
@@ -622,6 +636,8 @@ func newMessagingUpdatePushCommand() *cobra.Command {
 	cmd.Flags().Lookup("critical").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&priority, "priority", "", "Set the notification priority. \"normal\" will consider device battery state and may send notifications later. \"high\" will always attempt to immediately deliver the notification.")
 	cmd.Flags().StringVar(&channelId, "channel-id", "", "ID of the notification channel to deliver the notification on. The app must have already created a channel with this ID, otherwise the channel from the app manifest is used. Pass an empty string to clear it. Available only for Android platforms.")
+	cmd.Flags().BoolVar(&mutableContent, "mutable-content", false, "If set to true, iOS runs the app's notification service extension before showing the notification, so it can change the content. Pushes with an image always set it. Available only for iOS Platform.")
+	cmd.Flags().Lookup("mutable-content").NoOptDefVal = "true"
 	return cmd
 }
 
@@ -1202,6 +1218,240 @@ func newMessagingUpdateAppwriteProviderCommand() *cobra.Command {
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().IntVar(&qos, "qos", 0, "Default QoS for topics on this provider (0 or 1). Null lets the subscriber choose.")
 	cmd.Flags().IntVar(&expiry, "expiry", 0, "Default message retention in seconds for offline delivery. Max 7 days (604800). Applies to topics with a null expiry; the lowest across enabled Appwrite providers wins.")
+	return cmd
+}
+
+func newMessagingCreateBirdEmailProviderCommand() *cobra.Command {
+	var providerId string
+	var name string
+	var apiKey string
+	var fromName string
+	var fromEmail string
+	var replyToName string
+	var replyToEmail string
+	var enabled bool
+
+	cmd := &cobra.Command{
+		Use:   "create-bird-email-provider",
+		Short: "Create a new Bird email provider. It sends email through Bird's email API with a workspace API key that holds the `emails:write` scope.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := messaging.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []messaging.CreateBirdEmailProviderOption{}
+			if cmd.Flags().Changed("api-key") {
+				options = append(options, service.WithCreateBirdEmailProviderApiKey(apiKey))
+			}
+			if cmd.Flags().Changed("from-name") {
+				options = append(options, service.WithCreateBirdEmailProviderFromName(fromName))
+			}
+			if cmd.Flags().Changed("from-email") {
+				options = append(options, service.WithCreateBirdEmailProviderFromEmail(fromEmail))
+			}
+			if cmd.Flags().Changed("reply-to-name") {
+				options = append(options, service.WithCreateBirdEmailProviderReplyToName(replyToName))
+			}
+			if cmd.Flags().Changed("reply-to-email") {
+				options = append(options, service.WithCreateBirdEmailProviderReplyToEmail(replyToEmail))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithCreateBirdEmailProviderEnabled(enabled))
+			}
+
+			result, err := service.CreateBirdEmailProvider(providerId, name, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringVar(&apiKey, "api-key", "", "Bird workspace API key.")
+	cmd.Flags().StringVar(&fromName, "from-name", "", "Sender Name.")
+	cmd.Flags().StringVar(&fromEmail, "from-email", "", "Sender email address. Its domain must be verified in the Bird workspace.")
+	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name set in the reply to field for the mail. Default value is sender name.")
+	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the reply to field for the mail. Default value is sender email.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	return cmd
+}
+
+func newMessagingUpdateBirdEmailProviderCommand() *cobra.Command {
+	var providerId string
+	var name string
+	var enabled bool
+	var apiKey string
+	var fromName string
+	var fromEmail string
+	var replyToName string
+	var replyToEmail string
+
+	cmd := &cobra.Command{
+		Use:   "update-bird-email-provider",
+		Short: "Update a Bird email provider by its unique ID.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := messaging.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []messaging.UpdateBirdEmailProviderOption{}
+			if cmd.Flags().Changed("name") {
+				options = append(options, service.WithUpdateBirdEmailProviderName(name))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateBirdEmailProviderEnabled(enabled))
+			}
+			if cmd.Flags().Changed("api-key") {
+				options = append(options, service.WithUpdateBirdEmailProviderApiKey(apiKey))
+			}
+			if cmd.Flags().Changed("from-name") {
+				options = append(options, service.WithUpdateBirdEmailProviderFromName(fromName))
+			}
+			if cmd.Flags().Changed("from-email") {
+				options = append(options, service.WithUpdateBirdEmailProviderFromEmail(fromEmail))
+			}
+			if cmd.Flags().Changed("reply-to-name") {
+				options = append(options, service.WithUpdateBirdEmailProviderReplyToName(replyToName))
+			}
+			if cmd.Flags().Changed("reply-to-email") {
+				options = append(options, service.WithUpdateBirdEmailProviderReplyToEmail(replyToEmail))
+			}
+
+			result, err := service.UpdateBirdEmailProvider(providerId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID.")
+	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&apiKey, "api-key", "", "Bird workspace API key.")
+	cmd.Flags().StringVar(&fromName, "from-name", "", "Sender Name.")
+	cmd.Flags().StringVar(&fromEmail, "from-email", "", "Sender email address. Its domain must be verified in the Bird workspace.")
+	cmd.Flags().StringVar(&replyToName, "reply-to-name", "", "Name set in the Reply To field for the mail. Default value is Sender Name.")
+	cmd.Flags().StringVar(&replyToEmail, "reply-to-email", "", "Email set in the Reply To field for the mail. Default value is Sender Email.")
+	return cmd
+}
+
+func newMessagingCreateBirdSMSProviderCommand() *cobra.Command {
+	var providerId string
+	var name string
+	var from string
+	var apiKey string
+	var enabled bool
+
+	cmd := &cobra.Command{
+		Use:   "create-bird-sms-provider",
+		Short: "Create a new Bird SMS provider. It sends SMS through Bird with a workspace API key that holds the `sms:write` scope.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := messaging.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []messaging.CreateBirdSMSProviderOption{}
+			if cmd.Flags().Changed("from") {
+				options = append(options, service.WithCreateBirdSMSProviderFrom(from))
+			}
+			if cmd.Flags().Changed("api-key") {
+				options = append(options, service.WithCreateBirdSMSProviderApiKey(apiKey))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithCreateBirdSMSProviderEnabled(enabled))
+			}
+
+			result, err := service.CreateBirdSMSProvider(providerId, name, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringVar(&from, "from", "", "Sender phone number or alphanumeric sender ID. Format phone numbers with a leading '+' and a country code, e.g., +16175551212.")
+	cmd.Flags().StringVar(&apiKey, "api-key", "", "Bird workspace API key.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	return cmd
+}
+
+func newMessagingUpdateBirdSMSProviderCommand() *cobra.Command {
+	var providerId string
+	var name string
+	var enabled bool
+	var apiKey string
+	var from string
+
+	cmd := &cobra.Command{
+		Use:   "update-bird-sms-provider",
+		Short: "Update a Bird SMS provider by its unique ID.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject("")
+			if err != nil {
+				return err
+			}
+			service := messaging.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []messaging.UpdateBirdSMSProviderOption{}
+			if cmd.Flags().Changed("name") {
+				options = append(options, service.WithUpdateBirdSMSProviderName(name))
+			}
+			if cmd.Flags().Changed("enabled") {
+				options = append(options, service.WithUpdateBirdSMSProviderEnabled(enabled))
+			}
+			if cmd.Flags().Changed("api-key") {
+				options = append(options, service.WithUpdateBirdSMSProviderApiKey(apiKey))
+			}
+			if cmd.Flags().Changed("from") {
+				options = append(options, service.WithUpdateBirdSMSProviderFrom(from))
+			}
+
+			result, err := service.UpdateBirdSMSProvider(providerId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&providerId, "provider-id", "", "Provider ID.")
+	_ = cmd.MarkFlagRequired("provider-id")
+	cmd.Flags().StringVar(&name, "name", "", "Provider name.")
+	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set as enabled.")
+	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
+	cmd.Flags().StringVar(&apiKey, "api-key", "", "Bird workspace API key.")
+	cmd.Flags().StringVar(&from, "from", "", "Sender phone number or alphanumeric sender ID. Format phone numbers with a leading '+' and a country code, e.g., +16175551212.")
 	return cmd
 }
 

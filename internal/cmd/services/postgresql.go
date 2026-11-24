@@ -221,7 +221,7 @@ func newPostgresqlCreateCommand() *cobra.Command {
 	_ = cmd.MarkFlagRequired("database-id")
 	cmd.Flags().StringVar(&name, "name", "", "Database display name. Max length: 128 chars.")
 	_ = cmd.MarkFlagRequired("name")
-	cmd.Flags().StringVar(&version, "version", "", "Database engine version. Defaults to latest for selected engine.")
+	cmd.Flags().StringVar(&version, "version", "", "Database engine version. Omit to use the recommended default version for the selected engine, which may be lower than the latest supported version.")
 	cmd.Flags().StringVar(&specification, "specification", "", "Specification identifier. Drives the allocated CPU, memory, storage, storage class, and connection ceiling.")
 	cmd.Flags().IntVar(&replicas, "replicas", 0, "Number of high availability replicas (0-5). High availability is enabled when greater than 0.")
 	cmd.Flags().StringVar(&syncMode, "sync-mode", "", "Replication sync mode preference. Allowed values: async, sync, quorum.")
