@@ -36,6 +36,7 @@ var helpGroups = []helpGroup{
 		title: "GET STARTED",
 		commands: []string{
 			"login",
+			"zero",
 			"list-organizations",
 			"list-projects",
 			"init",
@@ -102,6 +103,7 @@ var helpGroups = []helpGroup{
 // Short and Long stay the longer form shown on its own help page.
 var helpSummaries = map[string]string{
 	"login":              "Authenticate with your Appwrite account",
+	"zero":               "Get a working project instantly, no signup",
 	"list-organizations": "Organizations your session can access",
 	"list-projects":      "Projects your session can access",
 	"init":               "Scaffold a project, function, site, or resource",

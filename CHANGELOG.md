@@ -1,5 +1,11 @@
 # Change Log
 
+## 28.15.0
+
+* Added: `zero` creates an Appwrite project with no account, claimable from the printed link
+* Added: `zero status`, `zero console`, `zero list`, `zero extend` and `zero delete`
+* Added: `zero` walks through creating a project when run in an interactive terminal
+
 ## 28.14.0
 
 * Added: `--provider-comments`, `--provider-deployments` and `--provider-statuses` on `functions` and `sites` create and update
