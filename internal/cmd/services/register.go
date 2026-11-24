@@ -19,6 +19,7 @@ func Register(root *cobra.Command) {
 	root.AddCommand(NewFunctionsCommand())
 	root.AddCommand(NewGraphqlCommand())
 	root.AddCommand(NewLocaleCommand())
+	root.AddCommand(NewLogsCommand())
 	root.AddCommand(NewMessagingCommand())
 	root.AddCommand(NewMigrationsCommand())
 	root.AddCommand(NewMongoCommand())

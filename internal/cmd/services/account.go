@@ -996,7 +996,7 @@ func newAccountCreateMfaRecoveryCodesCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "create-mfa-recovery-codes",
-		Short: "Generate recovery codes as backup for MFA flow. It's recommended to generate and show then immediately after user successfully adds their authehticator. Recovery codes can be used as a MFA verification type in createMfaChallenge method.",
+		Short: "Generate recovery codes as backup for MFA flow. It's recommended to generate and show them immediately after the user successfully adds their authenticator. Once MFA is enabled on the account, a recent MFA challenge is required to generate them. Recovery codes can be used as a MFA verification type in createMfaChallenge method.",
 		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForConsole()
@@ -2123,7 +2123,7 @@ func newAccountCreateOAuth2TokenCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&provider, "provider", "", "OAuth2 Provider. Currently, supported providers are: amazon, apple, appwrite, atlassian, auth0, authentik, autodesk, bitbucket, bitly, box, cloudflare, dailymotion, discord, disqus, dropbox, etsy, facebook, figma, fusionauth, github, gitlab, google, huggingface, instagram, kakao, keycloak, kick, line, linear, linkedin, microsoft, naver, netlify, notion, oidc, okta, patreon, paypal, paypalSandbox, podio, railway, reddit, resend, roblox, salesforce, slack, spotify, strava, stripe, tiktok, tradeshift, tradeshiftBox, twitch, vercel, vipps, vippsSandbox, vk, webflow, wordpress, workos, x, yahoo, yammer, yandex, zoho, zoom.")
+	cmd.Flags().StringVar(&provider, "provider", "", "OAuth2 Provider. Currently, supported providers are: amazon, apple, appwrite, atlassian, auth0, authentik, autodesk, bird, bitbucket, bitly, box, cloudflare, dailymotion, discord, disqus, dropbox, etsy, facebook, figma, fusionauth, github, gitlab, google, huggingface, instagram, kakao, keycloak, kick, line, linear, linkedin, microsoft, naver, netlify, notion, oidc, okta, patreon, paypal, paypalSandbox, podio, railway, reddit, resend, roblox, salesforce, slack, spotify, strava, stripe, supabase, tiktok, tradeshift, tradeshiftBox, twitch, vercel, vipps, vippsSandbox, vk, webflow, wordpress, workos, x, yahoo, yammer, yandex, zoho, zoom.")
 	_ = cmd.MarkFlagRequired("provider")
 	cmd.Flags().StringVar(&success, "success", "", "URL to redirect back to your app after a successful login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")
 	cmd.Flags().StringVar(&failure, "failure", "", "URL to redirect back to your app after a failed login attempt.  Only URLs from hostnames in your project's platform list are allowed. This requirement helps to prevent an open redirect (https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.")

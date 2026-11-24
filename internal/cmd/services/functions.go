@@ -271,7 +271,7 @@ func newFunctionsCreateCommand() *cobra.Command {
 	cmd.Flags().IntVar(&timeout, "timeout", 0, "Function maximum execution time in seconds.")
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
-	cmd.Flags().BoolVar(&logging, "logging", false, "When disabled, executions will exclude logs and errors, and will be slightly faster.")
+	cmd.Flags().BoolVar(&logging, "logging", false, "When disabled, executions will exclude logs and errors, and will be slightly faster. Disabled by default.")
 	cmd.Flags().Lookup("logging").NoOptDefVal = "true"
 	cmd.Flags().StringVar(&entrypoint, "entrypoint", "", "Entrypoint File. This path is relative to the \"providerRootDirectory\".")
 	cmd.Flags().StringVar(&commands, "commands", "", "Build Commands.")
