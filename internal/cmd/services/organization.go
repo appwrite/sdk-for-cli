@@ -24,6 +24,11 @@ func NewOrganizationCommand() *cobra.Command {
 	cmd.AddCommand(newOrganizationGetCommand())
 	cmd.AddCommand(newOrganizationUpdateCommand())
 	cmd.AddCommand(newOrganizationDeleteCommand())
+	cmd.AddCommand(newOrganizationListEscalationsCommand())
+	cmd.AddCommand(newOrganizationCreateEscalationCommand())
+	cmd.AddCommand(newOrganizationGetEscalationCommand())
+	cmd.AddCommand(newOrganizationUpdateEscalationCommand())
+	cmd.AddCommand(newOrganizationDeleteEscalationCommand())
 	cmd.AddCommand(newOrganizationListInstallationsCommand())
 	cmd.AddCommand(newOrganizationCreateInstallationCommand())
 	cmd.AddCommand(newOrganizationGetInstallationCommand())
@@ -123,6 +128,247 @@ func newOrganizationDeleteCommand() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationListEscalationsCommand() *cobra.Command {
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "list-escalations",
+		Short: "Get a list of your organization's escalations. Use `Query.search('search', term)` to search escalation IDs and names.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []organization.ListEscalationsOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListEscalationsQueries(app.StringSlice(queries)))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListEscalationsTotal(total))
+			}
+
+			result, err := service.ListEscalations(options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, repeat, search. Repeat the flag for each value.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationCreateEscalationCommand() *cobra.Command {
+	var escalationId string
+	var name string
+	var steps []string
+	var repeat int
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "create-escalation",
+		Short: "Create an escalation for your organization. A monitor using it notifies the escalation's steps one after another while its alert fires, each by email, push and in the console, until a member acknowledges the alert or it resolves. Each step waits its `delay` in seconds, after the alert fires for the first step and after the previous step for the others, then notifies the members holding its `roles` and those named in `userIds`. With `repeat`, the steps run again from the first, a monitor's cooldown after the last step.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+			stepsDecoded, err := app.DecodeSlice[interface{}](steps)
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []organization.CreateEscalationOption{}
+			if cmd.Flags().Changed("repeat") {
+				options = append(options, service.WithCreateEscalationRepeat(repeat))
+			}
+
+			result, err := service.CreateEscalation(escalationId, name, stepsDecoded, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&escalationId, "escalation-id", "", "Escalation ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("escalation-id")
+	cmd.Flags().StringVar(&name, "name", "", "Escalation name. Max length: 128 chars.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().StringArrayVar(&steps, "steps", nil, "Steps notified in order while nobody acknowledges the alert. Each step is an object with `delay` (seconds to wait before the step, 0 to 2592000, default 0), `roles` (organization roles such as `owner` or `developer`) and `userIds` (organization members who accepted their invitation). A step names each role and member at most once and needs at least one of `roles` or `userIds`. Maximum of 100 steps. Repeat the flag for each value.")
+	_ = cmd.MarkFlagRequired("steps")
+	cmd.Flags().IntVar(&repeat, "repeat", 0, "How many more times the steps run from the first while nobody acknowledges the alert, between 0 and 9. Each round starts a monitor's cooldown after the last step.")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationGetEscalationCommand() *cobra.Command {
+	var escalationId string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "get-escalation",
+		Short: "Get one of your organization's escalations by its ID.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			result, err := service.GetEscalation(escalationId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&escalationId, "escalation-id", "", "Escalation ID.")
+	_ = cmd.MarkFlagRequired("escalation-id")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationUpdateEscalationCommand() *cobra.Command {
+	var escalationId string
+	var name string
+	var steps []string
+	var repeat int
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "update-escalation",
+		Short: "Update an escalation's name, steps or repeats; what you leave out stays as it is. Alerts already escalating keep the steps they started with; the next alert uses the new ones.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+			stepsDecoded, err := app.DecodeSlice[interface{}](steps)
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []organization.UpdateEscalationOption{}
+			if cmd.Flags().Changed("name") {
+				options = append(options, service.WithUpdateEscalationName(name))
+			}
+			if cmd.Flags().Changed("steps") {
+				options = append(options, service.WithUpdateEscalationSteps(stepsDecoded))
+			}
+			if cmd.Flags().Changed("repeat") {
+				options = append(options, service.WithUpdateEscalationRepeat(repeat))
+			}
+
+			result, err := service.UpdateEscalation(escalationId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&escalationId, "escalation-id", "", "Escalation ID.")
+	_ = cmd.MarkFlagRequired("escalation-id")
+	cmd.Flags().StringVar(&name, "name", "", "Escalation name. Max length: 128 chars.")
+	cmd.Flags().StringArrayVar(&steps, "steps", nil, "Steps notified in order while nobody acknowledges the alert. Each step is an object with `delay` (seconds to wait before the step, 0 to 2592000, default 0), `roles` (organization roles such as `owner` or `developer`) and `userIds` (organization members who accepted their invitation). A step names each role and member at most once and needs at least one of `roles` or `userIds`. Maximum of 100 steps. Repeat the flag for each value.")
+	cmd.Flags().IntVar(&repeat, "repeat", 0, "How many more times the steps run from the first while nobody acknowledges the alert, between 0 and 9. Each round starts a monitor's cooldown after the last step.")
+	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
+	return cmd
+}
+
+func newOrganizationDeleteEscalationCommand() *cobra.Command {
+	var escalationId string
+	var organizationId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-escalation",
+		Short: "Delete an escalation. An escalation that a monitor uses cannot be deleted: move the monitor to another escalation or to `notify` roles first. Open alerts keep the steps they started with.",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForOrganization(organizationId)
+			if err != nil {
+				return err
+			}
+			service := organization.New(client)
+
+			result, err := service.DeleteEscalation(escalationId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&escalationId, "escalation-id", "", "Escalation ID.")
+	_ = cmd.MarkFlagRequired("escalation-id")
 	cmd.Flags().StringVar(&organizationId, "organization-id", "", "Organization to act on. Defaults to the organization linked in appwrite.config.json.")
 	return cmd
 }

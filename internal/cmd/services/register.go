@@ -9,6 +9,7 @@ import (
 func Register(root *cobra.Command) {
 	root.AddCommand(NewAccountCommand())
 	root.AddCommand(NewActivitiesCommand())
+	root.AddCommand(NewAlertsCommand())
 	root.AddCommand(NewAnalyticsCommand())
 	root.AddCommand(NewAppsCommand())
 	root.AddCommand(NewBackupsCommand())
@@ -23,6 +24,7 @@ func Register(root *cobra.Command) {
 	root.AddCommand(NewMessagingCommand())
 	root.AddCommand(NewMigrationsCommand())
 	root.AddCommand(NewMongoCommand())
+	root.AddCommand(NewMonitorsCommand())
 	root.AddCommand(NewMysqlCommand())
 	root.AddCommand(NewOauth2Command())
 	root.AddCommand(NewOrganizationCommand())
