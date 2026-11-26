@@ -282,11 +282,14 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 	var conditions []string
 	var difficulty int
 	var ttl int
+	var password string
+	var attempts int
+	var attemptsInterval int
 	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "create-challenge-rule",
-		Short: "Create a challenge WAF rule. Use `difficulty` (1 easiest to 5 hardest) to tune the client-side proof-of-work cost, and `ttl` to control how long, in seconds, a visitor stays cleared after passing the challenge before being challenged again. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
+		Short: "Create a challenge WAF rule. Use `difficulty` (1 easiest to 5 hardest) to tune the client-side proof-of-work cost, and `ttl` to control how long, in seconds, a visitor stays cleared after passing the challenge before being challenged again. Set `challengeType` to `password` and pass `password` (8 to 256 characters) to ask visitors for a password instead. On a password challenge, `attempts` (1 to 100) sets how many wrong passwords one visitor (per IP) may try before waiting, and `attemptsInterval` (60 to 86400) sets the window, in seconds, those attempts are counted over. They default to 10 attempts per 300 seconds. Password challenges apply to sites and functions only, not the API. Only a hash of the password is stored, and responses never include it. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
 		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -325,6 +328,15 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("ttl") {
 				options = append(options, service.WithCreateChallengeRuleTtl(ttl))
 			}
+			if cmd.Flags().Changed("password") {
+				options = append(options, service.WithCreateChallengeRulePassword(password))
+			}
+			if cmd.Flags().Changed("attempts") {
+				options = append(options, service.WithCreateChallengeRuleAttempts(attempts))
+			}
+			if cmd.Flags().Changed("attempts-interval") {
+				options = append(options, service.WithCreateChallengeRuleAttemptsInterval(attemptsInterval))
+			}
 			if cmd.Flags().Changed("schedule") {
 				options = append(options, service.WithCreateChallengeRuleSchedule(scheduleValue))
 			}
@@ -351,8 +363,11 @@ func newWafCreateChallengeRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to create the rule in a disabled state.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
-	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work.")
+	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work. Ignored for password challenges.")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "How long, in seconds, a visitor stays cleared after passing the challenge before being challenged again.")
+	cmd.Flags().StringVar(&password, "password", "", "Password visitors enter to pass the challenge, 8 to 256 characters. Required when `challengeType` is `password`, and only accepted then. Only a hash is stored.")
+	cmd.Flags().IntVar(&attempts, "attempts", 0, "How many wrong passwords one visitor (per IP) may try before waiting, from 1 to 100. Only accepted for password challenges; defaults to 10.")
+	cmd.Flags().IntVar(&attemptsInterval, "attempts-interval", 0, "The window, in seconds, those attempts are counted over, from 60 to 86400. Only accepted for password challenges; defaults to 300.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
@@ -369,11 +384,14 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 	var conditions []string
 	var difficulty int
 	var ttl int
+	var password string
+	var attempts int
+	var attemptsInterval int
 	var schedule string
 
 	cmd := &cobra.Command{
 		Use:   "update-challenge-rule",
-		Short: "Update a challenge WAF rule. Use `difficulty` (1 easiest to 5 hardest) to tune the client-side proof-of-work cost, and `ttl` to control how long, in seconds, a visitor stays cleared after passing the challenge before being challenged again. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
+		Short: "Update a challenge WAF rule. Use `difficulty` (1 easiest to 5 hardest) to tune the client-side proof-of-work cost, and `ttl` to control how long, in seconds, a visitor stays cleared after passing the challenge before being challenged again. Set `challengeType` to `password` and pass `password` (8 to 256 characters) to ask visitors for a password instead. On a password challenge, leave `password` out to keep the current one or send a new one to replace it. `attempts` (1 to 100) sets how many wrong passwords one visitor (per IP) may try before waiting, and `attemptsInterval` (60 to 86400) sets the window, in seconds, those attempts are counted over. Leave them out to keep the current values; a rule switched to `password` without them gets 10 attempts per 300 seconds. Password challenges apply to sites and functions only, not the API. Only a hash of the password is stored, and responses never include it. Conditions can match request attributes including `ip` (plain IPs or CIDR blocks like `10.0.0.0/8`), `method`, `path`, `host`, `country`, `continent`, `headers.<name>`, `query.<key>`, `queryKeys`, `accept`, `acceptLanguage`, `cookie`, `userAgent`, `os`, `osVersion`, `browser`, and `browserVersion`. Conditions on `city` and `state` require the premium Geo DB addon.\n",
 		Args:  app.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client, err := app.ClientForProject("")
@@ -418,6 +436,15 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 			if cmd.Flags().Changed("ttl") {
 				options = append(options, service.WithUpdateChallengeRuleTtl(ttl))
 			}
+			if cmd.Flags().Changed("password") {
+				options = append(options, service.WithUpdateChallengeRulePassword(password))
+			}
+			if cmd.Flags().Changed("attempts") {
+				options = append(options, service.WithUpdateChallengeRuleAttempts(attempts))
+			}
+			if cmd.Flags().Changed("attempts-interval") {
+				options = append(options, service.WithUpdateChallengeRuleAttemptsInterval(attemptsInterval))
+			}
 			if cmd.Flags().Changed("schedule") {
 				options = append(options, service.WithUpdateChallengeRuleSchedule(scheduleValue))
 			}
@@ -442,8 +469,11 @@ func newWafUpdateChallengeRuleCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&enabled, "enabled", false, "Set to false to disable the rule.")
 	cmd.Flags().Lookup("enabled").NoOptDefVal = "true"
 	cmd.Flags().StringArrayVar(&conditions, "conditions", nil, "Array of condition strings generated using the WAF Condition builder. Maximum of 100 conditions are allowed, each 4096 characters long. Repeat the flag for each value.")
-	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work.")
+	cmd.Flags().IntVar(&difficulty, "difficulty", 0, "Challenge difficulty from 1 (easiest) to 5 (hardest). Higher values demand more client-side proof-of-work. Ignored for password challenges.")
 	cmd.Flags().IntVar(&ttl, "ttl", 0, "How long, in seconds, a visitor stays cleared after passing the challenge before being challenged again.")
+	cmd.Flags().StringVar(&password, "password", "", "Password visitors enter to pass the challenge, 8 to 256 characters. Only accepted for password challenges. Leave out to keep the current password; required when switching to `password`. Only a hash is stored.")
+	cmd.Flags().IntVar(&attempts, "attempts", 0, "How many wrong passwords one visitor (per IP) may try before waiting, from 1 to 100. Only accepted for password challenges. Leave out to keep the current value; switching to `password` without it uses 10.")
+	cmd.Flags().IntVar(&attemptsInterval, "attempts-interval", 0, "The window, in seconds, those attempts are counted over, from 60 to 86400. Only accepted for password challenges. Leave out to keep the current value; switching to `password` without it uses 300.")
 	cmd.Flags().StringVar(&schedule, "schedule", "", "When the rule is active: mode, days, interval, anchor, startTime and endTime (HH:MM), and an optional IANA timezone (UTC by default). Leave out for always on; on update, leave out to keep the current schedule and pass an empty object to remove it.")
 	return cmd
 }
