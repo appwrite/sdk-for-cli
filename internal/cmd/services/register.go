@@ -40,6 +40,7 @@ func Register(root *cobra.Command) {
 	root.AddCommand(NewTokensCommand())
 	root.AddCommand(NewUsersCommand())
 	root.AddCommand(NewVectorsDBCommand())
+	root.AddCommand(NewVideosCommand())
 	root.AddCommand(NewWafCommand())
 	root.AddCommand(NewWebhooksCommand())
 

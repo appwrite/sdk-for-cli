@@ -163,6 +163,11 @@ func NewProjectCommand() *cobra.Command {
 	cmd.AddCommand(newProjectGetVariableCommand())
 	cmd.AddCommand(newProjectUpdateVariableCommand())
 	cmd.AddCommand(newProjectDeleteVariableCommand())
+	cmd.AddCommand(newProjectListVideoProfilesCommand())
+	cmd.AddCommand(newProjectCreateVideoProfileCommand())
+	cmd.AddCommand(newProjectGetVideoProfileCommand())
+	cmd.AddCommand(newProjectUpdateVideoProfileCommand())
+	cmd.AddCommand(newProjectDeleteVideoProfileCommand())
 
 	return cmd
 }
@@ -6507,6 +6512,258 @@ func newProjectDeleteVariableCommand() *cobra.Command {
 
 	cmd.Flags().StringVar(&variableId, "variable-id", "", "Variable unique ID.")
 	_ = cmd.MarkFlagRequired("variable-id")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectListVideoProfilesCommand() *cobra.Command {
+	var queries []string
+	var total bool
+	var filter []string
+	var where []string
+	var sortAsc []string
+	var sortDesc []string
+	var limit int
+	var offset int
+	var cursorAfter string
+	var cursorBefore string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "list-video-profiles",
+		Short: "Get a list of video profiles in the current project (`GET /v1/project/videos/profiles`). Every profile is returned regardless of codec. Filter with `queries`, for example `Query.equal('codec', ['h264'])` for one encode ladder, or on `name`, `width`, `height`, `videoBitRate` and `audioBitRate`. Search with `Query.search()` on the `search` attribute.\n",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			parsedFilter, err := query.ParseFilters(filter)
+			if err != nil {
+				return err
+			}
+			parsedWhere, err := query.ParseFilters(where)
+			if err != nil {
+				return err
+			}
+
+			queries, err := query.Build(query.Options{
+				Queries:      queries,
+				Filter:       parsedFilter,
+				Where:        parsedWhere,
+				SortAsc:      sortAsc,
+				SortDesc:     sortDesc,
+				Limit:        app.FlagInt(cmd, "limit", limit),
+				Offset:       app.FlagInt(cmd, "offset", offset),
+				CursorAfter:  app.FlagString(cmd, "cursor-after", cursorAfter),
+				CursorBefore: app.FlagString(cmd, "cursor-before", cursorBefore),
+			})
+			if err != nil {
+				return err
+			}
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.ListVideoProfilesOption{}
+			if app.AnyFlagChanged(cmd, "queries", "filter", "where", "sort-asc", "sort-desc", "limit", "offset", "cursor-after", "cursor-before", "select") {
+				options = append(options, service.WithListVideoProfilesQueries(app.StringSlice(queries)))
+			}
+			if cmd.Flags().Changed("total") {
+				options = append(options, service.WithListVideoProfilesTotal(total))
+			}
+
+			result, err := service.ListVideoProfiles(options...)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringArrayVar(&queries, "queries", nil, "Array of query strings generated using the Query class provided by the SDK. Learn more about queries (https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, codec, width, height, videoBitRate, audioBitRate, search. Repeat the flag for each value.")
+	cmd.Flags().BoolVar(&total, "total", false, "When set to false, the total count returned will be 0 and will not be calculated.")
+	cmd.Flags().Lookup("total").NoOptDefVal = "true"
+	cmd.Flags().StringArrayVar(&filter, "filter", nil, "Filter using a simple comparison expression. Repeat for multiple filters. Supports field=value, field!=value, field>value, field>=value, field<value, and field<=value.")
+	cmd.Flags().StringArrayVar(&where, "where", nil, "Deprecated. Use --filter instead. Filter using a simple comparison expression. Repeat for multiple filters.")
+	cmd.Flags().StringArrayVar(&sortAsc, "sort-asc", nil, "Sort results by an attribute in ascending order. Repeat for multiple sort fields.")
+	cmd.Flags().StringArrayVar(&sortDesc, "sort-desc", nil, "Sort results by an attribute in descending order. Repeat for multiple sort fields.")
+	cmd.Flags().IntVar(&limit, "limit", 0, "Maximum number of results to return.")
+	cmd.Flags().IntVar(&offset, "offset", 0, "Number of results to skip.")
+	cmd.Flags().StringVar(&cursorAfter, "cursor-after", "", "Return results after this cursor ID.")
+	cmd.Flags().StringVar(&cursorBefore, "cursor-before", "", "Return results before this cursor ID.")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectCreateVideoProfileCommand() *cobra.Command {
+	var profileId string
+	var name string
+	var videoBitRate int
+	var audioBitRate int
+	var width int
+	var height int
+	var codec string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "create-video-profile",
+		Short: "Create a video profile (`POST /v1/project/videos/profiles`) describing an encoding target: output dimensions, video/audio bitrates, and encode codec. Only codecs enabled on this instance are accepted; the default is `h264`. A disabled codec is rejected. Creating a profile with the same width, height, bitrates, and codec fails with `video_profile_already_exists`. Bitrates are in bits per second and must be multiples of 1000. Renditions are encoded against a profile.\n",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.CreateVideoProfileOption{}
+			if cmd.Flags().Changed("codec") {
+				options = append(options, service.WithCreateVideoProfileCodec(codec))
+			}
+
+			result, err := service.CreateVideoProfile(profileId, name, videoBitRate, audioBitRate, width, height, options...)
+			if err != nil {
+				return sdk.WrapMutationError("POST", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&profileId, "profile-id", "", "Video profile ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.")
+	_ = cmd.MarkFlagRequired("profile-id")
+	cmd.Flags().StringVar(&name, "name", "", "Video profile name.")
+	_ = cmd.MarkFlagRequired("name")
+	cmd.Flags().IntVar(&videoBitRate, "video-bit-rate", 0, "Target video bitrate in bits per second. Must be a multiple of 1000.")
+	_ = cmd.MarkFlagRequired("video-bit-rate")
+	cmd.Flags().IntVar(&audioBitRate, "audio-bit-rate", 0, "Target audio bitrate in bits per second. Must be a multiple of 1000.")
+	_ = cmd.MarkFlagRequired("audio-bit-rate")
+	cmd.Flags().IntVar(&width, "width", 0, "Target video width in pixels. Must be an even number.")
+	_ = cmd.MarkFlagRequired("width")
+	cmd.Flags().IntVar(&height, "height", 0, "Target video height in pixels. Must be an even number.")
+	_ = cmd.MarkFlagRequired("height")
+	cmd.Flags().StringVar(&codec, "codec", "", "Video encode codec. Codecs not enabled on this instance are rejected. Defaults to `h264`.")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectGetVideoProfileCommand() *cobra.Command {
+	var profileId string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "get-video-profile",
+		Short: "Get a video profile by its unique ID (`GET /v1/project/videos/profiles/:profileId`).\n",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.GetVideoProfile(profileId)
+			if err != nil {
+				return sdk.WrapMutationError("GET", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&profileId, "profile-id", "", "Video profile unique ID.")
+	_ = cmd.MarkFlagRequired("profile-id")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectUpdateVideoProfileCommand() *cobra.Command {
+	var profileId string
+	var name string
+	var videoBitRate int
+	var audioBitRate int
+	var width int
+	var height int
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "update-video-profile",
+		Short: "Update a video profile by its unique ID (`PATCH /v1/project/videos/profiles/:profileId`). Existing renditions are not re-encoded. Changing the profile onto the same width, height, bitrates, and codec as another profile fails with `video_profile_already_exists`.\n",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			// An unset flag must be omitted, not sent as its zero value.
+			options := []project.UpdateVideoProfileOption{}
+			if cmd.Flags().Changed("name") {
+				options = append(options, service.WithUpdateVideoProfileName(name))
+			}
+			if cmd.Flags().Changed("video-bit-rate") {
+				options = append(options, service.WithUpdateVideoProfileVideoBitRate(videoBitRate))
+			}
+			if cmd.Flags().Changed("audio-bit-rate") {
+				options = append(options, service.WithUpdateVideoProfileAudioBitRate(audioBitRate))
+			}
+			if cmd.Flags().Changed("width") {
+				options = append(options, service.WithUpdateVideoProfileWidth(width))
+			}
+			if cmd.Flags().Changed("height") {
+				options = append(options, service.WithUpdateVideoProfileHeight(height))
+			}
+
+			result, err := service.UpdateVideoProfile(profileId, options...)
+			if err != nil {
+				return sdk.WrapMutationError("PATCH", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&profileId, "profile-id", "", "Video profile unique ID.")
+	_ = cmd.MarkFlagRequired("profile-id")
+	cmd.Flags().StringVar(&name, "name", "", "Video profile name.")
+	cmd.Flags().IntVar(&videoBitRate, "video-bit-rate", 0, "Target video bitrate in bits per second. Must be a multiple of 1000.")
+	cmd.Flags().IntVar(&audioBitRate, "audio-bit-rate", 0, "Target audio bitrate in bits per second. Must be a multiple of 1000.")
+	cmd.Flags().IntVar(&width, "width", 0, "Target video width in pixels. Must be an even number.")
+	cmd.Flags().IntVar(&height, "height", 0, "Target video height in pixels. Must be an even number.")
+	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
+	return cmd
+}
+
+func newProjectDeleteVideoProfileCommand() *cobra.Command {
+	var profileId string
+	var projectId string
+
+	cmd := &cobra.Command{
+		Use:   "delete-video-profile",
+		Short: "Delete a video profile by its unique ID (`DELETE /v1/project/videos/profiles/:profileId`). Renditions already encoded against it are left in place.\n",
+		Args:  app.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			client, err := app.ClientForProject(projectId)
+			if err != nil {
+				return err
+			}
+			service := project.New(client)
+
+			result, err := service.DeleteVideoProfile(profileId)
+			if err != nil {
+				return sdk.WrapMutationError("DELETE", err)
+			}
+
+			return app.Render(result)
+		},
+	}
+
+	cmd.Flags().StringVar(&profileId, "profile-id", "", "Video profile unique ID.")
+	_ = cmd.MarkFlagRequired("profile-id")
 	cmd.Flags().StringVar(&projectId, "project-id", "", "Project to act on. Defaults to the project linked in appwrite.config.json.")
 	return cmd
 }
